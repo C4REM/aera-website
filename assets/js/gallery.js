@@ -1,0 +1,258 @@
+/* ==========================================================================
+   AERA — WORK GALLERY
+   Projects sit on the surface of a large invisible cylinder, arranged as a
+   helix: each successive project advances one step around the axis AND one
+   step up it. Scrolling turns the cylinder, so projects wind past the camera
+   in a spiral. Modelled on jordigarreta.com, which does the same thing in
+   WebGL2.
+
+   Why Three.js and not CSS 3D: CSS can only transform flat quads. The whole
+   character of the reference is that each panel is BENT around the cylinder,
+   so its outer edges physically recede from the camera. That needs real
+   geometry with subdivided vertices — a previous CSS attempt could not do it
+   and read as flat cards floating in space.
+
+   Degrades to a plain DOM grid (already in the markup) when WebGL is missing,
+   reduced-motion is set, or we're on touch — a scroll-driven fly-through you
+   cannot hover is not worth the scroll distance on a phone.
+   ========================================================================== */
+(function () {
+  const stage    = document.getElementById('pgStage');
+  const track    = document.getElementById('pgTrack');
+  const canvas   = document.getElementById('pgCanvas');
+  const dataEl   = document.getElementById('pgData');
+  const fallback = document.getElementById('pgFallback');
+  if (!stage || !track || !canvas || !dataEl) return;
+
+  let PROJECTS = [];
+  try { PROJECTS = JSON.parse(dataEl.textContent); } catch (e) { return; }
+  if (!PROJECTS.length) return;
+
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const coarse = !matchMedia('(hover: hover) and (pointer: fine)').matches;
+  const small  = matchMedia('(max-width: 900px)').matches;
+
+  // Bail to the DOM grid before touching WebGL at all.
+  if (reduce || coarse || small || typeof THREE === 'undefined') return;
+
+  const gl = (() => {
+    try { return canvas.getContext('webgl2') || canvas.getContext('webgl'); }
+    catch (e) { return null; }
+  })();
+  if (!gl) return;
+
+  // WebGL is good — hand the page over to the canvas.
+  document.body.classList.add('pg-live');
+  if (fallback) fallback.setAttribute('aria-hidden', 'true');
+
+  /* ---------------- geometry constants ---------------- */
+  const N        = PROJECTS.length;
+  const RADIUS   = 7.4;              // cylinder radius, world units
+  const CARD_W   = 4.6;              // arc width of a panel
+  const CARD_H   = 2.7;
+  const SEG      = 40;               // horizontal subdivisions — the bend
+  const ANGLE    = (Math.PI * 2) / N;// one full turn across all projects
+  const Y_STEP   = 1.15;             // helix rise per project
+  const CAM_Z    = RADIUS + 4.15;    // camera sits outside the cylinder
+
+  /* ---------------- scene ---------------- */
+  const renderer = new THREE.WebGLRenderer({
+    canvas, antialias: true, alpha: true, powerPreference: 'high-performance'
+  });
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.outputEncoding = THREE.sRGBEncoding;
+
+  const scene  = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(46, 1, 0.1, 100);
+  camera.position.set(0, 0, CAM_Z);
+  camera.lookAt(0, 0, 0);
+
+  /* Bend a flat plane around a vertical axis of the given radius.
+     A vertex at arc-offset x maps to angle phi = x / R on the cylinder, so it
+     moves outward in x and BACKWARD in z. z is negative at the edges, i.e.
+     away from a camera sitting at +z — which is exactly the recession that
+     makes the panel read as curved rather than flat. */
+  function curvedPlane(w, h, r, seg) {
+    const g = new THREE.PlaneGeometry(w, h, seg, 1);
+    const pos = g.attributes.position;
+    for (let i = 0; i < pos.count; i++) {
+      const x = pos.getX(i);
+      const phi = x / r;
+      pos.setX(i, Math.sin(phi) * r);
+      pos.setZ(i, Math.cos(phi) * r - r);
+    }
+    pos.needsUpdate = true;
+    g.computeVertexNormals();
+    return g;
+  }
+
+  const geom = curvedPlane(CARD_W, CARD_H, RADIUS, SEG);
+  const loader = new THREE.TextureLoader();
+  loader.setCrossOrigin('anonymous');
+
+  const cards = PROJECTS.map((p, i) => {
+    const mat = new THREE.MeshBasicMaterial({
+      color: 0x1b1a1e,
+      transparent: true,
+      opacity: 0,
+      side: THREE.DoubleSide,
+      depthWrite: false
+    });
+
+    loader.load(
+      p.cover,
+      tex => {
+        tex.encoding = THREE.sRGBEncoding;
+        tex.minFilter = THREE.LinearFilter;          // no mipmaps → no NPOT issues
+        tex.generateMipmaps = false;
+        tex.wrapS = tex.wrapT = THREE.ClampToEdgeWrapping;
+        mat.map = tex;
+        mat.color.setHex(0xffffff);
+        mat.needsUpdate = true;
+      },
+      undefined,
+      () => { /* texture failed — the flat tile colour stands in */ }
+    );
+
+    const mesh = new THREE.Mesh(geom, mat);
+    mesh.userData = { i, href: p.href, title: p.title, cat: p.cat };
+    scene.add(mesh);
+    return mesh;
+  });
+
+  /* ---------------- scroll → helix progress ---------------- */
+  // Wrap an offset into [-N/2, N/2) so a project leaving one end reappears at
+  // the other. The wrap happens at angle ±PI — the far side of the cylinder,
+  // behind everything — so the jump is never visible.
+  function wrap(v) {
+    const m = ((v % N) + N) % N;
+    return m > N / 2 ? m - N : m;
+  }
+
+  let target = 0;   // where the scroll says we are, in project units
+  let current = 0;  // eased follower — this is what makes it glide
+  let hovered = null;
+
+  function readScroll() {
+    const r = track.getBoundingClientRect();
+    const scrollable = r.height - innerHeight;
+    let p = scrollable > 0 ? (-r.top) / scrollable : 0;
+    p = Math.max(0, Math.min(1, p));
+    target = p * N;
+  }
+
+  function resize() {
+    const w = stage.clientWidth || innerWidth;
+    const h = stage.clientHeight || innerHeight;
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+  }
+
+  /* ---------------- pointer ---------------- */
+  const ray = new THREE.Raycaster();
+  const ndc = new THREE.Vector2(-2, -2);
+
+  canvas.addEventListener('pointermove', e => {
+    const r = canvas.getBoundingClientRect();
+    ndc.x = ((e.clientX - r.left) / r.width) * 2 - 1;
+    ndc.y = -((e.clientY - r.top) / r.height) * 2 + 1;
+  }, { passive: true });
+
+  canvas.addEventListener('pointerleave', () => { ndc.set(-2, -2); });
+
+  /* ---------------- open transition ---------------- */
+  // The clicked panel flies at the camera while a veil fades up, then we
+  // navigate. Doing it in-scene keeps the curvature through the whole move.
+  let opening = null;
+  const veil = document.getElementById('pgVeil');
+
+  canvas.addEventListener('click', () => {
+    if (opening || !hovered) return;
+    opening = {
+      mesh: hovered,
+      t0: performance.now(),
+      from: hovered.position.clone(),
+      href: hovered.userData.href
+    };
+    canvas.style.cursor = 'default';
+  });
+
+  /* ---------------- HUD ---------------- */
+  const hudCat   = document.getElementById('pgCat');
+  const hudTitle = document.getElementById('pgTitle');
+  const hudNum   = document.getElementById('pgNum');
+  let activePrev = -1;
+
+  /* ---------------- frame ---------------- */
+  const clock = new THREE.Clock();
+
+  function frame() {
+    requestAnimationFrame(frame);
+
+    readScroll();
+    // critically-damped-ish follow. Frame-rate independent so a 120Hz display
+    // doesn't glide twice as fast as a 60Hz one.
+    const dt = Math.min(clock.getDelta(), 0.05);
+    current += (target - current) * (1 - Math.exp(-7.5 * dt));
+
+    let active = 0, bestScore = -Infinity;
+
+    for (const mesh of cards) {
+      const k = wrap(mesh.userData.i - current);
+      const a = k * ANGLE;
+
+      mesh.position.set(Math.sin(a) * RADIUS, k * Y_STEP, Math.cos(a) * RADIUS);
+      mesh.rotation.set(0, a, 0);
+
+      // face-on-ness: 1 when the panel points straight at the camera
+      const facing = Math.cos(a);
+      const t = Math.max(0, facing);
+      // fade the far side out rather than letting it clip through
+      mesh.material.opacity = Math.pow(t, 1.6) * 0.96 + 0.04;
+      mesh.visible = facing > -0.15;
+
+      const score = facing - Math.abs(k) * 0.02;
+      if (score > bestScore) { bestScore = score; active = mesh.userData.i; }
+    }
+
+    // hover test (skipped once we're opening)
+    if (!opening) {
+      ray.setFromCamera(ndc, camera);
+      const hits = ray.intersectObjects(cards, false);
+      const hit = hits.length ? hits[0].object : null;
+      if (hit !== hovered) {
+        hovered = hit;
+        canvas.style.cursor = hit ? 'pointer' : 'default';
+      }
+      if (hovered) {
+        // nudge the hovered panel toward the camera
+        hovered.position.lerp(camera.position, 0.035);
+      }
+    }
+
+    if (active !== activePrev) {
+      activePrev = active;
+      const p = PROJECTS[active];
+      if (hudCat)   hudCat.textContent   = p.cat;
+      if (hudTitle) hudTitle.textContent = p.title;
+      if (hudNum)   hudNum.textContent   = String(active + 1).padStart(2, '0');
+    }
+
+    if (opening) {
+      const k = Math.min(1, (performance.now() - opening.t0) / 820);
+      const e = k * k * (3 - 2 * k);                       // smoothstep
+      opening.mesh.position.lerpVectors(opening.from, camera.position, e * 0.97);
+      opening.mesh.material.opacity = 1;
+      opening.mesh.renderOrder = 10;
+      if (veil) veil.style.opacity = String(Math.max(0, (k - 0.45) / 0.55));
+      if (k >= 1) { location.href = opening.href; opening = null; }
+    }
+
+    renderer.render(scene, camera);
+  }
+
+  resize();
+  addEventListener('resize', resize);
+  requestAnimationFrame(frame);
+})();
