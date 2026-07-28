@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400;1,500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/style.css?v=20260728w">
+<link rel="stylesheet" href="assets/css/style.css?v=20260728x">
 <noscript><style>.preloader{display:none!important}body{overflow:visible!important;height:auto!important}.cursor-dot,.cursor-ring{display:none!important}.reveal{opacity:1!important;transform:none!important;filter:none!important}.pg-track{height:auto!important}.pg-stage{position:relative!important;height:auto!important}.pg-cards{position:static!important;display:grid!important;grid-template-columns:repeat(3,1fr);gap:10px;padding:0 22px}.pg-card{position:static!important;width:auto!important;opacity:1!important;transform:none!important}</style></noscript>
 </head>
 <body>
@@ -61,95 +61,92 @@
   </div>
 </nav>
 
+<div class="pg-veil" id="pgVeil" aria-hidden="true"></div>
+
 <section class="pg">
   <div class="pg-track" id="pgTrack">
     <div class="pg-stage" id="pgStage">
+      <canvas id="pgCanvas"></canvas>
 
       <div class="pg-head">
         <span class="eyebrow">Selected work</span>
         <h1>Things we've <em>actually made.</em></h1>
       </div>
 
-      <div class="pg-cards">
-      <button class="pg-card" type="button" data-href="never-felt-so-alone.html" aria-label="Open Never Felt So Alone">
-        <span class="pg-num">01</span>
-        <span class="pg-open">Open</span>
-        <span class="pg-shot"><img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/1738751753285-IBED4HQ8UC6KS2QNRQQL/IMG_7495.jpg" loading="lazy" alt="Never Felt So Alone"></span>
-        <span class="pg-meta">
-          <span class="pg-cat">Music video</span>
-          <span class="pg-title">Never Felt So Alone</span>
-        </span>
-      </button>
-      <button class="pg-card" type="button" data-href="i-feel-good.html" aria-label="Open I Feel Good">
-        <span class="pg-num">02</span>
-        <span class="pg-open">Open</span>
-        <span class="pg-shot"><img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/1738836148815-E90A17Q0X8NECR2KG62A/asfgh.png" loading="lazy" alt="I Feel Good"></span>
-        <span class="pg-meta">
-          <span class="pg-cat">Short film</span>
-          <span class="pg-title">I Feel Good</span>
-        </span>
-      </button>
-      <button class="pg-card" type="button" data-href="head-boy-application.html" aria-label="Open Head Boy Application">
-        <span class="pg-num">03</span>
-        <span class="pg-open">Open</span>
-        <span class="pg-shot"><img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/1741172634316-5OBW0V8OBR2W9MTM8GZJ/IMG_8254.PNG" loading="lazy" alt="Head Boy Application"></span>
-        <span class="pg-meta">
-          <span class="pg-cat">Personal film</span>
-          <span class="pg-title">Head Boy Application</span>
-        </span>
-      </button>
-      <button class="pg-card" type="button" data-href="green-planet-dubai.html" aria-label="Open Green Planet Dubai">
-        <span class="pg-num">04</span>
-        <span class="pg-open">Open</span>
-        <span class="pg-shot"><img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/1739452876599-36BMH4HXUAUML70B7F1D/Green+Planet+Photos-01.jpg" loading="lazy" alt="Green Planet Dubai"></span>
-        <span class="pg-meta">
-          <span class="pg-cat">Photography</span>
-          <span class="pg-title">Green Planet Dubai</span>
-        </span>
-      </button>
-      <button class="pg-card" type="button" data-href="photography.html" aria-label="Open Photography">
-        <span class="pg-num">05</span>
-        <span class="pg-open">Open</span>
-        <span class="pg-shot"><img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/1739453956597-KG50FNZA9GIWFRW2Z6C5/IMG_6821-Enhanced-NR.jpg" loading="lazy" alt="Photography"></span>
-        <span class="pg-meta">
-          <span class="pg-cat">Ongoing</span>
-          <span class="pg-title">Photography</span>
-        </span>
-      </button>
-      <button class="pg-card" type="button" data-href="f1-abu-dhabi-2024.html" aria-label="Open F1 Abu Dhabi 2024">
-        <span class="pg-num">06</span>
-        <span class="pg-open">Open</span>
-        <span class="pg-shot"><img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/1739452771013-PBXCKSWPZQUGEOZOMYR1/IMG_1199.jpg" loading="lazy" alt="F1 Abu Dhabi 2024"></span>
-        <span class="pg-meta">
-          <span class="pg-cat">Event photography</span>
-          <span class="pg-title">F1 Abu Dhabi 2024</span>
-        </span>
-      </button>
-      <button class="pg-card" type="button" data-href="eid-al-etihad.html" aria-label="Open Eid Al Etihad Day">
-        <span class="pg-num">07</span>
-        <span class="pg-open">Open</span>
-        <span class="pg-shot"><img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/1739453756613-1HQ85VBPU1OO5P4IBOO5/UAE+Flag.jpg" loading="lazy" alt="Eid Al Etihad Day"></span>
-        <span class="pg-meta">
-          <span class="pg-cat">Commissioned</span>
-          <span class="pg-title">Eid Al Etihad Day</span>
-        </span>
-      </button>
-      <button class="pg-card" type="button" data-href="graphic-design.html" aria-label="Open Graphic Design">
-        <span class="pg-num">08</span>
-        <span class="pg-open">Open</span>
-        <span class="pg-shot"><img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/1739634160164-UPFI1V1Z2CNL84EPEKQ5/Basketball+TV+Matchday+Graphic+1+copy.jpg" loading="lazy" alt="Graphic Design"></span>
-        <span class="pg-meta">
-          <span class="pg-cat">Design</span>
-          <span class="pg-title">Graphic Design</span>
-        </span>
-      </button>
+      <div class="pg-hud">
+        <span class="pg-cat" id="pgCat">Music video</span>
+        <span class="pg-title" id="pgTitle">Never Felt So Alone</span>
       </div>
 
       <div class="pg-count"><b id="pgNum">01</b> <span>/ 08</span></div>
-      <span class="pg-hint">Scroll to travel · click to open</span>
+      <span class="pg-hint">Scroll to turn · click to open</span>
     </div>
   </div>
+
+  <!-- Shown until the WebGL gallery reports itself live (and permanently on
+       touch / reduced-motion / no-WebGL). Real links, so the projects are
+       always reachable and always crawlable. -->
+  <div class="pg-fallback" id="pgFallback">
+    <a href="never-felt-so-alone.html">
+      <img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/1738751753285-IBED4HQ8UC6KS2QNRQQL/IMG_7495.jpg" loading="lazy" alt="Never Felt So Alone">
+      <span class="pg-fb-meta">
+        <span class="pg-fb-cat">Music video</span>
+        <span class="pg-fb-title">Never Felt So Alone</span>
+      </span>
+    </a>
+    <a href="i-feel-good.html">
+      <img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/1738836148815-E90A17Q0X8NECR2KG62A/asfgh.png" loading="lazy" alt="I Feel Good">
+      <span class="pg-fb-meta">
+        <span class="pg-fb-cat">Short film</span>
+        <span class="pg-fb-title">I Feel Good</span>
+      </span>
+    </a>
+    <a href="head-boy-application.html">
+      <img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/1741172634316-5OBW0V8OBR2W9MTM8GZJ/IMG_8254.PNG" loading="lazy" alt="Head Boy Application">
+      <span class="pg-fb-meta">
+        <span class="pg-fb-cat">Personal film</span>
+        <span class="pg-fb-title">Head Boy Application</span>
+      </span>
+    </a>
+    <a href="green-planet-dubai.html">
+      <img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/1739452876599-36BMH4HXUAUML70B7F1D/Green+Planet+Photos-01.jpg" loading="lazy" alt="Green Planet Dubai">
+      <span class="pg-fb-meta">
+        <span class="pg-fb-cat">Photography</span>
+        <span class="pg-fb-title">Green Planet Dubai</span>
+      </span>
+    </a>
+    <a href="photography.html">
+      <img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/1739453956597-KG50FNZA9GIWFRW2Z6C5/IMG_6821-Enhanced-NR.jpg" loading="lazy" alt="Photography">
+      <span class="pg-fb-meta">
+        <span class="pg-fb-cat">Ongoing</span>
+        <span class="pg-fb-title">Photography</span>
+      </span>
+    </a>
+    <a href="f1-abu-dhabi-2024.html">
+      <img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/1739452771013-PBXCKSWPZQUGEOZOMYR1/IMG_1199.jpg" loading="lazy" alt="F1 Abu Dhabi 2024">
+      <span class="pg-fb-meta">
+        <span class="pg-fb-cat">Event photography</span>
+        <span class="pg-fb-title">F1 Abu Dhabi 2024</span>
+      </span>
+    </a>
+    <a href="eid-al-etihad.html">
+      <img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/1739453756613-1HQ85VBPU1OO5P4IBOO5/UAE+Flag.jpg" loading="lazy" alt="Eid Al Etihad Day">
+      <span class="pg-fb-meta">
+        <span class="pg-fb-cat">Commissioned</span>
+        <span class="pg-fb-title">Eid Al Etihad Day</span>
+      </span>
+    </a>
+    <a href="graphic-design.html">
+      <img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/1739634160164-UPFI1V1Z2CNL84EPEKQ5/Basketball+TV+Matchday+Graphic+1+copy.jpg" loading="lazy" alt="Graphic Design">
+      <span class="pg-fb-meta">
+        <span class="pg-fb-cat">Design</span>
+        <span class="pg-fb-title">Graphic Design</span>
+      </span>
+    </a>
+  </div>
 </section>
+
+<script type="application/json" id="pgData">[{"title": "Never Felt So Alone", "cat": "Music video", "href": "never-felt-so-alone.html", "cover": "https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/1738751753285-IBED4HQ8UC6KS2QNRQQL/IMG_7495.jpg"}, {"title": "I Feel Good", "cat": "Short film", "href": "i-feel-good.html", "cover": "https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/1738836148815-E90A17Q0X8NECR2KG62A/asfgh.png"}, {"title": "Head Boy Application", "cat": "Personal film", "href": "head-boy-application.html", "cover": "https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/1741172634316-5OBW0V8OBR2W9MTM8GZJ/IMG_8254.PNG"}, {"title": "Green Planet Dubai", "cat": "Photography", "href": "green-planet-dubai.html", "cover": "https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/1739452876599-36BMH4HXUAUML70B7F1D/Green+Planet+Photos-01.jpg"}, {"title": "Photography", "cat": "Ongoing", "href": "photography.html", "cover": "https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/1739453956597-KG50FNZA9GIWFRW2Z6C5/IMG_6821-Enhanced-NR.jpg"}, {"title": "F1 Abu Dhabi 2024", "cat": "Event photography", "href": "f1-abu-dhabi-2024.html", "cover": "https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/1739452771013-PBXCKSWPZQUGEOZOMYR1/IMG_1199.jpg"}, {"title": "Eid Al Etihad Day", "cat": "Commissioned", "href": "eid-al-etihad.html", "cover": "https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/1739453756613-1HQ85VBPU1OO5P4IBOO5/UAE+Flag.jpg"}, {"title": "Graphic Design", "cat": "Design", "href": "graphic-design.html", "cover": "https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/1739634160164-UPFI1V1Z2CNL84EPEKQ5/Basketball+TV+Matchday+Graphic+1+copy.jpg"}]</script>
 
 <section class="tight">
   <div class="wrap">
@@ -179,7 +176,9 @@
   </div>
 </footer>
 
-<script src="assets/js/lenis.min.js?v=20260728w"></script>
-<script src="assets/js/main.js?v=20260728w"></script>
+<script src="assets/js/lenis.min.js?v=20260728x"></script>
+<script src="assets/js/main.js?v=20260728x"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="assets/js/gallery.js?v=20260728x"></script>
 </body>
 </html>
