@@ -26,4 +26,13 @@
     <priority>0.9</priority>
   </url>
   <url><loc>https://REPLACE-WITH-YOUR-DOMAIN.com/team.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://REPLACE-WITH-YOUR-DOMAIN.com/work.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://REPLACE-WITH-YOUR-DOMAIN.com/never-felt-so-alone.html</loc><changefreq>yearly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://REPLACE-WITH-YOUR-DOMAIN.com/i-feel-good.html</loc><changefreq>yearly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://REPLACE-WITH-YOUR-DOMAIN.com/head-boy-application.html</loc><changefreq>yearly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://REPLACE-WITH-YOUR-DOMAIN.com/green-planet-dubai.html</loc><changefreq>yearly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://REPLACE-WITH-YOUR-DOMAIN.com/photography.html</loc><changefreq>yearly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://REPLACE-WITH-YOUR-DOMAIN.com/f1-abu-dhabi-2024.html</loc><changefreq>yearly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://REPLACE-WITH-YOUR-DOMAIN.com/eid-al-etihad.html</loc><changefreq>yearly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://REPLACE-WITH-YOUR-DOMAIN.com/graphic-design.html</loc><changefreq>yearly</changefreq><priority>0.6</priority></url>
 </urlset>
