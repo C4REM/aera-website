@@ -468,17 +468,24 @@
     });
 
     // --- PHOTOS: their own wheel, travelling the OPPOSITE way (downward) ---
+    // Curved the same way the names bulge — as a frame nears the focal point it
+    // swings inward (toward the names column) rather than just sliding straight
+    // up and down, so the two wheels read as one matched arc, not one curved
+    // list next to one flat one.
     if (media.length){
       const gapM = vh * 0.66;                 // wider spacing → ~1–2 frames in view
       const travelM = (N - 1) * gapM;
       const cursorM = p * travelM;
       const falloffM = vh * 0.5;
+      const bulgeMaxM = Math.min(innerWidth * 0.06, 70);
       media.forEach((m, i) => {
         const baseY = i * gapM;
         const y = baseY - travelM + cursorM; // increases with scroll → moves DOWN
         const dyN = y / falloffM;
-        const s = (0.72 + 0.28 * Math.max(0, 1 - dyN * dyN)).toFixed(3);
-        m.style.transform = `translateY(calc(-50% + ${y.toFixed(1)}px)) scale(${s})`;
+        const bulge = Math.max(0, 1 - dyN * dyN);
+        const x = -bulge * bulgeMaxM;          // swing inward, toward the names
+        const s = (0.72 + 0.28 * bulge).toFixed(3);
+        m.style.transform = `translate(${x.toFixed(1)}px, calc(-50% + ${y.toFixed(1)}px)) scale(${s})`;
         m.style.opacity = Math.max(0, 1 - Math.abs(dyN) * 0.9).toFixed(2);
       });
     }
