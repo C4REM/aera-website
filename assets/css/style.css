@@ -119,6 +119,16 @@ nav.scrolled{
 .nav-links a.active{color:var(--champagne)}
 .nav-links a + a{border-top:1px solid rgba(234,223,205,.07)}
 
+/* on narrow phones the left (burger+Enquire) and right (Instagram) nav cells
+   are wide enough to collide with the absolutely-centred wordmark. "Enquire"
+   is already duplicated inside the hamburger dropdown, so it's safe to drop
+   from the bar itself; Instagram and the wordmark just need to shrink. */
+@media(max-width:600px){
+  .brand{font-size:1.05rem}
+  .nav-left .nav-cta{display:none}
+  .nav-right .nav-cell{padding:0 14px;font-size:9.5px}
+}
+
 /* HERO — home: one centred statement, lots of air */
 header.hero{
   min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;
@@ -340,6 +350,13 @@ section.tight{padding:80px 0}
   .si-card{position:static;width:auto;left:auto}
   .si-img{position:static;width:100%;max-width:320px;margin-top:20px}
   .story-progress{display:none}
+  /* the reveal-on-scroll JS bails out early on the stacked mobile layout
+     (there's no pinned track to measure progress against), so these never
+     otherwise pick up their .is-active state — force them visible instead,
+     the same way .mt-copy/.mt-end are forced visible in the METHOD section
+     below for the same reason. */
+  .si-when,.si-card,.si-img{opacity:1!important;transform:none!important}
+  .si-card h3.split .w{opacity:1!important;filter:blur(0)!important}
 }
 
 /* shared pill badge (used by the story cards) */
