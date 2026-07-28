@@ -232,23 +232,24 @@ section.tight{padding:80px 0}
 .wheel-item.active .wnum{color:var(--champagne)}
 /* the photo side is its OWN wheel — a vertical strip that scrolls the
    opposite way to the names, each frame scaling up as it passes centre */
+/* One fixed, vertically-centred frame that crossfades between service photos.
+   It used to be a full-height window with the photos travelling through it on
+   their own counter-rotating track. That looked clever in theory and wrong in
+   practice: the photos were only ever near the top or bottom edge (so the
+   window sliced them), they were faint by the time they got there, and the one
+   on screen belonged to a DIFFERENT service than the highlighted name. A frame
+   that doesn't move can't crop what's inside it, and pinning it to the active
+   index means the picture always matches the word. */
 .wheel-media{
-  position:absolute;right:clamp(24px,4vw,64px);top:0;bottom:0;
-  width:min(26vw,300px);z-index:1;overflow:hidden;pointer-events:none;
-  /* Belt and braces for the clipping fix in main.js. The frames travel through
-     this fixed-height window, so anything still visible when it reaches an edge
-     would be sliced flat by it — against the nav at the top especially. The JS
-     fades each frame out before it gets that far; this mask means that even if
-     the timing is off (odd viewport, mid-resize) the edge dissolves instead of
-     cutting. */
-  -webkit-mask-image:linear-gradient(180deg,transparent 0,#000 13%,#000 87%,transparent 100%);
-  mask-image:linear-gradient(180deg,transparent 0,#000 13%,#000 87%,transparent 100%);
-  -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
+  position:absolute;right:clamp(24px,4vw,64px);top:50%;
+  width:min(26vw,300px);aspect-ratio:4/5;transform:translateY(-50%);
+  z-index:1;overflow:hidden;pointer-events:none;
+  border:1px solid var(--smoke);background:#141317;
 }
 .wheel-media img{
-  position:absolute;left:0;top:50%;width:100%;aspect-ratio:4/5;object-fit:cover;
-  border:1px solid var(--smoke);background:#141317;opacity:0;
-  will-change:transform,opacity;
+  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  opacity:0;will-change:opacity,transform;
+  transition:opacity .5s ease;
 }
 .wheel-progress{position:absolute;right:32px;bottom:8%;z-index:3;font-family:var(--sans);font-size:12px;letter-spacing:.14em;color:var(--stone)}
 .wheel-progress b{color:var(--champagne);font-weight:400}
