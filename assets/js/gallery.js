@@ -168,12 +168,24 @@
   const ray = new THREE.Raycaster();
   const ndc = new THREE.Vector2(-2, -2);
 
-  canvas.addEventListener('pointermove', e => {
+  function setNdc(e) {
     const r = canvas.getBoundingClientRect();
     ndc.x = ((e.clientX - r.left) / r.width) * 2 - 1;
     ndc.y = -((e.clientY - r.top) / r.height) * 2 + 1;
-  }, { passive: true });
+  }
 
+  // One picking helper, used by BOTH the per-frame cursor update and the click
+  // handler. The click must do its own pick rather than trusting the last
+  // frame's hover state: the panels move under a stationary cursor while you
+  // scroll, and a click that lands before the next frame would otherwise see a
+  // stale (often null) hover and silently do nothing.
+  function pick() {
+    ray.setFromCamera(ndc, camera);
+    const hits = ray.intersectObjects(cards, false);
+    return hits.length ? hits[0].object : null;
+  }
+
+  canvas.addEventListener('pointermove', setNdc, { passive: true });
   canvas.addEventListener('pointerleave', () => { ndc.set(-2, -2); });
 
   /* ---------------- open transition ---------------- */
@@ -182,13 +194,16 @@
   let opening = null;
   const veil = document.getElementById('pgVeil');
 
-  canvas.addEventListener('click', () => {
-    if (opening || !hovered) return;
+  canvas.addEventListener('click', e => {
+    if (opening) return;
+    setNdc(e);                 // trust this event, not the last pointermove
+    const mesh = pick();
+    if (!mesh) return;
     opening = {
-      mesh: hovered,
+      mesh,
       t0: performance.now(),
-      from: hovered.position.clone(),
-      href: hovered.userData.href
+      from: mesh.position.clone(),
+      href: mesh.userData.href
     };
     canvas.style.cursor = 'default';
   });
@@ -233,9 +248,7 @@
 
     // hover test (skipped once we're opening)
     if (!opening) {
-      ray.setFromCamera(ndc, camera);
-      const hits = ray.intersectObjects(cards, false);
-      const hit = hits.length ? hits[0].object : null;
+      const hit = pick();
       if (hit !== hovered) {
         hovered = hit;
         canvas.style.cursor = hit ? 'pointer' : 'default';
