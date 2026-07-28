@@ -1239,13 +1239,18 @@ body.preloading.preloader-seen .preloader-word{animation-duration:1s;animation-d
   perspective:1150px;perspective-origin:50% 46%;
   /* no overflow/filter here — see note above. Cards clip themselves instead. */
 }
-.pg-cards{position:absolute;inset:0;transform-style:preserve-3d}
+/* pointer-events:none is load-bearing, not tidiness. This container sits at
+   z=0 while every card is pushed to NEGATIVE z, so in 3D space the container
+   is physically in FRONT of its own children and swallows every click before
+   a card ever sees it. (elementFromPoint over a card returned .pg-cards, not
+   the card.) The cards opt themselves back in below. */
+.pg-cards{position:absolute;inset:0;transform-style:preserve-3d;pointer-events:none}
 .pg-card{
   position:absolute;left:50%;top:50%;
   width:min(30vw,380px);aspect-ratio:4/5;
   margin:0;padding:0;border:0;background:none;color:inherit;
   cursor:pointer;will-change:transform,opacity;
-  transform-style:preserve-3d;
+  transform-style:preserve-3d;pointer-events:auto;
 }
 .pg-shot{
   position:absolute;inset:0;overflow:hidden;
