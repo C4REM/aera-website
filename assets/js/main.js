@@ -959,3 +959,155 @@
     });
   });
 })();
+
+/* ---- WORK GALLERY — scroll-driven 3D corridor of project cards ----
+   Cards are laid out at increasing depth in one perspective space. Scroll
+   progress moves a "camera" cursor along that depth axis, so cards fly toward
+   the viewer and past the lens. Each card also sits slightly off-axis on a slow
+   spiral, which is what stops it reading as a boring straight tunnel.
+
+   Same single-rAF pattern used everywhere else on the site: one passive scroll
+   listener flips a flag, one rAF does the reads and writes.
+
+   NOTE: the mobile/touch fallback is pure CSS (a plain grid). This whole module
+   bails out early in that case so it never fights the stacked layout. */
+(function(){
+  const stage = document.getElementById('pgStage');
+  const track = document.getElementById('pgTrack');
+  if (!stage || !track) return;
+
+  const cards = Array.from(stage.querySelectorAll('.pg-card'));
+  const numEl = document.getElementById('pgNum');
+  if (!cards.length) return;
+
+  const N = cards.length;
+  const SPACING = 620;      // depth between consecutive cards, px
+  const NEAR = 260;         // cards closer than this to the lens are gone
+  const FAR = SPACING * 3.4;// fade-in distance
+  const SPIRAL = 0.72;      // radians of turn per card
+  const RADIUS_X = 0.19;    // off-axis drift, as a fraction of viewport
+  const RADIUS_Y = 0.13;
+
+  let ticking = false, activePrev = -1, flat = false;
+
+  function measure(){
+    // matches the CSS breakpoint that swaps in the stacked grid
+    flat = window.matchMedia('(max-width:900px)').matches ||
+           !window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    if (flat) cards.forEach(c => { c.style.transform = ''; c.style.opacity = ''; c.style.zIndex = ''; });
+  }
+
+  function update(){
+    ticking = false;
+    if (flat) return;
+
+    const vh = innerHeight, vw = innerWidth;
+    const rect = track.getBoundingClientRect();
+    const scrollable = rect.height - vh;
+    let p = scrollable > 0 ? (-rect.top) / scrollable : 0;
+    p = Math.max(0, Math.min(1, p));
+
+    // travel far enough that the last card also clears the lens
+    const cursor = p * (N - 1 + 0.6) * SPACING;
+
+    let activeIdx = 0, activeDist = 1e9;
+
+    cards.forEach((card, i) => {
+      const z = i * SPACING - cursor;      // +ve = ahead of the camera
+      const a = i * SPIRAL;
+      const x = Math.cos(a) * vw * RADIUS_X;
+      const y = Math.sin(a) * vh * RADIUS_Y;
+
+      if (z < NEAR - SPACING || z > FAR){
+        // fully past the lens or not yet in range — park it cheaply
+        card.style.opacity = '0';
+        card.style.transform = `translate3d(-50%,-50%,${(-FAR).toFixed(0)}px)`;
+        card.style.pointerEvents = 'none';
+        return;
+      }
+
+      // fade in from the far plane, and blow out as it passes the lens
+      let o = 1;
+      if (z > FAR * 0.55) o = 1 - (z - FAR * 0.55) / (FAR * 0.45);
+      if (z < NEAR)       o = Math.max(0, z / NEAR) * 0.5;
+      o = Math.max(0, Math.min(1, o));
+
+      card.style.opacity = o.toFixed(3);
+      card.style.transform =
+        `translate3d(calc(-50% + ${x.toFixed(1)}px), calc(-50% + ${y.toFixed(1)}px), ${(-z).toFixed(0)}px)`;
+      // nearer cards must paint over further ones
+      card.style.zIndex = String(1000 - Math.round(z / 10));
+      card.style.pointerEvents = o > 0.45 ? 'auto' : 'none';
+
+      const d = Math.abs(z - SPACING * 0.35);   // the "in focus" plane
+      if (d < activeDist){ activeDist = d; activeIdx = i; }
+    });
+
+    if (activeIdx !== activePrev){
+      cards.forEach((c, i) => c.classList.toggle('is-active', i === activeIdx));
+      if (numEl) numEl.textContent = String(activeIdx + 1).padStart(2, '0');
+      activePrev = activeIdx;
+    }
+  }
+
+  function onScroll(){ if (!ticking){ ticking = true; requestAnimationFrame(update); } }
+  addEventListener('scroll', onScroll, { passive: true });
+  addEventListener('resize', () => { measure(); onScroll(); });
+  addEventListener('load', () => { measure(); update(); });
+  measure(); update();
+
+  /* --- click: FLIP the card up to fullscreen, then navigate ---
+     We clone the card's image into a fixed overlay at the card's exact on-screen
+     rect, then animate that clone out to fill the viewport while a veil fades
+     up. Cloning (rather than animating the card itself) keeps us out of the 3D
+     context entirely — animating a preserve-3d child to position:fixed is
+     exactly the kind of thing that silently flattens or mis-positions. */
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  cards.forEach(card => {
+    card.addEventListener('click', e => {
+      const href = card.dataset.href;
+      if (!href) return;
+      if (reduce){ location.href = href; return; }
+      e.preventDefault();
+
+      const shot = card.querySelector('.pg-shot');
+      const img  = card.querySelector('.pg-shot img');
+      if (!shot || !img){ location.href = href; return; }
+
+      const r = shot.getBoundingClientRect();
+
+      const veil = document.createElement('div');
+      veil.className = 'pg-veil';
+      const flip = document.createElement('div');
+      flip.className = 'pg-flip';
+      flip.style.left   = r.left + 'px';
+      flip.style.top    = r.top + 'px';
+      flip.style.width  = r.width + 'px';
+      flip.style.height = r.height + 'px';
+      const clone = document.createElement('img');
+      clone.src = img.currentSrc || img.src;
+      clone.alt = '';
+      flip.appendChild(clone);
+      document.body.appendChild(veil);
+      document.body.appendChild(flip);
+
+      // scale + translate the clone so it covers the viewport exactly
+      const sx = innerWidth / r.width;
+      const sy = innerHeight / r.height;
+      const s  = Math.max(sx, sy);
+      const dx = (innerWidth / 2)  - (r.left + r.width / 2);
+      const dy = (innerHeight / 2) - (r.top + r.height / 2);
+      const EASE = 'cubic-bezier(.7,0,.2,1)';
+
+      flip.animate(
+        [{ transform: 'translate(0,0) scale(1)' },
+         { transform: `translate(${dx}px, ${dy}px) scale(${s})` }],
+        { duration: 760, easing: EASE, fill: 'forwards' }
+      );
+      veil.animate([{ opacity: 0 }, { opacity: 1 }],
+        { duration: 420, delay: 420, easing: 'ease-in', fill: 'forwards' })
+        .onfinish = () => { location.href = href; };
+    });
+  });
+})();
