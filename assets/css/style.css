@@ -1416,8 +1416,17 @@ body.preloading.preloader-seen .preloader-word{animation-duration:1s;animation-d
   .pj-gal figure:nth-child(6n+1){grid-column:span 2;aspect-ratio:16/10}
 }
 
-/* prev / next */
+/* prev / next.
+   These overrides are mandatory, not defensive. The site nav is styled with a
+   bare ELEMENT selector — `nav{position:fixed;top:0;height:72px;z-index:100}`
+   — so it captures EVERY <nav> on the page, including this one, and pins the
+   prev/next links to the top of the window over the hero. Anything semantically
+   marked up as <nav> anywhere on this site has to opt back out here. */
 .pj-nav{
+  position:static;height:auto;z-index:auto;
+  top:auto;left:auto;right:auto;
+  background:none;backdrop-filter:none;border-bottom:none;
+  align-items:flex-start;
   display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;
   border-top:1px solid var(--smoke);margin-top:clamp(50px,8vh,90px);padding-top:34px;
 }
