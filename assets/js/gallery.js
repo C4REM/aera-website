@@ -53,7 +53,11 @@
   const SEG      = 40;               // horizontal subdivisions — the bend
   const ANGLE    = (Math.PI * 2) / N;// one full turn across all projects
   const Y_STEP   = 1.15;             // helix rise per project
-  const CAM_Z    = RADIUS + 4.15;    // camera sits outside the cylinder
+  const FOV      = 46;
+  // How much of the viewport the front panel should take up. Below ~0.55 you
+  // stop reading it as a cylinder because the neighbours fall off-screen; above
+  // ~0.65 the front panel covers everything and it looks like a slideshow.
+  const FILL     = 0.56;
 
   /* ---------------- scene ---------------- */
   const renderer = new THREE.WebGLRenderer({
@@ -63,8 +67,8 @@
   renderer.outputEncoding = THREE.sRGBEncoding;
 
   const scene  = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(46, 1, 0.1, 100);
-  camera.position.set(0, 0, CAM_Z);
+  const camera = new THREE.PerspectiveCamera(FOV, 1, 0.1, 100);
+  camera.position.set(0, 0, RADIUS + 6);
   camera.lookAt(0, 0, 0);
 
   /* Bend a flat plane around a vertical axis of the given radius.
@@ -141,12 +145,23 @@
     target = p * N;
   }
 
+  // Camera distance is solved from the viewport rather than hard-coded, so the
+  // front panel occupies the same fraction of the screen on a laptop as on an
+  // ultrawide. Solve it twice — once so the panel's HEIGHT fits, once so its
+  // WIDTH fits — and take whichever pushes the camera further back, otherwise
+  // a narrow window crops the panel's sides.
   function resize() {
     const w = stage.clientWidth || innerWidth;
     const h = stage.clientHeight || innerHeight;
     renderer.setSize(w, h, false);
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
+
+    const halfFov = (FOV * Math.PI / 180) / 2;
+    const dForHeight = CARD_H / (2 * Math.tan(halfFov) * FILL);
+    const dForWidth  = CARD_W / (2 * Math.tan(halfFov) * camera.aspect * FILL);
+    camera.position.z = RADIUS + Math.max(dForHeight, dForWidth);
+    camera.lookAt(0, 0, 0);
   }
 
   /* ---------------- pointer ---------------- */
