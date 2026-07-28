@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Event Photography &amp; Videography in Leeds | Aera</title>
+<meta name="description" content="Fast-moving event coverage in Leeds and Yorkshire — parties, launches, festivals and corporate days, shot and edited to feel premium. From £250.">
+<link rel="canonical" href="https://REPLACE-WITH-YOUR-DOMAIN.com/events.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Aera">
+<meta property="og:title" content="Event Photography & Videography in Leeds | Aera">
+<meta property="og:description" content="Fast-moving event coverage across Leeds and Yorkshire — stills and a same-week recap edit.">
+<meta property="og:url" content="https://REPLACE-WITH-YOUR-DOMAIN.com/events.html">
+<link rel="icon" type="image/svg+xml" href="assets/img/logo/aera-monogram-favicon.svg">
+<link rel="apple-touch-icon" href="assets/img/logo/aera-monogram-favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400;1,500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css?v=20260721w">
+<noscript><style>.preloader{display:none!important}body{overflow:visible!important;height:auto!important}.cursor-dot,.cursor-ring{display:none!important}.reveal{opacity:1!important;transform:none!important;filter:none!important}.hero-statement .ln>span,.rise>span{transform:none!important}</style></noscript>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Service",
+  "serviceType": "Event Photography & Videography",
+  "name": "Event Coverage",
+  "description": "Fast-moving, high-energy event coverage — stills and a short recap edit from the same day.",
+  "provider": {"@type": "ProfessionalService", "name": "Aera", "url": "https://REPLACE-WITH-YOUR-DOMAIN.com/", "email": "jackcareem@icloud.com"},
+  "areaServed": ["Leeds", "Yorkshire", "United Kingdom"],
+  "url": "https://REPLACE-WITH-YOUR-DOMAIN.com/events.html",
+  "offers": [
+    {"@type": "Offer", "name": "Half-day coverage", "priceCurrency": "GBP", "price": "250", "description": "Up to 4 hours on-site, edited stills gallery."},
+    {"@type": "Offer", "name": "Full-day coverage", "priceCurrency": "GBP", "price": "450", "description": "Full day on-site, stills and a short recap edit."},
+    {"@type": "Offer", "name": "Multi-day / festival", "priceCurrency": "GBP", "price": "600", "description": "Bespoke coverage across multiple days, quoted to scope."}
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://REPLACE-WITH-YOUR-DOMAIN.com/"},
+    {"@type": "ListItem", "position": 2, "name": "Events", "item": "https://REPLACE-WITH-YOUR-DOMAIN.com/events.html"}
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {"@type": "Question", "name": "How quickly do we get photos back?", "acceptedAnswer": {"@type": "Answer", "text": "A same-week edit is standard for event coverage, with a quick turnaround gallery available on request for time-sensitive launches or press."}},
+    {"@type": "Question", "name": "Can you cover multi-day events?", "acceptedAnswer": {"@type": "Answer", "text": "Yes — multi-day events and festivals are quoted to scope, covering as many days and sessions as needed."}},
+    {"@type": "Question", "name": "Do you shoot video and stills together?", "acceptedAnswer": {"@type": "Answer", "text": "Yes — most event bookings combine stills with a short recap edit from the same day, shot by the same team."}},
+    {"@type": "Question", "name": "What's included in the recap edit?", "acceptedAnswer": {"@type": "Answer", "text": "A 60–90 second highlight edit capturing the atmosphere of the event, suitable for social media or next year's promotion."}}
+  ]
+}
+</script>
+</head>
+<body>
+
+<div class="bg-stage" aria-hidden="true"></div>
+<canvas id="bgGL" aria-hidden="true"></canvas>
+<canvas id="grainCanvas" aria-hidden="true"></canvas>
+
+<div class="preloader" id="preloader">
+  <div class="preloader-inner">
+    <svg class="preloader-mark" viewBox="0 0 200 200" fill="none">
+      <path d="M100,52 L138,100 L100,148 L62,100 Z" stroke="#C2A878" stroke-width="1.5" opacity="0.5"/><path d="M100,60 L70,100 L130,100 Z M100,140 L70,100 M130,100 L100,140 M82,85 L118,85 M82,115 L118,115" stroke="#C2A878" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <span class="preloader-word">AERA</span>
+  </div>
+</div>
+<div class="grain" aria-hidden="true"></div>
+<div class="cursor-dot" id="cursorDot" aria-hidden="true"></div>
+<div class="cursor-ring" id="cursorRing" aria-hidden="true"></div>
+
+<nav id="nav">
+  <div class="nav-left">
+    <button class="burger nav-cell" id="burger" aria-label="Menu" aria-expanded="false" aria-controls="navLinks"><span></span><span></span><span></span></button>
+    <a href="index.html#contact" class="nav-cell nav-cta magnetic">Enquire</a>
+  </div>
+  <a href="index.html" class="brand">
+    <svg class="mark" viewBox="61 51 78 98" fill="none"><path d="M100,52 L138,100 L100,148 L62,100 Z" stroke="#C2A878" stroke-width="1.5" opacity="0.5"/><path d="M100,60 L70,100 L130,100 Z M100,140 L70,100 M130,100 L100,140 M82,85 L118,85 M82,115 L118,115" stroke="#C2A878" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    AERA
+  </a>
+  <div class="nav-right">
+    <a href="https://instagram.com/_c4rem" target="_blank" rel="noopener" class="nav-cell">Instagram</a>
+  </div>
+  <div class="nav-links" id="navLinks">
+    <a href="social-media.html">Social Media</a>
+    <a href="brand-commercial.html">Brand &amp; Commercial</a>
+    <a href="events.html" class="active">Events</a>
+    <a href="weddings.html">Weddings</a>
+    <a href="index.html#about">Studio</a>
+    <a href="team.html">Team</a>
+    <a href="index.html#contact">Enquire</a>
+  </div>
+</nav>
+
+<header class="page-hero">
+  <div class="hero-inner">
+    <div class="breadcrumb reveal"><a href="index.html">Home</a><span class="sep">/</span><span class="current">Events</span></div>
+    <span class="eyebrow">Events · Leeds &amp; Yorkshire</span>
+    <h1 class="blur-focus">Event coverage that keeps <em>up.</em></h1>
+    <p class="lead">Parties, launches, festivals and corporate days — covered with energy, and
+      edited fast enough to still feel current.</p>
+    <div class="hero-actions">
+      <a href="#contact" class="btn btn-solid">Book coverage</a>
+      <a href="#pricing" class="btn btn-ghost">See packages</a>
+    </div>
+  </div>
+</header>
+
+<section id="intro" class="tight">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow">The approach</span>
+      <h2 class="section-title blur-focus">Present, fast, unobtrusive.</h2>
+      <p>Events move quickly and rarely repeat a moment — the job is to stay close to the action
+        without getting in the way of it, and turn coverage around while it's still useful.
+        Whether it's a society ball, a store launch or a festival stall, the brief is the same:
+        capture the energy of the room, not a stiff, staged version of it.</p>
+    </div>
+  </div>
+</section>
+
+<section id="process" class="tight">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow">How it works</span>
+      <h2 class="section-title blur-focus">Four steps, start to finish.</h2>
+    </div>
+    <div class="process reveal">
+      <div class="step"><span class="num">01</span><h4>Brief &amp; scope</h4><p>Tell us what the event is, roughly how many hours, and what you'll use the content for.</p></div>
+      <div class="step"><span class="num">02</span><h4>Day-of coverage</h4><p>On-site, moving with the event rather than staging it.</p></div>
+      <div class="step"><span class="num">03</span><h4>Same-week edit</h4><p>Stills and a short recap edit turned around while it's still relevant.</p></div>
+      <div class="step"><span class="num">04</span><h4>Delivery</h4><p>A shareable gallery and edit, with usage rights for your own marketing.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="work" class="tight">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow">Style reference</span>
+      <h2 class="section-title blur-focus">A look at the frame.</h2>
+      <p>Actual event coverage from Jack's portfolio — motorsport and national-day events.</p>
+    </div>
+    <div class="work-grid reveal">
+      <div class="tile wide"><img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/13f98449-a6da-4ea8-b125-01a7d5fc40b4/IMG_1199.jpg" loading="lazy" alt="Event coverage style reference"><div class="label"><div class="cat">Event</div><div class="t">Race Day</div></div></div>
+      <div class="tile"><img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/d68650ca-1652-44b5-823e-c43abab0b7e2/Lando+Photo.png" loading="lazy" alt="Motorsport event photography style reference"><div class="label"><div class="cat">Event</div><div class="t">Motorsport</div></div></div>
+      <div class="tile"><img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/50a7d34c-7a13-43f5-a5da-bc73d671fc8e/UAE+Flag.jpg" loading="lazy" alt="National day event coverage style reference"><div class="label"><div class="cat">Event</div><div class="t">National Day</div></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="pricing" class="tight">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow">Packages</span>
+      <h2 class="section-title blur-focus">Rates for founding clients.</h2>
+      <p>Priced to scale with the event — final quote confirmed once we know the brief.</p>
+    </div>
+    <div class="pricing reveal">
+      <div class="price-card">
+        <span class="tier">Half-day</span>
+        <div class="amount">from £250</div>
+        <ul>
+          <li>Up to 4 hours on-site</li>
+          <li>Edited stills gallery</li>
+          <li>48-hour turnaround option</li>
+        </ul>
+        <a href="#contact" class="btn btn-ghost">Enquire</a>
+      </div>
+      <div class="price-card">
+        <span class="tier">Full-day</span>
+        <div class="amount">from £450</div>
+        <ul>
+          <li>Full day on-site</li>
+          <li>Stills + short recap edit</li>
+          <li>Same-week delivery</li>
+        </ul>
+        <a href="#contact" class="btn btn-solid">Enquire</a>
+      </div>
+      <div class="price-card">
+        <span class="tier">Multi-day / festival</span>
+        <div class="amount">from £600</div>
+        <ul>
+          <li>Coverage across multiple days</li>
+          <li>Bespoke scope &amp; team size</li>
+          <li>Ideal for festivals &amp; fairs</li>
+        </ul>
+        <a href="#contact" class="btn btn-ghost">Enquire</a>
+      </div>
+    </div>
+    <p class="price-note">Charity, student-society and community events — ask about a modest opening-relationship rate.</p>
+  </div>
+</section>
+
+<section id="faq" class="tight">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow">Questions</span>
+      <h2 class="section-title blur-focus">Good to know.</h2>
+    </div>
+    <div class="faq reveal">
+      <div class="faq-item">
+        <button class="faq-q"><span>How quickly do we get photos back?</span><span class="icon">+</span></button>
+        <div class="faq-a"><p>A same-week edit is standard, with a quick-turnaround gallery available on request for time-sensitive launches or press.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q"><span>Can you cover multi-day events?</span><span class="icon">+</span></button>
+        <div class="faq-a"><p>Yes — multi-day events and festivals are quoted to scope, covering as many days and sessions as needed.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q"><span>Do you shoot video and stills together?</span><span class="icon">+</span></button>
+        <div class="faq-a"><p>Yes — most event bookings combine stills with a short recap edit from the same day, shot by the same team.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q"><span>What's included in the recap edit?</span><span class="icon">+</span></button>
+        <div class="faq-a"><p>A 60–90 second highlight edit capturing the atmosphere of the event, suitable for social media or next year's promotion.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="related" class="tight">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow">Also worth a look</span>
+      <h2 class="section-title blur-focus">Other ways Aera can help.</h2>
+    </div>
+    <div class="related-grid reveal">
+      <a class="related-card" href="social-media.html"><span class="eyebrow">Social</span><h4>Social Media</h4><p>An always-on content partnership for your feed.</p></a>
+      <a class="related-card" href="brand-commercial.html"><span class="eyebrow">Brand</span><h4>Brand &amp; Commercial</h4><p>Product, portrait and promo content for growing businesses.</p></a>
+      <a class="related-card" href="weddings.html"><span class="eyebrow">Weddings</span><h4>Wedding Photography &amp; Film</h4><p>Full-day coverage shot with a calm, editorial eye.</p></a>
+    </div>
+  </div>
+</section>
+
+<section id="contact" class="contact">
+  <div class="wrap">
+    <span class="eyebrow">Enquire</span>
+    <h2 class="blur-focus">Tell us about your event.</h2>
+    <a class="email" href="mailto:jackcareem@icloud.com?subject=Aera%20event%20enquiry">jackcareem@icloud.com</a>
+    <div class="socials">
+      <a href="https://instagram.com/_c4rem" target="_blank" rel="noopener">Instagram — @_c4rem</a>
+      <a href="mailto:jackcareem@icloud.com">Email</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span class="brand-sm" style="display:inline-flex;align-items:center;gap:.4em;justify-content:center">
+      <svg width="16" height="16" viewBox="0 0 200 200" fill="none"><path d="M100,52 L138,100 L100,148 L62,100 Z" stroke="#C2A878" stroke-width="1.5" opacity="0.5"/><path d="M100,60 L70,100 L130,100 Z M100,140 L70,100 M130,100 L100,140 M82,85 L118,85 M82,115 L118,115" stroke="#C2A878" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      AERA
+    </span>
+    © <span id="year"></span> Aera Media Studio · Leeds, UK
+    <div class="foot-links">
+      <a href="social-media.html">Social Media</a>
+      <a href="brand-commercial.html">Brand &amp; Commercial</a>
+      <a href="events.html">Events</a>
+      <a href="weddings.html">Weddings</a>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/js/lenis.min.js?v=20260721w"></script>
+<script src="assets/js/main.js?v=20260721w"></script>
+</body>
+</html>

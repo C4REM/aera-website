@@ -1,0 +1,21 @@
+# Aera — robots.txt
+# Standard search crawlers: allowed everywhere.
+User-agent: *
+Allow: /
+
+# AI crawlers — explicitly allowed so Aera can be found and cited in
+# AI search answers (ChatGPT, Perplexity, Google AI Overviews, Claude).
+# See Aera-SEO-Strategy.md for the reasoning.
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+Sitemap: https://REPLACE-WITH-YOUR-DOMAIN.com/sitemap.xml

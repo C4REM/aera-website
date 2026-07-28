@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Social Media Content &amp; Management in Leeds | Aera</title>
+<meta name="description" content="Ongoing social media content creation, management and strategy for Leeds &amp; Yorkshire small businesses — a considered feed, without an agency budget.">
+<link rel="canonical" href="https://REPLACE-WITH-YOUR-DOMAIN.com/social-media.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Aera">
+<meta property="og:title" content="Social Media Content & Management in Leeds | Aera">
+<meta property="og:description" content="Content creation, management and strategy that makes brands look considered across every feed.">
+<meta property="og:url" content="https://REPLACE-WITH-YOUR-DOMAIN.com/social-media.html">
+<link rel="icon" type="image/svg+xml" href="assets/img/logo/aera-monogram-favicon.svg">
+<link rel="apple-touch-icon" href="assets/img/logo/aera-monogram-favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400;1,500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css?v=20260721w">
+<noscript><style>.preloader{display:none!important}body{overflow:visible!important;height:auto!important}.cursor-dot,.cursor-ring{display:none!important}.reveal{opacity:1!important;transform:none!important;filter:none!important}.hero-statement .ln>span,.rise>span{transform:none!important}</style></noscript>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Service",
+  "serviceType": "Social Media Content & Management",
+  "name": "Social Media Content & Management",
+  "description": "Content creation, management and strategy that makes brands look considered across every feed.",
+  "provider": {"@type": "ProfessionalService", "name": "Aera", "url": "https://REPLACE-WITH-YOUR-DOMAIN.com/", "email": "jackcareem@icloud.com"},
+  "areaServed": ["Leeds", "Yorkshire", "United Kingdom"],
+  "url": "https://REPLACE-WITH-YOUR-DOMAIN.com/social-media.html",
+  "offers": [
+    {"@type": "Offer", "name": "Starter Content Set", "priceCurrency": "GBP", "price": "300", "description": "A one-off content shoot — hero stills plus a couple of reels."},
+    {"@type": "Offer", "name": "Monthly Partner", "priceCurrency": "GBP", "price": "300", "priceSpecification": {"@type": "PriceSpecification", "minPrice": "300", "maxPrice": "500", "priceCurrency": "GBP"}, "description": "A recurring monthly content retainer."},
+    {"@type": "Offer", "name": "Full Management", "description": "Content creation, posting and strategy handled end-to-end — bespoke quote."}
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://REPLACE-WITH-YOUR-DOMAIN.com/"},
+    {"@type": "ListItem", "position": 2, "name": "Social Media", "item": "https://REPLACE-WITH-YOUR-DOMAIN.com/social-media.html"}
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {"@type": "Question", "name": "Do you post on our behalf or just create content?", "acceptedAnswer": {"@type": "Answer", "text": "Both are available — content-only packages hand everything back for you to post, while Full Management includes posting and scheduling too."}},
+    {"@type": "Question", "name": "What if we just want a one-off shoot?", "acceptedAnswer": {"@type": "Answer", "text": "The Starter Content Set is exactly that — a single shoot with no ongoing commitment, a low-friction way to see if it's useful."}},
+    {"@type": "Question", "name": "Which platforms do you create for?", "acceptedAnswer": {"@type": "Answer", "text": "Primarily Instagram and TikTok, with content formatted for whichever platforms your audience actually uses."}},
+    {"@type": "Question", "name": "Is there a minimum contract length?", "acceptedAnswer": {"@type": "Answer", "text": "No — monthly retainers run month to month, so you can pause or stop whenever it stops being useful."}}
+  ]
+}
+</script>
+</head>
+<body>
+
+<div class="bg-stage" aria-hidden="true"></div>
+<canvas id="bgGL" aria-hidden="true"></canvas>
+<canvas id="grainCanvas" aria-hidden="true"></canvas>
+
+<div class="preloader" id="preloader">
+  <div class="preloader-inner">
+    <svg class="preloader-mark" viewBox="0 0 200 200" fill="none">
+      <path d="M100,52 L138,100 L100,148 L62,100 Z" stroke="#C2A878" stroke-width="1.5" opacity="0.5"/><path d="M100,60 L70,100 L130,100 Z M100,140 L70,100 M130,100 L100,140 M82,85 L118,85 M82,115 L118,115" stroke="#C2A878" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <span class="preloader-word">AERA</span>
+  </div>
+</div>
+<div class="grain" aria-hidden="true"></div>
+<div class="cursor-dot" id="cursorDot" aria-hidden="true"></div>
+<div class="cursor-ring" id="cursorRing" aria-hidden="true"></div>
+
+<nav id="nav">
+  <div class="nav-left">
+    <button class="burger nav-cell" id="burger" aria-label="Menu" aria-expanded="false" aria-controls="navLinks"><span></span><span></span><span></span></button>
+    <a href="index.html#contact" class="nav-cell nav-cta magnetic">Enquire</a>
+  </div>
+  <a href="index.html" class="brand">
+    <svg class="mark" viewBox="61 51 78 98" fill="none"><path d="M100,52 L138,100 L100,148 L62,100 Z" stroke="#C2A878" stroke-width="1.5" opacity="0.5"/><path d="M100,60 L70,100 L130,100 Z M100,140 L70,100 M130,100 L100,140 M82,85 L118,85 M82,115 L118,115" stroke="#C2A878" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    AERA
+  </a>
+  <div class="nav-right">
+    <a href="https://instagram.com/_c4rem" target="_blank" rel="noopener" class="nav-cell">Instagram</a>
+  </div>
+  <div class="nav-links" id="navLinks">
+    <a href="social-media.html" class="active">Social Media</a>
+    <a href="brand-commercial.html">Brand &amp; Commercial</a>
+    <a href="events.html">Events</a>
+    <a href="weddings.html">Weddings</a>
+    <a href="index.html#about">Studio</a>
+    <a href="team.html">Team</a>
+    <a href="index.html#contact">Enquire</a>
+  </div>
+</nav>
+
+<header class="page-hero">
+  <div class="hero-inner">
+    <div class="breadcrumb reveal"><a href="index.html">Home</a><span class="sep">/</span><span class="current">Social Media</span></div>
+    <span class="eyebrow">Social Media · Leeds &amp; Yorkshire</span>
+    <h1 class="blur-focus">A feed that looks considered, <em>every week.</em></h1>
+    <p class="lead">Content creation, management and strategy for small and independent brands
+      that want a feed people actually stop scrolling for.</p>
+    <div class="hero-actions">
+      <a href="#contact" class="btn btn-solid">Start a partnership</a>
+      <a href="#pricing" class="btn btn-ghost">See packages</a>
+    </div>
+  </div>
+</header>
+
+<section id="intro" class="tight">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow">The approach</span>
+      <h2 class="section-title blur-focus">Fewer, stronger posts.</h2>
+      <p>Most small business feeds don't fail from posting too little — they fail from posting
+        anything, inconsistently, with no eye for how it all sits together. Aera's approach is
+        the opposite: a smaller number of considered stills and reels, shot and edited to a
+        consistent style, that make the account look like it belongs to a bigger brand than it is.</p>
+    </div>
+  </div>
+</section>
+
+<section id="process" class="tight">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow">How it works</span>
+      <h2 class="section-title blur-focus">Four steps, start to finish.</h2>
+    </div>
+    <div class="process reveal">
+      <div class="step"><span class="num">01</span><h4>Discovery call</h4><p>A short chat about your brand, your audience, and what "considered" looks like for you.</p></div>
+      <div class="step"><span class="num">02</span><h4>Content calendar</h4><p>A simple monthly plan agreed in advance, so shoot days stay efficient.</p></div>
+      <div class="step"><span class="num">03</span><h4>Monthly shoot day</h4><p>Stills and reels captured in a single, focused session.</p></div>
+      <div class="step"><span class="num">04</span><h4>Edit &amp; deliver</h4><p>Ready-to-post content, or fully scheduled if you choose Full Management.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="work" class="tight">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow">Style reference</span>
+      <h2 class="section-title blur-focus">A look at the frame.</h2>
+      <p>Actual design and content work from Jack's portfolio — social posts, campaign graphics and event design.</p>
+    </div>
+    <div class="work-grid reveal">
+      <div class="tile wide"><img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/f5c5d3ac-57b1-4757-ab6c-6ac16ca6e090/Hauntfest++Poster.png" loading="lazy" alt="Campaign poster design style reference"><div class="label"><div class="cat">Campaign</div><div class="t">Event Poster</div></div></div>
+      <div class="tile"><img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/ebc2d86a-43dc-45da-8c9a-9c069df080d2/Insta-Post-Dubai-23-24-_01.jpg" loading="lazy" alt="Instagram post design style reference"><div class="label"><div class="cat">Social</div><div class="t">Feed Post</div></div></div>
+      <div class="tile"><img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/956771b0-d277-4ee9-bde0-2c1b6d0a8d8c/Green+Planet+Photos-12.jpg" loading="lazy" alt="Brand content style reference"><div class="label"><div class="cat">Brand</div><div class="t">Content Set</div></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="pricing" class="tight">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow">Packages</span>
+      <h2 class="section-title blur-focus">Rates for founding clients.</h2>
+      <p>Start with a single shoot, or move straight to a monthly partnership.</p>
+    </div>
+    <div class="pricing reveal">
+      <div class="price-card">
+        <span class="tier">Starter Content Set</span>
+        <div class="amount">from £300</div>
+        <ul>
+          <li>One-off shoot, no commitment</li>
+          <li>Hero stills + 2–3 reels</li>
+          <li>A low-friction way to try Aera</li>
+        </ul>
+        <a href="#contact" class="btn btn-ghost">Enquire</a>
+      </div>
+      <div class="price-card">
+        <span class="tier">Monthly Partner</span>
+        <div class="amount">£300 – £500<span class="sub">/month</span></div>
+        <ul>
+          <li>Recurring monthly shoot day</li>
+          <li>Content calendar included</li>
+          <li>Cancel or pause anytime</li>
+        </ul>
+        <a href="#contact" class="btn btn-solid">Enquire</a>
+      </div>
+      <div class="price-card">
+        <span class="tier">Full Management</span>
+        <div class="amount">bespoke</div>
+        <ul>
+          <li>Content, posting &amp; strategy</li>
+          <li>Quoted to your platforms &amp; goals</li>
+          <li>For brands who want it fully handled</li>
+        </ul>
+        <a href="#contact" class="btn btn-ghost">Enquire</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="faq" class="tight">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow">Questions</span>
+      <h2 class="section-title blur-focus">Good to know.</h2>
+    </div>
+    <div class="faq reveal">
+      <div class="faq-item">
+        <button class="faq-q"><span>Do you post on our behalf or just create content?</span><span class="icon">+</span></button>
+        <div class="faq-a"><p>Both are available — content-only packages hand everything back for you to post, while Full Management includes posting and scheduling too.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q"><span>What if we just want a one-off shoot?</span><span class="icon">+</span></button>
+        <div class="faq-a"><p>The Starter Content Set is exactly that — a single shoot with no ongoing commitment, a low-friction way to see if it's useful.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q"><span>Which platforms do you create for?</span><span class="icon">+</span></button>
+        <div class="faq-a"><p>Primarily Instagram and TikTok, with content formatted for whichever platforms your audience actually uses.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q"><span>Is there a minimum contract length?</span><span class="icon">+</span></button>
+        <div class="faq-a"><p>No — monthly retainers run month to month, so you can pause or stop whenever it stops being useful.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="related" class="tight">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow">Also worth a look</span>
+      <h2 class="section-title blur-focus">Other ways Aera can help.</h2>
+    </div>
+    <div class="related-grid reveal">
+      <a class="related-card" href="brand-commercial.html"><span class="eyebrow">Brand</span><h4>Brand &amp; Commercial</h4><p>Product, portrait and promo content for growing businesses.</p></a>
+      <a class="related-card" href="events.html"><span class="eyebrow">Events</span><h4>Event Coverage</h4><p>Parties, launches and corporate days, covered with energy.</p></a>
+      <a class="related-card" href="weddings.html"><span class="eyebrow">Weddings</span><h4>Wedding Photography &amp; Film</h4><p>Full-day coverage shot with a calm, editorial eye.</p></a>
+    </div>
+  </div>
+</section>
+
+<section id="contact" class="contact">
+  <div class="wrap">
+    <span class="eyebrow">Enquire</span>
+    <h2 class="blur-focus">Let's fix your feed.</h2>
+    <a class="email" href="mailto:jackcareem@icloud.com?subject=Aera%20social%20media%20enquiry">jackcareem@icloud.com</a>
+    <div class="socials">
+      <a href="https://instagram.com/_c4rem" target="_blank" rel="noopener">Instagram — @_c4rem</a>
+      <a href="mailto:jackcareem@icloud.com">Email</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span class="brand-sm" style="display:inline-flex;align-items:center;gap:.4em;justify-content:center">
+      <svg width="16" height="16" viewBox="0 0 200 200" fill="none"><path d="M100,52 L138,100 L100,148 L62,100 Z" stroke="#C2A878" stroke-width="1.5" opacity="0.5"/><path d="M100,60 L70,100 L130,100 Z M100,140 L70,100 M130,100 L100,140 M82,85 L118,85 M82,115 L118,115" stroke="#C2A878" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      AERA
+    </span>
+    © <span id="year"></span> Aera Media Studio · Leeds, UK
+    <div class="foot-links">
+      <a href="social-media.html">Social Media</a>
+      <a href="brand-commercial.html">Brand &amp; Commercial</a>
+      <a href="events.html">Events</a>
+      <a href="weddings.html">Weddings</a>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/js/lenis.min.js?v=20260721w"></script>
+<script src="assets/js/main.js?v=20260721w"></script>
+</body>
+</html>

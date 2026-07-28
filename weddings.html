@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wedding Photography &amp; Film in Leeds &amp; Yorkshire | Aera</title>
+<meta name="description" content="Editorial wedding photography and film in Leeds and Yorkshire. Full-day coverage, shot with a calm, considered eye. Founding-client rates from £950.">
+<link rel="canonical" href="https://REPLACE-WITH-YOUR-DOMAIN.com/weddings.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Aera">
+<meta property="og:title" content="Wedding Photography & Film in Leeds & Yorkshire | Aera">
+<meta property="og:description" content="Full-day wedding photography and film, shot with a calm, editorial eye across Leeds and Yorkshire.">
+<meta property="og:url" content="https://REPLACE-WITH-YOUR-DOMAIN.com/weddings.html">
+<link rel="icon" type="image/svg+xml" href="assets/img/logo/aera-monogram-favicon.svg">
+<link rel="apple-touch-icon" href="assets/img/logo/aera-monogram-favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400;1,500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css?v=20260721w">
+<noscript><style>.preloader{display:none!important}body{overflow:visible!important;height:auto!important}.cursor-dot,.cursor-ring{display:none!important}.reveal{opacity:1!important;transform:none!important;filter:none!important}.hero-statement .ln>span,.rise>span{transform:none!important}</style></noscript>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Service",
+  "serviceType": "Wedding Photography & Film",
+  "name": "Wedding Photography & Film",
+  "description": "Full-day wedding photography and film, shot with a calm, editorial eye — one team from first look to last dance.",
+  "provider": {"@type": "ProfessionalService", "name": "Aera", "url": "https://REPLACE-WITH-YOUR-DOMAIN.com/", "email": "jackcareem@icloud.com"},
+  "areaServed": ["Leeds", "Yorkshire", "United Kingdom"],
+  "url": "https://REPLACE-WITH-YOUR-DOMAIN.com/weddings.html",
+  "offers": [
+    {"@type": "Offer", "name": "Photography", "priceCurrency": "GBP", "price": "650", "description": "Single shooter, full 8-hour day, edited online gallery."},
+    {"@type": "Offer", "name": "Film", "priceCurrency": "GBP", "price": "700", "description": "Highlight film covering ceremony, speeches and key moments."},
+    {"@type": "Offer", "name": "Photography + Film", "priceCurrency": "GBP", "price": "950", "description": "Founding-client bundle rate — full-day photography and film together."}
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://REPLACE-WITH-YOUR-DOMAIN.com/"},
+    {"@type": "ListItem", "position": 2, "name": "Weddings", "item": "https://REPLACE-WITH-YOUR-DOMAIN.com/weddings.html"}
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {"@type": "Question", "name": "Do you offer second-shooter coverage?", "acceptedAnswer": {"@type": "Answer", "text": "Yes — a second shooter can be added for larger weddings or two-location days, quoted alongside your package."}},
+    {"@type": "Question", "name": "How many photos do we get?", "acceptedAnswer": {"@type": "Answer", "text": "A typical full-day wedding delivers 500–800 edited images in a private online gallery, ready to download and share."}},
+    {"@type": "Question", "name": "Do you travel outside Yorkshire?", "acceptedAnswer": {"@type": "Answer", "text": "Yes — Aera is based in Leeds and covers all of Yorkshire as standard, with travel further afield across the UK available on request."}},
+    {"@type": "Question", "name": "How far in advance should we book?", "acceptedAnswer": {"@type": "Answer", "text": "As early as possible once your date and venue are confirmed — wedding dates, especially in peak season, are held on a first-enquiry basis."}}
+  ]
+}
+</script>
+</head>
+<body>
+
+<div class="bg-stage" aria-hidden="true"></div>
+<canvas id="bgGL" aria-hidden="true"></canvas>
+<canvas id="grainCanvas" aria-hidden="true"></canvas>
+
+<div class="preloader" id="preloader">
+  <div class="preloader-inner">
+    <svg class="preloader-mark" viewBox="0 0 200 200" fill="none">
+      <path d="M100,52 L138,100 L100,148 L62,100 Z" stroke="#C2A878" stroke-width="1.5" opacity="0.5"/><path d="M100,60 L70,100 L130,100 Z M100,140 L70,100 M130,100 L100,140 M82,85 L118,85 M82,115 L118,115" stroke="#C2A878" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <span class="preloader-word">AERA</span>
+  </div>
+</div>
+<div class="grain" aria-hidden="true"></div>
+<div class="cursor-dot" id="cursorDot" aria-hidden="true"></div>
+<div class="cursor-ring" id="cursorRing" aria-hidden="true"></div>
+
+<nav id="nav">
+  <div class="nav-left">
+    <button class="burger nav-cell" id="burger" aria-label="Menu" aria-expanded="false" aria-controls="navLinks"><span></span><span></span><span></span></button>
+    <a href="index.html#contact" class="nav-cell nav-cta magnetic">Enquire</a>
+  </div>
+  <a href="index.html" class="brand">
+    <svg class="mark" viewBox="61 51 78 98" fill="none"><path d="M100,52 L138,100 L100,148 L62,100 Z" stroke="#C2A878" stroke-width="1.5" opacity="0.5"/><path d="M100,60 L70,100 L130,100 Z M100,140 L70,100 M130,100 L100,140 M82,85 L118,85 M82,115 L118,115" stroke="#C2A878" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    AERA
+  </a>
+  <div class="nav-right">
+    <a href="https://instagram.com/_c4rem" target="_blank" rel="noopener" class="nav-cell">Instagram</a>
+  </div>
+  <div class="nav-links" id="navLinks">
+    <a href="social-media.html">Social Media</a>
+    <a href="brand-commercial.html">Brand &amp; Commercial</a>
+    <a href="events.html">Events</a>
+    <a href="weddings.html" class="active">Weddings</a>
+    <a href="index.html#about">Studio</a>
+    <a href="team.html">Team</a>
+    <a href="index.html#contact">Enquire</a>
+  </div>
+</nav>
+
+<header class="page-hero">
+  <div class="hero-inner">
+    <div class="breadcrumb reveal"><a href="index.html">Home</a><span class="sep">/</span><span class="current">Weddings</span></div>
+    <span class="eyebrow">Weddings · Leeds &amp; Yorkshire</span>
+    <h1 class="blur-focus">Wedding photography &amp; film, done <em>properly.</em></h1>
+    <p class="lead">Full-day coverage shot with a calm, editorial eye — one team from first look
+      to last dance, across Leeds, Yorkshire and beyond.</p>
+    <div class="hero-actions">
+      <a href="#contact" class="btn btn-solid">Check your date</a>
+      <a href="#pricing" class="btn btn-ghost">See packages</a>
+    </div>
+  </div>
+</header>
+
+<section id="intro" class="tight">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow">The approach</span>
+      <h2 class="section-title blur-focus">Quiet, considered, unobtrusive.</h2>
+      <p>Weddings move fast and rarely go exactly to plan — the job is to stay close, stay calm,
+        and come away with a set of images and a film that feel like the day actually did.
+        No stage-managed poses, no disappearing for an hour of "creative shots." Just a team
+        that knows when to step back and when to be ready.</p>
+    </div>
+  </div>
+</section>
+
+<section id="process" class="tight">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow">How it works</span>
+      <h2 class="section-title blur-focus">Four steps, start to finish.</h2>
+    </div>
+    <div class="process reveal">
+      <div class="step"><span class="num">01</span><h4>Enquiry &amp; date check</h4><p>Share your date and venue — you'll hear back with availability the same day.</p></div>
+      <div class="step"><span class="num">02</span><h4>Planning call</h4><p>A short call to talk through your day, timings and what matters most to you.</p></div>
+      <div class="step"><span class="num">03</span><h4>The day itself</h4><p>Calm, present, and ready for the moments you didn't plan for.</p></div>
+      <div class="step"><span class="num">04</span><h4>Delivery</h4><p>A private online gallery and film, delivered within 4–6 weeks.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="work" class="tight">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow">Style reference</span>
+      <h2 class="section-title blur-focus">A look at the frame.</h2>
+      <p>Jack's own wedding and portrait work, standing in until Aera's first client galleries land.</p>
+    </div>
+    <div class="work-grid reveal">
+      <div class="tile wide"><img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/2bf343c0-129e-4bfa-9f17-0c20e62069dd/A7400282-Enhanced-NR.jpg" loading="lazy" alt="Wedding photography style reference — ceremony moment"><div class="label"><div class="cat">Wedding</div><div class="t">First Look</div></div></div>
+      <div class="tile"><img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/a5c290e2-e3f5-4aed-81bd-9e8fa29d2e44/A7400277.jpg" loading="lazy" alt="Wedding photography style reference — portrait"><div class="label"><div class="cat">Wedding</div><div class="t">Golden Hour</div></div></div>
+      <div class="tile"><img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/3f7fc108-1721-4d25-8fbd-b1328cbbfbe9/Screenshot%202025-02-05%20at%2010.41.30%E2%80%AFPM.png" loading="lazy" alt="Wedding film style reference — highlight edit"><div class="label"><div class="cat">Film</div><div class="t">Highlight Reel</div></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="pricing" class="tight">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow">Packages</span>
+      <h2 class="section-title blur-focus">Rates for founding clients.</h2>
+      <p>Locked in while Aera builds its first wedding portfolio — final quote confirmed after a
+        short call about your day.</p>
+    </div>
+    <div class="pricing reveal">
+      <div class="price-card">
+        <span class="tier">Photography</span>
+        <div class="amount">from £650</div>
+        <ul>
+          <li>Single shooter, full 8-hour day</li>
+          <li>Edited online gallery</li>
+          <li>Print &amp; download rights</li>
+        </ul>
+        <a href="#contact" class="btn btn-ghost">Enquire</a>
+      </div>
+      <div class="price-card">
+        <span class="tier">Film</span>
+        <div class="amount">from £700</div>
+        <ul>
+          <li>Ceremony &amp; speeches coverage</li>
+          <li>4–6 minute highlight film</li>
+          <li>Raw ceremony audio option</li>
+        </ul>
+        <a href="#contact" class="btn btn-ghost">Enquire</a>
+      </div>
+      <div class="price-card">
+        <span class="tier">Photography + Film</span>
+        <div class="amount">from £950</div>
+        <ul>
+          <li>Everything above, one team</li>
+          <li>500–800 edited images</li>
+          <li>Most booked package</li>
+        </ul>
+        <a href="#contact" class="btn btn-solid">Enquire</a>
+      </div>
+    </div>
+    <p class="price-note">Second shooters, drone coverage and multi-day weddings quoted separately — mention it in your enquiry.</p>
+  </div>
+</section>
+
+<section id="faq" class="tight">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow">Questions</span>
+      <h2 class="section-title blur-focus">Good to know.</h2>
+    </div>
+    <div class="faq reveal">
+      <div class="faq-item">
+        <button class="faq-q"><span>Do you offer second-shooter coverage?</span><span class="icon">+</span></button>
+        <div class="faq-a"><p>Yes — a second shooter can be added for larger weddings or two-location days, quoted alongside your package.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q"><span>How many photos do we get?</span><span class="icon">+</span></button>
+        <div class="faq-a"><p>A typical full-day wedding delivers 500–800 edited images in a private online gallery, ready to download and share.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q"><span>Do you travel outside Yorkshire?</span><span class="icon">+</span></button>
+        <div class="faq-a"><p>Yes — Aera is based in Leeds and covers all of Yorkshire as standard, with travel further afield across the UK available on request.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q"><span>How far in advance should we book?</span><span class="icon">+</span></button>
+        <div class="faq-a"><p>As early as possible once your date and venue are confirmed — wedding dates, especially in peak season, are held on a first-enquiry basis.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="related" class="tight">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow">Also worth a look</span>
+      <h2 class="section-title blur-focus">Other ways Aera can help.</h2>
+    </div>
+    <div class="related-grid reveal">
+      <a class="related-card" href="events.html"><span class="eyebrow">Events</span><h4>Event Coverage</h4><p>Parties, launches and corporate days, covered with energy.</p></a>
+      <a class="related-card" href="brand-commercial.html"><span class="eyebrow">Brand</span><h4>Brand &amp; Commercial</h4><p>Product, portrait and promo content for growing businesses.</p></a>
+      <a class="related-card" href="social-media.html"><span class="eyebrow">Social</span><h4>Social Media</h4><p>An always-on content partnership for your feed.</p></a>
+    </div>
+  </div>
+</section>
+
+<section id="contact" class="contact">
+  <div class="wrap">
+    <span class="eyebrow">Enquire</span>
+    <h2 class="blur-focus">Let's talk about your date.</h2>
+    <a class="email" href="mailto:jackcareem@icloud.com?subject=Aera%20wedding%20enquiry">jackcareem@icloud.com</a>
+    <div class="socials">
+      <a href="https://instagram.com/_c4rem" target="_blank" rel="noopener">Instagram — @_c4rem</a>
+      <a href="mailto:jackcareem@icloud.com">Email</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span class="brand-sm" style="display:inline-flex;align-items:center;gap:.4em;justify-content:center">
+      <svg width="16" height="16" viewBox="0 0 200 200" fill="none"><path d="M100,52 L138,100 L100,148 L62,100 Z" stroke="#C2A878" stroke-width="1.5" opacity="0.5"/><path d="M100,60 L70,100 L130,100 Z M100,140 L70,100 M130,100 L100,140 M82,85 L118,85 M82,115 L118,115" stroke="#C2A878" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      AERA
+    </span>
+    © <span id="year"></span> Aera Media Studio · Leeds, UK
+    <div class="foot-links">
+      <a href="social-media.html">Social Media</a>
+      <a href="brand-commercial.html">Brand &amp; Commercial</a>
+      <a href="events.html">Events</a>
+      <a href="weddings.html">Weddings</a>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/js/lenis.min.js?v=20260721w"></script>
+<script src="assets/js/main.js?v=20260721w"></script>
+</body>
+</html>

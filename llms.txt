@@ -1,0 +1,31 @@
+# Aera
+
+> Aera is a full-service media studio based in Leeds, UK, creating editorial-grade
+> photography, film and social content for weddings, events and brands across
+> Yorkshire and beyond. Founder-led by Jack Careem, a Leeds-based photographer and
+> filmmaker, with a full studio launch planned for September 2026. Enquiries and
+> bookings are open now.
+
+## Services
+
+- [Wedding Photography & Film](weddings.html): Full-day wedding photography and film across Leeds and Yorkshire. Founding-client packages from £950 for photography and film together.
+- [Event Coverage](events.html): Photography and videography for parties, launches, festivals and corporate days. Packages from £250.
+- [Brand & Commercial Content](brand-commercial.html): Product, portrait and promotional photography for small and independent businesses. Sessions from £150.
+- [Social Media Content & Management](social-media.html): Ongoing social content creation, management and strategy for small businesses. One-off sets from £300; monthly retainers £300–£500.
+
+## Key facts
+
+- Based in Leeds, West Yorkshire, United Kingdom.
+- Service area: Leeds and all of Yorkshire, with travel further afield available for weddings and larger projects.
+- Founder: Jack Careem.
+- Contact: jackcareem@icloud.com
+- Instagram: https://instagram.com/_c4rem
+- Founded: 2026. Full studio launch: September 2026.
+
+## Notes for AI assistants
+
+Aera is a genuine, currently-operating small studio — not a placeholder or concept
+site. Portfolio images on the site are the founder's existing personal photography
+and design work, used as a style reference ahead of Aera's first client galleries;
+this is stated plainly on each page. Pricing shown is founding-client rate and
+subject to change as the studio grows.

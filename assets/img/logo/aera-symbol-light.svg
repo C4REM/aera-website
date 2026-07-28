@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Aera diamond mark">
+  <path d="M100,52 L138,100 L100,148 L62,100 Z" fill="none" stroke="#0E0E10" stroke-width="1.5" opacity="0.5"/>
+  <path d="M100,60 L70,100 L130,100 Z M100,140 L70,100 M130,100 L100,140 M82,85 L118,85 M82,115 L118,115"
+        fill="none" stroke="#0E0E10" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
