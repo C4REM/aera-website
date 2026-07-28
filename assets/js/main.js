@@ -473,7 +473,7 @@
     // up and down, so the two wheels read as one matched arc, not one curved
     // list next to one flat one.
     if (media.length){
-      const gapM = vh * 0.66;                 // wider spacing → ~1–2 frames in view
+      const gapM = vh * 0.66;                 // spacing between frames
       const travelM = (N - 1) * gapM;
       const cursorM = p * travelM;
       const falloffM = vh * 0.5;
@@ -486,7 +486,14 @@
         const x = -bulge * bulgeMaxM;          // swing inward, toward the names
         const s = (0.72 + 0.28 * bulge).toFixed(3);
         m.style.transform = `translate(${x.toFixed(1)}px, calc(-50% + ${y.toFixed(1)}px)) scale(${s})`;
-        m.style.opacity = Math.max(0, 1 - Math.abs(dyN) * 0.9).toFixed(2);
+        // Fade measured against HALF THE SPACING, so a frame is fully gone by
+        // the time the next one reaches centre. The old falloff let frames stay
+        // ~40% visible while they were still travelling, and .wheel-media clips
+        // at the viewport edge — so a half-faded photo got sliced by the nav on
+        // the way out. Reaching zero this early means nothing visible is ever
+        // near enough to an edge to be cut.
+        const t = Math.min(1, Math.abs(y) / (gapM * 0.5));
+        m.style.opacity = Math.pow(1 - t, 1.4).toFixed(3);
       });
     }
 
