@@ -1318,7 +1318,10 @@ body.preloading.preloader-seen .preloader-word{animation-duration:1s;animation-d
    The canvas does all the drawing; everything here is either the pinned shell
    around it or the no-WebGL / touch fallback grid.
    ========================================================================== */
-.pg{position:relative}
+/* padding:0 is required. The global `section{padding:120px 0}` rule otherwise
+   pushes the sticky stage 120px down the document, so at scrollTop:0 the stage
+   bottom — and with it the whole HUD — sits below the fold until you scroll. */
+.pg{position:relative;padding:0}
 .pg-track{height:760vh}                    /* scroll distance = one full turn */
 .pg-stage{position:sticky;top:0;height:100vh;overflow:hidden}
 #pgCanvas{
