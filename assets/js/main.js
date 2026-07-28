@@ -467,33 +467,14 @@
       if (d < activeDist){ activeDist = d; activeIdx = i; }
     });
 
-    // --- PHOTOS: their own wheel, travelling the OPPOSITE way (downward) ---
-    // Curved the same way the names bulge — as a frame nears the focal point it
-    // swings inward (toward the names column) rather than just sliding straight
-    // up and down, so the two wheels read as one matched arc, not one curved
-    // list next to one flat one.
+    // --- PHOTO: one fixed frame, crossfading to whichever name is active ---
+    // The frame never moves, so it can never crop what's inside it. Only a slow
+    // Ken Burns drift plays within it, which the 1.08 scale leaves room for.
     if (media.length){
-      const gapM = vh * 0.66;                 // spacing between frames
-      const travelM = (N - 1) * gapM;
-      const cursorM = p * travelM;
-      const falloffM = vh * 0.5;
-      const bulgeMaxM = Math.min(innerWidth * 0.06, 70);
+      const drift = Math.max(-12, Math.min(12, (p - 0.5) * 46));
       media.forEach((m, i) => {
-        const baseY = i * gapM;
-        const y = baseY - travelM + cursorM; // increases with scroll → moves DOWN
-        const dyN = y / falloffM;
-        const bulge = Math.max(0, 1 - dyN * dyN);
-        const x = -bulge * bulgeMaxM;          // swing inward, toward the names
-        const s = (0.72 + 0.28 * bulge).toFixed(3);
-        m.style.transform = `translate(${x.toFixed(1)}px, calc(-50% + ${y.toFixed(1)}px)) scale(${s})`;
-        // Fade measured against HALF THE SPACING, so a frame is fully gone by
-        // the time the next one reaches centre. The old falloff let frames stay
-        // ~40% visible while they were still travelling, and .wheel-media clips
-        // at the viewport edge — so a half-faded photo got sliced by the nav on
-        // the way out. Reaching zero this early means nothing visible is ever
-        // near enough to an edge to be cut.
-        const t = Math.min(1, Math.abs(y) / (gapM * 0.5));
-        m.style.opacity = Math.pow(1 - t, 1.4).toFixed(3);
+        m.style.opacity = i === activeIdx ? '1' : '0';
+        m.style.transform = `scale(1.08) translateY(${drift.toFixed(1)}px)`;
       });
     }
 
