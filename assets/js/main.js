@@ -721,6 +721,11 @@
           '<h2 class="td-name">' + m.name + '</h2>' +
           '<p class="td-bio">' + esc(m.bio || '') + '</p>' +
           '<div class="td-skills">' + (m.skills || []).map(x => '<span>' + esc(x) + '</span>').join('') + '</div>' +
+          // external portfolio, for anyone whose work lives on their own site
+          (m.link ? '<a class="td-link" href="' + esc(m.link) + '" target="_blank" rel="noopener">' +
+                      esc(m.linkLabel || 'View full portfolio') +
+                      '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
+                    '</a>' : '') +
         '</div>' +
         '<figure class="' + heroClass(m) + '">' + heroFor(m) + '</figure>' +
       '</div>' +
