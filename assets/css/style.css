@@ -1432,35 +1432,6 @@ body.preloading.preloader-seen .preloader-word{animation-duration:1s;animation-d
   font-family:var(--sans);font-size:10px;letter-spacing:.32em;text-transform:uppercase;
   color:var(--stone);animation:cuepulse 2.6s ease-in-out infinite;pointer-events:none;
 }
-/* Cursor label for the cylinder. Injected by gallery.js only when WebGL is
-   live. Positioned by a translate3d the script writes each frame, so the two
-   transforms must not fight: the scale/offset lives on the inner spans, never
-   on .pg-cursor itself. */
-.pg-cursor{
-  position:absolute;top:0;left:0;z-index:6;
-  pointer-events:none;will-change:transform;
-  display:flex;align-items:center;gap:10px;
-  white-space:nowrap;
-}
-.pg-cursor-do,.pg-cursor-t{
-  display:block;
-  transform:translate(18px,14px) scale(.82);
-  opacity:0;
-  transition:opacity .32s ease,transform .42s cubic-bezier(.2,.8,.2,1);
-}
-.pg-cursor-do{
-  font-family:var(--sans);font-size:9.5px;letter-spacing:.28em;text-transform:uppercase;
-  color:var(--obsidian);background:var(--champagne);
-  padding:7px 11px 6px;border-radius:999px;
-}
-.pg-cursor-t{
-  font-family:var(--serif);font-size:clamp(1rem,1.5vw,1.35rem);color:var(--cream);
-  text-shadow:0 2px 18px rgba(6,6,7,.85);
-  transition-delay:.04s;
-}
-.pg-cursor.on .pg-cursor-do,
-.pg-cursor.on .pg-cursor-t{opacity:1;transform:translate(18px,14px) scale(1)}
-
 /* veil for the open transition — body-level so no transform can capture it */
 .pg-veil{
   position:fixed;inset:0;z-index:9997;background:var(--obsidian);
