@@ -1342,6 +1342,10 @@ body.preloading.preloader-seen .preloader-word{animation-duration:1s;animation-d
 .pj-gal figure:nth-child(6n+1){grid-column:span 4;aspect-ratio:16/10}
 .pj-gal figure:nth-child(6n+4){grid-column:span 3;aspect-ratio:3/2}
 .pj-gal figure:nth-child(6n+5){grid-column:span 3;aspect-ratio:3/2}
+/* A project with a single extra frame (e.g. Rolls-Royce) would otherwise render
+   as a 4-of-6-column stub with a dead gap on the right, which reads as a bug
+   rather than a layout. Let it span the full row instead. */
+.pj-gal figure:only-child{grid-column:1/-1;aspect-ratio:16/9}
 @media(max-width:820px){
   .pj-gal{grid-template-columns:repeat(2,1fr)}
   .pj-gal figure,
