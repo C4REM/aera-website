@@ -468,13 +468,15 @@
     });
 
     // --- PHOTO: one fixed frame, crossfading to whichever name is active ---
-    // The frame never moves, so it can never crop what's inside it. Only a slow
-    // Ken Burns drift plays within it, which the 1.08 scale leaves room for.
+    // NOTHING moves inside the frame. Any transform on the image — even a slow
+    // Ken Burns drift — means the picture slides around behind a static,
+    // clipping edge, which reads exactly as "the photo moves but the frame
+    // doesn't, so it gets cut off". The image fills its frame and stays put;
+    // the only animation is the crossfade between services.
     if (media.length){
-      const drift = Math.max(-12, Math.min(12, (p - 0.5) * 46));
       media.forEach((m, i) => {
         m.style.opacity = i === activeIdx ? '1' : '0';
-        m.style.transform = `scale(1.08) translateY(${drift.toFixed(1)}px)`;
+        m.style.transform = '';
       });
     }
 
