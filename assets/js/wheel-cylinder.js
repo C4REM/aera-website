@@ -49,11 +49,11 @@
   const RADIUS = 3.6;
   const CARD_W = 2.3;
   const CARD_H = 2.875;           // 4:5, matching the frame's own aspect-ratio
-  const SEG    = 24;
   const ANGLE  = (Math.PI * 2) / N;
   const FOV    = 40;
-  const FILL   = 0.995;           // active card fills the frame edge-to-edge, same as
-                                   // the flat <img> it replaces — no dark margin around it
+  const FILL   = 1.02;            // very slight overscan — like object-fit:cover on
+                                   // the flat <img> this replaces, so there's never a
+                                   // sliver of frame background around the photo
 
   const renderer = new THREE.WebGLRenderer({
     canvas, antialias: true, alpha: true, powerPreference: 'high-performance'
@@ -66,23 +66,13 @@
   camera.position.set(0, 0, RADIUS + 4);
   camera.lookAt(0, 0, 0);
 
-  // Same bend as the work page: a vertex at arc-offset x maps to angle
-  // phi = x / r on the cylinder, moving outward in x and back in z.
-  function curvedPlane(w, h, r, seg) {
-    const g = new THREE.PlaneGeometry(w, h, seg, 1);
-    const pos = g.attributes.position;
-    for (let i = 0; i < pos.count; i++) {
-      const x = pos.getX(i);
-      const phi = x / r;
-      pos.setX(i, Math.sin(phi) * r);
-      pos.setZ(i, Math.cos(phi) * r - r);
-    }
-    pos.needsUpdate = true;
-    g.computeVertexNormals();
-    return g;
-  }
-
-  const geom = curvedPlane(CARD_W, CARD_H, RADIUS, SEG);
+  // Flat cards, not curved: bending each photo onto the cylinder's surface (as the
+  // work page does) warped straight lines in the source photos noticeably at this
+  // small a size, and shrank their apparent width, leaving a border of frame
+  // background showing at the edges. A flat plane held at an angle on the ring
+  // reads just as "3D" here — the turn and the perspective foreshortening sell it
+  // — without distorting the image it's carrying.
+  const geom = new THREE.PlaneGeometry(CARD_W, CARD_H);
   const loader = new THREE.TextureLoader();
   loader.setCrossOrigin('anonymous');
 
