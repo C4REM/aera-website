@@ -56,22 +56,34 @@ through Cloudflare the whole thing is one dashboard.
 
 Either one takes about 15 minutes end to end, and both are free at this scale.
 
-## Step 3 — Point the real domain at every file
+## Step 3 — Domain (done)
 
-Every page currently uses a placeholder domain — `REPLACE-WITH-YOUR-DOMAIN.com` —
-in canonical links, Open Graph tags, the schema.org markup, `robots.txt` and
-`sitemap.xml`. This is deliberate: it's a single find-and-replace once you know
-your real domain, rather than guessing one now.
+The live domain is **aerastudios.org**. Every canonical link, Open Graph tag,
+schema.org URL, `robots.txt` and `sitemap.xml` entry already points at it — the
+old `REPLACE-WITH-YOUR-DOMAIN.com` placeholder is gone.
 
-Once you own a domain, run this from inside the `site` folder (Mac Terminal):
+If the domain ever changes, it's one find-and-replace from inside `site/`:
 
 ```bash
-grep -rl "REPLACE-WITH-YOUR-DOMAIN.com" . | xargs sed -i '' 's/REPLACE-WITH-YOUR-DOMAIN\.com/yourdomain.co.uk/g'
+grep -rl "aerastudios.org" . | xargs sed -i '' 's/aerastudios\.org/newdomain.com/g'
 ```
 
-Swap `yourdomain.co.uk` for whatever you bought, then re-upload to your host (or
-just ask Claude to do this find-and-replace for you if you'd rather not touch the
-terminal — tell it the domain and it'll handle it directly in these files).
+## Cache busting — READ THIS BEFORE EDITING CSS OR JS
+
+Every page loads `style.css` and `main.js` with a `?v=` version string. Browsers
+and Cloudflare's edge cache those files hard. **If you change `style.css` or
+`main.js` without changing that version string, your edit will appear to do
+nothing** — you'll be served the old file, and so will everyone else.
+
+After editing either file, bump the version everywhere:
+
+```bash
+sed -i '' 's/?v=OLDVERSION/?v=NEWVERSION/g' *.html
+```
+
+then re-upload the changed asset *and* all the HTML files. Loading the page with
+a `?something=1` query on the URL is a quick way to check you're seeing fresh
+HTML rather than a cached copy.
 
 ## About the portfolio images
 

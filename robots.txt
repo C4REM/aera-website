@@ -18,4 +18,4 @@ Allow: /
 User-agent: Google-Extended
 Allow: /
 
-Sitemap: https://REPLACE-WITH-YOUR-DOMAIN.com/sitemap.xml
+Sitemap: https://aerastudios.org/sitemap.xml
