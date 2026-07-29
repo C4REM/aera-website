@@ -701,7 +701,10 @@
   let busy = false, current = -1;
 
   function heroFor(m){
-    return m.photo ? '<img src="' + esc(m.photo) + '" alt="">' : '<span class="tt-ph">Seat open</span>';
+    // `ph` lets a real, named person show "Photo to come" rather than the
+    // "Seat open" wording used for vacancies — they are not the same thing.
+    return m.photo ? '<img src="' + esc(m.photo) + '" alt="">'
+                   : '<span class="tt-ph">' + esc(m.ph || 'Seat open') + '</span>';
   }
   const heroClass = m => 'td-hero' + (m.cut ? ' cut' : '');
 
@@ -713,7 +716,8 @@
       // name and copy left, portrait right — side by side rather than a banner
       '<div class="td-top">' +
         '<div class="td-info">' +
-          '<div class="td-role">' + m.role + ' · ' + esc(m.loc || '') + '</div>' +
+          // guard the separator — an empty loc otherwise leaves a dangling "·"
+          '<div class="td-role">' + m.role + (m.loc ? ' · ' + esc(m.loc) : '') + '</div>' +
           '<h2 class="td-name">' + m.name + '</h2>' +
           '<p class="td-bio">' + esc(m.bio || '') + '</p>' +
           '<div class="td-skills">' + (m.skills || []).map(x => '<span>' + esc(x) + '</span>').join('') + '</div>' +
