@@ -52,8 +52,13 @@
   /* ---------------- geometry constants ---------------- */
   const N      = imgs.length;
   const RADIUS = 7.4;              // cylinder radius, world units
-  const CARD_W = 5.4;              // arc width of a panel
-  const CARD_H = 3.6;              // 3:2 — textures are fitted to it, see below
+  const CARD_W = 4.7;              // arc width of a panel
+  // Nearly square rather than the work page's wide 16:9-ish panel. These six
+  // photos are a mix of tall posters and landscape stills, and every one gets
+  // centre-cropped to the panel (see cover() below) — the wider the panel, the
+  // more a portrait source loses off its top and bottom. 6:5 is the compromise
+  // that keeps a poster legible without the landscape shots looking boxed in.
+  const CARD_H = 3.9;
   const SEG    = 40;               // horizontal subdivisions — the bend
   const ANGLE  = (Math.PI * 2) / N;
   const Y_STEP = 0.72;             // helix rise per service
