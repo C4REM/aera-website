@@ -113,13 +113,15 @@
         mat.map = tex;
         mat.color.setHex(0xffffff);
         mat.needsUpdate = true;
+        mesh.userData.hasTex = true;   // only textured panels may be tinted
       },
       undefined,
       () => { /* texture failed — the flat tile colour stands in */ }
     );
 
     const mesh = new THREE.Mesh(geom, mat);
-    mesh.userData = { i, href: p.href, title: p.title, cat: p.cat };
+    // hv = this panel's own eased hover amount, 0→1
+    mesh.userData = { i, href: p.href, title: p.title, cat: p.cat, hv: 0, hasTex: false };
     scene.add(mesh);
     return mesh;
   });
@@ -136,6 +138,20 @@
   let target = 0;   // where the scroll says we are, in project units
   let current = 0;  // eased follower — this is what makes it glide
   let hovered = null;
+  let dim = 0;      // eased 0→1 while ANY panel is hovered
+
+  /* Hover feel, in one place.
+     LIFT is along the panel's own radius, not toward the camera. Lerping toward
+     camera.position (the previous approach) drags panels above and below the
+     centre line diagonally inward, so they slide across the screen instead of
+     stepping out of the wall. Pushing along the radius moves each panel
+     perpendicular to its own face, which is what "lifting off the cylinder"
+     actually looks like. */
+  const LIFT  = 0.85;   // world units outward from the cylinder surface
+  const GROW  = 0.055;  // extra scale at full hover
+  const FADE  = 0.42;   // how far unhovered panels drop back
+  const EASE_H = 12;    // hover in/out speed
+  const EASE_D = 9;     // global dim speed
 
   function readScroll() {
     const r = track.getBoundingClientRect();
@@ -168,10 +184,31 @@
   const ray = new THREE.Raycaster();
   const ndc = new THREE.Vector2(-2, -2);
 
+  // Raw pointer position in stage-local px, for the follow-label below.
+  let px = -999, py = -999, lx = -999, ly = -999;
+
   function setNdc(e) {
     const r = canvas.getBoundingClientRect();
     ndc.x = ((e.clientX - r.left) / r.width) * 2 - 1;
     ndc.y = -((e.clientY - r.top) / r.height) * 2 + 1;
+    px = e.clientX - r.left;
+    py = e.clientY - r.top;
+    if (lx < -900) { lx = px; ly = py; }   // first sight: no fly-in from 0,0
+  }
+
+  /* A small label that trails the cursor and names what you're about to open.
+     Built here rather than in the markup so it only ever exists when WebGL is
+     actually live — the DOM fallback grid has its own hover treatment and
+     shouldn't inherit a floating label it can't drive. */
+  const cur = document.createElement('div');
+  cur.className = 'pg-cursor';
+  cur.innerHTML = '<span class="pg-cursor-do">View</span><span class="pg-cursor-t"></span>';
+  stage.appendChild(cur);
+  const curT = cur.querySelector('.pg-cursor-t');
+
+  function setLabel(hit) {
+    if (hit) curT.textContent = hit.userData.title;
+    cur.classList.toggle('on', !!hit);
   }
 
   // One picking helper, used by BOTH the per-frame cursor update and the click
@@ -186,7 +223,11 @@
   }
 
   canvas.addEventListener('pointermove', setNdc, { passive: true });
-  canvas.addEventListener('pointerleave', () => { ndc.set(-2, -2); });
+  canvas.addEventListener('pointerleave', () => {
+    ndc.set(-2, -2);
+    px = py = -999;
+    cur.classList.remove('on');
+  });
 
   /* ---------------- open transition ---------------- */
   // The clicked panel flies at the camera while a veil fades up, then we
@@ -226,37 +267,57 @@
     const dt = Math.min(clock.getDelta(), 0.05);
     current += (target - current) * (1 - Math.exp(-7.5 * dt));
 
+    // Pick BEFORE positioning, so this frame's hover feeds this frame's layout.
+    // (The ray uses last frame's matrices either way — one frame of lag that
+    // nobody can see — but doing it here keeps hover and position in step.)
+    const hit = opening ? null : pick();
+    if (hit !== hovered) {
+      hovered = hit;
+      canvas.style.cursor = hit ? 'pointer' : 'default';
+      setLabel(hit);
+    }
+
+    // Frame-rate-independent easing, same shape as the scroll follower. The old
+    // hover used a fixed per-frame lerp, which ran twice as fast on a 120Hz
+    // display, and — because positions are rebuilt from the helix every frame —
+    // snapped back instantly on exit instead of easing out.
+    dim += ((hit ? 1 : 0) - dim) * (1 - Math.exp(-EASE_D * dt));
+
     let active = 0, bestScore = -Infinity;
 
     for (const mesh of cards) {
-      const k = wrap(mesh.userData.i - current);
+      const d = mesh.userData;
+      d.hv += ((mesh === hit ? 1 : 0) - d.hv) * (1 - Math.exp(-EASE_H * dt));
+      const hv = d.hv;
+
+      const k = wrap(d.i - current);
       const a = k * ANGLE;
 
-      mesh.position.set(Math.sin(a) * RADIUS, k * Y_STEP, Math.cos(a) * RADIUS);
+      // push out along this panel's own radius — perpendicular to its face
+      const r = RADIUS + hv * LIFT;
+      mesh.position.set(Math.sin(a) * r, k * Y_STEP, Math.cos(a) * r);
       mesh.rotation.set(0, a, 0);
+
+      const s = 1 + hv * GROW;
+      mesh.scale.set(s, s, s);
 
       // face-on-ness: 1 when the panel points straight at the camera
       const facing = Math.cos(a);
       const t = Math.max(0, facing);
       // fade the far side out rather than letting it clip through
-      mesh.material.opacity = Math.pow(t, 1.6) * 0.96 + 0.04;
+      const base = Math.pow(t, 1.6) * 0.96 + 0.04;
+
+      // everything that isn't the hovered panel recedes slightly, so the one
+      // you're pointing at is the only thing at full strength
+      const back = 1 - dim * (1 - hv) * FADE;
+      mesh.material.opacity = base * back;
+      if (d.hasTex) mesh.material.color.setScalar(back);
+
+      mesh.renderOrder = hv > 0.01 ? 5 : 0;   // lifted panel draws over its neighbours
       mesh.visible = facing > -0.15;
 
       const score = facing - Math.abs(k) * 0.02;
-      if (score > bestScore) { bestScore = score; active = mesh.userData.i; }
-    }
-
-    // hover test (skipped once we're opening)
-    if (!opening) {
-      const hit = pick();
-      if (hit !== hovered) {
-        hovered = hit;
-        canvas.style.cursor = hit ? 'pointer' : 'default';
-      }
-      if (hovered) {
-        // nudge the hovered panel toward the camera
-        hovered.position.lerp(camera.position, 0.035);
-      }
+      if (score > bestScore) { bestScore = score; active = d.i; }
     }
 
     if (active !== activePrev) {
@@ -267,7 +328,15 @@
       if (hudNum)   hudNum.textContent   = String(active + 1).padStart(2, '0');
     }
 
+    // label trails the cursor slightly — same easing family as everything else
+    if (px > -900) {
+      lx += (px - lx) * (1 - Math.exp(-18 * dt));
+      ly += (py - ly) * (1 - Math.exp(-18 * dt));
+      cur.style.transform = 'translate3d(' + lx.toFixed(1) + 'px,' + ly.toFixed(1) + 'px,0)';
+    }
+
     if (opening) {
+      cur.classList.remove('on');
       const k = Math.min(1, (performance.now() - opening.t0) / 820);
       const e = k * k * (3 - 2 * k);                       // smoothstep
       opening.mesh.position.lerpVectors(opening.from, camera.position, e * 0.97);
