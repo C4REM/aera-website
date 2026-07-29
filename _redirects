@@ -1,0 +1,6 @@
+# Cloudflare Pages serves index.html with a 200 for unknown paths, which turns every
+# dead link into a soft-404 that Google indexes as a duplicate homepage. 404.html fixes
+# the general case; these two rules preserve the specific URLs that used to be real
+# project pages, so anything already linking to them lands on the work index instead.
+/head-boy-application.html  /work.html  301
+/f1-abu-dhabi-2024.html     /work.html  301
