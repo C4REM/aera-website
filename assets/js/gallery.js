@@ -121,7 +121,7 @@
 
     const mesh = new THREE.Mesh(geom, mat);
     // hv = this panel's own eased hover amount, 0→1
-    mesh.userData = { i, href: p.href, title: p.title, cat: p.cat, hv: 0, hasTex: false };
+    mesh.userData = { i, href: p.href, title: p.title, cat: p.cat, hv: 0, hasTex: false, facing: 0 };
     scene.add(mesh);
     return mesh;
   });
@@ -184,31 +184,34 @@
   const ray = new THREE.Raycaster();
   const ndc = new THREE.Vector2(-2, -2);
 
-  // Raw pointer position in stage-local px, for the follow-label below.
-  let px = -999, py = -999, lx = -999, ly = -999;
-
   function setNdc(e) {
     const r = canvas.getBoundingClientRect();
     ndc.x = ((e.clientX - r.left) / r.width) * 2 - 1;
     ndc.y = -((e.clientY - r.top) / r.height) * 2 + 1;
-    px = e.clientX - r.left;
-    py = e.clientY - r.top;
-    if (lx < -900) { lx = px; ly = py; }   // first sight: no fly-in from 0,0
   }
 
-  /* A small label that trails the cursor and names what you're about to open.
-     Built here rather than in the markup so it only ever exists when WebGL is
-     actually live — the DOM fallback grid has its own hover treatment and
-     shouldn't inherit a floating label it can't drive. */
-  const cur = document.createElement('div');
-  cur.className = 'pg-cursor';
-  cur.innerHTML = '<span class="pg-cursor-do">View</span><span class="pg-cursor-t"></span>';
-  stage.appendChild(cur);
-  const curT = cur.querySelector('.pg-cursor-t');
+  /* Cursor feedback rides the site's EXISTING custom cursor (#cursorRing in
+     main.js) rather than a second label of our own. main.js only knows how to
+     react to real DOM hoverables, and the panels are pixels on a canvas — so it
+     can never light up by itself here. Driving its classes directly keeps the
+     cylinder consistent with every other link on the site instead of inventing
+     a parallel cursor that behaves slightly differently.
+
+     main.js's own mouseover/mouseout handlers match `a, button, .tile, …`; the
+     canvas matches none of them, so nothing fights us for these classes. */
+  const ring = document.getElementById('cursorRing');
+  const customCursor = !!ring && document.body.classList.contains('has-cursor');
 
   function setLabel(hit) {
-    if (hit) curT.textContent = hit.userData.title;
-    cur.classList.toggle('on', !!hit);
+    if (ring) {
+      ring.classList.toggle('hover', !!hit);
+      ring.classList.toggle('hover-text', !!hit);
+      if (hit) ring.setAttribute('data-label', 'View');
+    }
+    // Only fall back to a real pointer when the custom cursor isn't running —
+    // otherwise body{cursor:none} is defeated by an inline cursor:pointer and
+    // you get the OS arrow and the champagne ring on screen at the same time.
+    if (!customCursor) canvas.style.cursor = hit ? 'pointer' : 'default';
   }
 
   // One picking helper, used by BOTH the per-frame cursor update and the click
@@ -216,17 +219,41 @@
   // frame's hover state: the panels move under a stationary cursor while you
   // scroll, and a click that lands before the next frame would otherwise see a
   // stale (often null) hover and silently do nothing.
+  /* Only the near face of the cylinder is pickable.
+
+     Three.js r128's Raycaster does NOT skip meshes with visible=false, and the
+     panels are DoubleSide with depthWrite:false — so every panel on the BACK of
+     the cylinder is still a valid ray target even though you cannot see it.
+     Point at a gap between two front panels and the ray sails through and hits
+     whatever is round the back. Those panels are sweeping past as you scroll,
+     so the hit flips between them (and to null) every few frames, which is the
+     cursor "spamming" between projects.
+
+     Filtering by facing — how square-on a panel is to the camera — restricts
+     picking to panels genuinely presented to the viewer. 0.35 is comfortably
+     past the point where a panel has turned edge-on, so a panel stops being
+     clickable at roughly the moment it stops being legible.
+
+     facing is written by the previous frame, which is the RIGHT frame to use:
+     the ray runs against the previous frame's world matrices too, so the two
+     agree. Reusing one array avoids allocating every frame. */
+  const pickable = [];
+
   function pick() {
+    pickable.length = 0;
+    for (const mesh of cards) {
+      if (mesh.visible && mesh.userData.facing > 0.35) pickable.push(mesh);
+    }
+    if (!pickable.length) return null;
     ray.setFromCamera(ndc, camera);
-    const hits = ray.intersectObjects(cards, false);
+    const hits = ray.intersectObjects(pickable, false);
     return hits.length ? hits[0].object : null;
   }
 
   canvas.addEventListener('pointermove', setNdc, { passive: true });
   canvas.addEventListener('pointerleave', () => {
     ndc.set(-2, -2);
-    px = py = -999;
-    cur.classList.remove('on');
+    setLabel(null);
   });
 
   /* ---------------- open transition ---------------- */
@@ -246,7 +273,7 @@
       from: mesh.position.clone(),
       href: mesh.userData.href
     };
-    canvas.style.cursor = 'default';
+    setLabel(null);
   });
 
   /* ---------------- HUD ---------------- */
@@ -273,7 +300,6 @@
     const hit = opening ? null : pick();
     if (hit !== hovered) {
       hovered = hit;
-      canvas.style.cursor = hit ? 'pointer' : 'default';
       setLabel(hit);
     }
 
@@ -301,8 +327,11 @@
       const s = 1 + hv * GROW;
       mesh.scale.set(s, s, s);
 
-      // face-on-ness: 1 when the panel points straight at the camera
+      // face-on-ness: 1 when the panel points straight at the camera.
+      // Stashed on the mesh because pick() (which runs at the TOP of the next
+      // frame, before this loop) uses it to ignore the back of the cylinder.
       const facing = Math.cos(a);
+      d.facing = facing;
       const t = Math.max(0, facing);
       // fade the far side out rather than letting it clip through
       const base = Math.pow(t, 1.6) * 0.96 + 0.04;
@@ -328,15 +357,8 @@
       if (hudNum)   hudNum.textContent   = String(active + 1).padStart(2, '0');
     }
 
-    // label trails the cursor slightly — same easing family as everything else
-    if (px > -900) {
-      lx += (px - lx) * (1 - Math.exp(-18 * dt));
-      ly += (py - ly) * (1 - Math.exp(-18 * dt));
-      cur.style.transform = 'translate3d(' + lx.toFixed(1) + 'px,' + ly.toFixed(1) + 'px,0)';
-    }
-
     if (opening) {
-      cur.classList.remove('on');
+      setLabel(null);
       const k = Math.min(1, (performance.now() - opening.t0) / 820);
       const e = k * k * (3 - 2 * k);                       // smoothstep
       opening.mesh.position.lerpVectors(opening.from, camera.position, e * 0.97);
