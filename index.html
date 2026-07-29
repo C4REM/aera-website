@@ -20,7 +20,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400;1,500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/style.css?v=20260729d">
+<link rel="stylesheet" href="assets/css/style.css?v=20260729e">
 <noscript><style>.preloader{display:none!important}body{overflow:visible!important;height:auto!important}.cursor-dot,.cursor-ring{display:none!important}.reveal{opacity:1!important;transform:none!important;filter:none!important}.hero-statement .ln>span,.rise>span{transform:none!important}</style></noscript>
 
 <script type="application/ld+json">
@@ -228,23 +228,35 @@
     </div>
   </div>
   <!-- Client names. The full list is repeated twice inside each half, and the
-       two halves are identical — that's what makes the loop seamless. To add or
-       change a client, edit BOTH halves so they stay in sync. -->
+       two halves are identical — that's what makes the `translateX(0 → -50%)`
+       loop seamless. To add or change a client, edit BOTH halves so they stay
+       in sync, or the track will visibly jump when it wraps.
+
+       TO SWAP IN REAL LOGOS: drop an SVG (or transparent PNG) into
+       assets/img/clients/ and replace the span's text with, e.g.
+         <span class="cl"><img src="assets/img/clients/kia.svg" alt="KIA Motors"></span>
+       The CSS normalises every logo to the same optical height and applies the
+       same dimmed / hover treatment, so text and logos can sit side by side
+       while you collect the files. -->
   <div class="marquee" role="list" aria-label="Clients and collaborators">
     <div class="marquee-track">
-        <span class="cl">Sunmarke School</span>
+        <span class="cl">Rolls-Royce</span>
+        <span class="cl">KIA Motors</span>
         <span class="cl">Diary of a CEO</span>
         <span class="cl">F1rst Motors</span>
         <span class="cl">Lewis Howes</span>
-        <span class="cl">Sunmarke School</span>
+        <span class="cl">Rolls-Royce</span>
+        <span class="cl">KIA Motors</span>
         <span class="cl">Diary of a CEO</span>
         <span class="cl">F1rst Motors</span>
         <span class="cl">Lewis Howes</span>
-        <span class="cl" aria-hidden="true">Sunmarke School</span>
+        <span class="cl" aria-hidden="true">Rolls-Royce</span>
+        <span class="cl" aria-hidden="true">KIA Motors</span>
         <span class="cl" aria-hidden="true">Diary of a CEO</span>
         <span class="cl" aria-hidden="true">F1rst Motors</span>
         <span class="cl" aria-hidden="true">Lewis Howes</span>
-        <span class="cl" aria-hidden="true">Sunmarke School</span>
+        <span class="cl" aria-hidden="true">Rolls-Royce</span>
+        <span class="cl" aria-hidden="true">KIA Motors</span>
         <span class="cl" aria-hidden="true">Diary of a CEO</span>
         <span class="cl" aria-hidden="true">F1rst Motors</span>
         <span class="cl" aria-hidden="true">Lewis Howes</span>
@@ -462,7 +474,7 @@
   </div>
 </footer>
 
-<script src="assets/js/lenis.min.js?v=20260729d"></script>
-<script src="assets/js/main.js?v=20260729d"></script>
+<script src="assets/js/lenis.min.js?v=20260729e"></script>
+<script src="assets/js/main.js?v=20260729e"></script>
 </body>
 </html>
