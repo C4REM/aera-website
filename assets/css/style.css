@@ -241,9 +241,10 @@ section.tight{padding:80px 0}
    that doesn't move can't crop what's inside it, and pinning it to the active
    index means the picture always matches the word. */
 .wheel-media{
+  display:block;
   position:absolute;right:clamp(24px,4vw,64px);top:50%;
   width:min(26vw,300px);aspect-ratio:4/5;transform:translateY(-50%);
-  z-index:1;overflow:hidden;pointer-events:none;
+  z-index:1;overflow:hidden;
   border:1px solid var(--smoke);background:#141317;
 }
 .wheel-media img{
