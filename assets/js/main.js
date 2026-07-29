@@ -484,6 +484,10 @@
       items.forEach((it, i) => it.classList.toggle('active', i === activeIdx));
       if (numEl) numEl.textContent = String(activeIdx + 1).padStart(2, '0');
       activePrev = activeIdx;
+      // Told, not asked: wheel-cylinder.js (if it loaded) turns the mini 3D
+      // ring to match. This fires whether or not that script exists, so the
+      // flat crossfade above stays the single source of truth either way.
+      document.dispatchEvent(new CustomEvent('aera:wheelactive', { detail: { index: activeIdx } }));
     }
   }
   function onScroll(){ if (!ticking){ ticking = true; requestAnimationFrame(update); } }
