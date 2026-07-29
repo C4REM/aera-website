@@ -50,23 +50,40 @@
   document.body.classList.add('wheel-live');
 
   /* ---------------- geometry constants ---------------- */
-  const N      = imgs.length;
+  /* The six photos go round the ring TWICE, so there are twelve panels.
+
+     With six panels a full turn is 360/6 = 60° apart, and a panel 60° off-axis
+     is already half turned away — squeezed to a sliver at the edge of frame and
+     nearly faded out. That's why it read as one photo in a gap rather than as a
+     cylinder: there was nothing between the front panel and the horizon.
+
+     The work page doesn't have this problem because it has eight projects at
+     45°. Six is simply too few to build a wall out of. Repeating them halves
+     the spacing to 30°, which puts two clearly-readable panels either side of
+     the front one — five visible at any moment. The repeat itself is never
+     seen: the copy of panel k sits at k+6, exactly 180° away, round the back. */
+  const N      = imgs.length * 2;
   const RADIUS = 7.4;              // cylinder radius, world units
-  const CARD_W = 4.7;              // arc width of a panel
-  // Nearly square rather than the work page's wide 16:9-ish panel. These six
-  // photos are a mix of tall posters and landscape stills, and every one gets
-  // centre-cropped to the panel (see cover() below) — the wider the panel, the
-  // more a portrait source loses off its top and bottom. 6:5 is the compromise
-  // that keeps a poster legible without the landscape shots looking boxed in.
-  const CARD_H = 3.9;
+  // Panel width is chosen to very nearly close the 30° gap between slots, so
+  // the panels form a near-continuous surface instead of floating separately:
+  // 30° of a 7.4-unit radius is 3.87 units of arc, and 3.6 leaves a hairline.
+  const CARD_W = 3.6;
+  // These six photos are a mix of tall posters and landscape stills, and every
+  // one gets centre-cropped to the panel (see cover() below) — the wider the
+  // panel, the more a portrait source loses off its top and bottom. 6:5 keeps a
+  // poster legible without the landscape shots looking boxed in.
+  const CARD_H = 3.0;
   const SEG    = 40;               // horizontal subdivisions — the bend
   const ANGLE  = (Math.PI * 2) / N;
-  const Y_STEP = 0.72;             // helix rise per service
+  // Gentler than the work page's rise: at 30° spacing you can see four panels
+  // out from centre, and the work page's 1.15 would send them off the top and
+  // bottom of the frame long before they turned away.
+  const Y_STEP = 0.34;
   const FOV    = 46;
-  // Same reasoning as the work page: below ~0.5 the neighbours fall off-screen
-  // and you stop reading a cylinder; above ~0.65 the front panel covers
-  // everything and it's a slideshow again.
-  const FILL   = 0.54;
+  // Deliberately lower than the work page's 0.56. The front panel takes up less
+  // of the frame, which is the whole point — it buys the room either side that
+  // the receding panels need in order to be visible at all.
+  const FILL   = 0.42;
 
   const renderer = new THREE.WebGLRenderer({
     canvas, antialias: true, alpha: true, powerPreference: 'high-performance'
@@ -126,35 +143,35 @@
     }
   }
 
-  const cards = imgs.map((img, i) => {
+  /* One texture per photo, shared by the two slots showing it — six downloads
+     and six GPU uploads for twelve panels, not twelve of each. */
+  const textures = imgs.map(img => {
+    const tex = loader.load(
+      img.currentSrc || img.src,
+      t => { cover(t); t.needsUpdate = true; },
+      undefined,
+      () => { /* texture failed — the flat tile colour stands in */ }
+    );
+    tex.encoding = THREE.sRGBEncoding;
+    tex.minFilter = THREE.LinearFilter;
+    tex.generateMipmaps = false;
+    tex.wrapS = tex.wrapT = THREE.ClampToEdgeWrapping;
+    return tex;
+  });
+
+  const cards = Array.from({ length: N }, (_, i) => {
     const mat = new THREE.MeshBasicMaterial({
-      color: 0x1b1a1e, transparent: true, opacity: 0,
+      map: textures[i % imgs.length], color: 0xffffff,
+      transparent: true, opacity: 0,
       side: THREE.DoubleSide, depthWrite: false
     });
     const mesh = new THREE.Mesh(geom, mat);
     // hv = this panel's own eased hover amount, 0→1
-    mesh.userData = { i, hv: 0, hasTex: false, facing: 0 };
-
-    loader.load(
-      img.currentSrc || img.src,
-      tex => {
-        tex.encoding = THREE.sRGBEncoding;
-        tex.minFilter = THREE.LinearFilter;
-        tex.generateMipmaps = false;
-        tex.wrapS = tex.wrapT = THREE.ClampToEdgeWrapping;
-        cover(tex);
-        mat.map = tex;
-        mat.color.setHex(0xffffff);
-        mat.needsUpdate = true;
-        mesh.userData.hasTex = true;
-      },
-      undefined,
-      () => { /* texture failed — the flat tile colour stands in */ }
-    );
-
+    mesh.userData = { i, hv: 0, hasTex: true, facing: 0 };
     scene.add(mesh);
     return mesh;
   });
+
 
   // Wrap an offset into [-N/2, N/2) so a card leaving one end reappears at the
   // other. The wrap happens at angle ±PI, round the back, so it's never seen.
@@ -264,15 +281,26 @@
       const facing = Math.cos(a);
       d.facing = facing;
       const t = Math.max(0, facing);
-      const base = Math.pow(t, 1.6) * 0.96 + 0.04;
+      // Much gentler falloff than the work page's pow(t,1.6). That curve is
+      // tuned for panels 45° apart; at 30° it dimmed the immediate neighbours
+      // to near-nothing, which is what made the ring look empty either side of
+      // the front panel. A near-linear ramp keeps three or four panels legible
+      // at once, so you can actually see the surface curving away.
+      const base = Math.pow(t, 0.85) * 0.92 + 0.08;
 
       // everything that isn't the hovered panel recedes slightly
       const back = 1 - dim * (1 - hv) * FADE;
       mesh.material.opacity = base * back;
       if (d.hasTex) mesh.material.color.setScalar(back);
 
-      mesh.renderOrder = hv > 0.01 ? 5 : 0;
-      mesh.visible = facing > -0.15;
+      // Draw far panels first so the near ones composite over them correctly —
+      // these are transparent with depthWrite off, so paint order IS the depth
+      // test. Without this the panels wrapping round the sides can punch
+      // through the front one. facing runs -1 (behind) → 1 (front); mapping it
+      // to 0…200 gives a stable back-to-front order every frame. Hover still
+      // wins outright so a lifted panel is never overdrawn by its neighbour.
+      mesh.renderOrder = hv > 0.01 ? 500 : Math.round((facing + 1) * 100);
+      mesh.visible = facing > -0.25;
     }
 
     renderer.render(scene, camera);
