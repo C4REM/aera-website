@@ -52,7 +52,8 @@
   const SEG    = 24;
   const ANGLE  = (Math.PI * 2) / N;
   const FOV    = 40;
-  const FILL   = 0.66;            // the active card should all but fill the frame
+  const FILL   = 0.995;           // active card fills the frame edge-to-edge, same as
+                                   // the flat <img> it replaces — no dark margin around it
 
   const renderer = new THREE.WebGLRenderer({
     canvas, antialias: true, alpha: true, powerPreference: 'high-performance'
