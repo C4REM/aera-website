@@ -1191,6 +1191,21 @@ body.preloading.preloader-seen .preloader-word{animation-duration:1s;animation-d
 .td-skills{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
 .td-skills span{font-family:var(--sans);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;
   color:var(--cream-dim);border:1px solid rgba(234,223,205,.16);padding:6px 11px;border-radius:20px}
+/* link out to a member's own portfolio, for work that isn't hosted here */
+.td-link{
+  display:inline-flex;align-items:center;gap:9px;margin-top:26px;
+  font-family:var(--sans);font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--champagne);position:relative;padding-bottom:6px;
+}
+.td-link svg{width:14px;height:14px;transition:transform .45s cubic-bezier(.2,.8,.2,1)}
+.td-link::after{
+  content:'';position:absolute;left:0;bottom:0;height:1px;width:100%;
+  background:var(--champagne);transform:scaleX(0);transform-origin:left;
+  transition:transform .5s cubic-bezier(.19,1,.22,1);
+}
+.td-link:hover::after{transform:scaleX(1)}
+.td-link:hover svg{transform:translate(3px,-3px)}
+
 .td-folio{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:38px}
 .td-folio img{width:100%;aspect-ratio:4/5;object-fit:cover;border:1px solid var(--smoke);
   opacity:0;transform:translateY(22px);filter:sepia(.12) saturate(.92) brightness(.92);
