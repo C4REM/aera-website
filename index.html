@@ -20,7 +20,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400;1,500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/style.css?v=20260729j">
+<link rel="stylesheet" href="assets/css/style.css?v=20260729k">
 <noscript><style>.preloader{display:none!important}body{overflow:visible!important;height:auto!important}.cursor-dot,.cursor-ring{display:none!important}.reveal{opacity:1!important;transform:none!important;filter:none!important}.hero-statement .ln>span,.rise>span{transform:none!important}</style></noscript>
 
 <script type="application/ld+json">
@@ -152,6 +152,7 @@
           <a class="wheel-item" href="weddings.html"><span class="wnum">06</span>Weddings</a>
         </div>
         <div class="wheel-media" id="wheelMedia" aria-hidden="true">
+          <canvas id="wheelCanvas"></canvas>
           <img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/f5c5d3ac-57b1-4757-ab6c-6ac16ca6e090/Hauntfest++Poster.png" loading="lazy" alt="Social media content — style reference">
           <img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/956771b0-d277-4ee9-bde0-2c1b6d0a8d8c/Green+Planet+Photos-12.jpg" loading="lazy" alt="Brand &amp; commercial — style reference">
           <img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/13f98449-a6da-4ea8-b125-01a7d5fc40b4/IMG_1199.jpg" loading="lazy" alt="Event coverage — style reference">
@@ -474,7 +475,14 @@
   </div>
 </footer>
 
-<script src="assets/js/lenis.min.js?v=20260729j"></script>
-<script src="assets/js/main.js?v=20260729j"></script>
+<script src="assets/js/lenis.min.js?v=20260729k"></script>
+<script src="assets/js/main.js?v=20260729k"></script>
+<!-- Three.js + the mini cylinder load only here, after main.js, so THREE is
+     defined by the time wheel-cylinder.js runs (same load order as the work
+     page's gallery). main.js fires its first wheel update synchronously before
+     this listener exists, so its index-0 event is missed — harmless, because
+     wheel-cylinder.js also defaults to index 0 on init. -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="assets/js/wheel-cylinder.js?v=20260729k"></script>
 </body>
 </html>
