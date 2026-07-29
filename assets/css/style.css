@@ -650,6 +650,12 @@ body.tm-open{overflow:hidden}
   font-family:var(--serif);font-size:clamp(1.05rem,1.9vw,1.5rem);
   letter-spacing:.2em;text-transform:uppercase;white-space:nowrap;
   color:var(--cream-dim);opacity:.5;transition:opacity .4s ease,color .4s ease;
+  /* Cormorant ships oldstyle figures by default, which drops the "1" in a name
+     like "F1rst Motors" to x-height so it reads as "Fırst" — looks like a typo
+     in a client list. Force lining figures wherever a brand name can contain a
+     digit. */
+  font-variant-numeric:lining-nums;
+  font-feature-settings:"lnum" 1;
 }
 .cl:hover{opacity:1;color:var(--cream)}
 /* Logo slot. Every mark is normalised to one optical height and knocked back to
@@ -1230,7 +1236,8 @@ body.preloading.preloader-seen .preloader-word{animation-duration:1s;animation-d
   padding:13px 0;transition:padding-left .45s cubic-bezier(.22,.9,.25,1);
 }
 .td-credits a:hover{padding-left:12px}
-.tc-name{font-family:var(--serif);font-size:1.12rem;color:var(--cream);transition:color .35s ease}
+.tc-name{font-family:var(--serif);font-size:1.12rem;color:var(--cream);transition:color .35s ease;
+  font-variant-numeric:lining-nums;font-feature-settings:"lnum" 1}
 .td-credits a:hover .tc-name{color:var(--champagne)}
 .tc-meta{
   flex:none;font-family:var(--sans);font-size:10px;letter-spacing:.16em;
