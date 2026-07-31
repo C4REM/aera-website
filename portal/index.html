@@ -115,6 +115,16 @@ td.day.is-off{background:repeating-linear-gradient(45deg,transparent,transparent
 .dayfoot .add{background:none;border:1px solid var(--line);color:var(--stone);width:24px;height:24px;font-size:14px;line-height:1;cursor:pointer;font-family:inherit;transition:border-color .2s,color .2s;flex:none}
 .dayfoot .add:hover{border-color:var(--champagne);color:var(--cream)}
 .offtag{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--stone);border:1px dashed var(--line2);padding:5px 0;text-align:center;margin-bottom:6px}
+/* Finished work should stop competing for attention without vanishing — you
+   still want to see it was done, just not read it first. */
+.task[data-status="Done"]{opacity:.62}
+.task[data-status="Done"] .c{text-decoration:line-through;text-decoration-thickness:1px}
+.task[data-status="Blocked"]{background:#161113}
+.legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:14px;font-size:11px;color:var(--stone);letter-spacing:.05em;align-items:center}
+.legend span{display:flex;align-items:center;gap:7px}
+.legend i{width:12px;height:3px;display:block;flex:none}
+.statushint{font-size:11.5px;color:var(--stone);margin-top:7px;display:flex;align-items:center;gap:7px}
+.statushint i{width:12px;height:3px;display:block;flex:none}
 
 /* ---- modal ---- */
 .modal{position:fixed;inset:0;background:rgba(6,6,7,.84);backdrop-filter:blur(3px);z-index:100;display:flex;align-items:center;justify-content:center;padding:24px}
@@ -222,6 +232,7 @@ td.day.is-off{background:repeating-linear-gradient(45deg,transparent,transparent
     </div>
 
     <div class="gridwrap"><table class="plan" id="plantable"></table></div>
+    <div class="legend" id="legend"></div>
   </section>
 
   <!-- ============================== JOB TRACKER ============================ -->
@@ -375,6 +386,14 @@ td.day.is-off{background:repeating-linear-gradient(45deg,transparent,transparent
           <input id="tm-hours" type="number" min="0" max="24" step="0.25" placeholder="4">
         </div>
       </div>
+      <div class="row">
+        <label for="tm-status">Completion</label>
+        <select id="tm-status">
+          <option>To do</option><option>In progress</option><option>Review</option>
+          <option>Done</option><option>Blocked</option>
+        </select>
+        <div class="statushint" id="tm-statushint"></div>
+      </div>
       <datalist id="tasklist">
         <option>Shoot</option><option>Second shooter</option><option>Edit — V1</option>
         <option>Edit — revisions</option><option>Colour grade</option><option>Cull &amp; select</option>
@@ -484,10 +503,13 @@ td.day.is-off{background:repeating-linear-gradient(45deg,transparent,transparent
   function renderWeek(){
     const days = weekDays();
     const last = days[6];
-    const sameMonth = anchor.getMonth() === last.getMonth();
+    // Always name BOTH months. Dropping the first one when the week sits inside
+    // a single month ("3 – 9 Aug") saved four characters and made the label look
+    // half-finished — and read as a range with a missing end at a glance.
     $('weeklabel').textContent =
-      anchor.toLocaleDateString('en-GB',{day:'numeric', month: sameMonth ? undefined : 'short'}) +
-      ' – ' + last.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+      anchor.toLocaleDateString('en-GB',{ day:'numeric', month:'short' }) +
+      ' – ' +
+      last.toLocaleDateString('en-GB',{ day:'numeric', month:'short', year:'numeric' });
 
     if (!members.length){
       $('plantable').innerHTML = '<tr><td class="empty" style="border:0;padding:30px">No team yet — use “Edit team”.</td></tr>';
@@ -516,15 +538,20 @@ td.day.is-off{background:repeating-linear-gradient(45deg,transparent,transparent
 
         return `<td class="${cls}">
           ${dayOff ? '<div class="offtag">Off</div>' : ''}
-          ${list.map(t => `
+          ${list.map(t => {
+            const st = t.status || 'To do';
+            const col = colourFor(st);
+            return `
             <div class="task" data-task="${esc(t.id)}" data-member="${esc(m.id)}" data-date="${date}"
-                 style="border-left-color:${accent(t.client)}">
+                 data-status="${esc(st)}" title="${esc(st)}"
+                 style="border-left-color:${col}">
               <div class="txt">
                 <div class="c">${esc(t.client || t.task)}</div>
                 ${t.client && t.task ? `<div class="k">${esc(t.task)}</div>` : ''}
               </div>
-              ${t.hours ? `<span class="h">${esc(fmtH(t.hours))}</span>` : ''}
-            </div>`).join('')}
+              ${t.hours ? `<span class="h" style="background:${col}">${esc(fmtH(t.hours))}</span>` : ''}
+            </div>`;
+          }).join('')}
           <div class="dayfoot">
             <span class="cap ${capCls}">${esc(fmtH(used))} / ${esc(fmtH(cap))}</span>
             <button class="add" data-add="${esc(m.id)}" data-date="${date}"
@@ -548,19 +575,20 @@ td.day.is-off{background:repeating-linear-gradient(45deg,transparent,transparent
     refreshClientList();
   }
 
-  /* A stable colour per client, derived from the name rather than stored.
-     Means the same client always reads the same across the board without
-     anyone having to pick or maintain a palette — and the palette is the
-     brand's own accents, so the grid never introduces a colour the site
-     doesn't already use. */
-  const ACCENTS = ['#C2A878','#7E8BAF','#7E9B7A','#C97B6E','#9B8AA8','#B7AE9C'];
-  function accent(name){
-    const s = String(name || '');
-    if (!s) return 'var(--stone)';
-    let h = 0;
-    for (let i=0;i<s.length;i++) h = (h*31 + s.charCodeAt(i)) >>> 0;
-    return ACCENTS[h % ACCENTS.length];
-  }
+  /* Marker colour is driven by completion, not by which client it is.
+     Scanning the board you want "what still needs doing" to jump out, and a
+     per-client colour can't tell you that — two cards for the same client can
+     be finished and untouched. Every colour here is already in the site's
+     palette, so the grid never introduces one the brand doesn't use. */
+  const STATUSES = ['To do','In progress','Review','Done','Blocked'];
+  const STATUS_COLOUR = {
+    'To do':       '#8C887F',   // stone — parked, no attention yet
+    'In progress': '#C2A878',   // champagne — live work
+    'Review':      '#7E8BAF',   // slate — waiting on someone
+    'Done':        '#7E9B7A',   // sage — finished
+    'Blocked':     '#C97B6E'    // rust — needs unsticking
+  };
+  const colourFor = s => STATUS_COLOUR[s] || STATUS_COLOUR['To do'];
 
   function refreshClientList(){
     const names = [...new Set([
@@ -587,12 +615,29 @@ td.day.is-off{background:repeating-linear-gradient(45deg,transparent,transparent
     $('tm-client').value = t ? (t.client || '') : '';
     $('tm-task').value   = t ? (t.task   || '') : '';
     $('tm-hours').value  = t && t.hours ? t.hours : '';
+    $('tm-status').value = t ? (t.status || 'To do') : 'To do';
+    paintStatusHint();
     $('tm-save').textContent = t ? 'Save' : 'Add';
     $('tm-delete').hidden = !t;
     $('tm-off').textContent = isOff(date, memberId) ? 'Mark as working' : 'Mark day off';
     $('taskmodal').hidden = false;
     $('tm-client').focus();
   }
+  // Show the colour the card will take, next to the picker, so the mapping is
+  // learnable without hunting for the legend.
+  function paintStatusHint(){
+    const s = $('tm-status').value;
+    $('tm-statushint').innerHTML =
+      `<i style="background:${colourFor(s)}"></i> Marker colour for “${esc(s)}”`;
+  }
+  $('tm-status').addEventListener('change', paintStatusHint);
+
+  function renderLegend(){
+    $('legend').innerHTML =
+      STATUSES.map(s => `<span><i style="background:${colourFor(s)}"></i>${esc(s)}</span>`).join('') +
+      '<span style="color:var(--line2)">·</span><span>Empty cell = free</span>';
+  }
+
   const closeTask = () => { $('taskmodal').hidden = true; editing = null; };
   $('tm-cancel').addEventListener('click', closeTask);
   $('taskmodal').addEventListener('click', e => { if (e.target === $('taskmodal')) closeTask(); });
@@ -626,11 +671,12 @@ td.day.is-off{background:repeating-linear-gradient(45deg,transparent,transparent
     const client = $('tm-client').value.trim();
     const task   = $('tm-task').value.trim();
     const hrs    = $('tm-hours').value === '' ? 0 : Number($('tm-hours').value);
+    const st     = $('tm-status').value;
     if (!client && !task){ toast('Needs a client or a task'); return; }
 
     const ok = editing.taskId
-      ? await send({ op:'task.update', id: editing.taskId, client, task, hours: hrs }, 'Saved')
-      : await send({ op:'task.add', memberId: editing.memberId, date: editing.date, client, task, hours: hrs }, 'Added');
+      ? await send({ op:'task.update', id: editing.taskId, client, task, hours: hrs, status: st }, 'Saved')
+      : await send({ op:'task.add', memberId: editing.memberId, date: editing.date, client, task, hours: hrs, status: st }, 'Added');
     if (ok) closeTask();
   });
 
@@ -700,7 +746,7 @@ td.day.is-off{background:repeating-linear-gradient(45deg,transparent,transparent
       const data = await api(PLANNER, 'GET');
       members = data.members; tasks = data.tasks; off = data.off;
       ready = true;
-      renderWeek(); fillPeopleList();
+      renderWeek(); fillPeopleList(); renderLegend();
     } catch (err) {
       if (err.data && err.data.error === 'no-kv'){
         $('plannerbanner').hidden = false;
