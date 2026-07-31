@@ -4,3 +4,4 @@
 # project pages, so anything already linking to them lands on the work index instead.
 /head-boy-application.html  /work.html  301
 /f1-abu-dhabi-2024.html     /work.html  301
+/weddings.html              /events.html  301
