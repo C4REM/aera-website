@@ -236,8 +236,9 @@
    (e.g. <em>) and its styling survive intact. */
 (function(){
   const SELECTORS = [
-    '.hero-statement', 'h2.section-title', '.story-title',
-    '.wheel-head h2', '.contact h2', 'header.page-hero h1', '.si-card h3'
+    '.hero-statement', 'h2.section-title', '.htrack-title',
+    '.wheel-head h2', '.contact h2', 'header.page-hero h1',
+    '.partners-title', '.socials-title'
   ].join(',');
 
   function splitInto(node, out){
@@ -279,7 +280,7 @@
 
   // story cards are driven by their marker landing, so skip those here
   targets.forEach(el => {
-    if (!el.closest('.hero') && !el.closest('.story-item')) io.observe(el);
+    if (!el.closest('.hero')) io.observe(el);
   });
 
   // the hero holds until the preloader lifts, then joins the same cycle
@@ -425,29 +426,32 @@
 })();
 
 /* ---- HERO PARALLAX EXIT (home) ----
-   The background wordline drifts slower than the page (a real depth cue,
-   not just a static layer) while the headline column drifts faster and
-   fades — so leaving the hero feels like pulling away from it rather than
-   the page just scrolling past a flat banner. Same single-rAF pattern as
-   the blur-focus effect above; only runs for the height of the hero itself,
-   so it costs nothing once you're further down the page. */
+   The mega headline drifts up faster than the page and fades as you leave,
+   so exiting the hero feels like pulling away from it rather than the page
+   scrolling past a flat banner. The two lines drift at slightly different
+   rates, which separates them as they go and reads as depth rather than one
+   flat block sliding. Same single-rAF pattern as the blur-focus effect
+   above, and it stops doing work once the hero is off screen. */
 (function(){
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   const hero = document.querySelector('header.hero');
-  const word = document.querySelector('.hero-bigword-wrap');
   const inner = document.querySelector('header.hero .hero-inner');
   const ring = document.querySelector('.hero-scrollring');
-  if (!hero || !word || !inner) return;
+  if (!hero || !inner) return;
+  const lines = Array.from(hero.querySelectorAll('.hero-mega .ln'));
   let ticking = false;
 
   function update(){
     ticking = false;
     const h = hero.offsetHeight;
     const y = Math.max(0, -hero.getBoundingClientRect().top);
+    if (y > h) return;                      // hero fully passed — nothing to do
     const t = Math.min(1, y / h);
-    word.style.transform = `translateY(calc(-50% + ${(y * 0.22).toFixed(1)}px))`;
-    inner.style.transform = `translateY(${(y * 0.32).toFixed(1)}px)`;
-    inner.style.opacity = (1 - t * 0.9).toFixed(2);
+    inner.style.transform = `translateY(${(y * 0.3).toFixed(1)}px)`;
+    inner.style.opacity = (1 - t * 0.95).toFixed(2);
+    lines.forEach((ln, i) => {
+      ln.style.transform = `translateY(${(y * 0.06 * (i + 1)).toFixed(1)}px)`;
+    });
     if (ring) ring.style.opacity = (1 - t * 2.4).toFixed(2);
   }
   function onScroll(){ if (!ticking){ ticking = true; requestAnimationFrame(update); } }
@@ -529,112 +533,72 @@
   update();
 })();
 
-/* ---- STORY TIMELINE (about) — scroll advances a flowing timeline ----
-   The wave is generated from a sine so the nodes can be placed exactly on the
-   curve. Scrolling the pinned section translates the whole "world" sideways,
-   bringing one milestone at a time to the focal point, and draws the champagne
-   progress line in behind it. */
+/* ---- TIMELINE (about) — horizontal pinned track ----
+   Vertical scroll through the tall section is remapped to horizontal travel
+   across the card row (the landonorris.com pattern). Travel distance is
+   measured from the real rendered widths rather than assumed, so adding or
+   removing a card needs no constant updating here. Each card's image also
+   drifts a little inside its own clipped frame, which gives the row depth
+   as it passes instead of it sliding as one rigid strip.
+
+   Bails out entirely under 880px, where the CSS drops the pin and stacks the
+   cards — driving transforms there would fight the user's own scroll. */
 (function(){
-  const track = document.getElementById('storyTrack');
-  const world = document.getElementById('storyWorld');
-  const svg   = document.getElementById('storyWave');
-  const base  = document.getElementById('waveBase');
-  const prog  = document.getElementById('waveProg');
-  const numEl = document.getElementById('storyNum');
-  if (!track || !world || !svg) return;
+  const pin = document.getElementById('htrackPin');
+  const row = document.getElementById('htrackRow');
+  const bar = document.getElementById('htrackBar');
+  const numEl = document.getElementById('htrackNum');
+  if (!pin || !row) return;
 
-  const items = Array.from(world.querySelectorAll('.story-item'));
-  const N = items.length;
-  if (!N) return;
-
-  const grad = document.getElementById('progGrad');
-  const gp0 = document.getElementById('gp0');
-  const gp1 = document.getElementById('gp1');
-  const gp2 = document.getElementById('gp2');
-
-  const AMP = 54;          // wave amplitude
-  const PHASE = 0.6;
-  const FADE = 0.09;       // how much of the world the head fades over
-  let vw = 0, vh = 0, worldW = 0, step = 0, midY = 0, waveLen = 0;
-  let stacked = false;
-
-  const yAt = x => midY + AMP * Math.sin((x / waveLen) * Math.PI * 2 + PHASE);
+  const section = pin.closest('.htrack');
+  const cards = Array.from(row.children);
+  const imgs = cards.map(c => c.querySelector('.hcard-media img'));
+  let stacked = false, travel = 0, ticking = false, shownPrev = -1;
 
   function layout(){
     stacked = window.matchMedia('(max-width:880px)').matches;
-    if (stacked){                       // stacked list — clear inline layout
-      world.style.transform = '';
-      world.style.width = '';
-      items.forEach(it => { it.style.left = ''; });
+    if (stacked){
+      row.style.transform = '';
+      imgs.forEach(i => { if (i) i.style.transform = ''; });
+      section.style.height = '';
       return;
     }
-    vw = innerWidth; vh = innerHeight;
-    step = vw * 0.78;                   // horizontal distance between milestones
-    worldW = step * (N - 1) + vw;
-    waveLen = vw * 1.35;                // one wave cycle per ~1.35 screens
-    midY = vh * 0.46;
-
-    world.style.width = worldW + 'px';
-    svg.setAttribute('viewBox', `0 0 ${worldW} ${vh}`);
-    svg.setAttribute('width', worldW);
-    svg.setAttribute('height', vh);
-
-    let d = '';
-    for (let x = 0; x <= worldW; x += 16){
-      d += (x === 0 ? 'M' : ' L') + x.toFixed(1) + ',' + yAt(x).toFixed(2);
-    }
-    base.setAttribute('d', d);
-    prog.setAttribute('d', d);
-    if (grad) grad.setAttribute('x2', worldW);   // gradient spans the world
-
-    items.forEach((it, i) => {
-      const x = vw * 0.5 + i * step;    // focal point is viewport centre
-      it.style.left = x + 'px';
-      it.style.setProperty('--ny', yAt(x).toFixed(1) + 'px');
-      it.style.setProperty('--cardY', (yAt(x) + 150).toFixed(1) + 'px');
-    });
+    // how far the row has to move for its right edge to reach the viewport's
+    travel = Math.max(0, row.scrollWidth - window.innerWidth);
+    // section tall enough to give that travel a comfortable scroll distance,
+    // plus one viewport so the last card can rest on screen before release
+    section.style.height = (window.innerHeight + travel * 1.15) + 'px';
   }
 
-  let ticking = false, activePrev = -1;
   function update(){
     ticking = false;
     if (stacked) return;
-    const rect = track.getBoundingClientRect();
-    const scrollable = rect.height - vh;
-    let p = scrollable > 0 ? (-rect.top) / scrollable : 0;
-    p = Math.max(0, Math.min(1, p));
+    const r = section.getBoundingClientRect();
+    const total = section.offsetHeight - window.innerHeight;
+    const p = total > 0 ? Math.min(1, Math.max(0, -r.top / total)) : 0;
 
-    const shift = p * step * (N - 1);
-    world.style.transform = `translate3d(${-shift.toFixed(1)}px,0,0)`;
+    row.style.transform = 'translate3d(' + (-p * travel).toFixed(1) + 'px,0,0)';
 
-    // the champagne line runs up to the focal point then fades out into the
-    // dark base line (gradient stops, so there's no hard edge)
-    const head = Math.max(0, Math.min(1, (vw * 0.5 + shift) / worldW));
-    if (gp1 && gp2){
-      const mid = Math.max(0.0001, head - FADE);
-      gp0.setAttribute('offset', '0');
-      gp1.setAttribute('offset', mid.toFixed(4));
-      gp2.setAttribute('offset', Math.max(mid + 0.0001, head).toFixed(4));
-    }
-
-    // markers fade in as they come into range; content only "arrives" when the
-    // milestone is genuinely near the focal point
-    let idx = -1;
-    items.forEach((it, i) => {
-      const dist = Math.abs(i * step - shift);
-      const on = dist < step * 0.42;
-      it.classList.toggle('is-near', dist < step * 0.95);
-      it.classList.toggle('is-active', on);
-      if (on) idx = i;
+    // per-card image drift, keyed off how far each card is from centre
+    const mid = window.innerWidth / 2;
+    cards.forEach((c, i) => {
+      const img = imgs[i];
+      if (!img) return;
+      const cr = c.getBoundingClientRect();
+      if (cr.right < -200 || cr.left > window.innerWidth + 200) return;
+      const d = ((cr.left + cr.width / 2) - mid) / window.innerWidth;  // -0.5…0.5
+      img.style.transform = 'translate3d(' + (d * -26).toFixed(1) + 'px,0,0)';
     });
-    const shown = idx >= 0 ? idx : Math.round(p * (N - 1));
-    if (shown !== activePrev){
-      if (numEl) numEl.textContent = String(shown + 1).padStart(2, '0');
-      activePrev = shown;
+
+    if (bar) bar.style.width = (p * 100).toFixed(1) + '%';
+    const shown = Math.min(cards.length - 1, Math.round(p * (cards.length - 1)));
+    if (numEl && shown !== shownPrev){
+      numEl.textContent = String(shown + 1).padStart(2, '0');
+      shownPrev = shown;
     }
   }
-  function onScroll(){ if (!ticking){ ticking = true; requestAnimationFrame(update); } }
 
+  function onScroll(){ if (!ticking){ ticking = true; requestAnimationFrame(update); } }
   layout(); update();
   addEventListener('scroll', onScroll, { passive: true });
   addEventListener('resize', () => { layout(); update(); });
@@ -850,18 +814,6 @@
   if (!chatLog || !finderInput) return; // not on this page
 
   const FINDER_DATA = {
-    wedding: {
-      label: 'Wedding Photography & Film',
-      blurb: 'Full-day coverage shot with a calm, editorial eye — one team from first look to last dance.',
-      note: 'Style reference from Jack’s existing work — full wedding galleries land after Aera’s first bookings.',
-      price: '£950 – £1,800', team: 'Founder & lead shooter, Leeds', link: 'weddings.html',
-      images: [
-        'https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/2bf343c0-129e-4bfa-9f17-0c20e62069dd/A7400282-Enhanced-NR.jpg',
-        'https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/a5c290e2-e3f5-4aed-81bd-9e8fa29d2e44/A7400277.jpg',
-        'https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/3f7fc108-1721-4d25-8fbd-b1328cbbfbe9/Screenshot%202025-02-05%20at%2010.41.30%E2%80%AFPM.png'
-      ],
-      kw: ['wedding','marriage','bride','groom','engaged','fianc','barn','venue','vows','ceremony','reception']
-    },
     event: {
       label: 'Event Coverage',
       blurb: 'Fast-moving, high-energy coverage — stills and a short recap edit from the same day.',
@@ -975,7 +927,7 @@
     const typingEl = addAeraTyping();
     setTimeout(() => {
       typingEl.remove();
-      addAeraMessage('Hi — I’m here on behalf of Aera. Tell me a little about your project — a wedding, an event, your brand’s socials — and I’ll match you to the right service, real work, and a price range.');
+      addAeraMessage('Hi — I’m here on behalf of Aera. Tell me a little about your project — an event, a brand shoot, your socials — and I’ll match you to the right service, real work, and a price range.');
     }, 900);
   }
 
