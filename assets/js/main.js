@@ -424,6 +424,38 @@
   update();
 })();
 
+/* ---- HERO PARALLAX EXIT (home) ----
+   The background wordline drifts slower than the page (a real depth cue,
+   not just a static layer) while the headline column drifts faster and
+   fades — so leaving the hero feels like pulling away from it rather than
+   the page just scrolling past a flat banner. Same single-rAF pattern as
+   the blur-focus effect above; only runs for the height of the hero itself,
+   so it costs nothing once you're further down the page. */
+(function(){
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const hero = document.querySelector('header.hero');
+  const word = document.querySelector('.hero-bigword-wrap');
+  const inner = document.querySelector('header.hero .hero-inner');
+  const ring = document.querySelector('.hero-scrollring');
+  if (!hero || !word || !inner) return;
+  let ticking = false;
+
+  function update(){
+    ticking = false;
+    const h = hero.offsetHeight;
+    const y = Math.max(0, -hero.getBoundingClientRect().top);
+    const t = Math.min(1, y / h);
+    word.style.transform = `translateY(calc(-50% + ${(y * 0.22).toFixed(1)}px))`;
+    inner.style.transform = `translateY(${(y * 0.32).toFixed(1)}px)`;
+    inner.style.opacity = (1 - t * 0.9).toFixed(2);
+    if (ring) ring.style.opacity = (1 - t * 2.4).toFixed(2);
+  }
+  function onScroll(){ if (!ticking){ ticking = true; requestAnimationFrame(update); } }
+  addEventListener('scroll', onScroll, { passive: true });
+  addEventListener('resize', onScroll);
+  update();
+})();
+
 /* ---- SERVICE WHEEL (home) — scroll-driven arc of service names ----
    Names sit in a vertical column that bulges rightward as each passes the
    viewport's centre; the centred name is "active" and swaps in its photo.
