@@ -19,11 +19,23 @@
    The identity is carried over exactly instead: the same self-hosted Makcasa
    display face, the same palette variables copied from style.css, and the same
    eyebrow treatment (11px, .28em, uppercase) on section labels. */
+/* NOTE — the Makcasa file in this repo is an unlicensed/demo cut whose NUMERALS
+   are replaced with the foundry's "Timeless type." watermark. Letters are fine;
+   0–9 are not. That's invisible on the public site (no display-face text there
+   contains a digit) but fatal here, where the header is a date and the totals
+   column is hours.
+
+   unicode-range deliberately OMITS U+0030–U+0039, so the browser never reaches
+   for Makcasa to draw a digit and falls through to Playfair Display instead.
+   This guards every use of the display face at once — including client names
+   like "F1 Abu Dhabi 2024" — rather than patching the two places we happen to
+   have noticed. Delete this restriction once the font is properly licensed. */
 @font-face{
   font-family:'Makcasa';
   src:url('/assets/fonts/Makcasa-Regular.woff2') format('woff2'),
       url('/assets/fonts/Makcasa-Regular.ttf') format('truetype');
   font-weight:400;font-style:normal;font-display:swap;
+  unicode-range:U+0020-002F, U+003A-007E, U+00A0-00FF, U+2000-206F;
 }
 :root{
   --obsidian:#060607; --panel:#0D0D0F; --panel2:#121215;
