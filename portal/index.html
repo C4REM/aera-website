@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Belt and braces. The access gate already sends X-Robots-Tag on every
+     response under /portal/, and no page on the public site links here, but a
+     meta tag costs nothing and covers the case where the header gets stripped. -->
+<meta name="robots" content="noindex, nofollow, noarchive">
+<title>Studio Portal — Aera</title>
+<link rel="icon" type="image/svg+xml" href="/assets/img/logo/aera-monogram-favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+/* Deliberately self-contained rather than pulling in the site's style.css.
+   The public stylesheet carries a preloader, a custom cursor, Lenis smooth
+   scrolling and a WebGL background — all wrong for a tool you're going to have
+   open in a tab while you work. Same palette, none of the theatre. */
+:root{
+  --obsidian:#060607; --panel:#0D0D0F; --line:#1C1C1F;
+  --cream:#EADFCD; --dim:#B7AE9C; --stone:#8C887F;
+  --champagne:#C2A878; --rust:#C97B6E; --sage:#7E9B7A;
+  --display:'Playfair Display',Georgia,serif;
+  --sans:'Inter',-apple-system,sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--obsidian);color:var(--cream);font-family:var(--sans);font-weight:300;line-height:1.6;font-size:15px}
+a{color:inherit}
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+
+/* ---- header ---- */
+header{border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(6,6,7,.94);backdrop-filter:blur(10px);z-index:50}
+.hrow{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 0}
+.brand{display:flex;align-items:center;gap:11px;font-family:var(--display);font-weight:500;letter-spacing:.12em;font-size:15px}
+.brand svg{width:24px;height:24px;flex:none}
+.brand small{font-family:var(--sans);font-weight:300;letter-spacing:.2em;font-size:10px;text-transform:uppercase;color:var(--stone);border-left:1px solid var(--line);padding-left:11px;margin-left:2px}
+.hlinks{display:flex;gap:22px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--stone)}
+.hlinks a{text-decoration:none;transition:color .25s}
+.hlinks a:hover{color:var(--cream)}
+
+/* ---- tabs ---- */
+nav.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:34px}
+nav.tabs button{
+  background:none;border:0;border-bottom:1px solid transparent;margin-bottom:-1px;
+  color:var(--stone);font-family:inherit;font-size:12px;font-weight:400;letter-spacing:.16em;
+  text-transform:uppercase;padding:15px 18px;cursor:pointer;transition:color .25s,border-color .25s;
+}
+nav.tabs button:hover{color:var(--dim)}
+nav.tabs button[aria-selected="true"]{color:var(--champagne);border-bottom-color:var(--champagne)}
+section[hidden]{display:none}
+main{padding:34px 0 90px}
+
+h2{font-family:var(--display);font-weight:500;font-size:1.5rem;letter-spacing:-.01em;margin-bottom:4px}
+.lede{color:var(--stone);font-size:13.5px;margin-bottom:26px;max-width:60ch}
+h3{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--stone);font-weight:400;margin:38px 0 14px}
+h3:first-of-type{margin-top:0}
+
+/* ---- forms ---- */
+.jobform{background:var(--panel);border:1px solid var(--line);padding:20px;margin-bottom:34px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+label{display:block;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--stone);margin-bottom:6px}
+input,select,textarea{
+  width:100%;background:var(--obsidian);border:1px solid var(--line);color:var(--cream);
+  padding:9px 11px;font-family:inherit;font-size:14px;font-weight:300;outline:none;transition:border-color .25s;
+}
+input:focus,select:focus,textarea:focus{border-color:var(--champagne)}
+textarea{resize:vertical;min-height:62px}
+select option{background:var(--obsidian)}
+.btn{
+  background:var(--champagne);color:var(--obsidian);border:0;padding:10px 22px;
+  font-family:inherit;font-size:11px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;
+  cursor:pointer;transition:opacity .25s;
+}
+.btn:hover{opacity:.85}
+.btn.ghost{background:none;border:1px solid var(--line);color:var(--stone)}
+.btn.ghost:hover{border-color:var(--stone);color:var(--cream);opacity:1}
+.btn.danger{background:none;border:1px solid var(--line);color:var(--rust)}
+.btn.danger:hover{border-color:var(--rust);opacity:1}
+.formfoot{display:flex;gap:10px;align-items:center;margin-top:16px}
+
+/* ---- job board ---- */
+.job{border:1px solid var(--line);border-left:2px solid var(--stone);background:var(--panel);padding:15px 17px;margin-bottom:9px}
+.job[data-status="Confirmed"]{border-left-color:var(--champagne)}
+.job[data-status="Editing"]{border-left-color:#7E8BAF}
+.job[data-status="Shot"]{border-left-color:#9B8AA8}
+.job[data-status="Delivered"]{border-left-color:var(--sage)}
+.jobtop{display:flex;align-items:baseline;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.jobclient{font-family:var(--display);font-weight:500;font-size:1.12rem}
+.jobmeta{font-size:12.5px;color:var(--stone);display:flex;gap:14px;flex-wrap:wrap;margin-top:5px}
+.jobmeta b{color:var(--dim);font-weight:400}
+.jobnotes{font-size:13.5px;color:var(--dim);margin-top:9px;white-space:pre-wrap}
+.pill{font-size:10px;letter-spacing:.14em;text-transform:uppercase;border:1px solid var(--line);padding:3px 9px;color:var(--dim);white-space:nowrap}
+.jobacts{display:flex;gap:7px;margin-top:12px}
+.jobacts button{
+  background:none;border:0;color:var(--stone);font-family:inherit;font-size:10.5px;
+  letter-spacing:.14em;text-transform:uppercase;cursor:pointer;padding:3px 0;transition:color .25s;
+}
+.jobacts button:hover{color:var(--cream)}
+.jobacts button.del:hover{color:var(--rust)}
+.empty{color:var(--stone);font-size:13.5px;padding:26px 0;text-align:center;border:1px dashed var(--line)}
+.banner{border:1px solid var(--line);border-left:2px solid var(--rust);background:var(--panel);padding:14px 16px;font-size:13.5px;color:var(--dim);margin-bottom:22px}
+.banner code{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;color:var(--champagne)}
+
+/* ---- brand kit ---- */
+.swatches{display:grid;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:11px}
+.sw{border:1px solid var(--line);cursor:pointer;background:none;padding:0;text-align:left;font-family:inherit;transition:border-color .25s}
+.sw:hover{border-color:var(--champagne)}
+.sw i{display:block;height:62px}
+.sw span{display:block;padding:9px 11px;font-size:11px;letter-spacing:.05em}
+.sw span b{display:block;font-weight:400;color:var(--cream);margin-bottom:2px;letter-spacing:.12em;text-transform:uppercase;font-size:10px}
+.sw span em{font-style:normal;color:var(--stone);font-family:ui-monospace,Menlo,monospace}
+.kit{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:11px}
+.card{border:1px solid var(--line);background:var(--panel);padding:17px 19px}
+.card h4{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--champagne);font-weight:400;margin-bottom:11px}
+.card p,.card li{font-size:13.5px;color:var(--dim);margin-bottom:6px}
+.card ul{list-style:none}
+.card li::before{content:'—';color:var(--stone);margin-right:8px}
+.card code{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;color:var(--cream);background:var(--obsidian);padding:1px 5px;border:1px solid var(--line)}
+.dl{display:inline-block;margin-top:9px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--champagne);text-decoration:none;border-bottom:1px solid var(--line);padding-bottom:3px;transition:border-color .25s}
+.dl:hover{border-color:var(--champagne)}
+.toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--champagne);color:var(--obsidian);padding:10px 22px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;transition:transform .35s cubic-bezier(.16,1,.3,1);z-index:99}
+.toast.show{transform:translateX(-50%) translateY(0)}
+@media(max-width:620px){
+  .hlinks{gap:14px}
+  nav.tabs button{padding:14px 12px;letter-spacing:.1em}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap hrow">
+    <div class="brand">
+      <svg viewBox="0 0 200 200" fill="none" aria-hidden="true">
+        <path d="M100,52 L138,100 L100,148 L62,100 Z" stroke="#C2A878" stroke-width="1.5" opacity="0.5"/>
+        <path d="M100,60 L70,100 L130,100 Z M100,140 L70,100 M130,100 L100,140 M82,85 L118,85 M82,115 L118,115"
+              stroke="#C2A878" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      AERA <small>Studio Portal</small>
+    </div>
+    <div class="hlinks">
+      <a href="/" target="_blank" rel="noopener">Live site ↗</a>
+      <a href="#" id="signout">Sign out</a>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="tabs" role="tablist">
+    <button role="tab" aria-selected="true"  data-tab="jobs">Job Tracker</button>
+    <button role="tab" aria-selected="false" data-tab="kit">Brand Kit</button>
+  </nav>
+
+  <!-- ============================ JOB TRACKER ============================ -->
+  <section id="jobs">
+    <h2>Job Tracker</h2>
+    <p class="lede">Every enquiry and booking in one place, shared across the team. Changes save instantly — whoever opens this next sees them.</p>
+
+    <div id="kvbanner" hidden class="banner"></div>
+
+    <form class="jobform" id="jobform">
+      <input type="hidden" name="id">
+      <div class="grid">
+        <div><label for="f-client">Client</label><input id="f-client" name="client" required placeholder="Rolls-Royce"></div>
+        <div><label for="f-type">Job type</label><input id="f-type" name="type" placeholder="Brand film" list="types"></div>
+        <div><label for="f-date">Shoot date</label><input id="f-date" name="date" type="date"></div>
+        <div><label for="f-assignee">Lead</label><input id="f-assignee" name="assignee" placeholder="Jack" list="people"></div>
+        <div><label for="f-fee">Fee</label><input id="f-fee" name="fee" placeholder="£950"></div>
+        <div><label for="f-status">Status</label>
+          <select id="f-status" name="status">
+            <option>Enquiry</option><option>Confirmed</option><option>Shot</option>
+            <option>Editing</option><option>Delivered</option>
+          </select>
+        </div>
+      </div>
+      <datalist id="types">
+        <option>Wedding</option><option>Event</option><option>Brand film</option>
+        <option>Social content</option><option>Portraits</option><option>Graphic design</option>
+      </datalist>
+      <datalist id="people"><option>Jack</option><option>Vance</option></datalist>
+      <div style="margin-top:12px">
+        <label for="f-notes">Notes</label>
+        <textarea id="f-notes" name="notes" placeholder="Location, kit needed, deadline, anything the other person would need to know."></textarea>
+      </div>
+      <div class="formfoot">
+        <button type="submit" class="btn" id="submitbtn">Add job</button>
+        <button type="button" class="btn ghost" id="cancelbtn" hidden>Cancel</button>
+        <span id="formnote" style="font-size:12.5px;color:var(--stone)"></span>
+      </div>
+    </form>
+
+    <div id="board"><div class="empty">Loading…</div></div>
+  </section>
+
+  <!-- ============================= BRAND KIT ============================= -->
+  <section id="kit" hidden>
+    <h2>Brand Kit</h2>
+    <p class="lede">The reference sheet, so nobody has to ask what the gold hex is again. Click any colour to copy it.</p>
+
+    <h3>Colours</h3>
+    <div class="swatches" id="swatches"></div>
+
+    <h3>Typography</h3>
+    <div class="kit">
+      <div class="card">
+        <h4>Display — Makcasa</h4>
+        <p>Headlines and the wordmark only. Single weight (400). Falls back to Playfair Display where Makcasa isn't loaded.</p>
+        <p><code>font-family: 'Makcasa', 'Playfair Display', serif</code></p>
+      </div>
+      <div class="card">
+        <h4>Body — Inter</h4>
+        <p>Everything else. Light (300) for body copy, 400 for small caps and labels.</p>
+        <p><code>font-family: 'Inter', sans-serif</code></p>
+      </div>
+      <div class="card">
+        <h4>Eyebrow / label style</h4>
+        <p>The small uppercase text above headings.</p>
+        <p><code>11px · letter-spacing .28em · uppercase</code></p>
+      </div>
+    </div>
+
+    <h3>Logo</h3>
+    <div class="kit">
+      <div class="card">
+        <h4>Monogram</h4>
+        <p>The diamond mark. Works on obsidian; never place it on a light background without redrawing the strokes.</p>
+        <a class="dl" href="/assets/img/logo/aera-monogram-favicon.svg" download>Download SVG</a>
+      </div>
+      <div class="card">
+        <h4>Instagram avatar</h4>
+        <p>1080×1080, tight crop, obsidian background. Already sized for the circular profile crop.</p>
+        <p style="color:var(--stone);font-size:12.5px">Saved in the project folder as <code>instagram-avatar-aera.png</code></p>
+      </div>
+      <div class="card">
+        <h4>Clear space</h4>
+        <p>Leave at least the height of the diamond's centre bar on all sides. Don't rotate, recolour, or add effects.</p>
+      </div>
+    </div>
+
+    <h3>Delivery standards</h3>
+    <div class="kit">
+      <div class="card">
+        <h4>Instagram export</h4>
+        <ul>
+          <li>Feed: <code>1080×1350</code> (4:5)</li>
+          <li>Compose so it survives a <code>3:4</code> centre crop — that's the grid preview</li>
+          <li>Reels / stories: <code>1080×1920</code></li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>File naming</h4>
+        <p><code>AERA_Client_JobType_YYYY-MM-DD_###</code></p>
+        <p style="color:var(--stone);font-size:12.5px">e.g. <code>AERA_RollsRoyce_BrandFilm_2026-03-14_012</code></p>
+      </div>
+      <div class="card">
+        <h4>Grade</h4>
+        <p>One consistent look across a delivery. Warm, low-contrast shadows, no crushed blacks — it should sit next to the site's palette without clashing.</p>
+      </div>
+    </div>
+
+    <h3>Contact</h3>
+    <div class="kit">
+      <div class="card">
+        <h4>Client-facing address</h4>
+        <p><code>bookings@aerastudios.org</code></p>
+        <p style="color:var(--stone);font-size:12.5px">Use this on quotes, invoices and social bios — never a personal address.</p>
+      </div>
+      <div class="card">
+        <h4>Internal</h4>
+        <ul>
+          <li><code>jack@aerastudios.org</code></li>
+          <li><code>vance@aerastudios.org</code></li>
+          <li><code>instagram@aerastudios.org</code></li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>Credit rule</h4>
+        <p>Always credit accurately on shared work — the role someone actually did, not a rounded-up one. It costs nothing and it's the difference between a studio people trust and one they check.</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  'use strict';
+
+  /* ---------------- tabs ---------------- */
+  const tabs = document.querySelectorAll('nav.tabs button');
+  tabs.forEach(t => t.addEventListener('click', () => {
+    tabs.forEach(o => {
+      const on = o === t;
+      o.setAttribute('aria-selected', String(on));
+      document.getElementById(o.dataset.tab).hidden = !on;
+    });
+  }));
+
+  /* ---------------- toast ---------------- */
+  const toastEl = document.getElementById('toast');
+  let toastTimer;
+  function toast(msg){
+    toastEl.textContent = msg;
+    toastEl.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toastEl.classList.remove('show'), 1900);
+  }
+
+  /* ---------------- brand kit swatches ---------------- */
+  const COLOURS = [
+    ['Obsidian',   '#060607', 'Backgrounds'],
+    ['Champagne',  '#C2A878', 'Accent only'],
+    ['Cream',      '#EADFCD', 'Primary text'],
+    ['Cream dim',  '#B7AE9C', 'Secondary text'],
+    ['Stone',      '#8C887F', 'Captions, meta'],
+    ['Smoke',      '#1C1C1F', 'Hairline borders'],
+    ['Ivory',      '#F5F1E9', 'Rare, light surfaces']
+  ];
+  document.getElementById('swatches').innerHTML = COLOURS.map(([n,hex,use]) => `
+    <button class="sw" data-hex="${hex}" title="Copy ${hex}">
+      <i style="background:${hex}"></i>
+      <span><b>${n}</b><em>${hex}</em><br><span style="color:var(--stone);font-size:10.5px">${use}</span></span>
+    </button>`).join('');
+
+  document.getElementById('swatches').addEventListener('click', e => {
+    const btn = e.target.closest('.sw');
+    if (!btn) return;
+    navigator.clipboard.writeText(btn.dataset.hex)
+      .then(() => toast(btn.dataset.hex + ' copied'))
+      .catch(() => toast('Copy failed'));
+  });
+
+  /* ---------------- job tracker ---------------- */
+  const API      = '/portal/api/jobs';
+  const board    = document.getElementById('board');
+  const form     = document.getElementById('jobform');
+  const banner   = document.getElementById('kvbanner');
+  const submitBtn= document.getElementById('submitbtn');
+  const cancelBtn= document.getElementById('cancelbtn');
+  const formNote = document.getElementById('formnote');
+  const ORDER    = ['Enquiry','Confirmed','Shot','Editing','Delivered'];
+  let jobs = [];
+
+  const esc = s => String(s ?? '').replace(/[&<>"']/g, c =>
+    ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+  function niceDate(d){
+    if (!d) return '';
+    const dt = new Date(d + 'T00:00:00');
+    if (isNaN(dt)) return d;
+    return dt.toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' });
+  }
+
+  function render(){
+    if (!jobs.length){
+      board.innerHTML = '<div class="empty">No jobs yet. Add the first one above.</div>';
+      return;
+    }
+    // Group by status in workflow order rather than by date: what you want to
+    // know opening this is "what needs doing", and that's a status question.
+    const groups = ORDER
+      .map(s => [s, jobs.filter(j => j.status === s)])
+      .filter(([, list]) => list.length);
+
+    board.innerHTML = groups.map(([status, list]) => `
+      <h3>${status} · ${list.length}</h3>
+      ${list.map(j => `
+        <div class="job" data-status="${esc(j.status)}">
+          <div class="jobtop">
+            <div class="jobclient">${esc(j.client)}</div>
+            <span class="pill">${esc(j.status)}</span>
+          </div>
+          <div class="jobmeta">
+            ${j.type     ? `<span>${esc(j.type)}</span>` : ''}
+            ${j.date     ? `<span><b>${esc(niceDate(j.date))}</b></span>` : ''}
+            ${j.assignee ? `<span>Lead: ${esc(j.assignee)}</span>` : ''}
+            ${j.fee      ? `<span>${esc(j.fee)}</span>` : ''}
+          </div>
+          ${j.notes ? `<div class="jobnotes">${esc(j.notes)}</div>` : ''}
+          <div class="jobacts">
+            <button data-edit="${esc(j.id)}">Edit</button>
+            <button class="del" data-del="${esc(j.id)}">Delete</button>
+          </div>
+        </div>`).join('')}
+    `).join('');
+  }
+
+  async function api(method, body){
+    const res = await fetch(API, {
+      method,
+      headers: body ? { 'Content-Type': 'application/json' } : undefined,
+      body: body ? JSON.stringify(body) : undefined
+    });
+    // The gate returns 401 once the 14-day session lapses. Reloading lands on
+    // the login form rather than leaving a dead board on screen.
+    if (res.status === 401){ location.reload(); throw new Error('signed out'); }
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw Object.assign(new Error(data.message || data.error || 'Request failed'), { data });
+    return data;
+  }
+
+  async function load(){
+    try {
+      const { jobs: list } = await api('GET');
+      jobs = list;
+      render();
+    } catch (err) {
+      if (err.data && err.data.error === 'no-kv'){
+        banner.hidden = false;
+        banner.innerHTML = 'The job tracker needs its storage connected before it can save anything. In Cloudflare → Workers &amp; Pages → your project → Settings → Bindings, add a KV namespace binding called <code>PORTAL_KV</code>. The brand kit tab works regardless.';
+        board.innerHTML = '<div class="empty">Storage not connected yet.</div>';
+        form.querySelectorAll('input,select,textarea,button').forEach(el => el.disabled = true);
+        return;
+      }
+      board.innerHTML = '<div class="empty">Couldn’t load jobs. Refresh to try again.</div>';
+    }
+  }
+
+  function resetForm(){
+    form.reset();
+    form.id.value = '';
+    submitBtn.textContent = 'Add job';
+    cancelBtn.hidden = true;
+    formNote.textContent = '';
+  }
+
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    const data = Object.fromEntries(new FormData(form));
+    if (!data.client.trim()) return;
+    submitBtn.disabled = true;
+    try {
+      const editing = !!data.id;
+      const { jobs: list } = await api(editing ? 'PUT' : 'POST', data);
+      jobs = list;
+      render();
+      resetForm();
+      toast(editing ? 'Job updated' : 'Job added');
+    } catch {
+      toast('Save failed');
+    } finally {
+      submitBtn.disabled = false;
+    }
+  });
+
+  cancelBtn.addEventListener('click', resetForm);
+
+  board.addEventListener('click', async e => {
+    const editId = e.target.dataset.edit;
+    const delId  = e.target.dataset.del;
+
+    if (editId){
+      const j = jobs.find(x => x.id === editId);
+      if (!j) return;
+      form.id.value       = j.id;
+      form.client.value   = j.client   || '';
+      form.type.value     = j.type     || '';
+      form.date.value     = j.date     || '';
+      form.assignee.value = j.assignee || '';
+      form.fee.value      = j.fee      || '';
+      form.notes.value    = j.notes    || '';
+      form.status.value   = j.status   || 'Enquiry';
+      submitBtn.textContent = 'Save changes';
+      cancelBtn.hidden = false;
+      formNote.textContent = 'Editing ' + j.client;
+      form.scrollIntoView({ behavior:'smooth', block:'center' });
+      form.client.focus();
+      return;
+    }
+
+    if (delId){
+      const j = jobs.find(x => x.id === delId);
+      if (!confirm('Delete "' + (j ? j.client : 'this job') + '"? This cannot be undone.')) return;
+      try {
+        const { jobs: list } = await api('DELETE', { id: delId });
+        jobs = list;
+        render();
+        toast('Job deleted');
+      } catch {
+        toast('Delete failed');
+      }
+    }
+  });
+
+  /* ---------------- sign out ---------------- */
+  // The session cookie is HttpOnly so script can't clear it directly. Expiring
+  // it by name from the server isn't needed either — overwriting with an
+  // already-past date on the same path is enough, and the gate re-checks the
+  // signature on every request anyway.
+  document.getElementById('signout').addEventListener('click', e => {
+    e.preventDefault();
+    document.cookie = 'aera_portal=; Path=/portal; Max-Age=0; SameSite=Lax; Secure';
+    location.reload();
+  });
+
+  load();
+})();
+</script>
+</body>
+</html>
