@@ -63,12 +63,28 @@ a{color:inherit}
 @keyframes ringPulse{0%{box-shadow:0 0 0 2px var(--obsidian),0 0 0 3px var(--ring,var(--champagne)),0 0 0 3px var(--ring,var(--champagne))}70%{box-shadow:0 0 0 2px var(--obsidian),0 0 0 3px var(--ring,var(--champagne)),0 0 0 9px transparent}100%{box-shadow:0 0 0 2px var(--obsidian),0 0 0 3px var(--ring,var(--champagne)),0 0 0 9px transparent}}
 @keyframes modalIn{from{opacity:0;transform:scale(.96) translateY(8px)}to{opacity:1;transform:scale(1) translateY(0)}}
 @keyframes toastPop{0%{transform:translateX(-50%) translateY(80px) scale(.96)}100%{transform:translateX(-50%) translateY(0) scale(1)}}
+@keyframes pulseDot{0%{box-shadow:0 0 0 0 rgba(126,155,122,.55)}70%{box-shadow:0 0 0 7px rgba(126,155,122,0)}100%{box-shadow:0 0 0 0 rgba(126,155,122,0)}}
+
+/* Floating vertical ribbon pinned to the edge of the viewport — the one
+   unmistakably "designed by a person" flourish, not derivable from a
+   dashboard template. Says something true about the studio (two people, two
+   cities) rather than a generic "est." tag, and stays out of the way of
+   every interactive element since it's fixed, off to the side, and inert. */
+.edgetag{position:fixed;left:0;top:68%;transform:translateY(-50%);z-index:55;pointer-events:none}
+.edgetag span{display:block;writing-mode:vertical-rl;transform:rotate(180deg);background:var(--champagne);color:var(--obsidian);
+  font-family:var(--sans);font-size:10px;font-weight:500;letter-spacing:.24em;text-transform:uppercase;padding:16px 8px;white-space:nowrap}
+@media(max-width:780px){.edgetag{display:none}}
 
 header{border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(6,6,7,.94);backdrop-filter:blur(10px);z-index:60}
-.hrow{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 0}
+.hrow{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 0;position:relative}
 .brand{display:flex;align-items:center;gap:11px;font-family:var(--display);font-weight:400;letter-spacing:.12em;font-size:16px}
 .brand svg{width:24px;height:24px;flex:none}
 .brand small{font-family:var(--sans);font-weight:300;letter-spacing:.2em;font-size:10px;text-transform:uppercase;color:var(--stone);border-left:1px solid var(--line);padding-left:11px;margin-left:2px}
+/* Centre status pill, koenvo's "Available" dot — but reporting something
+   real (today) rather than a static "system operational" cliché. */
+.statuspill{display:flex;align-items:center;gap:8px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--sage);position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);white-space:nowrap}
+.statuspill i{width:7px;height:7px;border-radius:50%;background:var(--sage);flex:none;animation:pulseDot 2.4s ease-in-out infinite}
+@media(max-width:780px){.statuspill{display:none}}
 .hlinks{display:flex;gap:22px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--stone)}
 .hlinks a{text-decoration:none;transition:color .25s;cursor:pointer}
 .hlinks a:hover{color:var(--cream)}
@@ -82,8 +98,13 @@ nav.tabs button[aria-selected="true"]{color:var(--obsidian);background:var(--cha
 section[hidden]{display:none}
 main{padding:28px 0 90px}
 
-h2{font-family:var(--display);font-weight:400;font-size:1.75rem;letter-spacing:-.01em;margin-bottom:5px;line-height:1.15}
-.lede{color:var(--stone);font-size:13.5px;margin-bottom:22px;max-width:64ch}
+/* Oversized, mixed-weight headline instead of a modest section title — the
+   single biggest lever for "feels designed" vs. "feels like a dashboard
+   template". The eyebrow carries the small print so the headline itself can
+   be nothing but the two or three words that matter, set big. */
+.eyebrow{font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:var(--champagne);margin-bottom:12px;animation:riseIn .5s var(--ease) backwards}
+h2{font-family:var(--display);font-weight:400;font-size:clamp(2.15rem,4.6vw,3.25rem);letter-spacing:-.01em;margin-bottom:10px;line-height:.98;animation:riseIn .55s var(--ease) .04s backwards}
+.lede{color:var(--stone);font-size:13.5px;margin-bottom:26px;max-width:56ch}
 h3{font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--dim);font-weight:400;margin:36px 0 14px}
 h3:first-of-type{margin-top:0}
 
@@ -108,8 +129,12 @@ select option{background:var(--obsidian)}
 .teamrow{display:flex;gap:24px;flex-wrap:wrap;margin-bottom:22px;animation:riseIn .5s var(--ease) .05s backwards}
 .avatar{background:none;border:0;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;font-family:inherit;padding:2px;transition:transform .25s var(--ease),opacity .25s}
 .avatar:hover{transform:translateY(-2px)}
-.avatar .circ{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-size:13.5px;color:var(--obsidian);background:var(--ring,var(--champagne));box-shadow:0 0 0 2px var(--obsidian),0 0 0 3px var(--ring,var(--champagne));transition:box-shadow .3s,transform .3s}
+.avatar .circ{position:relative;width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-size:13.5px;color:var(--obsidian);background:var(--ring,var(--champagne));box-shadow:0 0 0 2px var(--obsidian),0 0 0 3px var(--ring,var(--champagne));transition:box-shadow .3s,transform .3s}
+/* Soft rim-light behind the mark, the same trick as the cutout-portrait glow
+   on koenvo.com, scaled down to an avatar instead of a hero photograph. */
+.avatar .circ::before{content:'';position:absolute;inset:-7px;border-radius:50%;background:var(--ring,var(--champagne));opacity:.16;filter:blur(7px);z-index:-1;transition:opacity .3s}
 .avatar:hover .circ{transform:scale(1.06);box-shadow:0 0 0 2px var(--obsidian),0 0 0 3px var(--ring,var(--champagne)),0 0 15px -3px var(--ring,var(--champagne))}
+.avatar:hover .circ::before{opacity:.4}
 .avatar.justtoggled .circ{animation:ringPulse .6s var(--ease)}
 .avatar .nm{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--stone);transition:color .25s}
 .avatar:hover .nm{color:var(--cream)}
@@ -121,8 +146,14 @@ select option{background:var(--obsidian)}
 /* ---- client pool — this week's bookings at a glance, Longwave's pill strip ---- */
 .pool{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
 .pool[hidden]{display:none}
-.poolpill{background:var(--panel2);border:1px solid var(--line);border-left:3px solid var(--stone);padding:6px 8px 6px 12px;font-size:12px;color:var(--dim);display:inline-flex;align-items:center;gap:8px;letter-spacing:.02em;animation:cardIn .35s var(--ease) backwards}
+.poolpill{background:var(--panel2);border:1px solid var(--line);border-left:3px solid var(--stone);padding:6px 8px 6px 12px;font-size:12px;color:var(--dim);display:inline-flex;align-items:center;gap:8px;letter-spacing:.02em;animation:cardIn .35s var(--ease) backwards;transition:transform .2s var(--ease)}
 .poolpill b{font-family:var(--display);font-weight:400;color:var(--champagne);font-size:11px;background:var(--obsidian);padding:2px 7px;border:1px solid var(--line)}
+/* A hair of tilt, alternating — decorative only, never on anything you drag
+   or click as a target, but it's the difference between a strip that looks
+   placed by hand and one that looks generated. */
+.poolpill:nth-child(odd){transform:rotate(-.6deg)}
+.poolpill:nth-child(even){transform:rotate(.5deg)}
+.poolpill:hover{transform:rotate(0deg) translateY(-1px)}
 
 /* ---- week nav — rounded cluster instead of loose buttons ---- */
 .weekbar{display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap}
@@ -204,8 +235,15 @@ td.day.is-today.dragover{background:#16160F}
 .statushint{font-size:11.5px;color:var(--stone);margin-top:7px;display:flex;align-items:center;gap:7px}
 .statushint i{width:12px;height:3px;display:block;flex:none}
 
-/* ---- week summary strip ---- */
-.summary{display:flex;gap:0;flex-wrap:wrap;border:1px solid var(--line);border-bottom:0;background:var(--panel)}
+/* ---- week summary strip ----
+   One dominant number instead of five equal boxes — asymmetric on purpose,
+   the same move as a portfolio hero that gives one thing all the weight
+   instead of spreading everything evenly. */
+.summary{display:flex;align-items:stretch;flex-wrap:wrap;border:1px solid var(--line);border-bottom:0;background:var(--panel)}
+.summary .hero{padding:16px 26px;border-right:1px solid var(--line);display:flex;flex-direction:column;justify-content:center;min-width:150px}
+.summary .hero .v{font-family:var(--display);font-size:2.5rem;color:var(--champagne);line-height:.92;animation:riseIn .35s var(--ease) backwards}
+.summary .hero .k{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--stone);margin-top:7px}
+.summary .rest{display:flex;flex-wrap:wrap;flex:1}
 .summary .s{padding:11px 16px;border-right:1px solid var(--line);display:flex;align-items:baseline;gap:8px;min-width:0}
 .summary .s:last-child{border-right:0}
 .summary .v{font-family:var(--display);font-size:1.15rem;color:var(--cream);line-height:1;animation:riseIn .3s var(--ease) backwards}
@@ -237,7 +275,10 @@ kbd{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;border:1px solid v
 /* ---- brand kit ---- */
 .swatches{display:grid;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:11px}
 .sw{border:1px solid var(--line);cursor:pointer;background:none;padding:0;text-align:left;font-family:inherit;transition:border-color .25s,transform .2s}
-.sw:hover{border-color:var(--champagne);transform:translateY(-2px)}
+.sw:nth-child(3n+1){transform:rotate(-.5deg)}
+.sw:nth-child(3n+2){transform:rotate(.4deg)}
+.sw:nth-child(3n){transform:rotate(-.3deg)}
+.sw:hover{border-color:var(--champagne);transform:translateY(-2px) rotate(0deg)}
 .sw i{display:block;height:62px}
 .sw span{display:block;padding:9px 11px;font-size:11px;letter-spacing:.05em}
 .sw span b{display:block;font-weight:400;color:var(--cream);margin-bottom:2px;letter-spacing:.12em;text-transform:uppercase;font-size:10px}
@@ -285,6 +326,8 @@ kbd{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;border:1px solid v
 </head>
 <body>
 
+<div class="edgetag" aria-hidden="true"><span>Leeds · Dubai</span></div>
+
 <header>
   <div class="wrap hrow">
     <div class="brand">
@@ -295,6 +338,7 @@ kbd{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;border:1px solid v
       </svg>
       AERA <small>Studio Portal</small>
     </div>
+    <div class="statuspill" id="statuspill"><i></i>—</div>
     <div class="hlinks">
       <a href="/" target="_blank" rel="noopener">Live site ↗</a>
       <a id="signout">Sign out</a>
@@ -311,6 +355,7 @@ kbd{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;border:1px solid v
 
   <!-- ============================= WEEK PLANNER ============================ -->
   <section id="week">
+    <div class="eyebrow">Studio schedule</div>
     <h2>Week Planner</h2>
     <p class="lede">Everyone's week in one grid — who's on, and what they're on. Click an avatar to focus the board on that person, drag a card to move it, and tap its status to move it along.</p>
 
@@ -345,6 +390,7 @@ kbd{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;border:1px solid v
 
   <!-- ============================== JOB TRACKER ============================ -->
   <section id="jobs" hidden>
+    <div class="eyebrow">Pipeline</div>
     <h2>Job Tracker</h2>
     <p class="lede">The pipeline. The planner above is who's working this week; this is every enquiry and booking, whenever it lands.</p>
 
@@ -386,6 +432,7 @@ kbd{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;border:1px solid v
 
   <!-- =============================== BRAND KIT ============================= -->
   <section id="kit" hidden>
+    <div class="eyebrow">Reference</div>
     <h2>Brand Kit</h2>
     <p class="lede">The reference sheet, so nobody has to ask what the gold hex is again. Click any colour to copy it.</p>
 
@@ -566,6 +613,11 @@ kbd{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;border:1px solid v
     if (!res.ok) throw Object.assign(new Error(data.message || data.error || 'Request failed'), { data });
     return data;
   }
+
+  // The header's status pill reports something real — today — rather than a
+  // static "all systems go" that never changes and stops meaning anything.
+  $('statuspill').lastChild.textContent =
+    new Date().toLocaleDateString('en-GB', { weekday: 'long' }) + ' · studio open';
 
   const tabs = document.querySelectorAll('nav.tabs button');
   tabs.forEach(t => t.addEventListener('click', () => {
@@ -920,16 +972,19 @@ kbd{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;border:1px solid v
       });
     });
     const pct = count ? Math.round(done / count * 100) : 0;
-    const cells = [
-      ['Jobs this week', String(count), ''],
+    const rest = [
       ['Active clients', String(clients.size), ''],
       ['Done', count ? `${done}/${count} · ${pct}%` : '—', done && done === count && count ? 'good' : ''],
       ['Free slots', String(freeCells), ''],
       ['Days off', String(offCells), '']
     ];
-    $('summary').innerHTML = cells.map(([k,v,cls]) =>
-      `<div class="s ${cls}"><span class="v">${esc(v)}</span><span class="k">${esc(k)}</span></div>`
-    ).join('');
+    // One dominant number rather than five equal boxes — see the CSS note by
+    // .summary .hero for why.
+    $('summary').innerHTML =
+      `<div class="hero"><span class="v">${esc(count)}</span><span class="k">Job${count===1?'':'s'} this week</span></div>` +
+      `<div class="rest">${rest.map(([k,v,cls]) =>
+        `<div class="s ${cls}"><span class="v">${esc(v)}</span><span class="k">${esc(k)}</span></div>`
+      ).join('')}</div>`;
   }
 
   const setSaving = on => $('saving').classList.toggle('on', on);
