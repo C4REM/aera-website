@@ -114,8 +114,23 @@ td.day{padding:8px;min-width:150px;background:var(--obsidian)}
 td.day.is-today{background:#0A0A0C}
 td.day.is-off{background:repeating-linear-gradient(45deg,transparent,transparent 7px,#0E0E11 7px,#0E0E11 14px)}
 
-.task{border:1px solid var(--line);border-left:2px solid var(--stone);background:var(--panel2);padding:7px 9px;margin-bottom:6px;cursor:pointer;display:flex;gap:8px;align-items:flex-start;transition:border-color .2s,background .2s}
-.task:hover{background:#17171B;border-color:var(--line2)}
+.task{border:1px solid var(--line);border-left:2px solid var(--stone);background:var(--panel2);padding:7px 9px;margin-bottom:6px;cursor:grab;display:flex;gap:8px;align-items:flex-start;
+  transition:border-color .18s,background .18s,transform .18s cubic-bezier(.16,1,.3,1),box-shadow .18s}
+.task:hover{background:#17171B;border-color:var(--line2);transform:translateX(2px);box-shadow:-2px 0 0 0 rgba(194,168,120,.25)}
+.task:active{cursor:grabbing}
+/* The card being dragged stays visible but recedes, so you can still see where
+   it came from while you choose a destination. */
+.task.dragging{opacity:.35;transform:scale(.97)}
+/* Hours badge doubles as the status control — click cycles. Made obvious with a
+   pointer and a ring on hover rather than another button competing for space. */
+.task .h{cursor:pointer;transition:box-shadow .15s,transform .15s}
+.task .h:hover{box-shadow:0 0 0 2px rgba(234,223,205,.35);transform:scale(1.06)}
+.task .dot{width:9px;height:9px;border-radius:50%;flex:none;margin-top:3px;cursor:pointer;transition:box-shadow .15s,transform .15s}
+.task .dot:hover{box-shadow:0 0 0 2px rgba(234,223,205,.35);transform:scale(1.18)}
+/* Whole empty area of a cell is a target, not just the little + */
+td.day{cursor:copy}
+td.day.dragover{background:#14140F;box-shadow:inset 0 0 0 1px var(--champagne)}
+td.day.is-today.dragover{background:#16160F}
 .task .txt{flex:1;min-width:0}
 .task .c{font-size:12.5px;color:var(--cream);line-height:1.3;font-weight:400;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .task .k{font-size:11px;color:var(--stone);line-height:1.35;margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -137,6 +152,21 @@ td.day.is-off{background:repeating-linear-gradient(45deg,transparent,transparent
 .legend i{width:12px;height:3px;display:block;flex:none}
 .statushint{font-size:11.5px;color:var(--stone);margin-top:7px;display:flex;align-items:center;gap:7px}
 .statushint i{width:12px;height:3px;display:block;flex:none}
+
+/* ---- week summary strip ---- */
+.summary{display:flex;gap:0;flex-wrap:wrap;border:1px solid var(--line);border-bottom:0;background:var(--panel)}
+.summary .s{padding:11px 16px;border-right:1px solid var(--line);display:flex;align-items:baseline;gap:8px;min-width:0}
+.summary .s:last-child{border-right:0}
+.summary .v{font-family:var(--display);font-size:1.15rem;color:var(--cream);line-height:1}
+.summary .k{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--stone)}
+.summary .s.warn .v{color:var(--rust)}
+.summary .s.good .v{color:var(--sage)}
+.summary .s.push{margin-left:auto;border-right:0;border-left:1px solid var(--line)}
+.saving{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--champagne);opacity:0;transition:opacity .2s;white-space:nowrap}
+.saving.on{opacity:1}
+.hint{font-size:11.5px;color:var(--stone);margin-top:10px;letter-spacing:.02em}
+.hint b{color:var(--dim);font-weight:400}
+kbd{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;border:1px solid var(--line2);border-bottom-width:2px;padding:1px 5px;color:var(--dim);margin:0 1px}
 
 /* ---- modal ---- */
 .modal{position:fixed;inset:0;background:rgba(6,6,7,.84);backdrop-filter:blur(3px);z-index:100;display:flex;align-items:center;justify-content:center;padding:24px}
@@ -239,12 +269,20 @@ td.day.is-off{background:repeating-linear-gradient(45deg,transparent,transparent
       <button class="nav" id="nextweek" aria-label="Next week">›</button>
       <div class="weeklabel" id="weeklabel"></div>
       <button class="btn ghost sm" id="thisweek">This week</button>
+      <span class="saving" id="saving">Saving…</span>
       <span style="flex:1"></span>
       <button class="btn ghost sm" id="teambtn">Edit team</button>
     </div>
 
+    <div class="summary" id="summary"></div>
     <div class="gridwrap"><table class="plan" id="plantable"></table></div>
     <div class="legend" id="legend"></div>
+    <p class="hint">
+      <b>Drag</b> a card to move it to another day or person ·
+      <b>Click the hours badge</b> to cycle its status ·
+      <b>Click any empty space</b> in a cell to add ·
+      <kbd>←</kbd><kbd>→</kbd> change week, <kbd>T</kbd> today
+    </p>
   </section>
 
   <!-- ============================== JOB TRACKER ============================ -->
@@ -525,6 +563,7 @@ td.day.is-off{background:repeating-linear-gradient(45deg,transparent,transparent
 
     if (!members.length){
       $('plantable').innerHTML = '<tr><td class="empty" style="border:0;padding:30px">No team yet — use “Edit team”.</td></tr>';
+      renderSummary();   // still zero the counters rather than leaving them stale
       return;
     }
 
@@ -548,20 +587,24 @@ td.day.is-off{background:repeating-linear-gradient(45deg,transparent,transparent
         const cls = ['day', iso(d)===todayIso() ? 'is-today':'', dayOff ? 'is-off':''].filter(Boolean).join(' ');
         const capCls = used > cap ? 'over' : (used === cap && used > 0 ? 'full' : '');
 
-        return `<td class="${cls}">
+        return `<td class="${cls}" data-member="${esc(m.id)}" data-date="${date}">
           ${dayOff ? '<div class="offtag">Off</div>' : ''}
           ${list.map(t => {
             const st = t.status || 'To do';
             const col = colourFor(st);
+            const cyc = `${esc(st)} — click to advance`;
             return `
-            <div class="task" data-task="${esc(t.id)}" data-member="${esc(m.id)}" data-date="${date}"
-                 data-status="${esc(st)}" title="${esc(st)}"
+            <div class="task" draggable="true"
+                 data-task="${esc(t.id)}" data-member="${esc(m.id)}" data-date="${date}"
+                 data-status="${esc(st)}" title="${esc(st)} · drag to move"
                  style="border-left-color:${col}">
               <div class="txt">
                 <div class="c">${esc(t.client || t.task)}</div>
                 ${t.client && t.task ? `<div class="k">${esc(t.task)}</div>` : ''}
               </div>
-              ${t.hours ? `<span class="h" style="background:${col}">${esc(fmtH(t.hours))}</span>` : ''}
+              ${t.hours
+                ? `<span class="h" data-cycle="${esc(t.id)}" title="${cyc}" style="background:${col}">${esc(fmtH(t.hours))}</span>`
+                : `<span class="dot" data-cycle="${esc(t.id)}" title="${cyc}" style="background:${col}"></span>`}
             </div>`;
           }).join('')}
           <div class="dayfoot">
@@ -585,6 +628,7 @@ td.day.is-off{background:repeating-linear-gradient(45deg,transparent,transparent
 
     $('plantable').innerHTML = head + '<tbody>' + body + '</tbody>';
     refreshClientList();
+    renderSummary();
   }
 
   /* Marker colour is driven by completion, not by which client it is.
@@ -650,32 +694,161 @@ td.day.is-off{background:repeating-linear-gradient(45deg,transparent,transparent
       '<span style="color:var(--line2)">·</span><span>Empty cell = free</span>';
   }
 
-  const closeTask = () => { $('taskmodal').hidden = true; editing = null; };
+  /* Drop focus on the way out. Without this the cursor stays in a field that is
+     now hidden, and because the key handler ignores keystrokes while an input
+     has focus, the week shortcuts silently stop working until you click the
+     page. Caught by the keyboard test, not by eye. */
+  function dropFocus(){
+    const el = window.document.activeElement;
+    if (el && el.blur) el.blur();
+  }
+  const closeTask = () => { $('taskmodal').hidden = true; editing = null; dropFocus(); };
   $('tm-cancel').addEventListener('click', closeTask);
   $('taskmodal').addEventListener('click', e => { if (e.target === $('taskmodal')) closeTask(); });
   document.addEventListener('keydown', e => {
-    if (e.key !== 'Escape') return;
-    if (!$('taskmodal').hidden) closeTask();
-    if (!$('teammodal').hidden) $('teammodal').hidden = true;
+    if (e.key === 'Escape'){
+      if (!$('taskmodal').hidden) closeTask();
+      if (!$('teammodal').hidden){ $('teammodal').hidden = true; dropFocus(); }
+      return;
+    }
+    // Week shortcuts, but never while typing or with a modal open — otherwise
+    // arrowing through a date field would jump the whole board.
+    const tag = (document.activeElement && document.activeElement.tagName) || '';
+    if (/^(INPUT|SELECT|TEXTAREA)$/.test(tag)) return;
+    if (!$('taskmodal').hidden || !$('teammodal').hidden) return;
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    if ($('week').hidden) return;
+
+    if (e.key === 'ArrowLeft'){ e.preventDefault(); shiftWeek(-1); }
+    else if (e.key === 'ArrowRight'){ e.preventDefault(); shiftWeek(1); }
+    else if (e.key === 't' || e.key === 'T'){ anchor = startOfWeek(new Date()); renderWeek(); }
   });
 
   $('plantable').addEventListener('click', e => {
     if (!ready) return;
+
+    // Status chip first — it sits inside a card, so it has to win before the
+    // card's own "open the editor" handler sees the click.
+    const cyc = e.target.closest('[data-cycle]');
+    if (cyc){ e.stopPropagation(); return cycleStatus(cyc.dataset.cycle); }
+
     const add = e.target.closest('button[data-add]');
     if (add) return openTask({ memberId: add.dataset.add, date: add.dataset.date });
+
     const task = e.target.closest('.task');
     if (task) return openTask({ memberId: task.dataset.member, date: task.dataset.date, taskId: task.dataset.task });
+
+    // Anywhere else in the cell counts as "add here" — the 24px + button was a
+    // needlessly small target for the most common action on the board.
+    const td = e.target.closest('td.day');
+    if (td) return openTask({ memberId: td.dataset.member, date: td.dataset.date });
   });
 
-  async function send(body, okMsg){
+  /* ---- week summary ---- */
+  function renderSummary(){
+    const days = weekDays().map(iso);
+    let planned = 0, count = 0, done = 0, overCells = 0, offCells = 0, freeCells = 0;
+    members.forEach(m => {
+      const cap = m.capacity || 8;
+      days.forEach(d => {
+        const list = tasksFor(d, m.id);
+        const used = list.reduce((s,t) => s + (t.hours || 0), 0);
+        planned += used; count += list.length;
+        done += list.filter(t => (t.status || 'To do') === 'Done').length;
+        if (isOff(d, m.id)) offCells++;
+        else if (used > cap) overCells++;
+        else if (!list.length) freeCells++;
+      });
+    });
+    const pct = count ? Math.round(done / count * 100) : 0;
+    const cells = [
+      ['Planned', fmtH(planned), ''],
+      ['Tasks', String(count), ''],
+      ['Done', count ? `${done}/${count} · ${pct}%` : '—', done && done === count ? 'good' : ''],
+      ['Over capacity', String(overCells), overCells ? 'warn' : ''],
+      ['Free slots', String(freeCells), ''],
+      ['Days off', String(offCells), '']
+    ];
+    $('summary').innerHTML = cells.map(([k,v,cls]) =>
+      `<div class="s ${cls}"><span class="v">${esc(v)}</span><span class="k">${esc(k)}</span></div>`
+    ).join('');
+  }
+
+  const setSaving = on => $('saving').classList.toggle('on', on);
+
+  /* Optional `optimistic` callback mutates local state so the board updates on
+     the same frame as the click, instead of after a network round-trip. If the
+     write then fails we restore the snapshot taken beforehand — so the screen
+     is never left showing a change the server rejected. */
+  async function send(body, okMsg, optimistic){
+    const snap = { members: members.slice(), tasks: tasks.map(t => ({...t})), off: off.slice() };
+    if (optimistic){ optimistic(); renderWeek(); }
+    setSaving(true);
     try {
       const data = await api(PLANNER, 'POST', body);
       members = data.members; tasks = data.tasks; off = data.off;
       renderWeek();
       if (okMsg) toast(okMsg);
       return true;
-    } catch (err) { toast(err.message || 'Save failed'); return false; }
+    } catch (err) {
+      members = snap.members; tasks = snap.tasks; off = snap.off;
+      renderWeek();
+      toast(err.message || 'Save failed');
+      return false;
+    } finally { setSaving(false); }
   }
+
+  /* ---- one-click status cycling ---- */
+  function cycleStatus(taskId){
+    const t = tasks.find(x => x.id === taskId);
+    if (!t) return;
+    const next = STATUSES[(STATUSES.indexOf(t.status || 'To do') + 1) % STATUSES.length];
+    send({ op:'task.update', id: taskId, status: next }, next, () => { t.status = next; });
+  }
+
+  /* ---- drag a card to another person or day ----
+     The API already accepts memberId/date on task.update, so a move is just an
+     edit — no special endpoint, and it inherits the same rollback. */
+  let dragId = null;
+  $('plantable').addEventListener('dragstart', e => {
+    const card = e.target.closest('.task');
+    if (!card) return;
+    dragId = card.dataset.task;
+    card.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', dragId);   // Firefox needs a payload
+  });
+  $('plantable').addEventListener('dragend', e => {
+    const card = e.target.closest('.task');
+    if (card) card.classList.remove('dragging');
+    document.querySelectorAll('td.day.dragover').forEach(td => td.classList.remove('dragover'));
+    dragId = null;
+  });
+  $('plantable').addEventListener('dragover', e => {
+    const td = e.target.closest('td.day');
+    if (!td || !dragId) return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    if (!td.classList.contains('dragover')){
+      document.querySelectorAll('td.day.dragover').forEach(x => x.classList.remove('dragover'));
+      td.classList.add('dragover');
+    }
+  });
+  $('plantable').addEventListener('drop', e => {
+    const td = e.target.closest('td.day');
+    const id = dragId || e.dataTransfer.getData('text/plain');
+    if (!td || !id) return;
+    e.preventDefault();
+    td.classList.remove('dragover');
+    const t = tasks.find(x => x.id === id);
+    if (!t) return;
+    const toMember = td.dataset.member, toDate = td.dataset.date;
+    if (t.memberId === toMember && t.date === toDate) return;   // dropped where it started
+    const who = members.find(m => m.id === toMember);
+    send({ op:'task.update', id, memberId: toMember, date: toDate },
+         'Moved to ' + (who ? who.name.split(' ')[0] : 'day'),
+         () => { t.memberId = toMember; t.date = toDate; });
+  });
 
   $('taskform').addEventListener('submit', async e => {
     e.preventDefault();
@@ -725,8 +898,8 @@ td.day.is-off{background:repeating-linear-gradient(45deg,transparent,transparent
     $('teammodal').hidden = false;
   });
   $('addmember').addEventListener('click', () => $('memberlist').appendChild(memberRow()));
-  $('cancelteam').addEventListener('click', () => { $('teammodal').hidden = true; });
-  $('teammodal').addEventListener('click', e => { if (e.target === $('teammodal')) $('teammodal').hidden = true; });
+  $('cancelteam').addEventListener('click', () => { $('teammodal').hidden = true; dropFocus(); });
+  $('teammodal').addEventListener('click', e => { if (e.target === $('teammodal')){ $('teammodal').hidden = true; dropFocus(); } });
 
   $('saveteam').addEventListener('click', async () => {
     const next = [...$('memberlist').querySelectorAll('.member')].map(r => ({
@@ -744,7 +917,7 @@ td.day.is-off{background:repeating-linear-gradient(45deg,transparent,transparent
     )) return;
 
     if (await send({ op:'team.save', members: next }, 'Team saved')){
-      $('teammodal').hidden = true;
+      $('teammodal').hidden = true; dropFocus();
       fillPeopleList();
     }
   });
