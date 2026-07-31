@@ -51,9 +51,21 @@
   --display:'Makcasa','Playfair Display',Georgia,serif;
   --sans:'Inter',-apple-system,sans-serif;
   --ease:cubic-bezier(.16,1,.3,1);
+  /* Rounded, gradient, borderless — modelled directly on koenvo.com's computed
+     styles (60px pill buttons, 16px cards, zero borders, depth from a radial
+     gradient + soft shadow instead of a hairline). The old system leaned on
+     1px lines and flat panels for every seam, which reads as generated
+     rather than designed. This is the fix, applied everywhere at once via
+     these tokens rather than patched component by component. */
+  --r-sm:10px; --r-md:16px; --r-lg:22px; --r-pill:999px;
+  --grad-panel:radial-gradient(circle at 18% 0%,#17171b,#0a0a0c 65%);
+  --grad-panel-hi:radial-gradient(circle at 18% 0%,#1c1c21,#0c0c0e 65%);
+  --grad-page:radial-gradient(circle at 22% -8%,#111114 0%,#060607 55%);
+  --shadow:0 10px 26px -14px rgba(0,0,0,.7);
+  --shadow-lg:0 18px 40px -16px rgba(0,0,0,.75);
 }
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:var(--obsidian);color:var(--cream);font-family:var(--sans);font-weight:300;line-height:1.6;font-size:15px}
+body{background:var(--grad-page) fixed;color:var(--cream);font-family:var(--sans);font-weight:300;line-height:1.6;font-size:15px}
 a{color:inherit}
 .wrap{max-width:1500px;margin:0 auto;padding:0 24px}
 
@@ -75,7 +87,7 @@ a{color:inherit}
   font-family:var(--sans);font-size:10px;font-weight:500;letter-spacing:.24em;text-transform:uppercase;padding:16px 8px;white-space:nowrap}
 @media(max-width:780px){.edgetag{display:none}}
 
-header{border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(6,6,7,.94);backdrop-filter:blur(10px);z-index:60}
+header{border-bottom:0;box-shadow:0 1px 0 rgba(255,255,255,.05);position:sticky;top:0;background:rgba(6,6,7,.88);backdrop-filter:blur(14px);z-index:60}
 .hrow{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 0;position:relative}
 .brand{display:flex;align-items:center;gap:11px;font-family:var(--display);font-weight:400;letter-spacing:.12em;font-size:16px}
 .brand svg{width:24px;height:24px;flex:none}
@@ -89,9 +101,10 @@ header{border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba
 .hlinks a{text-decoration:none;transition:color .25s;cursor:pointer}
 .hlinks a:hover{color:var(--cream)}
 
-/* ---- tabs, Longwave-style segmented pill instead of an underline ---- */
-nav.tabs{display:inline-flex;gap:2px;background:var(--panel);border:1px solid var(--line);padding:3px;margin-bottom:28px;width:fit-content;max-width:100%;overflow-x:auto;animation:riseIn .5s var(--ease) backwards}
-nav.tabs button{background:none;border:0;white-space:nowrap;color:var(--stone);font-family:inherit;font-size:11.5px;font-weight:400;letter-spacing:.14em;text-transform:uppercase;padding:10px 17px;cursor:pointer;transition:color .25s,background .25s,transform .15s}
+/* ---- tabs — a fully-rounded pill cluster, koenvo's button radius (60px)
+   applied to the segmented control instead of a bordered underline strip ---- */
+nav.tabs{display:inline-flex;gap:2px;background:var(--panel);border:0;border-radius:var(--r-pill);padding:4px;margin-bottom:28px;width:fit-content;max-width:100%;overflow-x:auto;box-shadow:var(--shadow);animation:riseIn .5s var(--ease) backwards}
+nav.tabs button{background:none;border:0;border-radius:var(--r-pill);white-space:nowrap;color:var(--stone);font-family:inherit;font-size:11.5px;font-weight:400;letter-spacing:.14em;text-transform:uppercase;padding:11px 20px;cursor:pointer;transition:color .25s,background .25s,transform .15s}
 nav.tabs button:hover:not([aria-selected="true"]){color:var(--cream);background:var(--panel2)}
 nav.tabs button:active{transform:scale(.97)}
 nav.tabs button[aria-selected="true"]{color:var(--obsidian);background:var(--champagne)}
@@ -109,21 +122,21 @@ h3{font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--dim)
 h3:first-of-type{margin-top:0}
 
 label{display:block;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--stone);margin-bottom:6px}
-input,select,textarea{width:100%;background:var(--obsidian);border:1px solid var(--line);color:var(--cream);padding:9px 11px;font-family:inherit;font-size:14px;font-weight:300;outline:none;transition:border-color .25s}
-input:focus,select:focus,textarea:focus{border-color:var(--champagne)}
+input,select,textarea{width:100%;background:var(--panel);border:1px solid rgba(255,255,255,.07);border-radius:var(--r-sm);color:var(--cream);padding:10px 13px;font-family:inherit;font-size:14px;font-weight:300;outline:none;transition:border-color .25s,background .25s}
+input:focus,select:focus,textarea:focus{border-color:var(--champagne);background:var(--panel2)}
 textarea{resize:vertical;min-height:62px}
 select option{background:var(--obsidian)}
-.btn{background:var(--champagne);color:var(--obsidian);border:0;padding:10px 22px;font-family:inherit;font-size:11px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;transition:opacity .25s,transform .15s}
+.btn{background:var(--champagne);color:var(--obsidian);border:0;border-radius:var(--r-pill);padding:11px 26px;font-family:inherit;font-size:11px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;transition:opacity .25s,transform .15s}
 .btn:hover{opacity:.85}
 .btn:active{transform:scale(.97)}
-.btn.ghost{background:none;border:1px solid var(--line);color:var(--stone)}
-.btn.ghost:hover{border-color:var(--stone);color:var(--cream);opacity:1}
-.btn.danger{background:none;border:1px solid var(--line);color:var(--rust)}
-.btn.danger:hover{border-color:var(--rust);opacity:1}
-.btn.sm{padding:7px 14px;font-size:10px}
-.banner{border:1px solid var(--line);border-left:2px solid var(--rust);background:var(--panel);padding:14px 16px;font-size:13.5px;color:var(--dim);margin-bottom:20px}
+.btn.ghost{background:var(--panel2);border:0;color:var(--dim)}
+.btn.ghost:hover{color:var(--cream);opacity:1}
+.btn.danger{background:rgba(201,123,110,.12);border:0;color:var(--rust)}
+.btn.danger:hover{background:rgba(201,123,110,.2);opacity:1}
+.btn.sm{padding:8px 18px;font-size:10px}
+.banner{border:0;border-radius:var(--r-md);background:var(--grad-panel);box-shadow:var(--shadow);padding:15px 18px;font-size:13.5px;color:var(--dim);margin-bottom:20px}
 .banner code{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;color:var(--champagne)}
-.empty{color:var(--stone);font-size:13.5px;padding:26px 0;text-align:center;border:1px dashed var(--line)}
+.empty{color:var(--stone);font-size:13.5px;padding:30px;text-align:center;background:var(--grad-panel);border-radius:var(--r-md)}
 
 /* ---- team / avatar row — the Longwave "who's on the board" strip ---- */
 .teamrow{display:flex;gap:24px;flex-wrap:wrap;margin-bottom:22px;animation:riseIn .5s var(--ease) .05s backwards}
@@ -146,8 +159,8 @@ select option{background:var(--obsidian)}
 /* ---- client pool — this week's bookings at a glance, Longwave's pill strip ---- */
 .pool{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
 .pool[hidden]{display:none}
-.poolpill{background:var(--panel2);border:1px solid var(--line);border-left:3px solid var(--stone);padding:6px 8px 6px 12px;font-size:12px;color:var(--dim);display:inline-flex;align-items:center;gap:8px;letter-spacing:.02em;animation:cardIn .35s var(--ease) backwards;transition:transform .2s var(--ease)}
-.poolpill b{font-family:var(--display);font-weight:400;color:var(--champagne);font-size:11px;background:var(--obsidian);padding:2px 7px;border:1px solid var(--line)}
+.poolpill{background:var(--c-bg,var(--panel2));border:0;border-radius:var(--r-pill);padding:7px 8px 7px 14px;font-size:12px;color:var(--dim);display:inline-flex;align-items:center;gap:8px;letter-spacing:.02em;box-shadow:var(--shadow);animation:cardIn .35s var(--ease) backwards;transition:transform .2s var(--ease)}
+.poolpill b{font-family:var(--display);font-weight:400;color:var(--c,var(--champagne));font-size:11px;background:rgba(0,0,0,.35);padding:3px 9px;border-radius:var(--r-pill)}
 /* A hair of tilt, alternating — decorative only, never on anything you drag
    or click as a target, but it's the difference between a strip that looks
    placed by hand and one that looks generated. */
@@ -155,80 +168,84 @@ select option{background:var(--obsidian)}
 .poolpill:nth-child(even){transform:rotate(.5deg)}
 .poolpill:hover{transform:rotate(0deg) translateY(-1px)}
 
-/* ---- week nav — rounded cluster instead of loose buttons ---- */
+/* ---- week nav — fully-rounded cluster instead of a bordered box ---- */
 .weekbar{display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap}
-.weeknav{display:flex;align-items:stretch;border:1px solid var(--line);background:var(--panel)}
-.weeknav .nav{background:none;border:0;color:var(--dim);width:36px;font-size:15px;cursor:pointer;transition:color .2s,background .2s;font-family:inherit}
+.weeknav{display:flex;align-items:stretch;border:0;border-radius:var(--r-pill);background:var(--panel);box-shadow:var(--shadow);overflow:hidden}
+.weeknav .nav{background:none;border:0;color:var(--dim);width:38px;font-size:15px;cursor:pointer;transition:color .2s,background .2s;font-family:inherit}
 .weeknav .nav:hover{color:var(--champagne);background:var(--panel2)}
 .weeknav .nav:active{transform:scale(.94)}
-.weeklabel{font-family:var(--display);font-size:1.1rem;font-weight:400;padding:0 16px;border-left:1px solid var(--line);border-right:1px solid var(--line);display:flex;align-items:center;min-width:190px;justify-content:center}
+.weeklabel{font-family:var(--display);font-size:1.1rem;font-weight:400;padding:0 18px;display:flex;align-items:center;min-width:190px;justify-content:center}
 
-/* ---- planner grid ---- */
-.gridwrap{border:1px solid var(--line);overflow-x:auto;transition:opacity .16s,transform .22s var(--ease)}
+/* ---- planner grid ----
+   A CSS grid of rounded, gradient-backed tiles instead of an HTML table with
+   hairline borders — the biggest single change here. The old version drew a
+   ruled spreadsheet; this one is a flat list of 9-per-row grid children (the
+   who-cell, seven day-cells, the total-cell), same column template on every
+   row so everything still lines up, but with generous gaps standing in for
+   grid lines and each tile carrying its own soft shadow instead. */
+.gridwrap{overflow-x:auto;transition:opacity .16s,transform .22s var(--ease)}
 .gridwrap.switching{opacity:0;transform:translateX(var(--dx,-10px))}
-table.plan{width:100%;border-collapse:collapse;min-width:1180px}
-table.plan th,table.plan td{border-right:1px solid var(--line);border-bottom:1px solid var(--line);vertical-align:top}
-table.plan th:last-child,table.plan td:last-child{border-right:0}
-table.plan tr:last-child td,table.plan tr:last-child th{border-bottom:0}
-table.plan thead th{background:var(--panel);padding:10px 12px;text-align:left;font-weight:400;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--stone)}
-table.plan thead th b{display:block;color:var(--dim);font-weight:400;letter-spacing:.04em;font-size:12px;text-transform:none;margin-top:2px}
-table.plan thead th.today{color:var(--champagne)}
-table.plan thead th.today b{color:var(--champagne)}
-th.who{width:180px;background:var(--panel);padding:14px 13px;text-align:left;vertical-align:top}
-th.who .nm{font-family:var(--display);font-size:1.02rem;font-weight:400;color:var(--cream);letter-spacing:0;text-transform:none;line-height:1.25}
-th.who .rl{font-size:11px;color:var(--stone);letter-spacing:0;text-transform:none;font-weight:300;margin-top:3px;line-height:1.35}
-th.total{width:80px;background:var(--panel)}
-td.tot{background:var(--panel);text-align:center;vertical-align:middle;padding:10px}
-td.tot .n{font-family:var(--display);font-size:1.15rem;color:var(--champagne);display:block}
-td.tot .lbl{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--stone)}
-td.day{padding:8px;min-width:158px;background:var(--obsidian)}
-td.day.is-today{background:#0A0A0C}
-td.day.is-off{background:repeating-linear-gradient(45deg,transparent,transparent 7px,#0E0E11 7px,#0E0E11 14px)}
+.plangrid{display:grid;grid-template-columns:180px repeat(7,minmax(152px,1fr)) 92px;gap:10px;min-width:1240px}
+.ghead{padding:2px 6px 4px;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--stone)}
+.ghead.today{color:var(--champagne)}
+.ghead b{display:block;color:var(--dim);font-weight:400;letter-spacing:.02em;font-size:13px;text-transform:none;margin-top:2px}
+.ghead.today b{color:var(--champagne)}
+.who{background:var(--grad-panel);border-radius:var(--r-md);padding:14px 15px;box-shadow:var(--shadow);display:flex;flex-direction:column;justify-content:center}
+.who .nm{font-family:var(--display);font-size:1.02rem;font-weight:400;color:var(--cream);line-height:1.25}
+.who .rl{font-size:11px;color:var(--stone);margin-top:3px;line-height:1.35}
+.totcell{background:var(--grad-panel);border-radius:var(--r-md);box-shadow:var(--shadow);text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px}
+.totcell .n{font-family:var(--display);font-size:1.2rem;color:var(--champagne);display:block}
+.totcell .lbl{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--stone);margin-top:3px}
+.daycell{padding:10px;border-radius:var(--r-md);background:var(--grad-panel);box-shadow:var(--shadow);transition:box-shadow .2s,background .2s}
+.daycell.is-today{background:radial-gradient(circle at 18% 0%,#1c1a13,#0b0a08 65%)}
+.daycell.is-off{background:repeating-linear-gradient(135deg,#111113,#111113 8px,#0a0a0b 8px,#0a0a0b 16px);box-shadow:none;opacity:.75}
 
 /* Working toggle, inline in every cell — Longwave surfaces this directly
    rather than behind a menu, and it's the single most-used control on the
    whole board, so it earns the top slot in every cell. */
-.working{display:flex;align-items:center;gap:6px;font-size:9px;letter-spacing:.13em;text-transform:uppercase;color:var(--stone);margin-bottom:8px;cursor:pointer;user-select:none}
+.working{display:flex;align-items:center;gap:6px;font-size:9px;letter-spacing:.13em;text-transform:uppercase;color:var(--stone);margin-bottom:9px;cursor:pointer;user-select:none}
 .working input{accent-color:var(--sage);width:12px;height:12px;cursor:pointer;flex:none}
 .working span{transition:color .2s}
-td.day.is-off .working span{color:var(--rust)}
+.daycell.is-off .working span{color:var(--rust)}
 
-.task{border:1px solid var(--line);border-left:2px solid var(--stone);background:var(--panel2);padding:8px 9px;margin-bottom:6px;cursor:grab;display:flex;flex-direction:column;gap:6px;
+/* Cards: rounded, gradient-backed, no border at all — the status colour that
+   used to run down the left edge as a hard square bar now lives only in the
+   pill, so nothing on the card has a right angle it doesn't need. */
+.task{border:0;border-radius:var(--r-sm);background:var(--panel2);padding:9px 10px;margin-bottom:7px;cursor:grab;display:flex;flex-direction:column;gap:6px;
   animation:cardIn .34s var(--ease) backwards;
-  transition:border-color .18s,background .18s,transform .18s var(--ease),box-shadow .18s}
+  transition:background .18s,transform .18s var(--ease),box-shadow .18s}
 .task.enter{animation-delay:calc(var(--i,0) * 22ms)}
-.task:hover{background:#17171B;border-color:var(--line2);transform:translateX(2px);box-shadow:-2px 0 0 0 rgba(194,168,120,.25)}
+.task:hover{background:#1a1a1f;transform:translateY(-1px);box-shadow:var(--shadow)}
 .task:active{cursor:grabbing}
 /* The card being dragged tilts and lifts, like it's been picked up off the
    table, rather than just fading — much clearer which one is in motion when
    several sit close together. */
-.task.dragging{opacity:.55;transform:rotate(-1.4deg) scale(1.04);box-shadow:0 10px 22px -8px rgba(0,0,0,.6);z-index:5;position:relative}
-td.day{cursor:copy}
-td.day.dragover{background:#14140F;box-shadow:inset 0 0 0 1px var(--champagne)}
-td.day.is-today.dragover{background:#16160F}
+.task.dragging{opacity:.6;transform:rotate(-1.4deg) scale(1.04);box-shadow:var(--shadow-lg);z-index:5;position:relative}
+.daycell{cursor:copy}
+.daycell.dragover{box-shadow:0 0 0 2px var(--champagne),var(--shadow)}
 .task .top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
 .task .txt{flex:1;min-width:0}
 .task .c{font-size:12.5px;color:var(--cream);line-height:1.3;font-weight:400;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .task .k{font-size:11px;color:var(--stone);line-height:1.35;margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .task .hrs{font-size:10px;color:var(--stone);margin-top:3px;letter-spacing:.04em}
 
-/* Status pill — the whole point of "less hour-centric": what a card leads
-   with is where the job stands, not how long it'll take. Click cycles it,
-   same interaction as before, new shape borrowed straight from Longwave's
-   subtask page ("● Review"). */
-.pill2{display:inline-flex;align-items:center;gap:5px;font-size:9.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--c,var(--stone));border:1px solid var(--c,var(--stone));padding:2px 8px 2px 6px;flex:none;cursor:pointer;transition:transform .18s,box-shadow .18s;white-space:nowrap;align-self:flex-start;animation:pillPop .32s cubic-bezier(.34,1.56,.64,1)}
+/* Status pill — fully rounded, tinted by its own colour rather than outlined
+   in it, same trick as koenvo's tags (background tint, no border). Still the
+   whole point of "less hour-centric": what a card leads with is where the
+   job stands, not how long it'll take. Click cycles it. */
+.pill2{display:inline-flex;align-items:center;gap:5px;font-size:9.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--c,var(--stone));background:var(--c-bg,rgba(140,136,127,.14));border:0;border-radius:var(--r-pill);padding:3px 10px 3px 7px;flex:none;cursor:pointer;transition:transform .18s,box-shadow .18s;white-space:nowrap;align-self:flex-start;animation:pillPop .32s cubic-bezier(.34,1.56,.64,1)}
 .pill2 i{width:5px;height:5px;border-radius:50%;background:var(--c,var(--stone));flex:none}
-.pill2:hover{box-shadow:0 0 0 3px color-mix(in srgb, var(--c,var(--stone)) 22%, transparent);transform:scale(1.05)}
-.dayfoot{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-top:7px}
+.pill2:hover{transform:scale(1.06)}
+.dayfoot{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-top:8px}
 .dayfoot .count{font-size:10.5px;color:var(--stone);letter-spacing:.06em}
-.dayfoot .add{background:none;border:1px solid var(--line);color:var(--stone);width:24px;height:24px;font-size:14px;line-height:1;cursor:pointer;font-family:inherit;transition:border-color .2s,color .2s,transform .15s;flex:none}
-.dayfoot .add:hover{border-color:var(--champagne);color:var(--cream)}
+.dayfoot .add{background:var(--panel2);border:0;border-radius:var(--r-pill);color:var(--stone);width:24px;height:24px;font-size:14px;line-height:1;cursor:pointer;font-family:inherit;transition:color .2s,background .2s,transform .15s;flex:none}
+.dayfoot .add:hover{color:var(--cream);background:#1c1c22}
 .dayfoot .add:active{transform:scale(.9)}
 /* Finished work should stop competing for attention without vanishing — you
    still want to see it was done, just not read it first. */
 .task[data-status="Done"]{opacity:.6}
 .task[data-status="Done"] .c{text-decoration:line-through;text-decoration-thickness:1px}
-.task[data-status="Blocked"]{background:#161113}
+.task[data-status="Blocked"]{background:#1c1416}
 .legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:14px;font-size:11px;color:var(--stone);letter-spacing:.05em;align-items:center}
 .legend span{display:flex;align-items:center;gap:7px}
 .legend i{width:12px;height:3px;display:block;flex:none}
@@ -238,19 +255,24 @@ td.day.is-today.dragover{background:#16160F}
 /* ---- week summary strip ----
    One dominant number instead of five equal boxes — asymmetric on purpose,
    the same move as a portfolio hero that gives one thing all the weight
-   instead of spreading everything evenly. */
-.summary{display:flex;align-items:stretch;flex-wrap:wrap;border:1px solid var(--line);border-bottom:0;background:var(--panel)}
-.summary .hero{padding:16px 26px;border-right:1px solid var(--line);display:flex;flex-direction:column;justify-content:center;min-width:150px}
+   instead of spreading everything evenly. Now a standalone rounded card,
+   floating above the grid on its own shadow rather than fused flush to it —
+   dividers are gaps + a faint vertical rule, not hairline borders. */
+.summary{display:flex;align-items:stretch;flex-wrap:wrap;background:var(--grad-panel);border-radius:var(--r-md);box-shadow:var(--shadow);margin-bottom:14px;overflow:hidden}
+.summary .hero{padding:16px 26px;position:relative;display:flex;flex-direction:column;justify-content:center;min-width:150px}
+.summary .hero::after{content:'';position:absolute;right:0;top:14px;bottom:14px;width:1px;background:rgba(255,255,255,.06)}
 .summary .hero .v{font-family:var(--display);font-size:2.5rem;color:var(--champagne);line-height:.92;animation:riseIn .35s var(--ease) backwards}
 .summary .hero .k{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--stone);margin-top:7px}
 .summary .rest{display:flex;flex-wrap:wrap;flex:1}
-.summary .s{padding:11px 16px;border-right:1px solid var(--line);display:flex;align-items:baseline;gap:8px;min-width:0}
-.summary .s:last-child{border-right:0}
+.summary .s{padding:11px 16px;position:relative;display:flex;align-items:baseline;gap:8px;min-width:0}
+.summary .s::after{content:'';position:absolute;right:0;top:10px;bottom:10px;width:1px;background:rgba(255,255,255,.06)}
+.summary .s:last-child::after{display:none}
 .summary .v{font-family:var(--display);font-size:1.15rem;color:var(--cream);line-height:1;animation:riseIn .3s var(--ease) backwards}
 .summary .k{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--stone)}
 .summary .s.warn .v{color:var(--rust)}
 .summary .s.good .v{color:var(--sage)}
-.summary .s.push{margin-left:auto;border-right:0;border-left:1px solid var(--line)}
+.summary .s.push{margin-left:auto}
+.summary .s.push::after{display:none}
 .saving{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--champagne);opacity:0;transition:opacity .2s;white-space:nowrap}
 .saving.on{opacity:1}
 .hint{font-size:11.5px;color:var(--stone);margin-top:10px;letter-spacing:.02em}
@@ -260,7 +282,7 @@ kbd{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;border:1px solid v
 /* ---- modal ---- */
 .modal{position:fixed;inset:0;background:rgba(6,6,7,.84);backdrop-filter:blur(3px);z-index:100;display:flex;align-items:center;justify-content:center;padding:24px}
 .modal[hidden]{display:none}
-.modal .box{background:var(--panel);border:1px solid var(--line2);width:100%;max-width:440px;padding:24px;max-height:88vh;overflow:auto;animation:modalIn .28s var(--ease)}
+.modal .box{background:var(--grad-panel-hi,var(--grad-panel));border:0;border-radius:var(--r-lg);box-shadow:var(--shadow-lg);width:100%;max-width:440px;padding:26px;max-height:88vh;overflow:auto;animation:modalIn .28s var(--ease)}
 .modal h4{font-family:var(--display);font-weight:400;font-size:1.3rem;margin-bottom:2px}
 .modal .sub{font-size:12px;color:var(--stone);margin-bottom:20px;letter-spacing:.04em}
 .modal .row{margin-bottom:14px}
@@ -274,41 +296,44 @@ kbd{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;border:1px solid v
 
 /* ---- brand kit ---- */
 .swatches{display:grid;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:11px}
-.sw{border:1px solid var(--line);cursor:pointer;background:none;padding:0;text-align:left;font-family:inherit;transition:border-color .25s,transform .2s}
+.sw{border:0;border-radius:var(--r-md);overflow:hidden;box-shadow:var(--shadow);cursor:pointer;background:var(--panel2);padding:0;text-align:left;font-family:inherit;transition:box-shadow .25s,transform .2s}
 .sw:nth-child(3n+1){transform:rotate(-.5deg)}
 .sw:nth-child(3n+2){transform:rotate(.4deg)}
 .sw:nth-child(3n){transform:rotate(-.3deg)}
-.sw:hover{border-color:var(--champagne);transform:translateY(-2px) rotate(0deg)}
+.sw:hover{box-shadow:var(--shadow-lg);transform:translateY(-2px) rotate(0deg)}
 .sw i{display:block;height:62px}
 .sw span{display:block;padding:9px 11px;font-size:11px;letter-spacing:.05em}
 .sw span b{display:block;font-weight:400;color:var(--cream);margin-bottom:2px;letter-spacing:.12em;text-transform:uppercase;font-size:10px}
 .sw span em{font-style:normal;color:var(--stone);font-family:ui-monospace,Menlo,monospace}
 .kit{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:11px}
-.card{border:1px solid var(--line);background:var(--panel);padding:17px 19px;transition:border-color .25s}
-.card:hover{border-color:var(--line2)}
+.card{border:0;border-radius:var(--r-md);background:var(--grad-panel);box-shadow:var(--shadow);padding:17px 19px;transition:box-shadow .25s,transform .2s}
+.card:hover{box-shadow:var(--shadow-lg);transform:translateY(-2px)}
 .card h4{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--champagne);font-weight:400;margin-bottom:11px}
 .card p,.card li{font-size:13.5px;color:var(--dim);margin-bottom:6px}
 .card ul{list-style:none}
 .card li::before{content:'—';color:var(--stone);margin-right:8px}
-.card code{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;color:var(--cream);background:var(--obsidian);padding:1px 5px;border:1px solid var(--line)}
-.dl{display:inline-block;margin-top:9px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--champagne);text-decoration:none;border-bottom:1px solid var(--line);padding-bottom:3px;transition:border-color .25s}
+.card code{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;color:var(--cream);background:rgba(0,0,0,.4);padding:2px 6px;border-radius:var(--r-sm);border:0}
+.dl{display:inline-block;margin-top:9px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--champagne);text-decoration:none;border-bottom:1px solid rgba(194,168,120,.35);padding-bottom:3px;transition:border-color .25s}
 .dl:hover{border-color:var(--champagne)}
 
 /* ---- jobs ---- */
-.jobform{background:var(--panel);border:1px solid var(--line);padding:20px;margin-bottom:28px}
+.jobform{background:var(--grad-panel);border:0;border-radius:var(--r-md);box-shadow:var(--shadow);padding:20px;margin-bottom:28px}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
 .formfoot{display:flex;gap:10px;align-items:center;margin-top:16px}
-.job{border:1px solid var(--line);border-left:2px solid var(--stone);background:var(--panel);padding:15px 17px;margin-bottom:9px;animation:cardIn .34s var(--ease) backwards;transition:border-color .2s}
-.job[data-status="Confirmed"]{border-left-color:var(--champagne)}
-.job[data-status="Editing"]{border-left-color:var(--slate)}
-.job[data-status="Shot"]{border-left-color:#9B8AA8}
-.job[data-status="Delivered"]{border-left-color:var(--sage)}
+/* Status used to be a hard 2px square bar down the left edge; now it's a
+   soft inset glow at the same edge — same at-a-glance signal, none of the
+   right angles. */
+.job{border:0;border-radius:var(--r-md);background:var(--grad-panel);box-shadow:var(--shadow),inset 3px 0 0 0 var(--stone);padding:15px 17px 15px 20px;margin-bottom:10px;animation:cardIn .34s var(--ease) backwards;transition:box-shadow .2s}
+.job[data-status="Confirmed"]{box-shadow:var(--shadow),inset 3px 0 0 0 var(--champagne)}
+.job[data-status="Editing"]{box-shadow:var(--shadow),inset 3px 0 0 0 var(--slate)}
+.job[data-status="Shot"]{box-shadow:var(--shadow),inset 3px 0 0 0 #9B8AA8}
+.job[data-status="Delivered"]{box-shadow:var(--shadow),inset 3px 0 0 0 var(--sage)}
 .jobtop{display:flex;align-items:baseline;justify-content:space-between;gap:14px;flex-wrap:wrap}
 .jobclient{font-family:var(--display);font-weight:400;font-size:1.15rem}
 .jobmeta{font-size:12.5px;color:var(--stone);display:flex;gap:14px;flex-wrap:wrap;margin-top:5px}
 .jobmeta b{color:var(--dim);font-weight:400}
 .jobnotes{font-size:13.5px;color:var(--dim);margin-top:9px;white-space:pre-wrap}
-.pill{font-size:10px;letter-spacing:.14em;text-transform:uppercase;border:1px solid var(--line);padding:3px 9px;color:var(--dim);white-space:nowrap}
+.pill{font-size:10px;letter-spacing:.14em;text-transform:uppercase;border:0;border-radius:var(--r-pill);background:rgba(255,255,255,.06);padding:3px 10px;color:var(--dim);white-space:nowrap}
 .jobacts{display:flex;gap:7px;margin-top:12px}
 .jobacts button{background:none;border:0;color:var(--stone);font-family:inherit;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;cursor:pointer;padding:3px 0;transition:color .25s}
 .jobacts button:hover{color:var(--cream)}
@@ -377,7 +402,7 @@ kbd{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;border:1px solid v
     </div>
 
     <div class="summary" id="summary"></div>
-    <div class="gridwrap" id="gridwrap"><table class="plan" id="plantable"></table></div>
+    <div class="gridwrap" id="gridwrap"><div class="plangrid" id="plangrid"></div></div>
     <div class="legend" id="legend"></div>
     <p class="hint">
       <b>Click an avatar</b> to show or hide their row ·
@@ -709,7 +734,8 @@ kbd{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;border:1px solid v
       const lead = list.some(t => t.status === 'Blocked') ? 'Blocked'
         : (done === list.length ? 'Done'
         : (list.some(t => t.status === 'In progress') ? 'In progress' : 'To do'));
-      return `<span class="poolpill" style="border-left-color:${colourFor(lead)}">${esc(n)} <b>${done}/${list.length}</b></span>`;
+      const col = colourFor(lead);
+      return `<span class="poolpill" style="--c:${col};--c-bg:color-mix(in srgb, ${col} 14%, var(--panel2))">${esc(n)} <b>${done}/${list.length}</b></span>`;
     }).join('');
   }
 
@@ -728,35 +754,43 @@ kbd{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;border:1px solid v
     renderPool();
 
     if (!members.length){
-      $('plantable').innerHTML = '<tr><td class="empty" style="border:0;padding:30px">No team yet — use "Edit team".</td></tr>';
+      $('plangrid').innerHTML = '<div class="empty" style="grid-column:1/-1;padding:30px">No team yet — use "Edit team".</div>';
       renderSummary();
       return;
     }
 
     const visible = members.filter(m => !hiddenMembers.has(m.id));
     if (!visible.length){
-      $('plantable').innerHTML = '<tr><td class="empty" style="border:0;padding:30px">Everyone\'s hidden — click an avatar above to bring a row back.</td></tr>';
+      $('plangrid').innerHTML = '<div class="empty" style="grid-column:1/-1;padding:30px">Everyone\'s hidden — click an avatar above to bring a row back.</div>';
       renderSummary();
       return;
     }
 
-    const head = `<thead><tr><th class="who"></th>${
+    // Flat list of grid children sharing one grid-template-columns — the
+    // "row" is source order, not a <tr> wrapper, same trick koenvo's pricing
+    // table uses so every tile can carry its own radius/shadow independently.
+    const head = `<div class="ghead"></div>${
       days.map(d => {
         const t = iso(d) === todayIso();
-        return `<th class="${t?'today':''}">${d.toLocaleDateString('en-GB',{weekday:'short'})}<b>${
-          d.toLocaleDateString('en-GB',{day:'numeric',month:'short'})}</b></th>`;
-      }).join('')}<th class="total">Total</th></tr></thead>`;
+        return `<div class="ghead ${t?'today':''}">${d.toLocaleDateString('en-GB',{weekday:'short'})}<b>${
+          d.toLocaleDateString('en-GB',{day:'numeric',month:'short'})}</b></div>`;
+      }).join('')}<div class="ghead">Total</div>`;
 
     const body = visible.map(m => {
       let weekJobs = 0;
       let cardIndex = 0;
+
+      const who = `<div class="who">
+          <div class="nm">${esc(m.name)}</div>
+          ${m.role ? `<div class="rl">${esc(m.role)}</div>` : ''}
+        </div>`;
 
       const cells = days.map(d => {
         const date = iso(d);
         const list = tasksFor(date, m.id);
         weekJobs += list.length;
         const dayOff = isOff(date, m.id);
-        const cls = ['day', iso(d)===todayIso() ? 'is-today':'', dayOff ? 'is-off':''].filter(Boolean).join(' ');
+        const cls = ['daycell', iso(d)===todayIso() ? 'is-today':'', dayOff ? 'is-off':''].filter(Boolean).join(' ');
 
         const cards = list.map(t => {
           const st = t.status || 'To do';
@@ -764,7 +798,7 @@ kbd{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;border:1px solid v
           const cyc = `${esc(st)} — click to advance`;
           const i = cardIndex++;
           return `
-          <div class="task ${enter?'enter':''}" style="--i:${i};border-left-color:${col}" draggable="true"
+          <div class="task ${enter?'enter':''}" style="--i:${i}" draggable="true"
                data-task="${esc(t.id)}" data-member="${esc(m.id)}" data-date="${date}"
                data-status="${esc(st)}" title="${esc(st)} · drag to move">
             <div class="top">
@@ -774,11 +808,11 @@ kbd{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;border:1px solid v
                 ${t.hours ? `<div class="hrs">${esc(fmtH(t.hours))}</div>` : ''}
               </div>
             </div>
-            <span class="pill2" data-cycle="${esc(t.id)}" title="${cyc}" style="--c:${col}"><i></i>${esc(st)}</span>
+            <span class="pill2" data-cycle="${esc(t.id)}" title="${cyc}" style="--c:${col};--c-bg:color-mix(in srgb, ${col} 16%, transparent)"><i></i>${esc(st)}</span>
           </div>`;
         }).join('');
 
-        return `<td class="${cls}" data-member="${esc(m.id)}" data-date="${date}">
+        return `<div class="${cls}" data-member="${esc(m.id)}" data-date="${date}">
           <label class="working" title="Working on ${esc(d.toLocaleDateString('en-GB',{weekday:'long'}))}">
             <input type="checkbox" data-off="${esc(m.id)}" data-date="${date}" ${dayOff ? '' : 'checked'}>
             <span>${dayOff ? 'Off' : 'Working'}</span>
@@ -789,20 +823,15 @@ kbd{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;border:1px solid v
             <button class="add" data-add="${esc(m.id)}" data-date="${date}"
                     aria-label="Add job for ${esc(m.name)}">+</button>
           </div>
-        </td>`;
+        </div>`;
       }).join('');
 
-      return `<tr>
-        <th class="who">
-          <div class="nm">${esc(m.name)}</div>
-          ${m.role ? `<div class="rl">${esc(m.role)}</div>` : ''}
-        </th>
-        ${cells}
-        <td class="tot"><span class="n">${weekJobs}</span><span class="lbl">${weekJobs===1?'job':'jobs'}</span></td>
-      </tr>`;
+      const tot = `<div class="totcell"><span class="n">${weekJobs}</span><span class="lbl">${weekJobs===1?'job':'jobs'}</span></div>`;
+
+      return who + cells + tot;
     }).join('');
 
-    $('plantable').innerHTML = head + '<tbody>' + body + '</tbody>';
+    $('plangrid').innerHTML = head + body;
     refreshClientList();
     renderSummary();
   }
@@ -919,7 +948,7 @@ kbd{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;border:1px solid v
     else if (e.key === 't' || e.key === 'T'){ anchor = startOfWeek(new Date()); renderWeek(true); }
   });
 
-  $('plantable').addEventListener('click', e => {
+  $('plangrid').addEventListener('click', e => {
     if (!ready) return;
 
     // Status pill first — it sits inside a card, so it has to win before the
@@ -938,12 +967,12 @@ kbd{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;border:1px solid v
 
     // Anywhere else in the cell counts as "add here" — a tiny + button is a
     // needlessly small target for the most common action on the board.
-    const td = e.target.closest('td.day');
+    const td = e.target.closest('.daycell');
     if (td) return openTask({ memberId: td.dataset.member, date: td.dataset.date });
   });
 
   /* ---- working / day-off toggle — inline now, no detour through the modal ---- */
-  $('plantable').addEventListener('change', e => {
+  $('plangrid').addEventListener('change', e => {
     const box = e.target.closest('input[data-off]');
     if (!box) return;
     const memberId = box.dataset.off, date = box.dataset.date;
@@ -1023,7 +1052,7 @@ kbd{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;border:1px solid v
      The API already accepts memberId/date on task.update, so a move is just an
      edit — no special endpoint, and it inherits the same rollback. */
   let dragId = null;
-  $('plantable').addEventListener('dragstart', e => {
+  $('plangrid').addEventListener('dragstart', e => {
     const card = e.target.closest('.task');
     if (!card) return;
     dragId = card.dataset.task;
@@ -1031,24 +1060,24 @@ kbd{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;border:1px solid v
     e.dataTransfer.effectAllowed = 'move';
     e.dataTransfer.setData('text/plain', dragId);   // Firefox needs a payload
   });
-  $('plantable').addEventListener('dragend', e => {
+  $('plangrid').addEventListener('dragend', e => {
     const card = e.target.closest('.task');
     if (card) card.classList.remove('dragging');
-    document.querySelectorAll('td.day.dragover').forEach(td => td.classList.remove('dragover'));
+    document.querySelectorAll('.daycell.dragover').forEach(td => td.classList.remove('dragover'));
     dragId = null;
   });
-  $('plantable').addEventListener('dragover', e => {
-    const td = e.target.closest('td.day');
+  $('plangrid').addEventListener('dragover', e => {
+    const td = e.target.closest('.daycell');
     if (!td || !dragId) return;
     e.preventDefault();
     e.dataTransfer.dropEffect = 'move';
     if (!td.classList.contains('dragover')){
-      document.querySelectorAll('td.day.dragover').forEach(x => x.classList.remove('dragover'));
+      document.querySelectorAll('.daycell.dragover').forEach(x => x.classList.remove('dragover'));
       td.classList.add('dragover');
     }
   });
-  $('plantable').addEventListener('drop', e => {
-    const td = e.target.closest('td.day');
+  $('plangrid').addEventListener('drop', e => {
+    const td = e.target.closest('.daycell');
     const id = dragId || e.dataTransfer.getData('text/plain');
     if (!td || !id) return;
     e.preventDefault();
@@ -1143,7 +1172,7 @@ kbd{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;border:1px solid v
         $('plannerbanner').hidden = false;
         $('plannerbanner').innerHTML = 'The planner needs its storage connected before it can save anything. In Cloudflare → Workers &amp; Pages → your project → Settings → Bindings, add a KV namespace binding called <code>PORTAL_KV</code>. The brand kit tab works regardless.';
       }
-      $('plantable').innerHTML = '<tr><td class="empty" style="border:0;padding:30px">Couldn’t load the planner.</td></tr>';
+      $('plangrid').innerHTML = '<div class="empty" style="grid-column:1/-1;padding:30px">Couldn’t load the planner.</div>';
     }
   }
 
