@@ -31,6 +31,12 @@ const json = (data, status = 200) =>
 const str = (v, max) => String(v ?? '').trim().slice(0, max);
 const isDate = d => /^\d{4}-\d{2}-\d{2}$/.test(d);
 
+/* Completion states, in workflow order. The board colours each marker from
+   this — the colour is derived, never stored, so a status rename here changes
+   every existing card at once instead of leaving old cards on a stale colour. */
+const STATUSES = ['To do', 'In progress', 'Review', 'Done', 'Blocked'];
+const status = v => STATUSES.includes(v) ? v : 'To do';
+
 /* Hours: quarter-hour steps, capped at a genuinely long day. Stored as a
    number so totals add up without float surprises from string maths. */
 function hours(v, fallback = 0) {
@@ -120,6 +126,7 @@ export async function onRequest(context) {
         memberId: str(body.memberId, 40),
         client, task,
         hours: hours(body.hours, 0),
+        status: status(body.status),
         updated: new Date().toISOString()
       });
       break;
@@ -142,6 +149,7 @@ export async function onRequest(context) {
       if (body.client !== undefined) t.client = str(body.client, 60);
       if (body.task   !== undefined) t.task   = str(body.task, 60);
       if (body.hours  !== undefined) t.hours  = hours(body.hours, t.hours);
+      if (body.status !== undefined) t.status = status(body.status);
       t.updated = new Date().toISOString();
 
       if (!t.client && !t.task) data.tasks.splice(i, 1);   // emptied = removed
