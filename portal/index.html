@@ -18,12 +18,18 @@
    background, all wrong for a tool you keep open in a tab while you work.
    The identity is carried over exactly instead: the same self-hosted Makcasa
    display face, the same palette variables copied from style.css, and the same
-   eyebrow treatment (11px, .28em, uppercase) on section labels. */
+   eyebrow treatment (11px, .28em, uppercase) on section labels.
+
+   The STRUCTURE, though, is deliberately closer to Longwave's portal — an
+   avatar row you can click to focus the board, a per-day "Working" toggle
+   instead of burying it in a modal, and a status pill on every card instead
+   of a number. Longwave's is hour-first (their unit is billable time); Aera's
+   is job-first (the unit is the booking), so hours here are an optional tag,
+   never the headline. */
 /* NOTE — the Makcasa file in this repo is an unlicensed/demo cut whose NUMERALS
    are replaced with the foundry's "Timeless type." watermark. Letters are fine;
    0–9 are not. That's invisible on the public site (no display-face text there
-   contains a digit) but fatal here, where the header is a date and the totals
-   column is hours.
+   contains a digit) but fatal here, where the header is a date.
 
    unicode-range deliberately OMITS U+0030–U+0039, so the browser never reaches
    for Makcasa to draw a digit and falls through to Playfair Display instead.
@@ -44,11 +50,19 @@
   --champagne:#C2A878; --rust:#C97B6E; --sage:#7E9B7A; --slate:#7E8BAF;
   --display:'Makcasa','Playfair Display',Georgia,serif;
   --sans:'Inter',-apple-system,sans-serif;
+  --ease:cubic-bezier(.16,1,.3,1);
 }
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:var(--obsidian);color:var(--cream);font-family:var(--sans);font-weight:300;line-height:1.6;font-size:15px}
 a{color:inherit}
 .wrap{max-width:1500px;margin:0 auto;padding:0 24px}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:translateY(0)}}
+@keyframes cardIn{from{opacity:0;transform:translateY(7px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes pillPop{0%{transform:scale(.6)}55%{transform:scale(1.14)}100%{transform:scale(1)}}
+@keyframes ringPulse{0%{box-shadow:0 0 0 2px var(--obsidian),0 0 0 3px var(--ring,var(--champagne)),0 0 0 3px var(--ring,var(--champagne))}70%{box-shadow:0 0 0 2px var(--obsidian),0 0 0 3px var(--ring,var(--champagne)),0 0 0 9px transparent}100%{box-shadow:0 0 0 2px var(--obsidian),0 0 0 3px var(--ring,var(--champagne)),0 0 0 9px transparent}}
+@keyframes modalIn{from{opacity:0;transform:scale(.96) translateY(8px)}to{opacity:1;transform:scale(1) translateY(0)}}
+@keyframes toastPop{0%{transform:translateX(-50%) translateY(80px) scale(.96)}100%{transform:translateX(-50%) translateY(0) scale(1)}}
 
 header{border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(6,6,7,.94);backdrop-filter:blur(10px);z-index:60}
 .hrow{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 0}
@@ -59,10 +73,12 @@ header{border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba
 .hlinks a{text-decoration:none;transition:color .25s;cursor:pointer}
 .hlinks a:hover{color:var(--cream)}
 
-nav.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:28px;overflow-x:auto}
-nav.tabs button{background:none;border:0;border-bottom:1px solid transparent;margin-bottom:-1px;white-space:nowrap;color:var(--stone);font-family:inherit;font-size:12px;font-weight:400;letter-spacing:.16em;text-transform:uppercase;padding:15px 18px;cursor:pointer;transition:color .25s,border-color .25s}
-nav.tabs button:hover{color:var(--dim)}
-nav.tabs button[aria-selected="true"]{color:var(--champagne);border-bottom-color:var(--champagne)}
+/* ---- tabs, Longwave-style segmented pill instead of an underline ---- */
+nav.tabs{display:inline-flex;gap:2px;background:var(--panel);border:1px solid var(--line);padding:3px;margin-bottom:28px;width:fit-content;max-width:100%;overflow-x:auto;animation:riseIn .5s var(--ease) backwards}
+nav.tabs button{background:none;border:0;white-space:nowrap;color:var(--stone);font-family:inherit;font-size:11.5px;font-weight:400;letter-spacing:.14em;text-transform:uppercase;padding:10px 17px;cursor:pointer;transition:color .25s,background .25s,transform .15s}
+nav.tabs button:hover:not([aria-selected="true"]){color:var(--cream);background:var(--panel2)}
+nav.tabs button:active{transform:scale(.97)}
+nav.tabs button[aria-selected="true"]{color:var(--obsidian);background:var(--champagne)}
 section[hidden]{display:none}
 main{padding:28px 0 90px}
 
@@ -76,8 +92,9 @@ input,select,textarea{width:100%;background:var(--obsidian);border:1px solid var
 input:focus,select:focus,textarea:focus{border-color:var(--champagne)}
 textarea{resize:vertical;min-height:62px}
 select option{background:var(--obsidian)}
-.btn{background:var(--champagne);color:var(--obsidian);border:0;padding:10px 22px;font-family:inherit;font-size:11px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;transition:opacity .25s}
+.btn{background:var(--champagne);color:var(--obsidian);border:0;padding:10px 22px;font-family:inherit;font-size:11px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;transition:opacity .25s,transform .15s}
 .btn:hover{opacity:.85}
+.btn:active{transform:scale(.97)}
 .btn.ghost{background:none;border:1px solid var(--line);color:var(--stone)}
 .btn.ghost:hover{border-color:var(--stone);color:var(--cream);opacity:1}
 .btn.danger{background:none;border:1px solid var(--line);color:var(--rust)}
@@ -87,14 +104,37 @@ select option{background:var(--obsidian)}
 .banner code{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;color:var(--champagne)}
 .empty{color:var(--stone);font-size:13.5px;padding:26px 0;text-align:center;border:1px dashed var(--line)}
 
-/* ---- week bar ---- */
-.weekbar{display:flex;align-items:center;gap:10px;margin-bottom:18px;flex-wrap:wrap}
-.weekbar .nav{background:none;border:1px solid var(--line);color:var(--dim);width:34px;height:34px;font-size:15px;cursor:pointer;transition:border-color .25s,color .25s;font-family:inherit}
-.weekbar .nav:hover{border-color:var(--champagne);color:var(--cream)}
-.weeklabel{font-family:var(--display);font-size:1.2rem;font-weight:400;min-width:210px}
+/* ---- team / avatar row — the Longwave "who's on the board" strip ---- */
+.teamrow{display:flex;gap:24px;flex-wrap:wrap;margin-bottom:22px;animation:riseIn .5s var(--ease) .05s backwards}
+.avatar{background:none;border:0;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;font-family:inherit;padding:2px;transition:transform .25s var(--ease),opacity .25s}
+.avatar:hover{transform:translateY(-2px)}
+.avatar .circ{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-size:13.5px;color:var(--obsidian);background:var(--ring,var(--champagne));box-shadow:0 0 0 2px var(--obsidian),0 0 0 3px var(--ring,var(--champagne));transition:box-shadow .3s,transform .3s}
+.avatar:hover .circ{transform:scale(1.06);box-shadow:0 0 0 2px var(--obsidian),0 0 0 3px var(--ring,var(--champagne)),0 0 15px -3px var(--ring,var(--champagne))}
+.avatar.justtoggled .circ{animation:ringPulse .6s var(--ease)}
+.avatar .nm{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--stone);transition:color .25s}
+.avatar:hover .nm{color:var(--cream)}
+.avatar.off .circ{opacity:.32;box-shadow:0 0 0 2px var(--obsidian),0 0 0 3px var(--line2)}
+.avatar.off .nm{color:var(--line2)}
+.teamrow .addperson{width:44px;height:44px;border-radius:50%;border:1px dashed var(--line2);background:none;color:var(--stone);font-size:16px;cursor:pointer;transition:border-color .25s,color .25s,transform .25s}
+.teamrow .addperson:hover{border-color:var(--champagne);color:var(--champagne);transform:translateY(-2px)}
+
+/* ---- client pool — this week's bookings at a glance, Longwave's pill strip ---- */
+.pool{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.pool[hidden]{display:none}
+.poolpill{background:var(--panel2);border:1px solid var(--line);border-left:3px solid var(--stone);padding:6px 8px 6px 12px;font-size:12px;color:var(--dim);display:inline-flex;align-items:center;gap:8px;letter-spacing:.02em;animation:cardIn .35s var(--ease) backwards}
+.poolpill b{font-family:var(--display);font-weight:400;color:var(--champagne);font-size:11px;background:var(--obsidian);padding:2px 7px;border:1px solid var(--line)}
+
+/* ---- week nav — rounded cluster instead of loose buttons ---- */
+.weekbar{display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+.weeknav{display:flex;align-items:stretch;border:1px solid var(--line);background:var(--panel)}
+.weeknav .nav{background:none;border:0;color:var(--dim);width:36px;font-size:15px;cursor:pointer;transition:color .2s,background .2s;font-family:inherit}
+.weeknav .nav:hover{color:var(--champagne);background:var(--panel2)}
+.weeknav .nav:active{transform:scale(.94)}
+.weeklabel{font-family:var(--display);font-size:1.1rem;font-weight:400;padding:0 16px;border-left:1px solid var(--line);border-right:1px solid var(--line);display:flex;align-items:center;min-width:190px;justify-content:center}
 
 /* ---- planner grid ---- */
-.gridwrap{border:1px solid var(--line);overflow-x:auto}
+.gridwrap{border:1px solid var(--line);overflow-x:auto;transition:opacity .16s,transform .22s var(--ease)}
+.gridwrap.switching{opacity:0;transform:translateX(var(--dx,-10px))}
 table.plan{width:100%;border-collapse:collapse;min-width:1180px}
 table.plan th,table.plan td{border-right:1px solid var(--line);border-bottom:1px solid var(--line);vertical-align:top}
 table.plan th:last-child,table.plan td:last-child{border-right:0}
@@ -106,45 +146,56 @@ table.plan thead th.today b{color:var(--champagne)}
 th.who{width:180px;background:var(--panel);padding:14px 13px;text-align:left;vertical-align:top}
 th.who .nm{font-family:var(--display);font-size:1.02rem;font-weight:400;color:var(--cream);letter-spacing:0;text-transform:none;line-height:1.25}
 th.who .rl{font-size:11px;color:var(--stone);letter-spacing:0;text-transform:none;font-weight:300;margin-top:3px;line-height:1.35}
-th.who .wk{margin-top:9px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
-th.who .wk b{color:var(--champagne);font-weight:400}
-th.total{width:96px;background:var(--panel)}
-td.tot{background:var(--panel);text-align:center;vertical-align:middle;font-family:var(--display);font-size:1.15rem;color:var(--champagne);padding:10px}
-td.day{padding:8px;min-width:150px;background:var(--obsidian)}
+th.total{width:80px;background:var(--panel)}
+td.tot{background:var(--panel);text-align:center;vertical-align:middle;padding:10px}
+td.tot .n{font-family:var(--display);font-size:1.15rem;color:var(--champagne);display:block}
+td.tot .lbl{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--stone)}
+td.day{padding:8px;min-width:158px;background:var(--obsidian)}
 td.day.is-today{background:#0A0A0C}
 td.day.is-off{background:repeating-linear-gradient(45deg,transparent,transparent 7px,#0E0E11 7px,#0E0E11 14px)}
 
-.task{border:1px solid var(--line);border-left:2px solid var(--stone);background:var(--panel2);padding:7px 9px;margin-bottom:6px;cursor:grab;display:flex;gap:8px;align-items:flex-start;
-  transition:border-color .18s,background .18s,transform .18s cubic-bezier(.16,1,.3,1),box-shadow .18s}
+/* Working toggle, inline in every cell — Longwave surfaces this directly
+   rather than behind a menu, and it's the single most-used control on the
+   whole board, so it earns the top slot in every cell. */
+.working{display:flex;align-items:center;gap:6px;font-size:9px;letter-spacing:.13em;text-transform:uppercase;color:var(--stone);margin-bottom:8px;cursor:pointer;user-select:none}
+.working input{accent-color:var(--sage);width:12px;height:12px;cursor:pointer;flex:none}
+.working span{transition:color .2s}
+td.day.is-off .working span{color:var(--rust)}
+
+.task{border:1px solid var(--line);border-left:2px solid var(--stone);background:var(--panel2);padding:8px 9px;margin-bottom:6px;cursor:grab;display:flex;flex-direction:column;gap:6px;
+  animation:cardIn .34s var(--ease) backwards;
+  transition:border-color .18s,background .18s,transform .18s var(--ease),box-shadow .18s}
+.task.enter{animation-delay:calc(var(--i,0) * 22ms)}
 .task:hover{background:#17171B;border-color:var(--line2);transform:translateX(2px);box-shadow:-2px 0 0 0 rgba(194,168,120,.25)}
 .task:active{cursor:grabbing}
-/* The card being dragged stays visible but recedes, so you can still see where
-   it came from while you choose a destination. */
-.task.dragging{opacity:.35;transform:scale(.97)}
-/* Hours badge doubles as the status control — click cycles. Made obvious with a
-   pointer and a ring on hover rather than another button competing for space. */
-.task .h{cursor:pointer;transition:box-shadow .15s,transform .15s}
-.task .h:hover{box-shadow:0 0 0 2px rgba(234,223,205,.35);transform:scale(1.06)}
-.task .dot{width:9px;height:9px;border-radius:50%;flex:none;margin-top:3px;cursor:pointer;transition:box-shadow .15s,transform .15s}
-.task .dot:hover{box-shadow:0 0 0 2px rgba(234,223,205,.35);transform:scale(1.18)}
-/* Whole empty area of a cell is a target, not just the little + */
+/* The card being dragged tilts and lifts, like it's been picked up off the
+   table, rather than just fading — much clearer which one is in motion when
+   several sit close together. */
+.task.dragging{opacity:.55;transform:rotate(-1.4deg) scale(1.04);box-shadow:0 10px 22px -8px rgba(0,0,0,.6);z-index:5;position:relative}
 td.day{cursor:copy}
 td.day.dragover{background:#14140F;box-shadow:inset 0 0 0 1px var(--champagne)}
 td.day.is-today.dragover{background:#16160F}
+.task .top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
 .task .txt{flex:1;min-width:0}
 .task .c{font-size:12.5px;color:var(--cream);line-height:1.3;font-weight:400;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .task .k{font-size:11px;color:var(--stone);line-height:1.35;margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.task .h{font-size:10.5px;color:var(--obsidian);background:var(--champagne);padding:1px 6px;border-radius:9px;flex:none;font-weight:500;letter-spacing:.02em}
+.task .hrs{font-size:10px;color:var(--stone);margin-top:3px;letter-spacing:.04em}
+
+/* Status pill — the whole point of "less hour-centric": what a card leads
+   with is where the job stands, not how long it'll take. Click cycles it,
+   same interaction as before, new shape borrowed straight from Longwave's
+   subtask page ("● Review"). */
+.pill2{display:inline-flex;align-items:center;gap:5px;font-size:9.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--c,var(--stone));border:1px solid var(--c,var(--stone));padding:2px 8px 2px 6px;flex:none;cursor:pointer;transition:transform .18s,box-shadow .18s;white-space:nowrap;align-self:flex-start;animation:pillPop .32s cubic-bezier(.34,1.56,.64,1)}
+.pill2 i{width:5px;height:5px;border-radius:50%;background:var(--c,var(--stone));flex:none}
+.pill2:hover{box-shadow:0 0 0 3px color-mix(in srgb, var(--c,var(--stone)) 22%, transparent);transform:scale(1.05)}
 .dayfoot{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-top:7px}
-.dayfoot .cap{font-size:10.5px;color:var(--stone);letter-spacing:.06em}
-.dayfoot .cap.over{color:var(--rust)}
-.dayfoot .cap.full{color:var(--sage)}
-.dayfoot .add{background:none;border:1px solid var(--line);color:var(--stone);width:24px;height:24px;font-size:14px;line-height:1;cursor:pointer;font-family:inherit;transition:border-color .2s,color .2s;flex:none}
+.dayfoot .count{font-size:10.5px;color:var(--stone);letter-spacing:.06em}
+.dayfoot .add{background:none;border:1px solid var(--line);color:var(--stone);width:24px;height:24px;font-size:14px;line-height:1;cursor:pointer;font-family:inherit;transition:border-color .2s,color .2s,transform .15s;flex:none}
 .dayfoot .add:hover{border-color:var(--champagne);color:var(--cream)}
-.offtag{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--stone);border:1px dashed var(--line2);padding:5px 0;text-align:center;margin-bottom:6px}
+.dayfoot .add:active{transform:scale(.9)}
 /* Finished work should stop competing for attention without vanishing — you
    still want to see it was done, just not read it first. */
-.task[data-status="Done"]{opacity:.62}
+.task[data-status="Done"]{opacity:.6}
 .task[data-status="Done"] .c{text-decoration:line-through;text-decoration-thickness:1px}
 .task[data-status="Blocked"]{background:#161113}
 .legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:14px;font-size:11px;color:var(--stone);letter-spacing:.05em;align-items:center}
@@ -157,7 +208,7 @@ td.day.is-today.dragover{background:#16160F}
 .summary{display:flex;gap:0;flex-wrap:wrap;border:1px solid var(--line);border-bottom:0;background:var(--panel)}
 .summary .s{padding:11px 16px;border-right:1px solid var(--line);display:flex;align-items:baseline;gap:8px;min-width:0}
 .summary .s:last-child{border-right:0}
-.summary .v{font-family:var(--display);font-size:1.15rem;color:var(--cream);line-height:1}
+.summary .v{font-family:var(--display);font-size:1.15rem;color:var(--cream);line-height:1;animation:riseIn .3s var(--ease) backwards}
 .summary .k{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--stone)}
 .summary .s.warn .v{color:var(--rust)}
 .summary .s.good .v{color:var(--sage)}
@@ -171,28 +222,29 @@ kbd{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;border:1px solid v
 /* ---- modal ---- */
 .modal{position:fixed;inset:0;background:rgba(6,6,7,.84);backdrop-filter:blur(3px);z-index:100;display:flex;align-items:center;justify-content:center;padding:24px}
 .modal[hidden]{display:none}
-.modal .box{background:var(--panel);border:1px solid var(--line2);width:100%;max-width:440px;padding:24px;max-height:88vh;overflow:auto}
+.modal .box{background:var(--panel);border:1px solid var(--line2);width:100%;max-width:440px;padding:24px;max-height:88vh;overflow:auto;animation:modalIn .28s var(--ease)}
 .modal h4{font-family:var(--display);font-weight:400;font-size:1.3rem;margin-bottom:2px}
 .modal .sub{font-size:12px;color:var(--stone);margin-bottom:20px;letter-spacing:.04em}
 .modal .row{margin-bottom:14px}
 .modal .two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.modal .two.optional label{color:var(--line2)}
 .modal .acts{display:flex;gap:9px;align-items:center;margin-top:20px}
 .modal .acts .spacer{flex:1}
 .member{display:flex;gap:8px;align-items:center;margin-bottom:8px}
-.member input.name{flex:1.1}
-.member input.role{flex:1.5}
-.member input.cap{width:66px;flex:none;text-align:center}
+.member input.name{flex:1.3}
+.member input.role{flex:1.7}
 
 /* ---- brand kit ---- */
 .swatches{display:grid;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:11px}
-.sw{border:1px solid var(--line);cursor:pointer;background:none;padding:0;text-align:left;font-family:inherit;transition:border-color .25s}
-.sw:hover{border-color:var(--champagne)}
+.sw{border:1px solid var(--line);cursor:pointer;background:none;padding:0;text-align:left;font-family:inherit;transition:border-color .25s,transform .2s}
+.sw:hover{border-color:var(--champagne);transform:translateY(-2px)}
 .sw i{display:block;height:62px}
 .sw span{display:block;padding:9px 11px;font-size:11px;letter-spacing:.05em}
 .sw span b{display:block;font-weight:400;color:var(--cream);margin-bottom:2px;letter-spacing:.12em;text-transform:uppercase;font-size:10px}
 .sw span em{font-style:normal;color:var(--stone);font-family:ui-monospace,Menlo,monospace}
 .kit{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:11px}
-.card{border:1px solid var(--line);background:var(--panel);padding:17px 19px}
+.card{border:1px solid var(--line);background:var(--panel);padding:17px 19px;transition:border-color .25s}
+.card:hover{border-color:var(--line2)}
 .card h4{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--champagne);font-weight:400;margin-bottom:11px}
 .card p,.card li{font-size:13.5px;color:var(--dim);margin-bottom:6px}
 .card ul{list-style:none}
@@ -205,7 +257,7 @@ kbd{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;border:1px solid v
 .jobform{background:var(--panel);border:1px solid var(--line);padding:20px;margin-bottom:28px}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
 .formfoot{display:flex;gap:10px;align-items:center;margin-top:16px}
-.job{border:1px solid var(--line);border-left:2px solid var(--stone);background:var(--panel);padding:15px 17px;margin-bottom:9px}
+.job{border:1px solid var(--line);border-left:2px solid var(--stone);background:var(--panel);padding:15px 17px;margin-bottom:9px;animation:cardIn .34s var(--ease) backwards;transition:border-color .2s}
 .job[data-status="Confirmed"]{border-left-color:var(--champagne)}
 .job[data-status="Editing"]{border-left-color:var(--slate)}
 .job[data-status="Shot"]{border-left-color:#9B8AA8}
@@ -221,11 +273,11 @@ kbd{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;border:1px solid v
 .jobacts button:hover{color:var(--cream)}
 .jobacts button.del:hover{color:var(--rust)}
 
-.toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--champagne);color:var(--obsidian);padding:10px 22px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;transition:transform .35s cubic-bezier(.16,1,.3,1);z-index:120}
-.toast.show{transform:translateX(-50%) translateY(0)}
+.toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--champagne);color:var(--obsidian);padding:10px 22px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;transition:transform .35s var(--ease);z-index:120}
+.toast.show{animation:toastPop .35s var(--ease);transform:translateX(-50%) translateY(0)}
 @media(max-width:620px){
   .hlinks{gap:14px}
-  nav.tabs button{padding:14px 12px;letter-spacing:.1em}
+  nav.tabs button{padding:9px 12px;letter-spacing:.1em}
   .weeklabel{min-width:0;font-size:1.05rem}
   .modal .two{grid-template-columns:1fr}
 }
@@ -260,14 +312,19 @@ kbd{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;border:1px solid v
   <!-- ============================= WEEK PLANNER ============================ -->
   <section id="week">
     <h2>Week Planner</h2>
-    <p class="lede">Everyone's week in one grid. Each cell is one person on one day — add what they're working on and how long it'll take. Hours total per day against their capacity, and per person across the week.</p>
+    <p class="lede">Everyone's week in one grid — who's on, and what they're on. Click an avatar to focus the board on that person, drag a card to move it, and tap its status to move it along.</p>
 
     <div id="plannerbanner" hidden class="banner"></div>
 
+    <div class="teamrow" id="teamrow"></div>
+    <div class="pool" id="pool" hidden></div>
+
     <div class="weekbar">
-      <button class="nav" id="prevweek" aria-label="Previous week">‹</button>
-      <button class="nav" id="nextweek" aria-label="Next week">›</button>
-      <div class="weeklabel" id="weeklabel"></div>
+      <div class="weeknav">
+        <button class="nav" id="prevweek" aria-label="Previous week">‹</button>
+        <div class="weeklabel" id="weeklabel"></div>
+        <button class="nav" id="nextweek" aria-label="Next week">›</button>
+      </div>
       <button class="btn ghost sm" id="thisweek">This week</button>
       <span class="saving" id="saving">Saving…</span>
       <span style="flex:1"></span>
@@ -275,12 +332,13 @@ kbd{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;border:1px solid v
     </div>
 
     <div class="summary" id="summary"></div>
-    <div class="gridwrap"><table class="plan" id="plantable"></table></div>
+    <div class="gridwrap" id="gridwrap"><table class="plan" id="plantable"></table></div>
     <div class="legend" id="legend"></div>
     <p class="hint">
-      <b>Drag</b> a card to move it to another day or person ·
-      <b>Click the hours badge</b> to cycle its status ·
-      <b>Click any empty space</b> in a cell to add ·
+      <b>Click an avatar</b> to show or hide their row ·
+      <b>Drag</b> a card to move it ·
+      <b>Tap the status pill</b> to advance it ·
+      <b>Click empty space</b> to add ·
       <kbd>←</kbd><kbd>→</kbd> change week, <kbd>T</kbd> today
     </p>
   </section>
@@ -426,23 +484,24 @@ kbd{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;border:1px solid v
         <input id="tm-client" maxlength="60" placeholder="Rolls-Royce" list="clientlist" autocomplete="off">
       </div>
       <datalist id="clientlist"></datalist>
-      <div class="two">
-        <div class="row">
-          <label for="tm-task">Task</label>
-          <input id="tm-task" maxlength="60" placeholder="Shoot" list="tasklist" autocomplete="off">
-        </div>
-        <div class="row">
-          <label for="tm-hours">Hours</label>
-          <input id="tm-hours" type="number" min="0" max="24" step="0.25" placeholder="4">
-        </div>
+      <div class="row">
+        <label for="tm-task">Task</label>
+        <input id="tm-task" maxlength="60" placeholder="Shoot" list="tasklist" autocomplete="off">
       </div>
       <div class="row">
-        <label for="tm-status">Completion</label>
+        <label for="tm-status">Status</label>
         <select id="tm-status">
           <option>To do</option><option>In progress</option><option>Review</option>
           <option>Done</option><option>Blocked</option>
         </select>
         <div class="statushint" id="tm-statushint"></div>
+      </div>
+      <div class="row two optional">
+        <div>
+          <label for="tm-hours">Hours — optional</label>
+          <input id="tm-hours" type="number" min="0" max="24" step="0.25" placeholder="Leave blank if it doesn't matter">
+        </div>
+        <div></div>
       </div>
       <datalist id="tasklist">
         <option>Shoot</option><option>Second shooter</option><option>Edit — V1</option>
@@ -457,9 +516,6 @@ kbd{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;border:1px solid v
         <button type="button" class="btn danger" id="tm-delete" hidden>Delete</button>
       </div>
     </form>
-    <div style="border-top:1px solid var(--line);margin-top:18px;padding-top:14px">
-      <button type="button" class="btn ghost sm" id="tm-off">Mark day off</button>
-    </div>
   </div>
 </div>
 
@@ -467,7 +523,7 @@ kbd{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;border:1px solid v
 <div class="modal" id="teammodal" hidden>
   <div class="box">
     <h4>Team</h4>
-    <div class="sub">Rows on the planner. Capacity is their normal working hours in a day.</div>
+    <div class="sub">Rows on the planner. Just a name and what they do — jobs are the unit here, not hours.</div>
     <div id="memberlist"></div>
     <button type="button" class="btn ghost sm" id="addmember" style="margin-top:6px">+ Add person</button>
     <div class="acts">
@@ -491,6 +547,7 @@ kbd{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;border:1px solid v
   let toastTimer;
   function toast(msg){
     toastEl.textContent = msg;
+    toastEl.classList.remove('show'); void toastEl.offsetWidth;   // restart the pop animation
     toastEl.classList.add('show');
     clearTimeout(toastTimer);
     toastTimer = setTimeout(() => toastEl.classList.remove('show'), 1900);
@@ -526,6 +583,7 @@ kbd{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;border:1px solid v
   let members = [], tasks = [], off = [], ready = false;
   let anchor = startOfWeek(new Date());     // Monday of the shown week
   let editing = null;                        // {memberId, date, taskId?}
+  const hiddenMembers = new Set();           // avatar-row focus filter, display only
 
   // Monday-start week. getDay() is 0 for Sunday, so Sunday has to reach back
   // six days rather than forward one — the usual off-by-one in week maths.
@@ -544,13 +602,66 @@ kbd{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;border:1px solid v
     });
   }
 
-  // 4 → "4h", 4.5 → "4.5h", 0 → "0h"
+  // 4 → "4h", 4.5 → "4.5h", 0 → "0h" — only ever shown as an optional tag now.
   const fmtH = n => (Math.round(n*100)/100).toString().replace(/\.00?$/,'') + 'h';
 
   const isOff = (date, memberId) => off.includes(`${date}|${memberId}`);
   const tasksFor = (date, memberId) => tasks.filter(t => t.date === date && t.memberId === memberId);
 
-  function renderWeek(){
+  const RING = ['var(--champagne)','var(--rust)','var(--sage)','var(--slate)'];
+  const ringFor = i => RING[i % RING.length];
+  const initials = name => (name || '').trim().split(/\s+/).slice(0,2).map(w => w[0] || '').join('').toUpperCase() || '?';
+
+  function renderAvatars(){
+    if (!members.length){ $('teamrow').innerHTML = ''; return; }
+    $('teamrow').innerHTML = members.map((m,i) => {
+      const on = !hiddenMembers.has(m.id);
+      return `<button type="button" class="avatar ${on?'':'off'}" data-toggle="${esc(m.id)}"
+                style="--ring:${ringFor(i)}" title="${esc(m.name)} — click to ${on?'hide':'show'} their row">
+        <span class="circ">${esc(initials(m.name))}</span>
+        <span class="nm">${esc((m.name || '').split(' ')[0] || m.name)}</span>
+      </button>`;
+    }).join('');
+  }
+
+  $('teamrow').addEventListener('click', e => {
+    const btn = e.target.closest('[data-toggle]');
+    if (!btn) return;
+    const id = btn.dataset.toggle;
+    if (hiddenMembers.has(id)) hiddenMembers.delete(id); else hiddenMembers.add(id);
+    renderAvatars();
+    renderWeek();
+    const fresh = [...$('teamrow').querySelectorAll('[data-toggle]')].find(el => el.dataset.toggle === id);
+    if (fresh){ fresh.classList.add('justtoggled'); setTimeout(() => fresh.classList.remove('justtoggled'), 650); }
+  });
+
+  /* This week's bookings, grouped by client — the pool of "what's live" that
+     Longwave shows as loose pills above the grid. Ours is derived (there's no
+     separate backlog list to keep in sync), and the badge on each pill counts
+     jobs done vs total for that client this week, not hours. */
+  function renderPool(){
+    const days = weekDays().map(iso);
+    const weekTasks = tasks.filter(t => days.includes(t.date));
+    const byClient = new Map();
+    weekTasks.forEach(t => {
+      const name = t.client || t.task || 'Untitled';
+      if (!byClient.has(name)) byClient.set(name, []);
+      byClient.get(name).push(t);
+    });
+    const names = [...byClient.keys()].sort((a,b) => byClient.get(b).length - byClient.get(a).length);
+    if (!names.length){ $('pool').hidden = true; $('pool').innerHTML = ''; return; }
+    $('pool').hidden = false;
+    $('pool').innerHTML = names.map(n => {
+      const list = byClient.get(n);
+      const done = list.filter(t => (t.status || 'To do') === 'Done').length;
+      const lead = list.some(t => t.status === 'Blocked') ? 'Blocked'
+        : (done === list.length ? 'Done'
+        : (list.some(t => t.status === 'In progress') ? 'In progress' : 'To do'));
+      return `<span class="poolpill" style="border-left-color:${colourFor(lead)}">${esc(n)} <b>${done}/${list.length}</b></span>`;
+    }).join('');
+  }
+
+  function renderWeek(enter){
     const days = weekDays();
     const last = days[6];
     // Always name BOTH months. Dropping the first one when the week sits inside
@@ -561,9 +672,19 @@ kbd{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;border:1px solid v
       ' – ' +
       last.toLocaleDateString('en-GB',{ day:'numeric', month:'short', year:'numeric' });
 
+    renderAvatars();
+    renderPool();
+
     if (!members.length){
-      $('plantable').innerHTML = '<tr><td class="empty" style="border:0;padding:30px">No team yet — use “Edit team”.</td></tr>';
-      renderSummary();   // still zero the counters rather than leaving them stale
+      $('plantable').innerHTML = '<tr><td class="empty" style="border:0;padding:30px">No team yet — use "Edit team".</td></tr>';
+      renderSummary();
+      return;
+    }
+
+    const visible = members.filter(m => !hiddenMembers.has(m.id));
+    if (!visible.length){
+      $('plantable').innerHTML = '<tr><td class="empty" style="border:0;padding:30px">Everyone\'s hidden — click an avatar above to bring a row back.</td></tr>';
+      renderSummary();
       return;
     }
 
@@ -574,43 +695,47 @@ kbd{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;border:1px solid v
           d.toLocaleDateString('en-GB',{day:'numeric',month:'short'})}</b></th>`;
       }).join('')}<th class="total">Total</th></tr></thead>`;
 
-    const body = members.map(m => {
-      const cap = m.capacity || 8;
-      let weekTotal = 0;
+    const body = visible.map(m => {
+      let weekJobs = 0;
+      let cardIndex = 0;
 
       const cells = days.map(d => {
         const date = iso(d);
         const list = tasksFor(date, m.id);
-        const used = list.reduce((s,t) => s + (t.hours || 0), 0);
-        weekTotal += used;
+        weekJobs += list.length;
         const dayOff = isOff(date, m.id);
         const cls = ['day', iso(d)===todayIso() ? 'is-today':'', dayOff ? 'is-off':''].filter(Boolean).join(' ');
-        const capCls = used > cap ? 'over' : (used === cap && used > 0 ? 'full' : '');
 
-        return `<td class="${cls}" data-member="${esc(m.id)}" data-date="${date}">
-          ${dayOff ? '<div class="offtag">Off</div>' : ''}
-          ${list.map(t => {
-            const st = t.status || 'To do';
-            const col = colourFor(st);
-            const cyc = `${esc(st)} — click to advance`;
-            return `
-            <div class="task" draggable="true"
-                 data-task="${esc(t.id)}" data-member="${esc(m.id)}" data-date="${date}"
-                 data-status="${esc(st)}" title="${esc(st)} · drag to move"
-                 style="border-left-color:${col}">
+        const cards = list.map(t => {
+          const st = t.status || 'To do';
+          const col = colourFor(st);
+          const cyc = `${esc(st)} — click to advance`;
+          const i = cardIndex++;
+          return `
+          <div class="task ${enter?'enter':''}" style="--i:${i};border-left-color:${col}" draggable="true"
+               data-task="${esc(t.id)}" data-member="${esc(m.id)}" data-date="${date}"
+               data-status="${esc(st)}" title="${esc(st)} · drag to move">
+            <div class="top">
               <div class="txt">
                 <div class="c">${esc(t.client || t.task)}</div>
                 ${t.client && t.task ? `<div class="k">${esc(t.task)}</div>` : ''}
+                ${t.hours ? `<div class="hrs">${esc(fmtH(t.hours))}</div>` : ''}
               </div>
-              ${t.hours
-                ? `<span class="h" data-cycle="${esc(t.id)}" title="${cyc}" style="background:${col}">${esc(fmtH(t.hours))}</span>`
-                : `<span class="dot" data-cycle="${esc(t.id)}" title="${cyc}" style="background:${col}"></span>`}
-            </div>`;
-          }).join('')}
+            </div>
+            <span class="pill2" data-cycle="${esc(t.id)}" title="${cyc}" style="--c:${col}"><i></i>${esc(st)}</span>
+          </div>`;
+        }).join('');
+
+        return `<td class="${cls}" data-member="${esc(m.id)}" data-date="${date}">
+          <label class="working" title="Working on ${esc(d.toLocaleDateString('en-GB',{weekday:'long'}))}">
+            <input type="checkbox" data-off="${esc(m.id)}" data-date="${date}" ${dayOff ? '' : 'checked'}>
+            <span>${dayOff ? 'Off' : 'Working'}</span>
+          </label>
+          ${cards}
           <div class="dayfoot">
-            <span class="cap ${capCls}">${esc(fmtH(used))} / ${esc(fmtH(cap))}</span>
+            <span class="count">${list.length ? list.length + (list.length===1?' job':' jobs') : ''}</span>
             <button class="add" data-add="${esc(m.id)}" data-date="${date}"
-                    aria-label="Add task for ${esc(m.name)}">+</button>
+                    aria-label="Add job for ${esc(m.name)}">+</button>
           </div>
         </td>`;
       }).join('');
@@ -619,10 +744,9 @@ kbd{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;border:1px solid v
         <th class="who">
           <div class="nm">${esc(m.name)}</div>
           ${m.role ? `<div class="rl">${esc(m.role)}</div>` : ''}
-          <div class="wk">Capacity <b>${esc(fmtH(cap))}</b>/day</div>
         </th>
         ${cells}
-        <td class="tot">${esc(fmtH(weekTotal))}</td>
+        <td class="tot"><span class="n">${weekJobs}</span><span class="lbl">${weekJobs===1?'job':'jobs'}</span></td>
       </tr>`;
     }).join('');
 
@@ -654,10 +778,30 @@ kbd{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;border:1px solid v
     $('clientlist').innerHTML = names.map(n => `<option>${esc(n)}</option>`).join('');
   }
 
-  function shiftWeek(n){ anchor.setDate(anchor.getDate() + n*7); renderWeek(); }
+  /* Week navigation slides the grid out and back in, direction-aware, rather
+     than snapping straight to new content — a small nod to "this feels a bit
+     static" without touching how the data loads. */
+  function shiftWeek(n){
+    const wrap = $('gridwrap');
+    wrap.style.setProperty('--dx', n > 0 ? '14px' : '-14px');
+    wrap.classList.add('switching');
+    setTimeout(() => {
+      anchor.setDate(anchor.getDate() + n*7);
+      renderWeek(true);
+      requestAnimationFrame(() => wrap.classList.remove('switching'));
+    }, 130);
+  }
   $('prevweek').addEventListener('click', () => shiftWeek(-1));
   $('nextweek').addEventListener('click', () => shiftWeek(1));
-  $('thisweek').addEventListener('click', () => { anchor = startOfWeek(new Date()); renderWeek(); });
+  $('thisweek').addEventListener('click', () => {
+    const wrap = $('gridwrap');
+    wrap.classList.add('switching');
+    setTimeout(() => {
+      anchor = startOfWeek(new Date());
+      renderWeek(true);
+      requestAnimationFrame(() => wrap.classList.remove('switching'));
+    }, 130);
+  });
 
   /* ---- task modal ---- */
   function openTask({ memberId, date, taskId }){
@@ -675,7 +819,6 @@ kbd{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;border:1px solid v
     paintStatusHint();
     $('tm-save').textContent = t ? 'Save' : 'Add';
     $('tm-delete').hidden = !t;
-    $('tm-off').textContent = isOff(date, memberId) ? 'Mark as working' : 'Mark day off';
     $('taskmodal').hidden = false;
     $('tm-client').focus();
   }
@@ -684,7 +827,7 @@ kbd{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;border:1px solid v
   function paintStatusHint(){
     const s = $('tm-status').value;
     $('tm-statushint').innerHTML =
-      `<i style="background:${colourFor(s)}"></i> Marker colour for “${esc(s)}”`;
+      `<i style="background:${colourFor(s)}"></i> Marker colour for "${esc(s)}"`;
   }
   $('tm-status').addEventListener('change', paintStatusHint);
 
@@ -721,16 +864,19 @@ kbd{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;border:1px solid v
 
     if (e.key === 'ArrowLeft'){ e.preventDefault(); shiftWeek(-1); }
     else if (e.key === 'ArrowRight'){ e.preventDefault(); shiftWeek(1); }
-    else if (e.key === 't' || e.key === 'T'){ anchor = startOfWeek(new Date()); renderWeek(); }
+    else if (e.key === 't' || e.key === 'T'){ anchor = startOfWeek(new Date()); renderWeek(true); }
   });
 
   $('plantable').addEventListener('click', e => {
     if (!ready) return;
 
-    // Status chip first — it sits inside a card, so it has to win before the
+    // Status pill first — it sits inside a card, so it has to win before the
     // card's own "open the editor" handler sees the click.
     const cyc = e.target.closest('[data-cycle]');
     if (cyc){ e.stopPropagation(); return cycleStatus(cyc.dataset.cycle); }
+
+    // The working checkbox is its own control too.
+    if (e.target.closest('.working')) return;
 
     const add = e.target.closest('button[data-add]');
     if (add) return openTask({ memberId: add.dataset.add, date: add.dataset.date });
@@ -738,34 +884,46 @@ kbd{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;border:1px solid v
     const task = e.target.closest('.task');
     if (task) return openTask({ memberId: task.dataset.member, date: task.dataset.date, taskId: task.dataset.task });
 
-    // Anywhere else in the cell counts as "add here" — the 24px + button was a
+    // Anywhere else in the cell counts as "add here" — a tiny + button is a
     // needlessly small target for the most common action on the board.
     const td = e.target.closest('td.day');
     if (td) return openTask({ memberId: td.dataset.member, date: td.dataset.date });
   });
 
-  /* ---- week summary ---- */
+  /* ---- working / day-off toggle — inline now, no detour through the modal ---- */
+  $('plantable').addEventListener('change', e => {
+    const box = e.target.closest('input[data-off]');
+    if (!box) return;
+    const memberId = box.dataset.off, date = box.dataset.date;
+    send({ op:'off.toggle', memberId, date }, box.checked ? 'Working' : 'Marked off',
+      () => {
+        const key = `${date}|${memberId}`;
+        const i = off.indexOf(key);
+        if (i === -1) off.push(key); else off.splice(i, 1);
+      });
+  });
+
+  /* ---- week summary — job-based, not hour-based ---- */
   function renderSummary(){
     const days = weekDays().map(iso);
-    let planned = 0, count = 0, done = 0, overCells = 0, offCells = 0, freeCells = 0;
-    members.forEach(m => {
-      const cap = m.capacity || 8;
+    let count = 0, done = 0, offCells = 0, freeCells = 0;
+    const clients = new Set();
+    const visible = members.filter(m => !hiddenMembers.has(m.id));
+    visible.forEach(m => {
       days.forEach(d => {
         const list = tasksFor(d, m.id);
-        const used = list.reduce((s,t) => s + (t.hours || 0), 0);
-        planned += used; count += list.length;
+        count += list.length;
+        list.forEach(t => { if (t.client) clients.add(t.client); });
         done += list.filter(t => (t.status || 'To do') === 'Done').length;
         if (isOff(d, m.id)) offCells++;
-        else if (used > cap) overCells++;
         else if (!list.length) freeCells++;
       });
     });
     const pct = count ? Math.round(done / count * 100) : 0;
     const cells = [
-      ['Planned', fmtH(planned), ''],
-      ['Tasks', String(count), ''],
-      ['Done', count ? `${done}/${count} · ${pct}%` : '—', done && done === count ? 'good' : ''],
-      ['Over capacity', String(overCells), overCells ? 'warn' : ''],
+      ['Jobs this week', String(count), ''],
+      ['Active clients', String(clients.size), ''],
+      ['Done', count ? `${done}/${count} · ${pct}%` : '—', done && done === count && count ? 'good' : ''],
       ['Free slots', String(freeCells), ''],
       ['Days off', String(offCells), '']
     ];
@@ -867,23 +1025,17 @@ kbd{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;border:1px solid v
 
   $('tm-delete').addEventListener('click', async () => {
     if (!editing || !editing.taskId) return;
-    if (!confirm('Delete this task?')) return;
+    if (!confirm('Delete this job?')) return;
     if (await send({ op:'task.delete', id: editing.taskId }, 'Deleted')) closeTask();
   });
 
-  $('tm-off').addEventListener('click', async () => {
-    if (!editing) return;
-    if (await send({ op:'off.toggle', memberId: editing.memberId, date: editing.date }, 'Updated')) closeTask();
-  });
-
   /* ---- team editor ---- */
-  function memberRow(m = { id:'', name:'', role:'', capacity:8 }){
+  function memberRow(m = { id:'', name:'', role:'' }){
     const div = document.createElement('div');
     div.className = 'member';
     div.innerHTML = `
       <input class="name" placeholder="Name" maxlength="40" value="${esc(m.name)}">
       <input class="role" placeholder="Role" maxlength="60" value="${esc(m.role)}">
-      <input class="cap" type="number" min="1" max="24" step="0.5" title="Hours per day" value="${m.capacity || 8}">
       <button type="button" class="btn ghost sm rm" aria-label="Remove">✕</button>`;
     div.dataset.id = m.id || '';
     div.querySelector('.rm').addEventListener('click', () => div.remove());
@@ -905,8 +1057,7 @@ kbd{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;border:1px solid v
     const next = [...$('memberlist').querySelectorAll('.member')].map(r => ({
       id:   r.dataset.id || undefined,
       name: r.querySelector('.name').value.trim(),
-      role: r.querySelector('.role').value.trim(),
-      capacity: Number(r.querySelector('.cap').value) || 8
+      role: r.querySelector('.role').value.trim()
     })).filter(m => m.name);
 
     if (!next.length) { toast('Add at least one person'); return; }
@@ -931,7 +1082,7 @@ kbd{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;border:1px solid v
       const data = await api(PLANNER, 'GET');
       members = data.members; tasks = data.tasks; off = data.off;
       ready = true;
-      renderWeek(); fillPeopleList(); renderLegend();
+      renderWeek(true); fillPeopleList(); renderLegend();
     } catch (err) {
       if (err.data && err.data.error === 'no-kv'){
         $('plannerbanner').hidden = false;
