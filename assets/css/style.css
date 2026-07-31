@@ -159,34 +159,6 @@ header.hero{
   text-align:center;position:relative;padding:120px clamp(24px,5vw,60px) 110px;background:transparent;
 }
 
-/* the oversized background wordline — bleeds off both edges of the viewport
-   and loops slowly behind the real headline, at low enough opacity to read
-   as texture rather than a second line of copy competing with the h1.
-   Pauses on hover, same courtesy as the clients marquee lower down the page. */
-.hero-bigword-wrap{
-  position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);
-  overflow:hidden;z-index:0;pointer-events:auto;
-  -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 15%,#000 85%,transparent 100%);
-          mask-image:linear-gradient(90deg,transparent 0,#000 15%,#000 85%,transparent 100%);
-}
-.hero-bigword-track{
-  display:flex;align-items:center;width:max-content;gap:clamp(40px,6vw,90px);
-  animation:heroMarquee 70s linear infinite;will-change:transform;
-  transition:transform .6s cubic-bezier(.2,.8,.2,1);
-}
-.hero-bigword-wrap:hover .hero-bigword-track{animation-play-state:paused}
-.hero-bigword-track span{
-  font-family:var(--display);font-weight:var(--display-wght);
-  font-size:clamp(4.5rem,14vw,11rem);line-height:1;letter-spacing:-.01em;
-  color:rgba(234,223,205,.05);white-space:nowrap;
-  transition:color .5s ease;
-}
-/* the word nearest the cursor brightens — a quiet payoff for hovering
-   something that looks purely decorative */
-.hero-bigword-track span:hover{color:rgba(194,168,120,.5)}
-@keyframes heroMarquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-@media(prefers-reduced-motion:reduce){.hero-bigword-track{animation:none}}
-
 /* vertical ribbon pinned to the true viewport edge — a fact about the studio
    instead of an award tag. Slides fully flush and brightens on hover. */
 .hero-edgebadge{position:fixed;left:0;top:64%;transform:translateY(-50%);z-index:56;
@@ -225,7 +197,29 @@ header.hero .hero-inner{position:relative;z-index:2}
   font-size:clamp(2.1rem,5.6vw,4.4rem);line-height:1.1;letter-spacing:-.015em;
   margin:0 0 clamp(26px,3.6vh,40px);
 }
-header.hero .hero-statement{font-size:clamp(2.4rem,6.6vw,5.2rem);letter-spacing:-.025em}
+/* MEGA hero type — the whole point of the home page now. Sized off vw so it
+   fills the viewport at any width the way couroazul's single line does,
+   with the two words stacked so each gets a full line's worth of scale.
+   line-height under 1 lets the two lines close up into one type block. */
+header.hero .hero-statement.hero-mega{
+  font-size:clamp(3.6rem,17vw,15rem);
+  line-height:.82;letter-spacing:-.04em;
+  margin:0 0 clamp(20px,3vh,34px);
+  text-transform:none;
+}
+.hero-mega em{
+  /* second word carries the serif-italic-champagne treatment the site
+     already uses for emphasis — same device landonorris uses when it drops
+     one serif word into a wall of sans caps */
+  letter-spacing:-.02em;
+}
+/* each line slides up from behind the one above as it resolves */
+.hero-mega .ln{overflow:hidden;padding-bottom:.06em}
+.hero-sub{
+  font-family:var(--sans);font-size:clamp(.82rem,1.5vw,1rem);font-weight:300;
+  letter-spacing:.02em;color:var(--stone);margin:0 0 clamp(26px,4vh,42px);
+  position:relative;z-index:2;
+}
 .hero-statement em{font-family:var(--serif);font-style:italic;font-weight:500;color:var(--champagne)}
 /* the hero resolves word by word out of a blur (see .split) */
 .hero-statement .ln{display:block}
@@ -376,112 +370,80 @@ body.wheel-live .wheel-media img{opacity:0!important}
   .wheel-head{top:9%}
 }
 
-/* ---- STORY TIMELINE (about) — a flowing line that advances as you scroll ----
-   The section pins; scrolling drives the timeline horizontally so one milestone
-   sits at the focal point at a time, with its photo travelling alongside. */
-.story{position:relative;padding:0;border-top:1px solid var(--smoke);border-bottom:1px solid var(--smoke)}
-.story-track{height:520vh}
-.story-vp{position:sticky;top:0;height:100vh;overflow:hidden}
-.story-head{
-  position:absolute;top:11%;left:clamp(24px,5vw,72px);z-index:4;max-width:22ch;pointer-events:none;
-}
-.story-title{
+/* ---- TIMELINE (about) — horizontally-pinned track ----
+   Modelled on landonorris.com: a tall section whose inner frame sticks to
+   the viewport while vertical scroll is remapped to horizontal travel, so
+   the story reads left-to-right as you scroll down. Cards are staggered
+   vertically so the row is a composed spread rather than a flat conveyor,
+   and each image sits oversized inside a clipped frame so it can parallax
+   within its own card as the row passes. Replaces the old sine-wave
+   version, which needed a lot of maths to say the same thing and never
+   animated as cleanly. */
+.htrack{position:relative;border-top:1px solid var(--smoke);border-bottom:1px solid var(--smoke)}
+.htrack-pin{position:sticky;top:0;height:100vh;overflow:hidden;display:flex;flex-direction:column;justify-content:center}
+.htrack-head{position:absolute;top:clamp(70px,11vh,110px);left:0;width:100%;padding:0 clamp(22px,5vw,60px);z-index:3;pointer-events:none}
+.htrack-title{
   font-family:var(--display);font-weight:var(--display-wght);
-  font-size:clamp(1.8rem,4vw,3rem);line-height:1.05;letter-spacing:-.01em;margin-top:14px;
+  font-size:clamp(1.9rem,4.4vw,3.2rem);line-height:1.04;margin-top:14px;letter-spacing:-.015em;
 }
-.story-title em{font-family:var(--serif);font-style:italic;font-weight:500;color:var(--champagne)}
+.htrack-title em{font-family:var(--serif);font-style:italic;font-weight:500;color:var(--champagne)}
 
-.story-world{position:absolute;top:0;left:0;height:100%;will-change:transform}
-.story-wave{position:absolute;top:0;left:0;height:100%;overflow:visible}
-.story-wave .wave-base{stroke:var(--smoke);stroke-width:1;vector-effect:non-scaling-stroke}
-/* progress line is painted with a gradient that fades out into the dark base
-   line, rather than stopping abruptly */
-.story-wave .wave-prog{stroke:url(#progGrad);stroke-width:1.4;vector-effect:non-scaling-stroke}
+.htrack-row{
+  display:flex;align-items:center;gap:clamp(26px,3.6vw,58px);
+  padding:0 clamp(22px,8vw,140px);width:max-content;will-change:transform;
+}
+/* every other card drops down a little — the stagger landonorris uses to
+   stop the row scanning as a single ruled line */
+.hcard{width:clamp(230px,25vw,330px);flex:none;position:relative}
+.hcard:nth-child(even){margin-top:clamp(46px,8vh,96px)}
+.hcard-when{
+  display:block;font-family:var(--sans);font-size:10px;letter-spacing:.26em;
+  text-transform:uppercase;color:var(--champagne);margin-bottom:14px;
+}
+.hcard-media{
+  position:relative;overflow:hidden;aspect-ratio:4/5;margin-bottom:18px;background:#111013;
+}
+/* oversized so there's room to drift without exposing an edge */
+.hcard-media img{
+  position:absolute;inset:-8% -12%;width:124%;height:116%;object-fit:cover;
+  will-change:transform;transition:transform .8s cubic-bezier(.2,.8,.2,1),filter .6s ease;
+  filter:saturate(.9);
+}
+.hcard:hover .hcard-media img{transform:scale(1.06);filter:saturate(1.05)}
+.hcard h3{
+  font-family:var(--display);font-weight:var(--display-wght);
+  font-size:clamp(1.05rem,1.9vw,1.42rem);line-height:1.18;margin-bottom:9px;
+}
+.hcard p{color:var(--stone);font-size:.88rem;line-height:1.65}
 
-.story-item{position:absolute;top:0;left:0;width:1px;height:100%}
-/* content is hidden until the milestone reaches the marker, then pops in
-   (.si-when keeps its own -50% centring inside the transform) */
-.si-when,.si-card,.si-img{
-  opacity:0;
-  transition:opacity .5s cubic-bezier(.2,.8,.2,1),transform .68s cubic-bezier(.2,.8,.2,1);
+/* progress rail + counter, pinned bottom-left of the frame */
+.htrack-foot{
+  position:absolute;bottom:clamp(26px,5vh,50px);left:clamp(22px,5vw,60px);
+  display:flex;align-items:center;gap:18px;z-index:3;
 }
-.si-card,.si-img{transform:translateY(22px)}
-.si-when{transform:translate(-50%,22px)}
-.story-item.is-active .si-when{opacity:1;transform:translate(-50%,0);transition-delay:.04s}
-.story-item.is-active .si-card{opacity:1;transform:none;transition-delay:.12s}
-.story-item.is-active .si-img{opacity:1;transform:none;transition-delay:.2s}
-/* card headings resolve word-by-word once the marker lands */
-.story-item.is-active .si-card h3.split .w{opacity:1;filter:blur(0)}
-.si-when{
-  position:absolute;left:50%;top:calc(var(--ny) - 76px);
-  text-align:center;white-space:nowrap;
+.htrack-bar{width:clamp(90px,14vw,190px);height:1px;background:var(--smoke);position:relative;overflow:hidden}
+.htrack-bar span{
+  position:absolute;left:0;top:0;height:100%;width:0%;background:var(--champagne);
+  transition:width .12s linear;
 }
-.si-year{display:block;font-family:var(--sans);font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--champagne)}
-.si-lead{display:block;margin-top:6px;font-size:12px;color:var(--stone)}
-/* markers fade in as you scroll onto them, then scale up on arrival */
-.si-node{
-  position:absolute;left:50%;top:var(--ny);
-  transform:translate(-50%,-50%) scale(.3);opacity:0;
-  width:10px;height:10px;border-radius:50%;background:var(--champagne);
-  box-shadow:0 0 0 6px rgba(194,168,120,0);
-  transition:transform .55s cubic-bezier(.2,.8,.2,1),opacity .45s ease,box-shadow .6s ease;
-}
-.story-item.is-near .si-node{transform:translate(-50%,-50%) scale(.5);opacity:.45}
-.story-item.is-active .si-node{
-  transform:translate(-50%,-50%) scale(1);opacity:1;
-  box-shadow:0 0 0 6px rgba(194,168,120,.12);
-}
-.si-drop{
-  position:absolute;left:50%;top:var(--ny);width:1px;
-  height:calc(var(--cardY) - var(--ny));
-  background:linear-gradient(180deg,rgba(194,168,120,.5),rgba(194,168,120,.08));
-  transform-origin:top;transform:scaleY(0);
-  transition:transform .6s cubic-bezier(.2,.8,.2,1) .06s;
-}
-.story-item.is-active .si-drop{transform:scaleY(1)}
-.si-card{position:absolute;top:var(--cardY);left:-24px;width:min(30vw,360px)}
-.si-card h3{
-  font-family:var(--serif);font-style:italic;font-weight:500;
-  font-size:clamp(1.3rem,2.4vw,1.9rem);color:var(--cream);margin-bottom:14px;line-height:1.15;
-}
-.si-card p{color:var(--stone);font-size:.92rem;line-height:1.7}
-.si-img{
-  position:absolute;left:min(24vw,290px);top:calc(var(--ny) - 250px);
-  width:min(22vw,260px);aspect-ratio:4/5;object-fit:cover;
-  border:1px solid var(--smoke);background:#141317;
-}
-.story-progress{
-  position:absolute;right:clamp(24px,5vw,72px);bottom:9%;z-index:4;
-  font-family:var(--sans);font-size:12px;letter-spacing:.16em;color:var(--stone);
-}
-.story-progress b{color:var(--champagne);font-weight:400}
+.htrack-count{font-family:var(--sans);font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--stone)}
+.htrack-count b{color:var(--champagne);font-weight:400}
 
-/* stacked, static version on small screens */
+/* Under ~880px the pin is dropped entirely and the row becomes a normal
+   stacked column — a pinned horizontal scroll on a phone fights the user's
+   own gesture, and there isn't the width to make it read anyway. */
 @media(max-width:880px){
-  .story-track{height:auto}
-  .story-vp{position:relative;height:auto;padding:90px 0 70px}
-  .story-head{position:static;max-width:none;padding:0 22px;margin-bottom:44px}
-  .story-world{position:static;transform:none!important;height:auto;padding:0 22px}
-  .story-wave,.si-node,.si-drop{display:none}
-  .story-item{
-    position:relative;width:auto;height:auto;opacity:1;
-    padding:0 0 40px 26px;border-left:1px solid var(--smoke);
+  .htrack-pin{position:relative;height:auto;overflow:visible;padding:80px 0 60px}
+  .htrack-head{position:static;padding:0 22px;margin-bottom:36px}
+  .htrack-row{
+    flex-direction:column;align-items:stretch;width:auto;
+    padding:0 22px;gap:44px;transform:none!important;
   }
-  .story-item::before{
-    content:'';position:absolute;left:-5px;top:8px;width:10px;height:10px;
-    border-radius:50%;background:var(--champagne);
-  }
-  .si-when{position:static;transform:none;text-align:left;margin-bottom:14px}
-  .si-card{position:static;width:auto;left:auto}
-  .si-img{position:static;width:100%;max-width:320px;margin-top:20px}
-  .story-progress{display:none}
-  /* the reveal-on-scroll JS bails out early on the stacked mobile layout
-     (there's no pinned track to measure progress against), so these never
-     otherwise pick up their .is-active state — force them visible instead,
-     the same way .mt-copy/.mt-end are forced visible in the METHOD section
-     below for the same reason. */
-  .si-when,.si-card,.si-img{opacity:1!important;transform:none!important}
-  .si-card h3.split .w{opacity:1!important;filter:blur(0)!important}
+  .hcard{width:auto}
+  .hcard:nth-child(even){margin-top:0}
+  .hcard-media{aspect-ratio:auto}
+  .hcard-media img{position:static;inset:auto;width:100%;height:auto;transform:none!important}
+  .htrack-foot{display:none}
 }
 
 /* shared pill badge (used by the story cards) */
@@ -748,6 +710,100 @@ body.tm-open{overflow:hidden}
 /* ---- CLIENTS — continuously scrolling wordmark strip ---- */
 .clients{padding-top:0}
 .clients-head{margin-bottom:clamp(34px,5vh,60px)}
+
+/* ---- PARTNERS & CAMPAIGNS — landonorris collabs headline ----
+   Two lines, the second flipped to serif italic: the same "one word in a
+   different voice" device the reference uses to stop a big headline reading
+   as a flat block. Headline hard left, supporting note pushed out right, so
+   the pair frames the marquee underneath instead of stacking centred. */
+.partners-head{
+  display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.72fr);
+  gap:clamp(20px,5vw,70px);align-items:end;
+  margin-bottom:clamp(38px,6vh,70px);
+}
+.partners-title{
+  font-family:var(--display);font-weight:var(--display-wght);
+  font-size:clamp(2.1rem,6vw,4.4rem);line-height:.94;letter-spacing:-.03em;
+}
+.partners-title .pt-a{display:block}
+.partners-title .pt-b{
+  display:block;font-family:var(--serif);font-style:italic;font-weight:500;
+  color:var(--champagne);letter-spacing:-.01em;
+}
+.partners-note{color:var(--stone);font-size:.95rem;line-height:1.7;max-width:44ch;padding-bottom:.4em}
+@media(max-width:760px){
+  .partners-head{grid-template-columns:1fr;align-items:start;gap:18px}
+  .partners-note{padding-bottom:0}
+}
+
+/* ---- WHAT'S UP ON SOCIALS — fanned photo stack ----
+   Seven cards in a symmetric arc. --i runs -3…3 and drives rotation, scale,
+   horizontal spread and vertical drop together, so the whole fan is one
+   formula rather than seven hand-placed cards; z-index falls away from the
+   centre so they overlap the right way round. Ratios are lifted from the
+   reference's real computed matrices (7° per step, ~0.075 scale falloff).
+   Hovering pulls a card up and straightens it out of the arc. */
+.socials{padding-top:clamp(60px,9vh,110px);overflow:hidden}
+.socials-head{margin-bottom:clamp(34px,5vh,56px);text-align:center}
+.socials-title{
+  font-family:var(--display);font-weight:var(--display-wght);
+  font-size:clamp(2rem,5.4vw,4rem);line-height:.96;letter-spacing:-.03em;
+}
+.socials-title .st-a{display:block}
+.socials-title .st-b{
+  display:block;font-family:var(--serif);font-style:italic;font-weight:500;color:var(--champagne);
+}
+.socials-note{color:var(--stone);font-size:.95rem;line-height:1.7;max-width:46ch;margin:16px auto 0}
+
+.fan{
+  position:relative;height:clamp(300px,42vh,430px);
+  display:flex;align-items:flex-start;justify-content:center;
+  margin-top:clamp(10px,2vh,26px);
+}
+.fan-card{
+  position:absolute;top:0;
+  width:clamp(132px,15vw,200px);aspect-ratio:4/7;
+  border-radius:clamp(16px,2vw,30px);overflow:hidden;
+  background:#111013;
+  z-index:calc(10 - var(--a));
+  transform:
+    translateX(calc(var(--i) * clamp(58px,6.6vw,105px)))
+    translateY(calc(var(--a) * clamp(9px,1.5vh,20px)))
+    rotate(calc(var(--i) * 7deg))
+    scale(calc(1 - var(--a) * 0.075));
+  transition:transform .55s cubic-bezier(.2,.8,.2,1), box-shadow .45s ease;
+  box-shadow:0 24px 50px -26px rgba(0,0,0,.85);
+}
+.fan-card img{width:100%;height:100%;object-fit:cover;transition:transform .7s cubic-bezier(.2,.8,.2,1)}
+/* lift out of the fan, straighten, come fully forward */
+.fan-card:hover{
+  z-index:20;
+  transform:
+    translateX(calc(var(--i) * clamp(58px,6.6vw,105px)))
+    translateY(-16px) rotate(0deg) scale(1.04);
+  box-shadow:0 34px 70px -22px rgba(0,0,0,.9);
+}
+.fan-card:hover img{transform:scale(1.07)}
+.socials-cta{text-align:center;margin-top:clamp(30px,5vh,54px)}
+
+/* on narrow screens the arc collapses into a simple scrollable row —
+   a seven-card fan at phone width is unreadable and clips off both edges */
+@media(max-width:760px){
+  .fan{
+    height:auto;position:static;display:flex;gap:12px;overflow-x:auto;
+    padding:0 22px 10px;justify-content:flex-start;
+    -webkit-overflow-scrolling:touch;scrollbar-width:none;
+  }
+  .fan::-webkit-scrollbar{display:none}
+  .fan-card{
+    position:relative;flex:none;width:52vw;max-width:230px;
+    transform:none!important;z-index:auto;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  .fan-card,.fan-card img{transition:none}
+}
+
 .marquee{
   position:relative;overflow:hidden;padding:6px 0;
   /* fade the strip out at both edges */
