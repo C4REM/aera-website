@@ -11,96 +11,125 @@
 <link rel="icon" type="image/svg+xml" href="/assets/img/logo/aera-monogram-favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-/* Deliberately self-contained rather than pulling in the site's style.css.
-   The public stylesheet carries a preloader, a custom cursor, Lenis smooth
-   scrolling and a WebGL background — all wrong for a tool you're going to have
-   open in a tab while you work. Same palette, none of the theatre. */
+/* Self-contained rather than pulling in the site's style.css — that stylesheet
+   carries a preloader, custom cursor, Lenis smooth scrolling and a WebGL
+   background, all wrong for a tool you keep open in a tab while you work.
+   The identity is carried over exactly instead: the same self-hosted Makcasa
+   display face, the same palette variables copied from style.css, and the same
+   eyebrow treatment (11px, .28em, uppercase) on section labels. */
+@font-face{
+  font-family:'Makcasa';
+  src:url('/assets/fonts/Makcasa-Regular.woff2') format('woff2'),
+      url('/assets/fonts/Makcasa-Regular.ttf') format('truetype');
+  font-weight:400;font-style:normal;font-display:swap;
+}
 :root{
-  --obsidian:#060607; --panel:#0D0D0F; --line:#1C1C1F;
-  --cream:#EADFCD; --dim:#B7AE9C; --stone:#8C887F;
-  --champagne:#C2A878; --rust:#C97B6E; --sage:#7E9B7A;
-  --display:'Playfair Display',Georgia,serif;
+  --obsidian:#060607; --panel:#0D0D0F; --panel2:#121215;
+  --line:#1C1C1F; --line2:#26262B;
+  --cream:#EADFCD; --dim:#B7AE9C; --stone:#8C887F; --ivory:#F5F1E9;
+  --champagne:#C2A878; --rust:#C97B6E; --sage:#7E9B7A; --slate:#7E8BAF;
+  --display:'Makcasa','Playfair Display',Georgia,serif;
   --sans:'Inter',-apple-system,sans-serif;
 }
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:var(--obsidian);color:var(--cream);font-family:var(--sans);font-weight:300;line-height:1.6;font-size:15px}
 a{color:inherit}
-.wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+.wrap{max-width:1500px;margin:0 auto;padding:0 24px}
 
-/* ---- header ---- */
-header{border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(6,6,7,.94);backdrop-filter:blur(10px);z-index:50}
+header{border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(6,6,7,.94);backdrop-filter:blur(10px);z-index:60}
 .hrow{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 0}
-.brand{display:flex;align-items:center;gap:11px;font-family:var(--display);font-weight:500;letter-spacing:.12em;font-size:15px}
+.brand{display:flex;align-items:center;gap:11px;font-family:var(--display);font-weight:400;letter-spacing:.12em;font-size:16px}
 .brand svg{width:24px;height:24px;flex:none}
 .brand small{font-family:var(--sans);font-weight:300;letter-spacing:.2em;font-size:10px;text-transform:uppercase;color:var(--stone);border-left:1px solid var(--line);padding-left:11px;margin-left:2px}
 .hlinks{display:flex;gap:22px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--stone)}
-.hlinks a{text-decoration:none;transition:color .25s}
+.hlinks a{text-decoration:none;transition:color .25s;cursor:pointer}
 .hlinks a:hover{color:var(--cream)}
 
-/* ---- tabs ---- */
-nav.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:34px}
-nav.tabs button{
-  background:none;border:0;border-bottom:1px solid transparent;margin-bottom:-1px;
-  color:var(--stone);font-family:inherit;font-size:12px;font-weight:400;letter-spacing:.16em;
-  text-transform:uppercase;padding:15px 18px;cursor:pointer;transition:color .25s,border-color .25s;
-}
+nav.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:28px;overflow-x:auto}
+nav.tabs button{background:none;border:0;border-bottom:1px solid transparent;margin-bottom:-1px;white-space:nowrap;color:var(--stone);font-family:inherit;font-size:12px;font-weight:400;letter-spacing:.16em;text-transform:uppercase;padding:15px 18px;cursor:pointer;transition:color .25s,border-color .25s}
 nav.tabs button:hover{color:var(--dim)}
 nav.tabs button[aria-selected="true"]{color:var(--champagne);border-bottom-color:var(--champagne)}
 section[hidden]{display:none}
-main{padding:34px 0 90px}
+main{padding:28px 0 90px}
 
-h2{font-family:var(--display);font-weight:500;font-size:1.5rem;letter-spacing:-.01em;margin-bottom:4px}
-.lede{color:var(--stone);font-size:13.5px;margin-bottom:26px;max-width:60ch}
-h3{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--stone);font-weight:400;margin:38px 0 14px}
+h2{font-family:var(--display);font-weight:400;font-size:1.75rem;letter-spacing:-.01em;margin-bottom:5px;line-height:1.15}
+.lede{color:var(--stone);font-size:13.5px;margin-bottom:22px;max-width:64ch}
+h3{font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--dim);font-weight:400;margin:36px 0 14px}
 h3:first-of-type{margin-top:0}
 
-/* ---- forms ---- */
-.jobform{background:var(--panel);border:1px solid var(--line);padding:20px;margin-bottom:34px}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
 label{display:block;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--stone);margin-bottom:6px}
-input,select,textarea{
-  width:100%;background:var(--obsidian);border:1px solid var(--line);color:var(--cream);
-  padding:9px 11px;font-family:inherit;font-size:14px;font-weight:300;outline:none;transition:border-color .25s;
-}
+input,select,textarea{width:100%;background:var(--obsidian);border:1px solid var(--line);color:var(--cream);padding:9px 11px;font-family:inherit;font-size:14px;font-weight:300;outline:none;transition:border-color .25s}
 input:focus,select:focus,textarea:focus{border-color:var(--champagne)}
 textarea{resize:vertical;min-height:62px}
 select option{background:var(--obsidian)}
-.btn{
-  background:var(--champagne);color:var(--obsidian);border:0;padding:10px 22px;
-  font-family:inherit;font-size:11px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;
-  cursor:pointer;transition:opacity .25s;
-}
+.btn{background:var(--champagne);color:var(--obsidian);border:0;padding:10px 22px;font-family:inherit;font-size:11px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;transition:opacity .25s}
 .btn:hover{opacity:.85}
 .btn.ghost{background:none;border:1px solid var(--line);color:var(--stone)}
 .btn.ghost:hover{border-color:var(--stone);color:var(--cream);opacity:1}
 .btn.danger{background:none;border:1px solid var(--line);color:var(--rust)}
 .btn.danger:hover{border-color:var(--rust);opacity:1}
-.formfoot{display:flex;gap:10px;align-items:center;margin-top:16px}
-
-/* ---- job board ---- */
-.job{border:1px solid var(--line);border-left:2px solid var(--stone);background:var(--panel);padding:15px 17px;margin-bottom:9px}
-.job[data-status="Confirmed"]{border-left-color:var(--champagne)}
-.job[data-status="Editing"]{border-left-color:#7E8BAF}
-.job[data-status="Shot"]{border-left-color:#9B8AA8}
-.job[data-status="Delivered"]{border-left-color:var(--sage)}
-.jobtop{display:flex;align-items:baseline;justify-content:space-between;gap:14px;flex-wrap:wrap}
-.jobclient{font-family:var(--display);font-weight:500;font-size:1.12rem}
-.jobmeta{font-size:12.5px;color:var(--stone);display:flex;gap:14px;flex-wrap:wrap;margin-top:5px}
-.jobmeta b{color:var(--dim);font-weight:400}
-.jobnotes{font-size:13.5px;color:var(--dim);margin-top:9px;white-space:pre-wrap}
-.pill{font-size:10px;letter-spacing:.14em;text-transform:uppercase;border:1px solid var(--line);padding:3px 9px;color:var(--dim);white-space:nowrap}
-.jobacts{display:flex;gap:7px;margin-top:12px}
-.jobacts button{
-  background:none;border:0;color:var(--stone);font-family:inherit;font-size:10.5px;
-  letter-spacing:.14em;text-transform:uppercase;cursor:pointer;padding:3px 0;transition:color .25s;
-}
-.jobacts button:hover{color:var(--cream)}
-.jobacts button.del:hover{color:var(--rust)}
-.empty{color:var(--stone);font-size:13.5px;padding:26px 0;text-align:center;border:1px dashed var(--line)}
-.banner{border:1px solid var(--line);border-left:2px solid var(--rust);background:var(--panel);padding:14px 16px;font-size:13.5px;color:var(--dim);margin-bottom:22px}
+.btn.sm{padding:7px 14px;font-size:10px}
+.banner{border:1px solid var(--line);border-left:2px solid var(--rust);background:var(--panel);padding:14px 16px;font-size:13.5px;color:var(--dim);margin-bottom:20px}
 .banner code{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;color:var(--champagne)}
+.empty{color:var(--stone);font-size:13.5px;padding:26px 0;text-align:center;border:1px dashed var(--line)}
+
+/* ---- week bar ---- */
+.weekbar{display:flex;align-items:center;gap:10px;margin-bottom:18px;flex-wrap:wrap}
+.weekbar .nav{background:none;border:1px solid var(--line);color:var(--dim);width:34px;height:34px;font-size:15px;cursor:pointer;transition:border-color .25s,color .25s;font-family:inherit}
+.weekbar .nav:hover{border-color:var(--champagne);color:var(--cream)}
+.weeklabel{font-family:var(--display);font-size:1.2rem;font-weight:400;min-width:210px}
+
+/* ---- planner grid ---- */
+.gridwrap{border:1px solid var(--line);overflow-x:auto}
+table.plan{width:100%;border-collapse:collapse;min-width:1180px}
+table.plan th,table.plan td{border-right:1px solid var(--line);border-bottom:1px solid var(--line);vertical-align:top}
+table.plan th:last-child,table.plan td:last-child{border-right:0}
+table.plan tr:last-child td,table.plan tr:last-child th{border-bottom:0}
+table.plan thead th{background:var(--panel);padding:10px 12px;text-align:left;font-weight:400;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--stone)}
+table.plan thead th b{display:block;color:var(--dim);font-weight:400;letter-spacing:.04em;font-size:12px;text-transform:none;margin-top:2px}
+table.plan thead th.today{color:var(--champagne)}
+table.plan thead th.today b{color:var(--champagne)}
+th.who{width:180px;background:var(--panel);padding:14px 13px;text-align:left;vertical-align:top}
+th.who .nm{font-family:var(--display);font-size:1.02rem;font-weight:400;color:var(--cream);letter-spacing:0;text-transform:none;line-height:1.25}
+th.who .rl{font-size:11px;color:var(--stone);letter-spacing:0;text-transform:none;font-weight:300;margin-top:3px;line-height:1.35}
+th.who .wk{margin-top:9px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+th.who .wk b{color:var(--champagne);font-weight:400}
+th.total{width:96px;background:var(--panel)}
+td.tot{background:var(--panel);text-align:center;vertical-align:middle;font-family:var(--display);font-size:1.15rem;color:var(--champagne);padding:10px}
+td.day{padding:8px;min-width:150px;background:var(--obsidian)}
+td.day.is-today{background:#0A0A0C}
+td.day.is-off{background:repeating-linear-gradient(45deg,transparent,transparent 7px,#0E0E11 7px,#0E0E11 14px)}
+
+.task{border:1px solid var(--line);border-left:2px solid var(--stone);background:var(--panel2);padding:7px 9px;margin-bottom:6px;cursor:pointer;display:flex;gap:8px;align-items:flex-start;transition:border-color .2s,background .2s}
+.task:hover{background:#17171B;border-color:var(--line2)}
+.task .txt{flex:1;min-width:0}
+.task .c{font-size:12.5px;color:var(--cream);line-height:1.3;font-weight:400;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.task .k{font-size:11px;color:var(--stone);line-height:1.35;margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.task .h{font-size:10.5px;color:var(--obsidian);background:var(--champagne);padding:1px 6px;border-radius:9px;flex:none;font-weight:500;letter-spacing:.02em}
+.dayfoot{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-top:7px}
+.dayfoot .cap{font-size:10.5px;color:var(--stone);letter-spacing:.06em}
+.dayfoot .cap.over{color:var(--rust)}
+.dayfoot .cap.full{color:var(--sage)}
+.dayfoot .add{background:none;border:1px solid var(--line);color:var(--stone);width:24px;height:24px;font-size:14px;line-height:1;cursor:pointer;font-family:inherit;transition:border-color .2s,color .2s;flex:none}
+.dayfoot .add:hover{border-color:var(--champagne);color:var(--cream)}
+.offtag{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--stone);border:1px dashed var(--line2);padding:5px 0;text-align:center;margin-bottom:6px}
+
+/* ---- modal ---- */
+.modal{position:fixed;inset:0;background:rgba(6,6,7,.84);backdrop-filter:blur(3px);z-index:100;display:flex;align-items:center;justify-content:center;padding:24px}
+.modal[hidden]{display:none}
+.modal .box{background:var(--panel);border:1px solid var(--line2);width:100%;max-width:440px;padding:24px;max-height:88vh;overflow:auto}
+.modal h4{font-family:var(--display);font-weight:400;font-size:1.3rem;margin-bottom:2px}
+.modal .sub{font-size:12px;color:var(--stone);margin-bottom:20px;letter-spacing:.04em}
+.modal .row{margin-bottom:14px}
+.modal .two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.modal .acts{display:flex;gap:9px;align-items:center;margin-top:20px}
+.modal .acts .spacer{flex:1}
+.member{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+.member input.name{flex:1.1}
+.member input.role{flex:1.5}
+.member input.cap{width:66px;flex:none;text-align:center}
 
 /* ---- brand kit ---- */
 .swatches{display:grid;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:11px}
@@ -119,11 +148,34 @@ select option{background:var(--obsidian)}
 .card code{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;color:var(--cream);background:var(--obsidian);padding:1px 5px;border:1px solid var(--line)}
 .dl{display:inline-block;margin-top:9px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--champagne);text-decoration:none;border-bottom:1px solid var(--line);padding-bottom:3px;transition:border-color .25s}
 .dl:hover{border-color:var(--champagne)}
-.toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--champagne);color:var(--obsidian);padding:10px 22px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;transition:transform .35s cubic-bezier(.16,1,.3,1);z-index:99}
+
+/* ---- jobs ---- */
+.jobform{background:var(--panel);border:1px solid var(--line);padding:20px;margin-bottom:28px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.formfoot{display:flex;gap:10px;align-items:center;margin-top:16px}
+.job{border:1px solid var(--line);border-left:2px solid var(--stone);background:var(--panel);padding:15px 17px;margin-bottom:9px}
+.job[data-status="Confirmed"]{border-left-color:var(--champagne)}
+.job[data-status="Editing"]{border-left-color:var(--slate)}
+.job[data-status="Shot"]{border-left-color:#9B8AA8}
+.job[data-status="Delivered"]{border-left-color:var(--sage)}
+.jobtop{display:flex;align-items:baseline;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.jobclient{font-family:var(--display);font-weight:400;font-size:1.15rem}
+.jobmeta{font-size:12.5px;color:var(--stone);display:flex;gap:14px;flex-wrap:wrap;margin-top:5px}
+.jobmeta b{color:var(--dim);font-weight:400}
+.jobnotes{font-size:13.5px;color:var(--dim);margin-top:9px;white-space:pre-wrap}
+.pill{font-size:10px;letter-spacing:.14em;text-transform:uppercase;border:1px solid var(--line);padding:3px 9px;color:var(--dim);white-space:nowrap}
+.jobacts{display:flex;gap:7px;margin-top:12px}
+.jobacts button{background:none;border:0;color:var(--stone);font-family:inherit;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;cursor:pointer;padding:3px 0;transition:color .25s}
+.jobacts button:hover{color:var(--cream)}
+.jobacts button.del:hover{color:var(--rust)}
+
+.toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--champagne);color:var(--obsidian);padding:10px 22px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;transition:transform .35s cubic-bezier(.16,1,.3,1);z-index:120}
 .toast.show{transform:translateX(-50%) translateY(0)}
 @media(max-width:620px){
   .hlinks{gap:14px}
   nav.tabs button{padding:14px 12px;letter-spacing:.1em}
+  .weeklabel{min-width:0;font-size:1.05rem}
+  .modal .two{grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -141,21 +193,41 @@ select option{background:var(--obsidian)}
     </div>
     <div class="hlinks">
       <a href="/" target="_blank" rel="noopener">Live site ↗</a>
-      <a href="#" id="signout">Sign out</a>
+      <a id="signout">Sign out</a>
     </div>
   </div>
 </header>
 
 <main class="wrap">
   <nav class="tabs" role="tablist">
-    <button role="tab" aria-selected="true"  data-tab="jobs">Job Tracker</button>
+    <button role="tab" aria-selected="true"  data-tab="week">Week Planner</button>
+    <button role="tab" aria-selected="false" data-tab="jobs">Job Tracker</button>
     <button role="tab" aria-selected="false" data-tab="kit">Brand Kit</button>
   </nav>
 
-  <!-- ============================ JOB TRACKER ============================ -->
-  <section id="jobs">
+  <!-- ============================= WEEK PLANNER ============================ -->
+  <section id="week">
+    <h2>Week Planner</h2>
+    <p class="lede">Everyone's week in one grid. Each cell is one person on one day — add what they're working on and how long it'll take. Hours total per day against their capacity, and per person across the week.</p>
+
+    <div id="plannerbanner" hidden class="banner"></div>
+
+    <div class="weekbar">
+      <button class="nav" id="prevweek" aria-label="Previous week">‹</button>
+      <button class="nav" id="nextweek" aria-label="Next week">›</button>
+      <div class="weeklabel" id="weeklabel"></div>
+      <button class="btn ghost sm" id="thisweek">This week</button>
+      <span style="flex:1"></span>
+      <button class="btn ghost sm" id="teambtn">Edit team</button>
+    </div>
+
+    <div class="gridwrap"><table class="plan" id="plantable"></table></div>
+  </section>
+
+  <!-- ============================== JOB TRACKER ============================ -->
+  <section id="jobs" hidden>
     <h2>Job Tracker</h2>
-    <p class="lede">Every enquiry and booking in one place, shared across the team. Changes save instantly — whoever opens this next sees them.</p>
+    <p class="lede">The pipeline. The planner above is who's working this week; this is every enquiry and booking, whenever it lands.</p>
 
     <div id="kvbanner" hidden class="banner"></div>
 
@@ -178,7 +250,7 @@ select option{background:var(--obsidian)}
         <option>Wedding</option><option>Event</option><option>Brand film</option>
         <option>Social content</option><option>Portraits</option><option>Graphic design</option>
       </datalist>
-      <datalist id="people"><option>Jack</option><option>Vance</option></datalist>
+      <datalist id="people"></datalist>
       <div style="margin-top:12px">
         <label for="f-notes">Notes</label>
         <textarea id="f-notes" name="notes" placeholder="Location, kit needed, deadline, anything the other person would need to know."></textarea>
@@ -193,7 +265,7 @@ select option{background:var(--obsidian)}
     <div id="board"><div class="empty">Loading…</div></div>
   </section>
 
-  <!-- ============================= BRAND KIT ============================= -->
+  <!-- =============================== BRAND KIT ============================= -->
   <section id="kit" hidden>
     <h2>Brand Kit</h2>
     <p class="lede">The reference sheet, so nobody has to ask what the gold hex is again. Click any colour to copy it.</p>
@@ -282,24 +354,71 @@ select option{background:var(--obsidian)}
   </section>
 </main>
 
+<!-- task modal -->
+<div class="modal" id="taskmodal" hidden>
+  <div class="box">
+    <h4 id="tm-who">—</h4>
+    <div class="sub" id="tm-when">—</div>
+    <form id="taskform">
+      <div class="row">
+        <label for="tm-client">Client / project</label>
+        <input id="tm-client" maxlength="60" placeholder="Rolls-Royce" list="clientlist" autocomplete="off">
+      </div>
+      <datalist id="clientlist"></datalist>
+      <div class="two">
+        <div class="row">
+          <label for="tm-task">Task</label>
+          <input id="tm-task" maxlength="60" placeholder="Shoot" list="tasklist" autocomplete="off">
+        </div>
+        <div class="row">
+          <label for="tm-hours">Hours</label>
+          <input id="tm-hours" type="number" min="0" max="24" step="0.25" placeholder="4">
+        </div>
+      </div>
+      <datalist id="tasklist">
+        <option>Shoot</option><option>Second shooter</option><option>Edit — V1</option>
+        <option>Edit — revisions</option><option>Colour grade</option><option>Cull &amp; select</option>
+        <option>Deliver</option><option>Social cutdowns</option><option>Travel</option>
+        <option>Client call</option><option>Admin</option>
+      </datalist>
+      <div class="acts">
+        <button type="submit" class="btn" id="tm-save">Add</button>
+        <button type="button" class="btn ghost" id="tm-cancel">Cancel</button>
+        <span class="spacer"></span>
+        <button type="button" class="btn danger" id="tm-delete" hidden>Delete</button>
+      </div>
+    </form>
+    <div style="border-top:1px solid var(--line);margin-top:18px;padding-top:14px">
+      <button type="button" class="btn ghost sm" id="tm-off">Mark day off</button>
+    </div>
+  </div>
+</div>
+
+<!-- team modal -->
+<div class="modal" id="teammodal" hidden>
+  <div class="box">
+    <h4>Team</h4>
+    <div class="sub">Rows on the planner. Capacity is their normal working hours in a day.</div>
+    <div id="memberlist"></div>
+    <button type="button" class="btn ghost sm" id="addmember" style="margin-top:6px">+ Add person</button>
+    <div class="acts">
+      <button type="button" class="btn" id="saveteam">Save team</button>
+      <button type="button" class="btn ghost" id="cancelteam">Cancel</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
 (function(){
   'use strict';
 
-  /* ---------------- tabs ---------------- */
-  const tabs = document.querySelectorAll('nav.tabs button');
-  tabs.forEach(t => t.addEventListener('click', () => {
-    tabs.forEach(o => {
-      const on = o === t;
-      o.setAttribute('aria-selected', String(on));
-      document.getElementById(o.dataset.tab).hidden = !on;
-    });
-  }));
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s ?? '').replace(/[&<>"']/g, c =>
+    ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
-  /* ---------------- toast ---------------- */
-  const toastEl = document.getElementById('toast');
+  const toastEl = $('toast');
   let toastTimer;
   function toast(msg){
     toastEl.textContent = msg;
@@ -308,43 +427,297 @@ select option{background:var(--obsidian)}
     toastTimer = setTimeout(() => toastEl.classList.remove('show'), 1900);
   }
 
-  /* ---------------- brand kit swatches ---------------- */
-  const COLOURS = [
-    ['Obsidian',   '#060607', 'Backgrounds'],
-    ['Champagne',  '#C2A878', 'Accent only'],
-    ['Cream',      '#EADFCD', 'Primary text'],
-    ['Cream dim',  '#B7AE9C', 'Secondary text'],
-    ['Stone',      '#8C887F', 'Captions, meta'],
-    ['Smoke',      '#1C1C1F', 'Hairline borders'],
-    ['Ivory',      '#F5F1E9', 'Rare, light surfaces']
-  ];
-  document.getElementById('swatches').innerHTML = COLOURS.map(([n,hex,use]) => `
-    <button class="sw" data-hex="${hex}" title="Copy ${hex}">
-      <i style="background:${hex}"></i>
-      <span><b>${n}</b><em>${hex}</em><br><span style="color:var(--stone);font-size:10.5px">${use}</span></span>
-    </button>`).join('');
+  async function api(url, method, body){
+    const res = await fetch(url, {
+      method,
+      headers: body ? { 'Content-Type': 'application/json' } : undefined,
+      body: body ? JSON.stringify(body) : undefined
+    });
+    // The gate returns 401 once the 14-day session lapses. Reloading lands on
+    // the login form rather than leaving a dead board on screen.
+    if (res.status === 401){ location.reload(); throw new Error('signed out'); }
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw Object.assign(new Error(data.message || data.error || 'Request failed'), { data });
+    return data;
+  }
 
-  document.getElementById('swatches').addEventListener('click', e => {
-    const btn = e.target.closest('.sw');
-    if (!btn) return;
-    navigator.clipboard.writeText(btn.dataset.hex)
-      .then(() => toast(btn.dataset.hex + ' copied'))
-      .catch(() => toast('Copy failed'));
+  const tabs = document.querySelectorAll('nav.tabs button');
+  tabs.forEach(t => t.addEventListener('click', () => {
+    tabs.forEach(o => {
+      const on = o === t;
+      o.setAttribute('aria-selected', String(on));
+      $(o.dataset.tab).hidden = !on;
+    });
+  }));
+
+  /* ================================================================
+     WEEK PLANNER
+     ================================================================ */
+  const PLANNER = '/portal/api/roster';
+  let members = [], tasks = [], off = [], ready = false;
+  let anchor = startOfWeek(new Date());     // Monday of the shown week
+  let editing = null;                        // {memberId, date, taskId?}
+
+  // Monday-start week. getDay() is 0 for Sunday, so Sunday has to reach back
+  // six days rather than forward one — the usual off-by-one in week maths.
+  function startOfWeek(d){
+    const x = new Date(d); x.setHours(12,0,0,0);
+    const diff = (x.getDay() + 6) % 7;
+    x.setDate(x.getDate() - diff);
+    return x;
+  }
+  const iso = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  const todayIso = () => iso(new Date());
+
+  function weekDays(){
+    return Array.from({length:7}, (_,i) => {
+      const d = new Date(anchor); d.setDate(anchor.getDate()+i); return d;
+    });
+  }
+
+  // 4 → "4h", 4.5 → "4.5h", 0 → "0h"
+  const fmtH = n => (Math.round(n*100)/100).toString().replace(/\.00?$/,'') + 'h';
+
+  const isOff = (date, memberId) => off.includes(`${date}|${memberId}`);
+  const tasksFor = (date, memberId) => tasks.filter(t => t.date === date && t.memberId === memberId);
+
+  function renderWeek(){
+    const days = weekDays();
+    const last = days[6];
+    const sameMonth = anchor.getMonth() === last.getMonth();
+    $('weeklabel').textContent =
+      anchor.toLocaleDateString('en-GB',{day:'numeric', month: sameMonth ? undefined : 'short'}) +
+      ' – ' + last.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+
+    if (!members.length){
+      $('plantable').innerHTML = '<tr><td class="empty" style="border:0;padding:30px">No team yet — use “Edit team”.</td></tr>';
+      return;
+    }
+
+    const head = `<thead><tr><th class="who"></th>${
+      days.map(d => {
+        const t = iso(d) === todayIso();
+        return `<th class="${t?'today':''}">${d.toLocaleDateString('en-GB',{weekday:'short'})}<b>${
+          d.toLocaleDateString('en-GB',{day:'numeric',month:'short'})}</b></th>`;
+      }).join('')}<th class="total">Total</th></tr></thead>`;
+
+    const body = members.map(m => {
+      const cap = m.capacity || 8;
+      let weekTotal = 0;
+
+      const cells = days.map(d => {
+        const date = iso(d);
+        const list = tasksFor(date, m.id);
+        const used = list.reduce((s,t) => s + (t.hours || 0), 0);
+        weekTotal += used;
+        const dayOff = isOff(date, m.id);
+        const cls = ['day', iso(d)===todayIso() ? 'is-today':'', dayOff ? 'is-off':''].filter(Boolean).join(' ');
+        const capCls = used > cap ? 'over' : (used === cap && used > 0 ? 'full' : '');
+
+        return `<td class="${cls}">
+          ${dayOff ? '<div class="offtag">Off</div>' : ''}
+          ${list.map(t => `
+            <div class="task" data-task="${esc(t.id)}" data-member="${esc(m.id)}" data-date="${date}"
+                 style="border-left-color:${accent(t.client)}">
+              <div class="txt">
+                <div class="c">${esc(t.client || t.task)}</div>
+                ${t.client && t.task ? `<div class="k">${esc(t.task)}</div>` : ''}
+              </div>
+              ${t.hours ? `<span class="h">${esc(fmtH(t.hours))}</span>` : ''}
+            </div>`).join('')}
+          <div class="dayfoot">
+            <span class="cap ${capCls}">${esc(fmtH(used))} / ${esc(fmtH(cap))}</span>
+            <button class="add" data-add="${esc(m.id)}" data-date="${date}"
+                    aria-label="Add task for ${esc(m.name)}">+</button>
+          </div>
+        </td>`;
+      }).join('');
+
+      return `<tr>
+        <th class="who">
+          <div class="nm">${esc(m.name)}</div>
+          ${m.role ? `<div class="rl">${esc(m.role)}</div>` : ''}
+          <div class="wk">Capacity <b>${esc(fmtH(cap))}</b>/day</div>
+        </th>
+        ${cells}
+        <td class="tot">${esc(fmtH(weekTotal))}</td>
+      </tr>`;
+    }).join('');
+
+    $('plantable').innerHTML = head + '<tbody>' + body + '</tbody>';
+    refreshClientList();
+  }
+
+  /* A stable colour per client, derived from the name rather than stored.
+     Means the same client always reads the same across the board without
+     anyone having to pick or maintain a palette — and the palette is the
+     brand's own accents, so the grid never introduces a colour the site
+     doesn't already use. */
+  const ACCENTS = ['#C2A878','#7E8BAF','#7E9B7A','#C97B6E','#9B8AA8','#B7AE9C'];
+  function accent(name){
+    const s = String(name || '');
+    if (!s) return 'var(--stone)';
+    let h = 0;
+    for (let i=0;i<s.length;i++) h = (h*31 + s.charCodeAt(i)) >>> 0;
+    return ACCENTS[h % ACCENTS.length];
+  }
+
+  function refreshClientList(){
+    const names = [...new Set([
+      ...tasks.map(t => t.client).filter(Boolean),
+      ...jobs.map(j => j.client).filter(Boolean)
+    ])].sort();
+    $('clientlist').innerHTML = names.map(n => `<option>${esc(n)}</option>`).join('');
+  }
+
+  function shiftWeek(n){ anchor.setDate(anchor.getDate() + n*7); renderWeek(); }
+  $('prevweek').addEventListener('click', () => shiftWeek(-1));
+  $('nextweek').addEventListener('click', () => shiftWeek(1));
+  $('thisweek').addEventListener('click', () => { anchor = startOfWeek(new Date()); renderWeek(); });
+
+  /* ---- task modal ---- */
+  function openTask({ memberId, date, taskId }){
+    const m = members.find(x => x.id === memberId);
+    const d = new Date(date + 'T12:00:00');
+    const t = taskId ? tasks.find(x => x.id === taskId) : null;
+
+    editing = { memberId, date, taskId: taskId || null };
+    $('tm-who').textContent  = m ? m.name : '';
+    $('tm-when').textContent = d.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'});
+    $('tm-client').value = t ? (t.client || '') : '';
+    $('tm-task').value   = t ? (t.task   || '') : '';
+    $('tm-hours').value  = t && t.hours ? t.hours : '';
+    $('tm-save').textContent = t ? 'Save' : 'Add';
+    $('tm-delete').hidden = !t;
+    $('tm-off').textContent = isOff(date, memberId) ? 'Mark as working' : 'Mark day off';
+    $('taskmodal').hidden = false;
+    $('tm-client').focus();
+  }
+  const closeTask = () => { $('taskmodal').hidden = true; editing = null; };
+  $('tm-cancel').addEventListener('click', closeTask);
+  $('taskmodal').addEventListener('click', e => { if (e.target === $('taskmodal')) closeTask(); });
+  document.addEventListener('keydown', e => {
+    if (e.key !== 'Escape') return;
+    if (!$('taskmodal').hidden) closeTask();
+    if (!$('teammodal').hidden) $('teammodal').hidden = true;
   });
 
-  /* ---------------- job tracker ---------------- */
-  const API      = '/portal/api/jobs';
-  const board    = document.getElementById('board');
-  const form     = document.getElementById('jobform');
-  const banner   = document.getElementById('kvbanner');
-  const submitBtn= document.getElementById('submitbtn');
-  const cancelBtn= document.getElementById('cancelbtn');
-  const formNote = document.getElementById('formnote');
-  const ORDER    = ['Enquiry','Confirmed','Shot','Editing','Delivered'];
-  let jobs = [];
+  $('plantable').addEventListener('click', e => {
+    if (!ready) return;
+    const add = e.target.closest('button[data-add]');
+    if (add) return openTask({ memberId: add.dataset.add, date: add.dataset.date });
+    const task = e.target.closest('.task');
+    if (task) return openTask({ memberId: task.dataset.member, date: task.dataset.date, taskId: task.dataset.task });
+  });
 
-  const esc = s => String(s ?? '').replace(/[&<>"']/g, c =>
-    ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  async function send(body, okMsg){
+    try {
+      const data = await api(PLANNER, 'POST', body);
+      members = data.members; tasks = data.tasks; off = data.off;
+      renderWeek();
+      if (okMsg) toast(okMsg);
+      return true;
+    } catch (err) { toast(err.message || 'Save failed'); return false; }
+  }
+
+  $('taskform').addEventListener('submit', async e => {
+    e.preventDefault();
+    if (!editing) return;
+    const client = $('tm-client').value.trim();
+    const task   = $('tm-task').value.trim();
+    const hrs    = $('tm-hours').value === '' ? 0 : Number($('tm-hours').value);
+    if (!client && !task){ toast('Needs a client or a task'); return; }
+
+    const ok = editing.taskId
+      ? await send({ op:'task.update', id: editing.taskId, client, task, hours: hrs }, 'Saved')
+      : await send({ op:'task.add', memberId: editing.memberId, date: editing.date, client, task, hours: hrs }, 'Added');
+    if (ok) closeTask();
+  });
+
+  $('tm-delete').addEventListener('click', async () => {
+    if (!editing || !editing.taskId) return;
+    if (!confirm('Delete this task?')) return;
+    if (await send({ op:'task.delete', id: editing.taskId }, 'Deleted')) closeTask();
+  });
+
+  $('tm-off').addEventListener('click', async () => {
+    if (!editing) return;
+    if (await send({ op:'off.toggle', memberId: editing.memberId, date: editing.date }, 'Updated')) closeTask();
+  });
+
+  /* ---- team editor ---- */
+  function memberRow(m = { id:'', name:'', role:'', capacity:8 }){
+    const div = document.createElement('div');
+    div.className = 'member';
+    div.innerHTML = `
+      <input class="name" placeholder="Name" maxlength="40" value="${esc(m.name)}">
+      <input class="role" placeholder="Role" maxlength="60" value="${esc(m.role)}">
+      <input class="cap" type="number" min="1" max="24" step="0.5" title="Hours per day" value="${m.capacity || 8}">
+      <button type="button" class="btn ghost sm rm" aria-label="Remove">✕</button>`;
+    div.dataset.id = m.id || '';
+    div.querySelector('.rm').addEventListener('click', () => div.remove());
+    return div;
+  }
+
+  $('teambtn').addEventListener('click', () => {
+    const list = $('memberlist');
+    list.innerHTML = '';
+    members.forEach(m => list.appendChild(memberRow(m)));
+    if (!members.length) list.appendChild(memberRow());
+    $('teammodal').hidden = false;
+  });
+  $('addmember').addEventListener('click', () => $('memberlist').appendChild(memberRow()));
+  $('cancelteam').addEventListener('click', () => { $('teammodal').hidden = true; });
+  $('teammodal').addEventListener('click', e => { if (e.target === $('teammodal')) $('teammodal').hidden = true; });
+
+  $('saveteam').addEventListener('click', async () => {
+    const next = [...$('memberlist').querySelectorAll('.member')].map(r => ({
+      id:   r.dataset.id || undefined,
+      name: r.querySelector('.name').value.trim(),
+      role: r.querySelector('.role').value.trim(),
+      capacity: Number(r.querySelector('.cap').value) || 8
+    })).filter(m => m.name);
+
+    if (!next.length) { toast('Add at least one person'); return; }
+
+    const removed = members.filter(m => !next.some(n => n.id === m.id));
+    if (removed.length && !confirm(
+      `Remove ${removed.map(m => m.name).join(', ')}? Their scheduled work will be deleted too.`
+    )) return;
+
+    if (await send({ op:'team.save', members: next }, 'Team saved')){
+      $('teammodal').hidden = true;
+      fillPeopleList();
+    }
+  });
+
+  function fillPeopleList(){
+    $('people').innerHTML = members.map(m => `<option>${esc(m.name)}</option>`).join('');
+  }
+
+  async function loadPlanner(){
+    try {
+      const data = await api(PLANNER, 'GET');
+      members = data.members; tasks = data.tasks; off = data.off;
+      ready = true;
+      renderWeek(); fillPeopleList();
+    } catch (err) {
+      if (err.data && err.data.error === 'no-kv'){
+        $('plannerbanner').hidden = false;
+        $('plannerbanner').innerHTML = 'The planner needs its storage connected before it can save anything. In Cloudflare → Workers &amp; Pages → your project → Settings → Bindings, add a KV namespace binding called <code>PORTAL_KV</code>. The brand kit tab works regardless.';
+      }
+      $('plantable').innerHTML = '<tr><td class="empty" style="border:0;padding:30px">Couldn’t load the planner.</td></tr>';
+    }
+  }
+
+  /* ================================================================
+     JOB TRACKER
+     ================================================================ */
+  const JOBS_API = '/portal/api/jobs';
+  const ORDER = ['Enquiry','Confirmed','Shot','Editing','Delivered'];
+  const form = $('jobform'), board = $('board');
+  const submitBtn = $('submitbtn'), cancelBtn = $('cancelbtn'), formNote = $('formnote');
+  let jobs = [];
 
   function niceDate(d){
     if (!d) return '';
@@ -353,13 +726,12 @@ select option{background:var(--obsidian)}
     return dt.toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' });
   }
 
-  function render(){
+  function renderJobs(){
+    refreshClientList();
     if (!jobs.length){
       board.innerHTML = '<div class="empty">No jobs yet. Add the first one above.</div>';
       return;
     }
-    // Group by status in workflow order rather than by date: what you want to
-    // know opening this is "what needs doing", and that's a status question.
     const groups = ORDER
       .map(s => [s, jobs.filter(j => j.status === s)])
       .filter(([, list]) => list.length);
@@ -387,29 +759,14 @@ select option{background:var(--obsidian)}
     `).join('');
   }
 
-  async function api(method, body){
-    const res = await fetch(API, {
-      method,
-      headers: body ? { 'Content-Type': 'application/json' } : undefined,
-      body: body ? JSON.stringify(body) : undefined
-    });
-    // The gate returns 401 once the 14-day session lapses. Reloading lands on
-    // the login form rather than leaving a dead board on screen.
-    if (res.status === 401){ location.reload(); throw new Error('signed out'); }
-    const data = await res.json().catch(() => ({}));
-    if (!res.ok) throw Object.assign(new Error(data.message || data.error || 'Request failed'), { data });
-    return data;
-  }
-
-  async function load(){
+  async function loadJobs(){
     try {
-      const { jobs: list } = await api('GET');
-      jobs = list;
-      render();
+      const { jobs: list } = await api(JOBS_API, 'GET');
+      jobs = list; renderJobs();
     } catch (err) {
       if (err.data && err.data.error === 'no-kv'){
-        banner.hidden = false;
-        banner.innerHTML = 'The job tracker needs its storage connected before it can save anything. In Cloudflare → Workers &amp; Pages → your project → Settings → Bindings, add a KV namespace binding called <code>PORTAL_KV</code>. The brand kit tab works regardless.';
+        $('kvbanner').hidden = false;
+        $('kvbanner').innerHTML = 'Storage isn’t connected yet — see the note on the Week Planner tab.';
         board.innerHTML = '<div class="empty">Storage not connected yet.</div>';
         form.querySelectorAll('input,select,textarea,button').forEach(el => el.disabled = true);
         return;
@@ -419,11 +776,9 @@ select option{background:var(--obsidian)}
   }
 
   function resetForm(){
-    form.reset();
-    form.id.value = '';
+    form.reset(); form.id.value = '';
     submitBtn.textContent = 'Add job';
-    cancelBtn.hidden = true;
-    formNote.textContent = '';
+    cancelBtn.hidden = true; formNote.textContent = '';
   }
 
   form.addEventListener('submit', async e => {
@@ -432,36 +787,26 @@ select option{background:var(--obsidian)}
     if (!data.client.trim()) return;
     submitBtn.disabled = true;
     try {
-      const editing = !!data.id;
-      const { jobs: list } = await api(editing ? 'PUT' : 'POST', data);
-      jobs = list;
-      render();
-      resetForm();
-      toast(editing ? 'Job updated' : 'Job added');
-    } catch {
-      toast('Save failed');
-    } finally {
-      submitBtn.disabled = false;
-    }
+      const wasEdit = !!data.id;
+      const { jobs: list } = await api(JOBS_API, wasEdit ? 'PUT' : 'POST', data);
+      jobs = list; renderJobs(); resetForm();
+      toast(wasEdit ? 'Job updated' : 'Job added');
+    } catch { toast('Save failed'); }
+    finally { submitBtn.disabled = false; }
   });
 
   cancelBtn.addEventListener('click', resetForm);
 
   board.addEventListener('click', async e => {
-    const editId = e.target.dataset.edit;
-    const delId  = e.target.dataset.del;
-
+    const editId = e.target.dataset.edit, delId = e.target.dataset.del;
     if (editId){
       const j = jobs.find(x => x.id === editId);
       if (!j) return;
-      form.id.value       = j.id;
-      form.client.value   = j.client   || '';
-      form.type.value     = j.type     || '';
-      form.date.value     = j.date     || '';
-      form.assignee.value = j.assignee || '';
-      form.fee.value      = j.fee      || '';
-      form.notes.value    = j.notes    || '';
-      form.status.value   = j.status   || 'Enquiry';
+      form.id.value = j.id;
+      form.client.value = j.client || ''; form.type.value = j.type || '';
+      form.date.value = j.date || '';     form.assignee.value = j.assignee || '';
+      form.fee.value = j.fee || '';       form.notes.value = j.notes || '';
+      form.status.value = j.status || 'Enquiry';
       submitBtn.textContent = 'Save changes';
       cancelBtn.hidden = false;
       formNote.textContent = 'Editing ' + j.client;
@@ -469,33 +814,50 @@ select option{background:var(--obsidian)}
       form.client.focus();
       return;
     }
-
     if (delId){
       const j = jobs.find(x => x.id === delId);
       if (!confirm('Delete "' + (j ? j.client : 'this job') + '"? This cannot be undone.')) return;
       try {
-        const { jobs: list } = await api('DELETE', { id: delId });
-        jobs = list;
-        render();
-        toast('Job deleted');
-      } catch {
-        toast('Delete failed');
-      }
+        const { jobs: list } = await api(JOBS_API, 'DELETE', { id: delId });
+        jobs = list; renderJobs(); toast('Job deleted');
+      } catch { toast('Delete failed'); }
     }
   });
 
-  /* ---------------- sign out ---------------- */
-  // The session cookie is HttpOnly so script can't clear it directly. Expiring
-  // it by name from the server isn't needed either — overwriting with an
-  // already-past date on the same path is enough, and the gate re-checks the
-  // signature on every request anyway.
-  document.getElementById('signout').addEventListener('click', e => {
+  /* ================================================================
+     BRAND KIT
+     ================================================================ */
+  const COLOURS = [
+    ['Obsidian',   '#060607', 'Backgrounds'],
+    ['Champagne',  '#C2A878', 'Accent only'],
+    ['Cream',      '#EADFCD', 'Primary text'],
+    ['Cream dim',  '#B7AE9C', 'Secondary text'],
+    ['Stone',      '#8C887F', 'Captions, meta'],
+    ['Smoke',      '#1C1C1F', 'Hairline borders'],
+    ['Ivory',      '#F5F1E9', 'Rare, light surfaces']
+  ];
+  $('swatches').innerHTML = COLOURS.map(([n,hex,use]) => `
+    <button class="sw" data-hex="${hex}" title="Copy ${hex}">
+      <i style="background:${hex}"></i>
+      <span><b>${n}</b><em>${hex}</em><br><span style="color:var(--stone);font-size:10.5px">${use}</span></span>
+    </button>`).join('');
+
+  $('swatches').addEventListener('click', e => {
+    const btn = e.target.closest('.sw');
+    if (!btn) return;
+    navigator.clipboard.writeText(btn.dataset.hex)
+      .then(() => toast(btn.dataset.hex + ' copied'))
+      .catch(() => toast('Copy failed'));
+  });
+
+  $('signout').addEventListener('click', e => {
     e.preventDefault();
     document.cookie = 'aera_portal=; Path=/portal; Max-Age=0; SameSite=Lax; Secure';
     location.reload();
   });
 
-  load();
+  loadPlanner();
+  loadJobs();
 })();
 </script>
 </body>
