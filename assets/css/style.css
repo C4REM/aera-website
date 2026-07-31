@@ -4,12 +4,22 @@
    Used by every page in /site — edit once, applies everywhere.
    ========================================================================== */
 
-/* Makcasa — display face for headlines, self-hosted (woff2 + ttf fallback) */
+/* Makcasa — display face for headlines, self-hosted (woff2 + ttf fallback).
+   The file in this repo is an unlicensed/demo cut whose NUMERALS are replaced
+   with the foundry's watermark glyphs — letters are fine, 0–9 are not. That's
+   been invisible so far because no public-site headline has contained a
+   digit, but the new hero edge-badge does ("Est. 2026") via --sans, not
+   --display, so it's unaffected either way. unicode-range still deliberately
+   OMITS U+0030–U+0039 so the browser falls through to Playfair Display for
+   any digit, guarding every future use of the display face at once rather
+   than patching call sites as they're noticed (same fix already live on the
+   portal). Delete this restriction once the font is properly licensed. */
 @font-face{
   font-family:'Makcasa';
   src:url('../fonts/Makcasa-Regular.woff2') format('woff2'),
       url('../fonts/Makcasa-Regular.ttf') format('truetype');
   font-weight:400;font-style:normal;font-display:swap;
+  unicode-range:U+0020-002F, U+003A-007E, U+00A0-00FF, U+2000-206F;
 }
 
 :root{
@@ -129,18 +139,89 @@ nav.scrolled{
   .nav-right .nav-cell{padding:0 14px;font-size:9.5px}
 }
 
-/* HERO — home: one centred statement, lots of air */
+/* HERO — home: the whole thing now lives inside an inset, rounded frame
+   instead of running edge-to-edge — the literal device from
+   orionix.framer.website, where the hero is one large rounded card set a few
+   pixels off the true viewport edge rather than filling it. Two soft blurred
+   gradient blobs and a huge looping background wordline are
+   studiomodular.be's device: an oversized, half-hidden brand presence behind
+   the actual headline, not just a small logo top-left. Both borrowed as
+   literal layout/motion patterns, rendered in Aera's own obsidian/champagne
+   palette rather than either site's colours (see aera-brand memory —
+   inverting the theme to their light cream would fight every other page). */
+:root{ --frame-inset:clamp(10px,1.6vw,20px); }
 header.hero{
-  min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;
-  text-align:center;position:relative;padding:120px clamp(24px,5vw,60px) 110px;background:transparent;
+  min-height:calc(100vh - var(--frame-inset) * 2);
+  display:flex;flex-direction:column;justify-content:center;align-items:center;
+  text-align:center;position:relative;padding:120px clamp(24px,5vw,60px) 110px;
+  margin:var(--frame-inset);
+  border-radius:clamp(22px,3vw,40px);
+  overflow:hidden;
+  background:radial-gradient(ellipse at 26% 4%,#131116 0%,var(--obsidian) 60%);
+  box-shadow:0 46px 100px -44px rgba(0,0,0,.85);
 }
+/* soft overlapping blurred circles — studiomodular's pastel blobs, tinted
+   champagne/slate instead of their blue so it reads as Aera at a glance */
+.hero-blob{position:absolute;border-radius:50%;pointer-events:none;filter:blur(64px);z-index:0}
+.hero-blob-a{width:min(46vw,640px);height:min(46vw,640px);top:-16%;right:-9%;
+  background:radial-gradient(circle,rgba(194,168,120,.42),transparent 70%)}
+.hero-blob-b{width:min(32vw,440px);height:min(32vw,440px);bottom:-16%;left:-8%;
+  background:radial-gradient(circle,rgba(126,139,175,.28),transparent 70%)}
+
+/* the oversized background wordline — bleeds off both edges of the frame and
+   loops slowly behind the real headline, at low enough opacity to read as
+   texture rather than a second line of copy competing with the h1 */
+.hero-bigword-wrap{
+  position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);
+  overflow:hidden;z-index:0;pointer-events:none;
+  -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 15%,#000 85%,transparent 100%);
+          mask-image:linear-gradient(90deg,transparent 0,#000 15%,#000 85%,transparent 100%);
+}
+.hero-bigword-track{
+  display:flex;align-items:center;width:max-content;gap:clamp(40px,6vw,90px);
+  animation:heroMarquee 70s linear infinite;will-change:transform;
+}
+.hero-bigword-track span{
+  font-family:var(--display);font-weight:var(--display-wght);
+  font-size:clamp(4.5rem,14vw,11rem);line-height:1;letter-spacing:-.01em;
+  color:rgba(234,223,205,.05);white-space:nowrap;
+}
+@keyframes heroMarquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@media(prefers-reduced-motion:reduce){.hero-bigword-track{animation:none}}
+
+/* vertical ribbon pinned to the true viewport edge, bleeding past the
+   frame's rounded corner rather than sitting inside it — same device as
+   orionix's award-nominee tag, carrying a fact about the studio instead */
+.hero-edgebadge{position:fixed;left:0;top:64%;transform:translateY(-50%);z-index:56;pointer-events:none}
+.hero-edgebadge span{display:block;writing-mode:vertical-rl;transform:rotate(180deg);
+  background:var(--champagne);color:var(--obsidian);font-family:var(--sans);font-size:10px;
+  font-weight:500;letter-spacing:.24em;text-transform:uppercase;padding:16px 8px;white-space:nowrap}
+@media(max-width:780px){.hero-edgebadge{display:none}}
+
+/* rotating circular "scroll" badge — the device both reference sites use in
+   almost the same place: a dark disc with an arrow, ringed by small text
+   that spins continuously along its own circular path */
+.hero-scrollring{position:absolute;right:clamp(20px,4vw,52px);bottom:clamp(20px,4vh,40px);
+  width:104px;height:104px;z-index:3;pointer-events:none}
+.hero-scrollring svg{width:100%;height:100%;animation:heroSpin 14s linear infinite}
+.hero-scrollring text{font-family:var(--sans);font-size:9.2px;letter-spacing:.05em;
+  text-transform:uppercase;fill:var(--stone)}
+.hero-scrollring .ring-arrow{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:38px;height:38px;border-radius:50%;background:var(--champagne);color:var(--obsidian);
+  display:flex;align-items:center;justify-content:center;font-size:15px}
+@keyframes heroSpin{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.hero-scrollring svg{animation:none}}
+@media(max-width:620px){.hero-scrollring{display:none}}
+
 .hero-inner{max-width:none;margin:0;display:flex;flex-direction:column;align-items:center}
+header.hero .hero-inner{position:relative;z-index:2}
 .hero-kicker{display:block;margin-bottom:clamp(18px,3.2vh,32px)}
 .hero-statement{
   font-family:var(--display);font-weight:var(--display-wght);font-style:normal;
   font-size:clamp(2.1rem,5.6vw,4.4rem);line-height:1.1;letter-spacing:-.015em;
   margin:0 0 clamp(26px,3.6vh,40px);
 }
+header.hero .hero-statement{font-size:clamp(2.35rem,6.3vw,4.95rem);letter-spacing:-.025em}
 .hero-statement em{font-family:var(--serif);font-style:italic;font-weight:500;color:var(--champagne)}
 /* the hero resolves word by word out of a blur (see .split) */
 .hero-statement .ln{display:block}
@@ -156,6 +237,7 @@ header.hero{
 .hero-link:hover::after{transform:scaleX(1)}
 .hero p.lead{
   max-width:540px;font-size:clamp(1rem,2.2vw,1.18rem);color:var(--cream-dim);font-weight:300;
+  position:relative;z-index:2;
 }
 .hero-actions{margin-top:44px;display:flex;gap:18px;flex-wrap:wrap}
 .btn{
