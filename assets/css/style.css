@@ -68,10 +68,14 @@ h2.section-title{
   margin:18px 0 0;letter-spacing:-.01em;
 }
 
-/* NAV — an edge-to-edge bar divided into cells by hairlines, wordmark centred */
+/* NAV — floating rather than a hard-edged cell grid: no more hairline
+   dividers walling off burger/Enquire/Instagram from each other, just
+   generous spacing, and "Enquire" is now a proper pill (echoes the pill
+   language already established by the hero's scroll badge and edge tag)
+   instead of a full-height hover-fill block. */
 nav{
   position:fixed;top:0;left:0;right:0;z-index:100;height:72px;
-  display:flex;align-items:stretch;
+  display:flex;align-items:center;padding:0 clamp(18px,3vw,34px);gap:10px;
   background:transparent;border-bottom:1px solid transparent;
   transition:background .45s ease,border-color .45s ease,backdrop-filter .45s ease;
 }
@@ -80,28 +84,30 @@ nav.scrolled{
   background:rgba(10,9,11,.34);backdrop-filter:blur(16px);
   border-bottom-color:rgba(234,223,205,.12);
 }
-.nav-left,.nav-right{display:flex;align-items:stretch;flex:0 0 auto}
+.nav-left,.nav-right{display:flex;align-items:center;gap:6px;flex:0 0 auto}
 .nav-right{margin-left:auto}
-/* each cell is separated by a hairline, like the reference bar */
 .nav-cell{
   display:flex;align-items:center;justify-content:center;
-  padding:0 clamp(18px,2.4vw,30px);
+  padding:9px clamp(14px,1.8vw,20px);
   font-family:var(--sans);font-size:11px;letter-spacing:.22em;text-transform:uppercase;
-  color:var(--cream);background:none;border:none;cursor:pointer;
-  transition:color .3s ease,background .3s ease;
+  color:var(--cream);background:none;border:none;border-radius:999px;cursor:pointer;
+  transition:color .3s ease,background .3s ease,transform .25s cubic-bezier(.2,.8,.2,1);
 }
-.nav-left .nav-cell{border-right:1px solid rgba(234,223,205,.14)}
-.nav-right .nav-cell{border-left:1px solid rgba(234,223,205,.14)}
-.nav-cell:hover{color:var(--champagne)}
-.nav-cta{color:var(--champagne)}
-.nav-cta:hover{background:var(--champagne);color:var(--obsidian)}
-/* centred wordmark */
+.nav-cell:hover{color:var(--champagne);background:rgba(234,223,205,.06);transform:translateY(-1px)}
+/* the one solid pill in the bar — everything else is a ghost */
+.nav-cta{color:var(--obsidian);background:var(--champagne);padding:9px 20px}
+.nav-cta:hover{color:var(--obsidian);background:var(--cream);transform:translateY(-1px) scale(1.03)}
+/* centred wordmark — a slow letter-spacing breathe on hover, nothing else
+   on the bar moves quite like it, so it still reads as the one to click */
 .brand{
   position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
   font-family:var(--serif);font-size:1.5rem;letter-spacing:.4em;padding-left:.4em;
   font-weight:400;display:flex;align-items:center;gap:.42em;color:var(--cream);
+  transition:letter-spacing .45s cubic-bezier(.2,.8,.2,1),color .3s ease;
 }
-.brand .mark{height:22px;width:auto;flex:none}
+.brand:hover{letter-spacing:.46em;color:var(--champagne)}
+.brand .mark{height:22px;width:auto;flex:none;transition:transform .45s cubic-bezier(.34,1.56,.64,1)}
+.brand:hover .mark{transform:rotate(180deg)}
 /* burger */
 .burger{display:flex;flex-direction:column;gap:5px;align-items:center;justify-content:center}
 .burger span{width:20px;height:1.5px;background:var(--cream);transition:transform .4s cubic-bezier(.2,.8,.2,1),opacity .3s}
@@ -139,76 +145,74 @@ nav.scrolled{
   .nav-right .nav-cell{padding:0 14px;font-size:9.5px}
 }
 
-/* HERO — home: the whole thing now lives inside an inset, rounded frame
-   instead of running edge-to-edge — the literal device from
-   orionix.framer.website, where the hero is one large rounded card set a few
-   pixels off the true viewport edge rather than filling it. Two soft blurred
-   gradient blobs and a huge looping background wordline are
-   studiomodular.be's device: an oversized, half-hidden brand presence behind
-   the actual headline, not just a small logo top-left. Both borrowed as
-   literal layout/motion patterns, rendered in Aera's own obsidian/champagne
-   palette rather than either site's colours (see aera-brand memory —
-   inverting the theme to their light cream would fight every other page). */
-:root{ --frame-inset:clamp(10px,1.6vw,20px); }
+/* HERO — home: back to the original edge-to-edge, transparent-background
+   treatment (the animated .bg-stage/#bgGL canvas shows straight through, as
+   before) — the inset rounded "frame" and its own gradient panel didn't
+   work against that ambient motion and got dropped. What's kept from the
+   koenvo/studiomodular/orionix research pass is the character devices that
+   don't depend on an opaque background to read: a huge looping wordline
+   behind the headline, a vertical edge ribbon, and a rotating scroll badge —
+   plus less text stacked in the centre, so those devices do the talking
+   instead of another paragraph. */
 header.hero{
-  min-height:calc(100vh - var(--frame-inset) * 2);
-  display:flex;flex-direction:column;justify-content:center;align-items:center;
-  text-align:center;position:relative;padding:120px clamp(24px,5vw,60px) 110px;
-  margin:var(--frame-inset);
-  border-radius:clamp(22px,3vw,40px);
-  overflow:hidden;
-  background:radial-gradient(ellipse at 26% 4%,#131116 0%,var(--obsidian) 60%);
-  box-shadow:0 46px 100px -44px rgba(0,0,0,.85);
+  min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;
+  text-align:center;position:relative;padding:120px clamp(24px,5vw,60px) 110px;background:transparent;
 }
-/* soft overlapping blurred circles — studiomodular's pastel blobs, tinted
-   champagne/slate instead of their blue so it reads as Aera at a glance */
-.hero-blob{position:absolute;border-radius:50%;pointer-events:none;filter:blur(64px);z-index:0}
-.hero-blob-a{width:min(46vw,640px);height:min(46vw,640px);top:-16%;right:-9%;
-  background:radial-gradient(circle,rgba(194,168,120,.42),transparent 70%)}
-.hero-blob-b{width:min(32vw,440px);height:min(32vw,440px);bottom:-16%;left:-8%;
-  background:radial-gradient(circle,rgba(126,139,175,.28),transparent 70%)}
 
-/* the oversized background wordline — bleeds off both edges of the frame and
-   loops slowly behind the real headline, at low enough opacity to read as
-   texture rather than a second line of copy competing with the h1 */
+/* the oversized background wordline — bleeds off both edges of the viewport
+   and loops slowly behind the real headline, at low enough opacity to read
+   as texture rather than a second line of copy competing with the h1.
+   Pauses on hover, same courtesy as the clients marquee lower down the page. */
 .hero-bigword-wrap{
   position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);
-  overflow:hidden;z-index:0;pointer-events:none;
+  overflow:hidden;z-index:0;pointer-events:auto;
   -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 15%,#000 85%,transparent 100%);
           mask-image:linear-gradient(90deg,transparent 0,#000 15%,#000 85%,transparent 100%);
 }
 .hero-bigword-track{
   display:flex;align-items:center;width:max-content;gap:clamp(40px,6vw,90px);
   animation:heroMarquee 70s linear infinite;will-change:transform;
+  transition:transform .6s cubic-bezier(.2,.8,.2,1);
 }
+.hero-bigword-wrap:hover .hero-bigword-track{animation-play-state:paused}
 .hero-bigword-track span{
   font-family:var(--display);font-weight:var(--display-wght);
   font-size:clamp(4.5rem,14vw,11rem);line-height:1;letter-spacing:-.01em;
   color:rgba(234,223,205,.05);white-space:nowrap;
+  transition:color .5s ease;
 }
+/* the word nearest the cursor brightens — a quiet payoff for hovering
+   something that looks purely decorative */
+.hero-bigword-track span:hover{color:rgba(194,168,120,.5)}
 @keyframes heroMarquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 @media(prefers-reduced-motion:reduce){.hero-bigword-track{animation:none}}
 
-/* vertical ribbon pinned to the true viewport edge, bleeding past the
-   frame's rounded corner rather than sitting inside it — same device as
-   orionix's award-nominee tag, carrying a fact about the studio instead */
-.hero-edgebadge{position:fixed;left:0;top:64%;transform:translateY(-50%);z-index:56;pointer-events:none}
+/* vertical ribbon pinned to the true viewport edge — a fact about the studio
+   instead of an award tag. Slides fully flush and brightens on hover. */
+.hero-edgebadge{position:fixed;left:0;top:64%;transform:translateY(-50%);z-index:56;
+  transition:transform .4s cubic-bezier(.2,.8,.2,1)}
 .hero-edgebadge span{display:block;writing-mode:vertical-rl;transform:rotate(180deg);
   background:var(--champagne);color:var(--obsidian);font-family:var(--sans);font-size:10px;
-  font-weight:500;letter-spacing:.24em;text-transform:uppercase;padding:16px 8px;white-space:nowrap}
+  font-weight:500;letter-spacing:.24em;text-transform:uppercase;padding:16px 8px;white-space:nowrap;
+  transition:background .35s ease}
+.hero-edgebadge:hover{transform:translateY(-50%) translateX(3px)}
+.hero-edgebadge:hover span{background:var(--cream)}
 @media(max-width:780px){.hero-edgebadge{display:none}}
 
-/* rotating circular "scroll" badge — the device both reference sites use in
-   almost the same place: a dark disc with an arrow, ringed by small text
-   that spins continuously along its own circular path */
+/* rotating circular "scroll" badge — a dark-on-champagne disc ringed by
+   small looping text. Speeds up and the arrow nudges downward on hover, so
+   it visibly invites the click instead of just sitting there spinning. */
 .hero-scrollring{position:absolute;right:clamp(20px,4vw,52px);bottom:clamp(20px,4vh,40px);
-  width:104px;height:104px;z-index:3;pointer-events:none}
-.hero-scrollring svg{width:100%;height:100%;animation:heroSpin 14s linear infinite}
+  width:104px;height:104px;z-index:3;cursor:pointer}
+.hero-scrollring svg{width:100%;height:100%;animation:heroSpin 14s linear infinite;transition:animation-duration .3s}
+.hero-scrollring:hover svg{animation-duration:3.5s}
 .hero-scrollring text{font-family:var(--sans);font-size:9.2px;letter-spacing:.05em;
   text-transform:uppercase;fill:var(--stone)}
 .hero-scrollring .ring-arrow{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
   width:38px;height:38px;border-radius:50%;background:var(--champagne);color:var(--obsidian);
-  display:flex;align-items:center;justify-content:center;font-size:15px}
+  display:flex;align-items:center;justify-content:center;font-size:15px;
+  transition:transform .3s cubic-bezier(.2,.8,.2,1)}
+.hero-scrollring:hover .ring-arrow{transform:translate(-50%,-50%) translateY(4px)}
 @keyframes heroSpin{to{transform:rotate(360deg)}}
 @media(prefers-reduced-motion:reduce){.hero-scrollring svg{animation:none}}
 @media(max-width:620px){.hero-scrollring{display:none}}
@@ -221,7 +225,7 @@ header.hero .hero-inner{position:relative;z-index:2}
   font-size:clamp(2.1rem,5.6vw,4.4rem);line-height:1.1;letter-spacing:-.015em;
   margin:0 0 clamp(26px,3.6vh,40px);
 }
-header.hero .hero-statement{font-size:clamp(2.35rem,6.3vw,4.95rem);letter-spacing:-.025em}
+header.hero .hero-statement{font-size:clamp(2.4rem,6.6vw,5.2rem);letter-spacing:-.025em}
 .hero-statement em{font-family:var(--serif);font-style:italic;font-weight:500;color:var(--champagne)}
 /* the hero resolves word by word out of a blur (see .split) */
 .hero-statement .ln{display:block}
