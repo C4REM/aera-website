@@ -753,17 +753,19 @@ body.tm-open{overflow:hidden}
 .awards-eyebrow{display:block;text-align:center;margin-bottom:clamp(24px,4vh,40px)}
 .award-row{
   list-style:none;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;
-  gap:clamp(20px,4vw,58px);
+  gap:clamp(16px,3vw,44px);
 }
 .award{flex:none}
 .award img{
-  height:clamp(64px,7.5vw,104px);width:auto;display:block;
-  opacity:.62;transition:opacity .35s ease,transform .35s cubic-bezier(.2,.8,.2,1);
+  /* sized so the award name inside each laurel is actually readable —
+     at ~80px the Dune laurels' inner text was too small to make out */
+  height:clamp(84px,10vw,140px);width:auto;display:block;
+  opacity:.72;transition:opacity .35s ease,transform .35s cubic-bezier(.2,.8,.2,1);
 }
 .award:hover img{opacity:1;transform:translateY(-3px)}
 @media(max-width:620px){
-  .award-row{gap:22px}
-  .award img{height:62px}
+  .award-row{gap:18px}
+  .award img{height:76px}
 }
 
 /* Client strip — a band, not a section. No heading, minimal height. */
