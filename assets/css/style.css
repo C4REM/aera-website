@@ -744,6 +744,28 @@ body.tm-open{overflow:hidden}
 }
 
 /* ---- CLIENTS — continuously scrolling wordmark strip ---- */
+/* ---- AWARDS — laurel row ----
+   Same restraint as the client strip below: one small eyebrow, no headline,
+   and every laurel forced to the same cream so six different festivals read
+   as one set. Laurels scale off their own height rather than width, so the
+   wide Black Sheep mark and the square BBC one sit at matching optical size. */
+.awards{padding:clamp(46px,7vh,80px) 0 clamp(20px,3vh,34px)}
+.awards-eyebrow{display:block;text-align:center;margin-bottom:clamp(24px,4vh,40px)}
+.award-row{
+  list-style:none;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;
+  gap:clamp(20px,4vw,58px);
+}
+.award{flex:none}
+.award img{
+  height:clamp(64px,7.5vw,104px);width:auto;display:block;
+  opacity:.62;transition:opacity .35s ease,transform .35s cubic-bezier(.2,.8,.2,1);
+}
+.award:hover img{opacity:1;transform:translateY(-3px)}
+@media(max-width:620px){
+  .award-row{gap:22px}
+  .award img{height:62px}
+}
+
 /* Client strip — a band, not a section. No heading, minimal height. */
 .clients{padding:clamp(26px,4vh,44px) 0}
 
@@ -785,48 +807,19 @@ body.tm-open{overflow:hidden}
 }
 .fan-card img{width:100%;height:100%;object-fit:cover;transition:transform .7s cubic-bezier(.2,.8,.2,1)}
 
-/* HOVER SHUFFLE — the hovered card lifts, straightens and comes forward, and
-   its neighbours slide outward to make room, like fanning a hand of cards to
-   look at one. Nothing is reordered: every card keeps its own --i, so the fan
-   re-closes to exactly the same arrangement when the pointer leaves. */
-.fan-card:hover{
-  z-index:20;
-  transform:
-    translateX(calc(var(--i) * clamp(58px,6.6vw,105px)))
-    translateY(-22px) rotate(0deg) scale(1.07);
-  box-shadow:0 34px 70px -22px rgba(0,0,0,.9);
-}
-.fan-card:hover img{transform:scale(1.07)}
-/* neighbours taper away: the card beside the hovered one moves most, the next
-   one less, so the fan opens smoothly instead of shifting as a block */
-.fan-card:hover + .fan-card{
-  transform:
-    translateX(calc(var(--i) * clamp(58px,6.6vw,105px) + clamp(20px,2.4vw,38px)))
-    translateY(calc(var(--a) * clamp(9px,1.5vh,20px)))
-    rotate(calc(var(--i) * 7deg + 3deg))
-    scale(calc(1 - var(--a) * 0.075));
-}
-.fan-card:hover + .fan-card + .fan-card{
-  transform:
-    translateX(calc(var(--i) * clamp(58px,6.6vw,105px) + clamp(9px,1.1vw,17px)))
-    translateY(calc(var(--a) * clamp(9px,1.5vh,20px)))
-    rotate(calc(var(--i) * 7deg + 1.5deg))
-    scale(calc(1 - var(--a) * 0.075));
-}
-.fan-card:has(+ .fan-card:hover){
-  transform:
-    translateX(calc(var(--i) * clamp(58px,6.6vw,105px) - clamp(20px,2.4vw,38px)))
-    translateY(calc(var(--a) * clamp(9px,1.5vh,20px)))
-    rotate(calc(var(--i) * 7deg - 3deg))
-    scale(calc(1 - var(--a) * 0.075));
-}
-.fan-card:has(+ .fan-card + .fan-card:hover){
-  transform:
-    translateX(calc(var(--i) * clamp(58px,6.6vw,105px) - clamp(9px,1.1vw,17px)))
-    translateY(calc(var(--a) * clamp(9px,1.5vh,20px)))
-    rotate(calc(var(--i) * 7deg - 1.5deg))
-    scale(calc(1 - var(--a) * 0.075));
-}
+/* HOVER SHUFFLE — driven from JS (see main.js "SOCIALS FAN"), not sibling
+   selectors. The CSS-only version set a different transform on each of four
+   separate `+`/`:has()` rules, so moving the pointer between cards swapped
+   which rule matched and the card jumped straight from one transform to
+   another; z-index also changed instantly, so cards popped in front of the
+   wrong neighbours mid-move. JS computes every card's offset from ONE formula
+   based on its distance from the hovered card, and sets z-index from that same
+   distance, so the whole fan eases as a unit and the overlap order is always
+   consistent. Order is never changed — each card keeps its own --i. */
+.fan-card{will-change:transform}
+.fan-card.is-lifted{box-shadow:0 34px 70px -22px rgba(0,0,0,.9)}
+.fan-card.is-lifted img{transform:scale(1.07)}
+
 .socials-cta{text-align:center;margin-top:clamp(30px,5vh,54px)}
 
 /* on narrow screens the arc collapses into a simple scrollable row — a
