@@ -207,7 +207,7 @@ header.hero .hero-statement.hero-mega{
      the old `overflow:hidden` on each line cut the descenders off "Annoyingly"
      and "good" — the clipping you saw. The slide-in below doesn't need a clip
      mask because the lines come in horizontally, not vertically. */
-  font-size:clamp(3.8rem,19.5vw,18rem);
+  font-size:clamp(3.8rem,21vw,19rem);
   line-height:.86;letter-spacing:-.045em;
   margin:0 0 clamp(20px,3vh,34px);
   text-transform:none;
@@ -217,23 +217,32 @@ header.hero .hero-statement.hero-mega{
 
 /* FILL-THE-FRAME ENTRANCE — the two lines fly in from opposite edges and
    settle, slightly over-scaled at the start so they read as rushing toward
-   the viewer rather than just sliding. Each line is its own block, so line 1
-   comes from the left and line 2 from the right. No word-splitting on this
-   headline any more (it's been removed from the JS split list) — at this size
-   a per-word blur reads as mush; one confident move per line is stronger. */
+   the viewer rather than just sliding. Line 1 comes from the left, line 2
+   from the right. No word-splitting on this headline any more — at this size
+   a per-word blur reads as mush; one confident move per line is stronger.
+
+   Deliberately a keyframe ANIMATION rather than a transition. As a transition
+   it stalled part-way and never resolved: the hero's scroll-parallax writes
+   inline styles onto these same elements every frame, and a transition that
+   gets restyled mid-flight can be left stranded at whatever value it had
+   reached. An animation with `both` fill runs to completion regardless of
+   what else touches the element, which is exactly the guarantee this needs. */
 .hero-mega .ln{display:block;overflow:visible}
-.hero-mega .ln > span{
-  display:block;
-  opacity:0;
-  transform:translateX(var(--from,-16%)) scale(1.14);
-  transition:opacity .9s cubic-bezier(.16,1,.3,1),
-             transform 1.15s cubic-bezier(.16,1,.3,1);
+.hero-mega .ln > span{display:block}
+@keyframes heroInL{
+  from{opacity:0;transform:translateX(-17%) scale(1.14)}
+  to  {opacity:1;transform:translateX(0) scale(1)}
 }
-.hero-mega .ln:nth-child(1) > span{--from:-16%}
-.hero-mega .ln:nth-child(2) > span{--from:16%;transition-delay:.1s}
-.hero-mega.in .ln > span{opacity:1;transform:translateX(0) scale(1)}
+@keyframes heroInR{
+  from{opacity:0;transform:translateX(17%) scale(1.14)}
+  to  {opacity:1;transform:translateX(0) scale(1)}
+}
+/* held invisible until the hero is told to play, so nothing flashes on load */
+.hero-mega .ln > span{opacity:0}
+.hero-mega.in .ln:nth-child(1) > span{animation:heroInL 1.15s cubic-bezier(.16,1,.3,1) both}
+.hero-mega.in .ln:nth-child(2) > span{animation:heroInR 1.15s cubic-bezier(.16,1,.3,1) .12s both}
 @media(prefers-reduced-motion:reduce){
-  .hero-mega .ln > span{transition:opacity .4s ease;transform:none!important}
+  .hero-mega.in .ln > span{animation:none;opacity:1}
 }
 .hero-sub{
   font-family:var(--sans);font-size:clamp(.82rem,1.5vw,1rem);font-weight:300;
