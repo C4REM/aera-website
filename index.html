@@ -20,7 +20,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400;1,500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/style.css?v=20260801b">
+<link rel="stylesheet" href="assets/css/style.css?v=20260801c">
 <noscript><style>.preloader{display:none!important}body{overflow:visible!important;height:auto!important}.cursor-dot,.cursor-ring{display:none!important}.reveal{opacity:1!important;transform:none!important;filter:none!important}.hero-statement .ln>span,.rise>span{transform:none!important}</style></noscript>
 
 <script type="application/ld+json">
@@ -216,66 +216,40 @@
   </div>
 </section>
 
-<!-- ============ PARTNERS & CAMPAIGNS ============
-     landonorris.com's collabs block: a big two-line headline where the
-     second line flips to serif, set hard left, with a short paragraph
-     parked out to the right rather than centred underneath — then the
-     logo/name marquee running full-bleed beneath both. -->
-<section id="clients" class="clients tight">
-  <div class="wrap">
-    <div class="partners-head">
-      <h2 class="partners-title reveal">
-        <span class="pt-a">Partners</span>
-        <span class="pt-b">&amp; campaigns</span>
-      </h2>
-      <p class="partners-note reveal d1">Brands who said yes before we had a website.
-        Turns out the work speaks louder than the domain name did.</p>
-    </div>
-  </div>
-  <!-- Client names. The full list is repeated twice inside each half, and the
-       two halves are identical — that's what makes the `translateX(0 → -50%)`
-       loop seamless. To add or change a client, edit BOTH halves so they stay
-       in sync, or the track will visibly jump when it wraps.
+<!-- ============ PARTNERS ============
+     Stripped right back: no heading, no paragraph, just a short band of client
+     marks. It's a credibility strip, not a section, so it earns about 100px of
+     height and nothing more.
 
-       TO SWAP IN REAL LOGOS: drop an SVG (or transparent PNG) into
-       assets/img/clients/ and replace the span's text with, e.g.
-         <span class="cl"><img src="assets/img/clients/kia.svg" alt="KIA Motors"></span>
-       The CSS normalises every logo to the same optical height and applies the
-       same dimmed / hover treatment, so text and logos can sit side by side
-       while you collect the files. -->
+     NOTE ON LOGOS: these are set as text wordmarks, all in one flat colour.
+     I have not dropped in the brands' real logo files — I can't pull those
+     down, and a client strip is the one place where using a company's actual
+     trademark implies a relationship, so it's worth being deliberate about.
+     If you want the real marks, save each as an SVG into assets/img/clients/
+     and swap the span contents to, e.g.
+       <span class="cl"><img src="assets/img/clients/kia.svg" alt="KIA Motors"></span>
+     The CSS below already normalises any logo to one optical height and forces
+     it to a single flat colour, so text and real logos can sit side by side
+     while you collect the files. Keep BOTH halves of the track identical or
+     the loop will visibly jump when it wraps. -->
+<section id="clients" class="clients">
   <div class="marquee" role="list" aria-label="Clients and collaborators">
-    <div class="marquee-track">
-        <span class="cl">Rolls-Royce</span>
-        <span class="cl">KIA Motors</span>
-        <span class="cl">Diary of a CEO</span>
-        <span class="cl">F1rst Motors</span>
-        <span class="cl">Lewis Howes</span>
-        <span class="cl">Rolls-Royce</span>
-        <span class="cl">KIA Motors</span>
-        <span class="cl">Diary of a CEO</span>
-        <span class="cl">F1rst Motors</span>
-        <span class="cl">Lewis Howes</span>
-        <span class="cl" aria-hidden="true">Rolls-Royce</span>
-        <span class="cl" aria-hidden="true">KIA Motors</span>
-        <span class="cl" aria-hidden="true">Diary of a CEO</span>
-        <span class="cl" aria-hidden="true">F1rst Motors</span>
-        <span class="cl" aria-hidden="true">Lewis Howes</span>
-        <span class="cl" aria-hidden="true">Rolls-Royce</span>
-        <span class="cl" aria-hidden="true">KIA Motors</span>
-        <span class="cl" aria-hidden="true">Diary of a CEO</span>
-        <span class="cl" aria-hidden="true">F1rst Motors</span>
-        <span class="cl" aria-hidden="true">Lewis Howes</span>
-    </div>
+    <div class="marquee-track"><span class="cl">Rolls-Royce</span><span class="cl">KIA Motors</span><span class="cl">Diary of a CEO</span><span class="cl">F1rst Motors</span><span class="cl">Lewis Howes</span><span class="cl">Green Planet</span><span class="cl">Rolls-Royce</span><span class="cl">KIA Motors</span><span class="cl">Diary of a CEO</span><span class="cl">F1rst Motors</span><span class="cl">Lewis Howes</span><span class="cl">Green Planet</span><span class="cl" aria-hidden="true">Rolls-Royce</span><span class="cl" aria-hidden="true">KIA Motors</span><span class="cl" aria-hidden="true">Diary of a CEO</span><span class="cl" aria-hidden="true">F1rst Motors</span><span class="cl" aria-hidden="true">Lewis Howes</span><span class="cl" aria-hidden="true">Green Planet</span><span class="cl" aria-hidden="true">Rolls-Royce</span><span class="cl" aria-hidden="true">KIA Motors</span><span class="cl" aria-hidden="true">Diary of a CEO</span><span class="cl" aria-hidden="true">F1rst Motors</span><span class="cl" aria-hidden="true">Lewis Howes</span><span class="cl" aria-hidden="true">Green Planet</span></div>
   </div>
 </section>
 
 <!-- ================= TIMELINE ==================
-     Rebuilt as a horizontally-pinned track (the landonorris.com pattern):
-     the section is several viewports tall, the inner frame sticks, and
-     vertical scroll is remapped to horizontal travel across the cards.
-     Cards sit at staggered vertical offsets so the row reads as a composed
-     spread rather than a conveyor belt, and each image parallaxes slightly
-     inside its own frame so the row has depth as it passes. -->
+     Horizontally-pinned track (the landonorris.com pattern): the section is
+     several viewports tall, the inner frame sticks, and vertical scroll is
+     remapped to horizontal travel.
+
+     The layout is a deliberately IRREGULAR collage, not a tidy row — that's
+     the thing that actually makes the reference read the way it does. Every
+     item sets its own width, aspect ratio and vertical position (--w / --ar /
+     --top), sizes run from 150px to 430px, and two short text callouts sit
+     among the photos instead of every card carrying a caption. Measured off
+     the real page: 12 items, widths 151–477px, tops scattered across the full
+     height of the frame. -->
 <section id="about" class="htrack" aria-label="How Aera began">
   <div class="htrack-pin" id="htrackPin">
     <div class="htrack-head">
@@ -284,40 +258,47 @@
     </div>
 
     <div class="htrack-row" id="htrackRow">
-      <article class="hcard" style="--off:0">
-        <span class="hcard-when">2024 — Before Aera</span>
-        <div class="hcard-media"><img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/717cb03f-faa2-4ff3-bb24-2a59f2af0aad/IMG_6821.jpg" loading="lazy" alt="Early portrait work"></div>
-        <h3>A camera and a curiosity</h3>
-        <p>A habit, not a business — friends, cars and nights out around Leeds, learning the frame by getting it wrong a few hundred times.</p>
-      </article>
-
-      <article class="hcard" style="--off:1">
-        <span class="hcard-when">2025 — First paid work</span>
-        <div class="hcard-media"><img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/13f98449-a6da-4ea8-b125-01a7d5fc40b4/IMG_1199.jpg" loading="lazy" alt="Early event coverage"></div>
-        <h3>People started asking</h3>
-        <p>Events, motorsport and nights that needed covering properly. First invoices, first deadlines, first inkling this could be a real thing.</p>
-      </article>
-
-      <article class="hcard" style="--off:2">
-        <span class="hcard-when">2025 — Beyond the lens</span>
-        <div class="hcard-media"><img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/f5c5d3ac-57b1-4757-ab6c-6ac16ca6e090/Hauntfest++Poster.png" loading="lazy" alt="Campaign design work"></div>
-        <h3>Not just the photo</h3>
-        <p>Brands wanted the whole thing — posters, campaign design, a feed that looked considered. Photography became one part of a bigger craft.</p>
-      </article>
-
-      <article class="hcard" style="--off:3">
-        <span class="hcard-when">2026 — Aera is named</span>
-        <div class="hcard-media"><img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/ebc2d86a-43dc-45da-8c9a-9c069df080d2/Insta-Post-Dubai-23-24-_01.jpg" loading="lazy" alt="Aera brand and social work"></div>
-        <h3>A name for the standard</h3>
-        <p>Built around one belief: good media shouldn&#39;t be reserved for brands with an agency budget. An identity, a way of working, a bar to clear.</p>
-      </article>
-
-      <article class="hcard" style="--off:4">
-        <span class="hcard-when">Sept 2026 — Where we are</span>
-        <div class="hcard-media"><img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/db5c3ac4-da30-40e7-84a7-28a43271390b/IMG_0831.jpg" loading="lazy" alt="Aera studio work"></div>
-        <h3>Leeds, and further out</h3>
-        <p>Founder-led from Leeds, working across Yorkshire with friends joining from further afield. Still small, still personal, only getting sharper.</p>
-      </article>
+      <div class="hitem" style="--w:196px;--top:4%;--ar:4/5">
+        <span class="hcap">2024 — before Aera</span>
+        <div class="hshot"><img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/717cb03f-faa2-4ff3-bb24-2a59f2af0aad/IMG_6821.jpg" loading="lazy" alt=""></div>
+      </div>
+      <div class="hitem" style="--w:214px;--top:56%;--ar:16/11">
+        <div class="hshot"><img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/13f98449-a6da-4ea8-b125-01a7d5fc40b4/IMG_1199.jpg" loading="lazy" alt=""></div>
+      </div>
+      <div class="hitem is-txt" style="--w:250px;--top:8%">
+        <p>It started as a habit. Friends, cars, nights out — and a few hundred frames that missed.</p>
+      </div>
+      <div class="hitem" style="--w:430px;--top:30%;--ar:16/10">
+        <div class="hshot"><img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/b5d862b4-ff71-42f0-9e9e-ce0c231c5a80/1J6A0134.jpg" loading="lazy" alt=""></div>
+      </div>
+      <div class="hitem" style="--w:158px;--top:2%;--ar:3/4">
+        <span class="hcap">2025 — first paid work</span>
+        <div class="hshot"><img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/956771b0-d277-4ee9-bde0-2c1b6d0a8d8c/Green+Planet+Photos-12.jpg" loading="lazy" alt=""></div>
+      </div>
+      <div class="hitem" style="--w:228px;--top:48%;--ar:4/5">
+        <div class="hshot"><img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/d68650ca-1652-44b5-823e-c43abab0b7e2/Lando+Photo.png" loading="lazy" alt=""></div>
+      </div>
+      <div class="hitem" style="--w:150px;--top:62%;--ar:1/1">
+        <div class="hshot"><img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/50a7d34c-7a13-43f5-a5da-bc73d671fc8e/UAE+Flag.jpg" loading="lazy" alt=""></div>
+      </div>
+      <div class="hitem" style="--w:168px;--top:10%;--ar:3/4">
+        <span class="hcap">2025 — beyond the lens</span>
+        <div class="hshot"><img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/f5c5d3ac-57b1-4757-ab6c-6ac16ca6e090/Hauntfest++Poster.png" loading="lazy" alt=""></div>
+      </div>
+      <div class="hitem is-txt" style="--w:268px;--top:58%">
+        <p>Brands wanted the whole thing: posters, campaign design, a feed that looked considered.</p>
+      </div>
+      <div class="hitem" style="--w:404px;--top:6%;--ar:16/11">
+        <span class="hcap">2026 — Aera is named</span>
+        <div class="hshot"><img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/ebc2d86a-43dc-45da-8c9a-9c069df080d2/Insta-Post-Dubai-23-24-_01.jpg" loading="lazy" alt=""></div>
+      </div>
+      <div class="hitem" style="--w:206px;--top:52%;--ar:4/5">
+        <div class="hshot"><img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/db5c3ac4-da30-40e7-84a7-28a43271390b/IMG_0831.jpg" loading="lazy" alt=""></div>
+      </div>
+      <div class="hitem" style="--w:176px;--top:14%;--ar:3/4">
+        <span class="hcap">Sept 2026 — where we are</span>
+        <div class="hshot"><img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/13f98449-a6da-4ea8-b125-01a7d5fc40b4/IMG_1199.jpg" loading="lazy" alt=""></div>
+      </div>
     </div>
 
     <div class="htrack-foot">
@@ -497,14 +478,14 @@
   </div>
 </footer>
 
-<script src="assets/js/lenis.min.js?v=20260801b"></script>
-<script src="assets/js/main.js?v=20260801b"></script>
+<script src="assets/js/lenis.min.js?v=20260801c"></script>
+<script src="assets/js/main.js?v=20260801c"></script>
 <!-- Three.js + the mini cylinder load only here, after main.js, so THREE is
      defined by the time wheel-cylinder.js runs (same load order as the work
      page's gallery). main.js fires its first wheel update synchronously before
      this listener exists, so its index-0 event is missed — harmless, because
      wheel-cylinder.js also defaults to index 0 on init. -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="assets/js/wheel-cylinder.js?v=20260801b"></script>
+<script src="assets/js/wheel-cylinder.js?v=20260801c"></script>
 </body>
 </html>
