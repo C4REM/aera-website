@@ -20,7 +20,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400;1,500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/style.css?v=20260801f">
+<link rel="stylesheet" href="assets/css/style.css?v=20260801g">
 <noscript><style>.preloader{display:none!important}body{overflow:visible!important;height:auto!important}.cursor-dot,.cursor-ring{display:none!important}.reveal{opacity:1!important;transform:none!important;filter:none!important}.hero-statement .ln>span,.rise>span{transform:none!important}</style></noscript>
 
 <script type="application/ld+json">
@@ -218,48 +218,42 @@
 
 <!-- ============ AWARDS ============
      Laurels sit above the client strip because they're the stronger proof.
-     Same restraint as the partners band: no big heading, one flat cream tone
-     across every laurel so the row reads as one set rather than six different
-     festivals' brand colours.
+     The Black Sheep win is the headline award, so it takes the centre slot and
+     is set noticeably larger; everything else is arranged symmetrically around
+     it. --n drives a staggered entrance so the row assembles outward from the
+     middle rather than all appearing at once.
 
      The two real laurels (Black Sheep, BBC Children in Need) were supplied as
      dark artwork on white, which would disappear on this background — they've
      been recoloured to cream on transparent rather than CSS-inverted, so the
      BBC one keeps its lighter weight instead of turning muddy. The four Dune
-     laurels are SVGs drawn for this site; see the note in the reply. -->
+     laurels are SVGs drawn for this site. -->
 <section id="awards" class="awards">
   <div class="wrap">
-    <span class="eyebrow awards-eyebrow">Selected recognition</span>
+    <span class="eyebrow awards-eyebrow reveal">Selected recognition</span>
     <ul class="award-row">
-      <li class="award"><img src="assets/img/awards/black-sheep-winner.png" loading="lazy" alt="Winner, The Black Sheep Film Festival 2026"></li>
-      <li class="award"><img src="assets/img/awards/dune-cinematography.svg" loading="lazy" alt="Winner, Best Cinematography — Dune Creative Festival 2026"></li>
-      <li class="award"><img src="assets/img/awards/dune-editing.svg" loading="lazy" alt="Winner, Best Editing — Dune Creative Festival 2026"></li>
-      <li class="award"><img src="assets/img/awards/dune-creative-concept.svg" loading="lazy" alt="Nominee, Best Creative Concept — Dune Creative Festival 2026"></li>
-      <li class="award"><img src="assets/img/awards/dune-mise-en-scene.svg" loading="lazy" alt="Nominee, Best Mise en Scène — Dune Creative Festival 2026"></li>
-      <li class="award"><img src="assets/img/awards/bbc-children-in-need.png" loading="lazy" alt="Runner-up, Sir Terry Wogan Fundraiser of the Year — BBC Children in Need"></li>
+      <li class="award" style="--n:0"><img src="assets/img/awards/dune-creative-concept.svg" loading="lazy" alt="Nominee, Best Creative Concept — Dune Creative Festival 2026"></li>
+      <li class="award" style="--n:1"><img src="assets/img/awards/dune-cinematography.svg" loading="lazy" alt="Winner, Best Cinematography — Dune Creative Festival 2026"></li>
+      <li class="award" style="--n:2"><img src="assets/img/awards/dune-editing.svg" loading="lazy" alt="Winner, Best Editing — Dune Creative Festival 2026"></li>
+      <li class="award is-hero" style="--n:3"><img src="assets/img/awards/black-sheep-winner.png" loading="lazy" alt="Winner, The Black Sheep Film Festival 2026"></li>
+      <li class="award" style="--n:4"><img src="assets/img/awards/bbc-children-in-need.png" loading="lazy" alt="Runner-up, Sir Terry Wogan Fundraiser of the Year — BBC Children in Need"></li>
+      <li class="award" style="--n:5"><img src="assets/img/awards/dune-mise-en-scene.svg" loading="lazy" alt="Nominee, Best Mise en Scène — Dune Creative Festival 2026"></li>
     </ul>
   </div>
 </section>
 
-<!-- ============ PARTNERS ============
-     Stripped right back: no heading, no paragraph, just a short band of client
-     marks. It's a credibility strip, not a section, so it earns about 100px of
-     height and nothing more.
+<!-- ============ CLIENTS ============
+     Real logos rather than set names. Every mark has been flattened to the
+     same cream and normalised so a wide wordmark and a compact one carry equal
+     optical weight — otherwise the strip reads as a ransom note of competing
+     brand colours and sizes.
 
-     NOTE ON LOGOS: these are set as text wordmarks, all in one flat colour.
-     I have not dropped in the brands' real logo files — I can't pull those
-     down, and a client strip is the one place where using a company's actual
-     trademark implies a relationship, so it's worth being deliberate about.
-     If you want the real marks, save each as an SVG into assets/img/clients/
-     and swap the span contents to, e.g.
-       <span class="cl"><img src="assets/img/clients/kia.svg" alt="KIA Motors"></span>
-     The CSS below already normalises any logo to one optical height and forces
-     it to a single flat colour, so text and real logos can sit side by side
-     while you collect the files. Keep BOTH halves of the track identical or
-     the loop will visibly jump when it wraps. -->
+     The track holds FOUR identical passes of the list: the marquee animates
+     0 -> -50%, so the first half must be pixel-identical to the second or the
+     loop visibly jumps when it wraps. Edit all four passes together. -->
 <section id="clients" class="clients">
   <div class="marquee" role="list" aria-label="Clients and collaborators">
-    <div class="marquee-track"><span class="cl">Rolls-Royce</span><span class="cl">KIA Motors</span><span class="cl">Diary of a CEO</span><span class="cl">F1rst Motors</span><span class="cl">Lewis Howes</span><span class="cl">Green Planet</span><span class="cl">Rolls-Royce</span><span class="cl">KIA Motors</span><span class="cl">Diary of a CEO</span><span class="cl">F1rst Motors</span><span class="cl">Lewis Howes</span><span class="cl">Green Planet</span><span class="cl" aria-hidden="true">Rolls-Royce</span><span class="cl" aria-hidden="true">KIA Motors</span><span class="cl" aria-hidden="true">Diary of a CEO</span><span class="cl" aria-hidden="true">F1rst Motors</span><span class="cl" aria-hidden="true">Lewis Howes</span><span class="cl" aria-hidden="true">Green Planet</span><span class="cl" aria-hidden="true">Rolls-Royce</span><span class="cl" aria-hidden="true">KIA Motors</span><span class="cl" aria-hidden="true">Diary of a CEO</span><span class="cl" aria-hidden="true">F1rst Motors</span><span class="cl" aria-hidden="true">Lewis Howes</span><span class="cl" aria-hidden="true">Green Planet</span></div>
+    <div class="marquee-track"><span class="cl"><img src="assets/img/clients/rolls-royce.png" alt="Rolls-Royce" loading="lazy"></span><span class="cl"><img src="assets/img/clients/kia.png" alt="KIA" loading="lazy"></span><span class="cl"><img src="assets/img/clients/lamborghini.png" alt="Lamborghini" loading="lazy"></span><span class="cl"><img src="assets/img/clients/first-motors.png" alt="F1rst Motors" loading="lazy"></span><span class="cl"><img src="assets/img/clients/diary-of-a-ceo.png" alt="The Diary of a CEO" loading="lazy"></span><span class="cl"><img src="assets/img/clients/green-planet.png" alt="The Green Planet" loading="lazy"></span><span class="cl"><img src="assets/img/clients/school-of-greatness.png" alt="The School of Greatness" loading="lazy"></span><span class="cl" aria-hidden="true"><img src="assets/img/clients/rolls-royce.png" alt="" loading="lazy"></span><span class="cl" aria-hidden="true"><img src="assets/img/clients/kia.png" alt="" loading="lazy"></span><span class="cl" aria-hidden="true"><img src="assets/img/clients/lamborghini.png" alt="" loading="lazy"></span><span class="cl" aria-hidden="true"><img src="assets/img/clients/first-motors.png" alt="" loading="lazy"></span><span class="cl" aria-hidden="true"><img src="assets/img/clients/diary-of-a-ceo.png" alt="" loading="lazy"></span><span class="cl" aria-hidden="true"><img src="assets/img/clients/green-planet.png" alt="" loading="lazy"></span><span class="cl" aria-hidden="true"><img src="assets/img/clients/school-of-greatness.png" alt="" loading="lazy"></span><span class="cl"><img src="assets/img/clients/rolls-royce.png" alt="Rolls-Royce" loading="lazy"></span><span class="cl"><img src="assets/img/clients/kia.png" alt="KIA" loading="lazy"></span><span class="cl"><img src="assets/img/clients/lamborghini.png" alt="Lamborghini" loading="lazy"></span><span class="cl"><img src="assets/img/clients/first-motors.png" alt="F1rst Motors" loading="lazy"></span><span class="cl"><img src="assets/img/clients/diary-of-a-ceo.png" alt="The Diary of a CEO" loading="lazy"></span><span class="cl"><img src="assets/img/clients/green-planet.png" alt="The Green Planet" loading="lazy"></span><span class="cl"><img src="assets/img/clients/school-of-greatness.png" alt="The School of Greatness" loading="lazy"></span><span class="cl" aria-hidden="true"><img src="assets/img/clients/rolls-royce.png" alt="" loading="lazy"></span><span class="cl" aria-hidden="true"><img src="assets/img/clients/kia.png" alt="" loading="lazy"></span><span class="cl" aria-hidden="true"><img src="assets/img/clients/lamborghini.png" alt="" loading="lazy"></span><span class="cl" aria-hidden="true"><img src="assets/img/clients/first-motors.png" alt="" loading="lazy"></span><span class="cl" aria-hidden="true"><img src="assets/img/clients/diary-of-a-ceo.png" alt="" loading="lazy"></span><span class="cl" aria-hidden="true"><img src="assets/img/clients/green-planet.png" alt="" loading="lazy"></span><span class="cl" aria-hidden="true"><img src="assets/img/clients/school-of-greatness.png" alt="" loading="lazy"></span></div>
   </div>
 </section>
 
@@ -503,14 +497,14 @@
   </div>
 </footer>
 
-<script src="assets/js/lenis.min.js?v=20260801f"></script>
-<script src="assets/js/main.js?v=20260801f"></script>
+<script src="assets/js/lenis.min.js?v=20260801g"></script>
+<script src="assets/js/main.js?v=20260801g"></script>
 <!-- Three.js + the mini cylinder load only here, after main.js, so THREE is
      defined by the time wheel-cylinder.js runs (same load order as the work
      page's gallery). main.js fires its first wheel update synchronously before
      this listener exists, so its index-0 event is missed — harmless, because
      wheel-cylinder.js also defaults to index 0 on init. -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="assets/js/wheel-cylinder.js?v=20260801f"></script>
+<script src="assets/js/wheel-cylinder.js?v=20260801g"></script>
 </body>
 </html>
