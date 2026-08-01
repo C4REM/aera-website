@@ -236,9 +236,9 @@
    (e.g. <em>) and its styling survive intact. */
 (function(){
   const SELECTORS = [
-    '.hero-statement', 'h2.section-title', '.htrack-title',
+    'h2.section-title', '.htrack-title',
     '.wheel-head h2', '.contact h2', 'header.page-hero h1',
-    '.partners-title', '.socials-title'
+    '.socials-title'
   ].join(',');
 
   function splitInto(node, out){
@@ -516,13 +516,21 @@
       });
     }
 
+    /* The ring used to be told only the INTEGER index, so it sat still and then
+       lurched a whole panel each time the active name changed — next to the
+       names, which glide continuously, it read as broken rather than snappy.
+       It now also gets the fractional position (cursor measured in name-steps)
+       on every frame, so it turns in lockstep with the column beside it. The
+       discrete event still fires for anything that only cares about "which one
+       is active". */
+    document.dispatchEvent(new CustomEvent('aera:wheelpos', {
+      detail: { pos: (cursor - vh * 0.30) / gap }
+    }));
+
     if (activeIdx !== activePrev){
       items.forEach((it, i) => it.classList.toggle('active', i === activeIdx));
       if (numEl) numEl.textContent = String(activeIdx + 1).padStart(2, '0');
       activePrev = activeIdx;
-      // Told, not asked: wheel-cylinder.js (if it loaded) turns the mini 3D
-      // ring to match. This fires whether or not that script exists, so the
-      // flat crossfade above stays the single source of truth either way.
       document.dispatchEvent(new CustomEvent('aera:wheelactive', { detail: { index: activeIdx } }));
     }
   }
@@ -533,16 +541,19 @@
   update();
 })();
 
-/* ---- TIMELINE (about) — horizontal pinned track ----
+/* ---- TIMELINE (about) — horizontal pinned collage ----
    Vertical scroll through the tall section is remapped to horizontal travel
-   across the card row (the landonorris.com pattern). Travel distance is
-   measured from the real rendered widths rather than assumed, so adding or
-   removing a card needs no constant updating here. Each card's image also
-   drifts a little inside its own clipped frame, which gives the row depth
-   as it passes instead of it sliding as one rigid strip.
+   across an irregular collage (the landonorris.com pattern). Items are
+   absolutely positioned so each can set its own width/height/vertical offset,
+   which means their horizontal placement has to be computed: layout() walks
+   them in order and assigns a running --x, so adding, removing or resizing an
+   item needs no constant updated by hand.
 
-   Bails out entirely under 880px, where the CSS drops the pin and stacks the
-   cards — driving transforms there would fight the user's own scroll. */
+   Each item also drifts a little inside its own frame as it crosses the
+   viewport, and fades up the first time it comes into range — so the row has
+   depth and arrival rather than sliding as one rigid strip.
+
+   Bails out under 880px, where the CSS drops the pin and stacks the items. */
 (function(){
   const pin = document.getElementById('htrackPin');
   const row = document.getElementById('htrackRow');
@@ -551,22 +562,27 @@
   if (!pin || !row) return;
 
   const section = pin.closest('.htrack');
-  const cards = Array.from(row.children);
-  const imgs = cards.map(c => c.querySelector('.hcard-media img'));
-  let stacked = false, travel = 0, ticking = false, shownPrev = -1;
+  const items = Array.from(row.querySelectorAll('.hitem'));
+  const GAP = 30;
+  let stacked = false, travel = 0, rowW = 0, ticking = false, shownPrev = -1;
 
   function layout(){
     stacked = window.matchMedia('(max-width:880px)').matches;
     if (stacked){
       row.style.transform = '';
-      imgs.forEach(i => { if (i) i.style.transform = ''; });
+      items.forEach(el => { el.style.removeProperty('--x'); el.classList.add('in'); });
       section.style.height = '';
       return;
     }
-    // how far the row has to move for its right edge to reach the viewport's
-    travel = Math.max(0, row.scrollWidth - window.innerWidth);
-    // section tall enough to give that travel a comfortable scroll distance,
-    // plus one viewport so the last card can rest on screen before release
+    // walk the items, assigning each its running horizontal offset
+    let x = 0;
+    items.forEach(el => {
+      el.style.setProperty('--x', x.toFixed(1) + 'px');
+      x += el.offsetWidth + GAP;
+    });
+    rowW = x;
+    const pad = parseFloat(getComputedStyle(row).paddingLeft) || 0;
+    travel = Math.max(0, rowW + pad * 2 - window.innerWidth);
     section.style.height = (window.innerHeight + travel * 1.15) + 'px';
   }
 
@@ -579,19 +595,21 @@
 
     row.style.transform = 'translate3d(' + (-p * travel).toFixed(1) + 'px,0,0)';
 
-    // per-card image drift, keyed off how far each card is from centre
-    const mid = window.innerWidth / 2;
-    cards.forEach((c, i) => {
-      const img = imgs[i];
-      if (!img) return;
-      const cr = c.getBoundingClientRect();
-      if (cr.right < -200 || cr.left > window.innerWidth + 200) return;
-      const d = ((cr.left + cr.width / 2) - mid) / window.innerWidth;  // -0.5…0.5
-      img.style.transform = 'translate3d(' + (d * -26).toFixed(1) + 'px,0,0)';
+    const vw = window.innerWidth, mid = vw / 2;
+    items.forEach(el => {
+      const cr = el.getBoundingClientRect();
+      if (cr.right < -300 || cr.left > vw + 300) return;
+      // reveal once it has genuinely entered the frame
+      if (cr.left < vw - 40) el.classList.add('in');
+      const img = el.firstElementChild && el.querySelector('.hshot img');
+      if (img){
+        const d = ((cr.left + cr.width / 2) - mid) / vw;   // -0.5…0.5
+        img.style.transform = 'translate3d(' + (d * -30).toFixed(1) + 'px,0,0)';
+      }
     });
 
     if (bar) bar.style.width = (p * 100).toFixed(1) + '%';
-    const shown = Math.min(cards.length - 1, Math.round(p * (cards.length - 1)));
+    const shown = Math.min(4, Math.round(p * 4));
     if (numEl && shown !== shownPrev){
       numEl.textContent = String(shown + 1).padStart(2, '0');
       shownPrev = shown;

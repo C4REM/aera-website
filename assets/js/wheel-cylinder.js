@@ -73,7 +73,7 @@
   // panel, the more a portrait source loses off its top and bottom. 6:5 keeps a
   // poster legible without the landscape shots looking boxed in.
   const CARD_H = 3.0;
-  const SEG    = 40;               // horizontal subdivisions — the bend
+  const SEG    = 64;               // horizontal subdivisions — the bend (raised: 40 faceted visibly at this radius)
   const ANGLE  = (Math.PI * 2) / N;
   // Gentler than the work page's rise: at 30° spacing you can see four panels
   // out from centre, and the work page's 1.15 would send them off the top and
@@ -159,9 +159,46 @@
     return tex;
   });
 
+  /* Rounded, feathered edge mask. The panels were hard-cut rectangles, so the
+     silhouette read as sharp and cheap as they rotated past — especially at
+     the sides of the ring where a panel is nearly edge-on and its corner is
+     the only thing you can see. One canvas-generated alpha map, shared by
+     every material, rounds the corners and fades the last few percent of each
+     edge to nothing. Cheap (a single 256px texture) and it's the difference
+     between "photo on a plane" and "panel". */
+  const edgeMask = (() => {
+    const S = 256, c = document.createElement('canvas');
+    c.width = c.height = S;
+    const g = c.getContext('2d');
+    g.fillStyle = '#000'; g.fillRect(0, 0, S, S);
+    const R = S * 0.075;                       // corner radius
+    g.fillStyle = '#fff';
+    g.beginPath();
+    if (g.roundRect) g.roundRect(0, 0, S, S, R);
+    else g.rect(0, 0, S, S);
+    g.fill();
+    // feather: repeatedly stroke the inside edge with falling alpha
+    g.globalCompositeOperation = 'destination-out';
+    const F = S * 0.045;
+    for (let k = 0; k < F; k++) {
+      g.strokeStyle = 'rgba(0,0,0,' + (0.16 * (1 - k / F)) + ')';
+      g.lineWidth = 1;
+      g.beginPath();
+      if (g.roundRect) g.roundRect(k + 0.5, k + 0.5, S - 2 * k - 1, S - 2 * k - 1, Math.max(1, R - k));
+      else g.rect(k + 0.5, k + 0.5, S - 2 * k - 1, S - 2 * k - 1);
+      g.stroke();
+    }
+    const t = new THREE.CanvasTexture(c);
+    t.minFilter = THREE.LinearFilter;
+    t.generateMipmaps = false;
+    t.wrapS = t.wrapT = THREE.ClampToEdgeWrapping;
+    return t;
+  })();
+
   const cards = Array.from({ length: N }, (_, i) => {
     const mat = new THREE.MeshBasicMaterial({
       map: textures[i % imgs.length], color: 0xffffff,
+      alphaMap: edgeMask,
       transparent: true, opacity: 0,
       side: THREE.DoubleSide, depthWrite: false
     });
@@ -193,9 +230,19 @@
   let hovered = null;
   let dim = 0;
 
-  // The one and only rotation input: main.js's index, whenever it changes.
+  /* Rotation input. main.js now publishes a CONTINUOUS position every frame
+     (`aera:wheelpos`, measured in name-steps), so the ring turns in lockstep
+     with the name column instead of sitting still and then jumping a whole
+     panel when the active index flipped — which is what made it read as
+     static next to the smoothly-gliding titles. The old discrete event is
+     still honoured as a fallback for the first frame / if main.js is older. */
+  let hasContinuous = false;
+  document.addEventListener('aera:wheelpos', e => {
+    hasContinuous = true;
+    target = e.detail.pos;
+  });
   document.addEventListener('aera:wheelactive', e => {
-    target = e.detail.index;
+    if (!hasContinuous) target = e.detail.index;
   });
 
   /* ---------------- pointer ---------------- */
@@ -255,7 +302,9 @@
     // shortest-path ease: approach the target via whichever wrapped direction is
     // nearer, so going from item 6 back to item 1 turns forward, not back
     // across all five others
-    current += wrap(target - current) * (1 - Math.exp(-7 * dt));
+    // gentler than 7: the input is continuous now, so this only has to take
+    // the edge off scroll jitter rather than absorb whole-panel jumps
+    current += wrap(target - current) * (1 - Math.exp(-5.5 * dt));
 
     // Pick before positioning so this frame's hover feeds this frame's layout.
     const hit = pick();
