@@ -622,6 +622,76 @@
   addEventListener('load', () => { layout(); update(); });
 })();
 
+/* ---- SOCIALS FAN — hover shuffle ----
+   Every card's position comes from ONE formula: its own index (i) plus how far
+   it sits from the hovered card (d). Neighbours slide outward by an amount
+   that tapers with distance, the hovered card straightens and lifts, and
+   z-index is assigned from the same distance so the overlap order is always
+   consistent while the pointer moves.
+
+   This used to be pure CSS with `+` and `:has()` sibling rules — four separate
+   rules each setting a different transform. Moving between cards swapped which
+   rule matched, so a card jumped straight from one transform to another
+   instead of easing, and z-index (which can't transition) flipped mid-move so
+   cards briefly overlapped the wrong way. One formula fixes both.
+
+   Order is never changed: each card keeps its --i for life, so the fan always
+   re-closes to exactly the arrangement it started in. */
+(function(){
+  const fan = document.querySelector('.fan');
+  if (!fan) return;
+  const cards = Array.from(fan.querySelectorAll('.fan-card'));
+  if (!cards.length) return;
+  if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+  if (window.matchMedia('(max-width:760px)').matches) return;
+
+  const px = v => v + 'px';
+  // matches the CSS clamps so JS and CSS agree at every viewport
+  const spread = () => Math.max(58, Math.min(105, innerWidth * 0.066));
+  const drop   = () => Math.max(9,  Math.min(20,  innerHeight * 0.015));
+  const nudge  = () => Math.max(20, Math.min(40,  innerWidth * 0.026));
+
+  let hovered = null;
+
+  function paint(){
+    const S = spread(), D = drop(), N = nudge();
+    cards.forEach(card => {
+      const i = parseFloat(card.style.getPropertyValue('--i')) || 0;
+      const a = Math.abs(i);
+      let x = i * S, y = a * D, rot = i * 7, sc = 1 - a * 0.075, z = 10 - a;
+
+      if (hovered !== null){
+        const d = i - hovered;                 // signed distance from hovered
+        const ad = Math.abs(d);
+        if (ad === 0){
+          y = -22; rot = 0; sc = 1.07; z = 30;
+        } else {
+          // push away, tapering off with distance (1 step = full nudge, 2 = half…)
+          const taper = 1 / ad;
+          x += Math.sign(d) * N * taper;
+          rot += Math.sign(d) * 3 * taper;
+          z = 20 - ad;                          // still descends away from the lifted card
+        }
+      }
+      card.style.zIndex = String(Math.round(z));
+      card.style.transform =
+        'translateX(' + px(x.toFixed(1)) + ') translateY(' + px(y.toFixed(1)) + ') ' +
+        'rotate(' + rot.toFixed(2) + 'deg) scale(' + sc.toFixed(3) + ')';
+      card.classList.toggle('is-lifted', hovered !== null && i === hovered);
+    });
+  }
+
+  cards.forEach(card => {
+    card.addEventListener('pointerenter', () => {
+      hovered = parseFloat(card.style.getPropertyValue('--i')) || 0;
+      paint();
+    });
+  });
+  fan.addEventListener('pointerleave', () => { hovered = null; paint(); });
+  addEventListener('resize', paint);
+  paint();
+})();
+
 /* ---- METHOD — pinned sequence ----
    Phase A: the photo sits large while the copy column travels up the right.
    Phase B: the photo shrinks and rounds into a small ellipse near the top,
