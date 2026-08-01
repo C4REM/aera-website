@@ -202,19 +202,39 @@ header.hero .hero-inner{position:relative;z-index:2}
    with the two words stacked so each gets a full line's worth of scale.
    line-height under 1 lets the two lines close up into one type block. */
 header.hero .hero-statement.hero-mega{
-  font-size:clamp(3.6rem,17vw,15rem);
-  line-height:.82;letter-spacing:-.04em;
+  /* Bigger again, and sized off vw so it genuinely fills the frame.
+     line-height is .86 rather than .82 and the lines are no longer clipped:
+     the old `overflow:hidden` on each line cut the descenders off "Annoyingly"
+     and "good" — the clipping you saw. The slide-in below doesn't need a clip
+     mask because the lines come in horizontally, not vertically. */
+  font-size:clamp(3.8rem,19.5vw,18rem);
+  line-height:.86;letter-spacing:-.045em;
   margin:0 0 clamp(20px,3vh,34px);
   text-transform:none;
+  width:100%;
 }
-.hero-mega em{
-  /* second word carries the serif-italic-champagne treatment the site
-     already uses for emphasis — same device landonorris uses when it drops
-     one serif word into a wall of sans caps */
-  letter-spacing:-.02em;
+.hero-mega em{letter-spacing:-.025em}
+
+/* FILL-THE-FRAME ENTRANCE — the two lines fly in from opposite edges and
+   settle, slightly over-scaled at the start so they read as rushing toward
+   the viewer rather than just sliding. Each line is its own block, so line 1
+   comes from the left and line 2 from the right. No word-splitting on this
+   headline any more (it's been removed from the JS split list) — at this size
+   a per-word blur reads as mush; one confident move per line is stronger. */
+.hero-mega .ln{display:block;overflow:visible}
+.hero-mega .ln > span{
+  display:block;
+  opacity:0;
+  transform:translateX(var(--from,-16%)) scale(1.14);
+  transition:opacity .9s cubic-bezier(.16,1,.3,1),
+             transform 1.15s cubic-bezier(.16,1,.3,1);
 }
-/* each line slides up from behind the one above as it resolves */
-.hero-mega .ln{overflow:hidden;padding-bottom:.06em}
+.hero-mega .ln:nth-child(1) > span{--from:-16%}
+.hero-mega .ln:nth-child(2) > span{--from:16%;transition-delay:.1s}
+.hero-mega.in .ln > span{opacity:1;transform:translateX(0) scale(1)}
+@media(prefers-reduced-motion:reduce){
+  .hero-mega .ln > span{transition:opacity .4s ease;transform:none!important}
+}
 .hero-sub{
   font-family:var(--sans);font-size:clamp(.82rem,1.5vw,1rem);font-weight:300;
   letter-spacing:.02em;color:var(--stone);margin:0 0 clamp(26px,4vh,42px);
@@ -389,33 +409,40 @@ body.wheel-live .wheel-media img{opacity:0!important}
 .htrack-title em{font-family:var(--serif);font-style:italic;font-weight:500;color:var(--champagne)}
 
 .htrack-row{
-  display:flex;align-items:center;gap:clamp(26px,3.6vw,58px);
-  padding:0 clamp(22px,8vw,140px) clamp(60px,10vh,96px);
-  width:max-content;flex:1;min-height:0;will-change:transform;
+  position:relative;
+  display:block;                       /* items are absolutely placed, not flowed */
+  padding:0 clamp(22px,8vw,140px);
+  flex:1;min-height:0;will-change:transform;
 }
-/* every other card drops down a little — the stagger landonorris uses to
-   stop the row scanning as a single ruled line */
-.hcard{width:clamp(230px,25vw,330px);flex:none;position:relative}
-.hcard:nth-child(even){margin-top:clamp(46px,8vh,96px)}
-.hcard-when{
-  display:block;font-family:var(--sans);font-size:10px;letter-spacing:.26em;
-  text-transform:uppercase;color:var(--champagne);margin-bottom:14px;
+
+/* IRREGULAR COLLAGE — each item carries its own width (--w), aspect (--ar) and
+   vertical position (--top) inline, so no two sit on the same baseline and the
+   sizes run 150px->430px. That irregularity is the whole trick: a row of equal
+   cards at one height reads as a carousel, this reads as a spread. JS sets --x
+   (the running horizontal offset) on layout. */
+.hitem{
+  position:absolute;top:var(--top,0);left:var(--x,0);
+  width:var(--w,200px);
+  opacity:0;transform:translateY(26px);
+  transition:opacity .7s cubic-bezier(.2,.8,.2,1),transform .9s cubic-bezier(.2,.8,.2,1);
 }
-.hcard-media{
-  position:relative;overflow:hidden;aspect-ratio:4/5;margin-bottom:18px;background:#111013;
+.hitem.in{opacity:1;transform:none}
+.hshot{position:relative;overflow:hidden;background:#111013;aspect-ratio:var(--ar,4/5)}
+.hshot img{
+  position:absolute;inset:-7% -11%;width:122%;height:114%;object-fit:cover;
+  will-change:transform;filter:saturate(.92);
+  transition:transform .75s cubic-bezier(.2,.8,.2,1),filter .6s ease;
 }
-/* oversized so there's room to drift without exposing an edge */
-.hcard-media img{
-  position:absolute;inset:-8% -12%;width:124%;height:116%;object-fit:cover;
-  will-change:transform;transition:transform .8s cubic-bezier(.2,.8,.2,1),filter .6s ease;
-  filter:saturate(.9);
+.hitem:hover .hshot img{transform:scale(1.05);filter:saturate(1.06)}
+.hcap{
+  display:block;font-family:var(--sans);font-size:9.5px;letter-spacing:.24em;
+  text-transform:uppercase;color:var(--champagne);margin-bottom:10px;
 }
-.hcard:hover .hcard-media img{transform:scale(1.06);filter:saturate(1.05)}
-.hcard h3{
-  font-family:var(--display);font-weight:var(--display-wght);
-  font-size:clamp(1.05rem,1.9vw,1.42rem);line-height:1.18;margin-bottom:9px;
+.hitem.is-txt{display:flex;align-items:center}
+.hitem.is-txt p{
+  font-family:var(--serif);font-style:italic;
+  font-size:clamp(.95rem,1.5vw,1.18rem);line-height:1.45;color:var(--cream-dim);
 }
-.hcard p{color:var(--stone);font-size:.88rem;line-height:1.65}
 
 /* progress rail + counter, pinned bottom-left of the frame */
 .htrack-foot{
@@ -437,13 +464,12 @@ body.wheel-live .wheel-media img{opacity:0!important}
   .htrack-pin{position:relative;height:auto;overflow:visible;padding:80px 0 60px}
   .htrack-head{padding:0 22px;margin-bottom:36px}
   .htrack-row{
-    flex-direction:column;align-items:stretch;width:auto;flex:none;
-    padding:0 22px;gap:44px;transform:none!important;
+    display:flex;flex-direction:column;align-items:stretch;width:auto;flex:none;
+    padding:0 22px;gap:38px;transform:none!important;
   }
-  .hcard{width:auto}
-  .hcard:nth-child(even){margin-top:0}
-  .hcard-media{aspect-ratio:auto}
-  .hcard-media img{position:static;inset:auto;width:100%;height:auto;transform:none!important}
+  .hitem{position:static;width:auto!important;left:auto;top:auto;opacity:1;transform:none}
+  .hshot{aspect-ratio:auto}
+  .hshot img{position:static;inset:auto;width:100%;height:auto;transform:none!important}
   .htrack-foot{display:none}
 }
 
@@ -709,41 +735,15 @@ body.tm-open{overflow:hidden}
 }
 
 /* ---- CLIENTS — continuously scrolling wordmark strip ---- */
-.clients{padding-top:0}
-.clients-head{margin-bottom:clamp(34px,5vh,60px)}
-
-/* ---- PARTNERS & CAMPAIGNS — landonorris collabs headline ----
-   Two lines, the second flipped to serif italic: the same "one word in a
-   different voice" device the reference uses to stop a big headline reading
-   as a flat block. Headline hard left, supporting note pushed out right, so
-   the pair frames the marquee underneath instead of stacking centred. */
-.partners-head{
-  display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.72fr);
-  gap:clamp(20px,5vw,70px);align-items:end;
-  margin-bottom:clamp(38px,6vh,70px);
-}
-.partners-title{
-  font-family:var(--display);font-weight:var(--display-wght);
-  font-size:clamp(2.1rem,6vw,4.4rem);line-height:.94;letter-spacing:-.03em;
-}
-.partners-title .pt-a{display:block}
-.partners-title .pt-b{
-  display:block;font-family:var(--serif);font-style:italic;font-weight:500;
-  color:var(--champagne);letter-spacing:-.01em;
-}
-.partners-note{color:var(--stone);font-size:.95rem;line-height:1.7;max-width:44ch;padding-bottom:.4em}
-@media(max-width:760px){
-  .partners-head{grid-template-columns:1fr;align-items:start;gap:18px}
-  .partners-note{padding-bottom:0}
-}
+/* Client strip — a band, not a section. No heading, minimal height. */
+.clients{padding:clamp(26px,4vh,44px) 0}
 
 /* ---- WHAT'S UP ON SOCIALS — fanned photo stack ----
-   Seven cards in a symmetric arc. --i runs -3…3 and drives rotation, scale,
-   horizontal spread and vertical drop together, so the whole fan is one
-   formula rather than seven hand-placed cards; z-index falls away from the
-   centre so they overlap the right way round. Ratios are lifted from the
-   reference's real computed matrices (7° per step, ~0.075 scale falloff).
-   Hovering pulls a card up and straightens it out of the arc. */
+   Seven cards in a symmetric arc. --i runs -3..3 and drives rotation, scale,
+   spread and drop together, so the whole fan is one formula rather than seven
+   hand-placed cards; --a is |--i| and drives z-index so they overlap the right
+   way round. Ratios lifted from the reference's real computed matrices
+   (7 degrees per step, ~0.075 scale falloff). */
 .socials{padding-top:clamp(60px,9vh,110px);overflow:hidden}
 .socials-head{margin-bottom:clamp(34px,5vh,56px);text-align:center}
 .socials-title{
@@ -764,8 +764,7 @@ body.tm-open{overflow:hidden}
 .fan-card{
   position:absolute;top:0;
   width:clamp(132px,15vw,200px);aspect-ratio:4/7;
-  border-radius:clamp(16px,2vw,30px);overflow:hidden;
-  background:#111013;
+  border-radius:clamp(16px,2vw,30px);overflow:hidden;background:#111013;
   z-index:calc(10 - var(--a));
   transform:
     translateX(calc(var(--i) * clamp(58px,6.6vw,105px)))
@@ -776,19 +775,53 @@ body.tm-open{overflow:hidden}
   box-shadow:0 24px 50px -26px rgba(0,0,0,.85);
 }
 .fan-card img{width:100%;height:100%;object-fit:cover;transition:transform .7s cubic-bezier(.2,.8,.2,1)}
-/* lift out of the fan, straighten, come fully forward */
+
+/* HOVER SHUFFLE — the hovered card lifts, straightens and comes forward, and
+   its neighbours slide outward to make room, like fanning a hand of cards to
+   look at one. Nothing is reordered: every card keeps its own --i, so the fan
+   re-closes to exactly the same arrangement when the pointer leaves. */
 .fan-card:hover{
   z-index:20;
   transform:
     translateX(calc(var(--i) * clamp(58px,6.6vw,105px)))
-    translateY(-16px) rotate(0deg) scale(1.04);
+    translateY(-22px) rotate(0deg) scale(1.07);
   box-shadow:0 34px 70px -22px rgba(0,0,0,.9);
 }
 .fan-card:hover img{transform:scale(1.07)}
+/* neighbours taper away: the card beside the hovered one moves most, the next
+   one less, so the fan opens smoothly instead of shifting as a block */
+.fan-card:hover + .fan-card{
+  transform:
+    translateX(calc(var(--i) * clamp(58px,6.6vw,105px) + clamp(20px,2.4vw,38px)))
+    translateY(calc(var(--a) * clamp(9px,1.5vh,20px)))
+    rotate(calc(var(--i) * 7deg + 3deg))
+    scale(calc(1 - var(--a) * 0.075));
+}
+.fan-card:hover + .fan-card + .fan-card{
+  transform:
+    translateX(calc(var(--i) * clamp(58px,6.6vw,105px) + clamp(9px,1.1vw,17px)))
+    translateY(calc(var(--a) * clamp(9px,1.5vh,20px)))
+    rotate(calc(var(--i) * 7deg + 1.5deg))
+    scale(calc(1 - var(--a) * 0.075));
+}
+.fan-card:has(+ .fan-card:hover){
+  transform:
+    translateX(calc(var(--i) * clamp(58px,6.6vw,105px) - clamp(20px,2.4vw,38px)))
+    translateY(calc(var(--a) * clamp(9px,1.5vh,20px)))
+    rotate(calc(var(--i) * 7deg - 3deg))
+    scale(calc(1 - var(--a) * 0.075));
+}
+.fan-card:has(+ .fan-card + .fan-card:hover){
+  transform:
+    translateX(calc(var(--i) * clamp(58px,6.6vw,105px) - clamp(9px,1.1vw,17px)))
+    translateY(calc(var(--a) * clamp(9px,1.5vh,20px)))
+    rotate(calc(var(--i) * 7deg - 1.5deg))
+    scale(calc(1 - var(--a) * 0.075));
+}
 .socials-cta{text-align:center;margin-top:clamp(30px,5vh,54px)}
 
-/* on narrow screens the arc collapses into a simple scrollable row —
-   a seven-card fan at phone width is unreadable and clips off both edges */
+/* on narrow screens the arc collapses into a simple scrollable row — a
+   seven-card fan at phone width is unreadable and clips off both edges */
 @media(max-width:760px){
   .fan{
     height:auto;position:static;display:flex;gap:12px;overflow-x:auto;
@@ -796,10 +829,7 @@ body.tm-open{overflow:hidden}
     -webkit-overflow-scrolling:touch;scrollbar-width:none;
   }
   .fan::-webkit-scrollbar{display:none}
-  .fan-card{
-    position:relative;flex:none;width:52vw;max-width:230px;
-    transform:none!important;z-index:auto;
-  }
+  .fan-card{position:relative;flex:none;width:52vw;max-width:230px;transform:none!important;z-index:auto}
 }
 @media(prefers-reduced-motion:reduce){
   .fan-card,.fan-card img{transition:none}
@@ -819,16 +849,21 @@ body.tm-open{overflow:hidden}
 .marquee:hover .marquee-track{animation-play-state:paused}
 @keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 .cl{
-  font-family:var(--serif);font-size:clamp(1.05rem,1.9vw,1.5rem);
+  font-family:var(--serif);font-size:clamp(.92rem,1.5vw,1.2rem);
   letter-spacing:.2em;text-transform:uppercase;white-space:nowrap;
-  color:var(--cream-dim);opacity:.5;transition:opacity .4s ease,color .4s ease;
-  /* Cormorant ships oldstyle figures by default, which drops the "1" in a name
-     like "F1rst Motors" to x-height so it reads as "Fırst" — looks like a typo
-     in a client list. Force lining figures wherever a brand name can contain a
-     digit. */
-  font-variant-numeric:lining-nums;
-  font-feature-settings:"lnum" 1;
+  /* every mark forced to the same flat tone so the strip reads as one row of
+     logos rather than a ransom note of different brand colours */
+  color:var(--cream-dim);opacity:.5;
+  transition:opacity .35s ease,color .35s ease;
 }
+.cl:hover{opacity:1;color:var(--cream)}
+.cl img{
+  height:clamp(15px,1.9vw,22px);width:auto;display:block;
+  /* normalise any real logo file to the same flat tone as the text marks */
+  filter:grayscale(1) brightness(0) invert(.82);
+  opacity:.72;transition:opacity .35s ease;
+}
+.cl:hover img{opacity:1}
 .cl:hover{opacity:1;color:var(--cream)}
 /* Logo slot. Every mark is normalised to one optical height and knocked back to
    a flat cream so a mixed set of brand colours still reads as one quiet row —
