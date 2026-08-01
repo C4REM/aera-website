@@ -387,6 +387,12 @@
     e.target.classList.toggle('in', e.isIntersecting);
   }), { threshold: .15 });
   document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  /* The awards row stages its own entrance (each laurel delayed by --n so the
+     row assembles outward from the centre), so the SECTION is what needs the
+     .in class, not the individual items. Same observer, one extra target. */
+  const awards = document.querySelector('.awards');
+  if (awards) io.observe(awards);
 })();
 
 /* ---- SCROLL-LINKED BLUR-FOCUS (Valeran-inspired headline motion) ----
