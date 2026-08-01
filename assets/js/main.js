@@ -438,7 +438,6 @@
   const inner = document.querySelector('header.hero .hero-inner');
   const ring = document.querySelector('.hero-scrollring');
   if (!hero || !inner) return;
-  const lines = Array.from(hero.querySelectorAll('.hero-mega .ln'));
   let ticking = false;
 
   function update(){
@@ -447,11 +446,11 @@
     const y = Math.max(0, -hero.getBoundingClientRect().top);
     if (y > h) return;                      // hero fully passed — nothing to do
     const t = Math.min(1, y / h);
+    /* Only the inner column is moved. The per-line offsets that used to live
+       here wrote inline transforms onto the very elements the entrance
+       animation drives, which is what stranded it mid-flight. */
     inner.style.transform = `translateY(${(y * 0.3).toFixed(1)}px)`;
     inner.style.opacity = (1 - t * 0.95).toFixed(2);
-    lines.forEach((ln, i) => {
-      ln.style.transform = `translateY(${(y * 0.06 * (i + 1)).toFixed(1)}px)`;
-    });
     if (ring) ring.style.opacity = (1 - t * 2.4).toFixed(2);
   }
   function onScroll(){ if (!ticking){ ticking = true; requestAnimationFrame(update); } }
