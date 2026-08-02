@@ -35,6 +35,22 @@
   --display-wght:400;   /* Makcasa ships a single weight */
   --sans:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
 }
+/* ---- CROSS-PAGE VIEW TRANSITIONS ----
+   Every page here is a real, separate .html file (no client-side router),
+   so a normal link click is a hard navigation — the browser tears the page
+   down and paints the new one from nothing, which is exactly the "flat"
+   feeling multi-page sites usually have next to an SPA. `navigation:auto`
+   opts every same-origin navigation into the browser's own cross-document
+   view transition: it snapshots the outgoing page, crossfades to the new
+   one once it paints, no JS involved. Supported in Chromium browsers as of
+   this build; unsupported browsers just keep doing a normal navigation, so
+   this is pure upside with no fallback code needed. Respects reduced-motion
+   automatically because a plain crossfade is the browser's default transition
+   and browsers already suppress/shorten it under that setting. */
+@view-transition{
+  navigation:auto;
+}
+
 *{margin:0;padding:0;box-sizing:border-box}
 /* Lenis — required base styles. It eases window.scrollTo each frame rather
    than transforming a wrapper, so window.scrollY and getBoundingClientRect
@@ -826,7 +842,7 @@ body.tm-open{overflow:hidden}
     translateY(calc(var(--a) * clamp(9px,1.5vh,20px)))
     rotate(calc(var(--i) * 7deg))
     scale(calc(1 - var(--a) * 0.075));
-  transition:transform .55s cubic-bezier(.2,.8,.2,1), box-shadow .45s ease;
+  transition:transform .8s cubic-bezier(.16,1,.3,1), box-shadow .45s ease, opacity .6s ease;
   box-shadow:0 24px 50px -26px rgba(0,0,0,.85);
 }
 .fan-card img{width:100%;height:100%;object-fit:cover;transition:transform .7s cubic-bezier(.2,.8,.2,1)}
@@ -843,6 +859,23 @@ body.tm-open{overflow:hidden}
 .fan-card{will-change:transform}
 .fan-card.is-lifted{box-shadow:0 34px 70px -22px rgba(0,0,0,.9)}
 .fan-card.is-lifted img{transform:scale(1.07)}
+
+/* ENTRANCE — the stack arrives closed, then fans open. Until `.socials`
+   gets its `.in` class (same IntersectionObserver as everything else with
+   `.reveal`, see main.js), every card collapses back to a single squared-off
+   stack dead centre; the moment the section scrolls into view they ease out
+   to the resting positions the base `.fan-card` rule already defines, each
+   one a beat behind the last (working outward from the centre card, not
+   left-to-right, so it reads as one stack blooming rather than a row
+   sliding in). Cards keep animating via the SAME transition used for the
+   hover shuffle, so there's no separate "entrance" mechanism to keep in
+   sync — just a temporary override on the resting transform. */
+.socials:not(.in) .fan-card{
+  opacity:0;
+  transform:translateY(10px) rotate(calc(var(--i,0) * 1.6deg)) scale(.62);
+  transition-delay:0s;
+}
+.fan-card{transition-delay:calc(var(--a,0) * 90ms)}
 
 .socials-cta{text-align:center;margin-top:clamp(30px,5vh,54px)}
 
@@ -903,39 +936,6 @@ body.tm-open{overflow:hidden}
 .cl:hover img{opacity:1}
 @media(prefers-reduced-motion:reduce){
   .marquee-track{animation:none;flex-wrap:wrap;width:auto;justify-content:center}
-}
-
-/* ---- BRAND MARQUEE — oversized scrolling statement band ----
-   A full-bleed strip of giant italic serif type that drifts sideways forever,
-   sitting right before the footer on every page. This is the landonorris.com
-   move: a huge duotone line of kinetic type used as a section divider rather
-   than a headline — texture and rhythm before the page resolves into the
-   footer, not more information. Driven by the same JS rAF pattern as the
-   client marquee (see main.js) rather than a CSS animation-play-state pause,
-   for the same reason: nothing to snap back to on hover. */
-.brand-marquee{
-  overflow:hidden;position:relative;
-  padding:clamp(22px,4.4vh,46px) 0;
-  background:var(--obsidian);
-  border-top:1px solid rgba(234,223,205,.10);
-  border-bottom:1px solid rgba(234,223,205,.10);
-}
-.bm-track{
-  display:flex;align-items:center;width:max-content;white-space:nowrap;
-  will-change:transform;
-}
-.bm-track span{
-  font-family:var(--serif);font-style:italic;font-weight:500;
-  font-size:clamp(28px,6.4vw,88px);line-height:1;
-  color:var(--cream);opacity:.85;
-  padding:0 clamp(14px,2vw,34px);
-  flex:none;
-}
-.bm-track span.bm-dot{
-  font-style:normal;color:var(--champagne);opacity:.55;font-size:.5em;
-}
-@media(prefers-reduced-motion:reduce){
-  .bm-track{width:auto;flex-wrap:wrap;justify-content:center;transform:none!important}
 }
 
 /* ---- WORK — full-bleed panels, one project at a time ---- */
