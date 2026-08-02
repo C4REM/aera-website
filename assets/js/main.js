@@ -1049,3 +1049,51 @@
     });
   });
 })();
+
+/* ---- CLIENTS MARQUEE — JS-driven scroll (home) ----
+   This used to be a CSS @keyframes animation paused via
+   `.marquee:hover .marquee-track{animation-play-state:paused}`. In practice,
+   pausing a running keyframe animation on hover made the strip visibly hop
+   backwards a few pixels the instant the pointer entered — a real browser
+   quirk with resuming/pausing compositor-driven animations, not something
+   fixable by tuning the CSS further.
+
+   Replaced with a single rAF loop that just advances a translateX value each
+   frame and stops advancing (rather than "pausing an animation") on hover —
+   there's no animation state to snap back to, so there's nothing to glitch.
+   The track holds 4 identical passes of the logo list; moving left by half
+   its total width loops seamlessly, same as the old -50% keyframe. */
+(function(){
+  const wrap = document.querySelector('.marquee');
+  const track = wrap && wrap.querySelector('.marquee-track');
+  if (!wrap || !track) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  const DURATION = 46; // seconds to cross half the track — matches the old keyframe pace
+  let half = 0, speed = 0, x = 0, paused = false, last = null;
+
+  function measure(){
+    half = track.scrollWidth / 2;
+    speed = half / DURATION;
+  }
+  measure();
+  addEventListener('resize', measure);
+
+  wrap.addEventListener('pointerenter', () => { paused = true; });
+  wrap.addEventListener('pointerleave', () => { paused = false; });
+  wrap.addEventListener('focusin', () => { paused = true; });
+  wrap.addEventListener('focusout', () => { paused = false; });
+
+  function tick(t){
+    if (last === null) last = t;
+    const dt = (t - last) / 1000;
+    last = t;
+    if (!paused && half > 0){
+      x -= speed * dt;
+      if (x <= -half) x += half;
+    }
+    track.style.transform = 'translateX(' + x.toFixed(2) + 'px)';
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+})();
