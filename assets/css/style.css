@@ -842,7 +842,7 @@ body.tm-open{overflow:hidden}
     translateY(calc(var(--a) * clamp(9px,1.5vh,20px)))
     rotate(calc(var(--i) * 7deg))
     scale(calc(1 - var(--a) * 0.075));
-  transition:transform .8s cubic-bezier(.16,1,.3,1), box-shadow .45s ease, opacity .6s ease;
+  transition:transform .55s cubic-bezier(.2,.8,.2,1), box-shadow .45s ease, opacity .5s ease;
   box-shadow:0 24px 50px -26px rgba(0,0,0,.85);
 }
 .fan-card img{width:100%;height:100%;object-fit:cover;transition:transform .7s cubic-bezier(.2,.8,.2,1)}
@@ -860,22 +860,20 @@ body.tm-open{overflow:hidden}
 .fan-card.is-lifted{box-shadow:0 34px 70px -22px rgba(0,0,0,.9)}
 .fan-card.is-lifted img{transform:scale(1.07)}
 
-/* ENTRANCE — the stack arrives closed, then fans open. Until `.socials`
-   gets its `.in` class (same IntersectionObserver as everything else with
-   `.reveal`, see main.js), every card collapses back to a single squared-off
-   stack dead centre; the moment the section scrolls into view they ease out
-   to the resting positions the base `.fan-card` rule already defines, each
-   one a beat behind the last (working outward from the centre card, not
-   left-to-right, so it reads as one stack blooming rather than a row
-   sliding in). Cards keep animating via the SAME transition used for the
-   hover shuffle, so there's no separate "entrance" mechanism to keep in
-   sync — just a temporary override on the resting transform. */
-.socials:not(.in) .fan-card{
+/* ENTRANCE — the stack arrives closed, then fans open, once, the first time
+   it scrolls into view. `.fan.opened` is added by JS (see "SOCIALS FAN" in
+   main.js) and never removed — unlike the sitewide `.reveal`/`.in` toggle,
+   which deliberately reverses on scroll-out so blocks replay. Re-closing a
+   stack of photos the visitor may already be hovering just because they
+   scrolled past and back is what made the first version of this feel
+   broken rather than deliberate. The per-card stagger delay that makes it
+   "unfold from the middle" is set as an inline style by JS for that one
+   opening transition only and cleared straight after, so it can never leak
+   into the hover shuffle below and make it feel laggy. */
+.fan:not(.opened) .fan-card{
   opacity:0;
   transform:translateY(10px) rotate(calc(var(--i,0) * 1.6deg)) scale(.62);
-  transition-delay:0s;
 }
-.fan-card{transition-delay:calc(var(--a,0) * 90ms)}
 
 .socials-cta{text-align:center;margin-top:clamp(30px,5vh,54px)}
 
