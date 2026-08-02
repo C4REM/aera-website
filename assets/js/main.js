@@ -388,11 +388,15 @@
   }), { threshold: .15 });
   document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 
-  /* The awards row stages its own entrance (each laurel delayed by --n so the
-     row assembles outward from the centre), so the SECTION is what needs the
-     .in class, not the individual items. Same observer, one extra target. */
+  /* The awards row and the socials fan both stage their own entrance (each
+     child delayed by a CSS custom property so the group assembles as one
+     move rather than everything fading in at once), so the SECTION is what
+     needs the .in class, not the individual items. Same observer, two extra
+     targets. */
   const awards = document.querySelector('.awards');
   if (awards) io.observe(awards);
+  const socials = document.querySelector('.socials');
+  if (socials) io.observe(socials);
 })();
 
 /* ---- SCROLL-LINKED BLUR-FOCUS (Valeran-inspired headline motion) ----
@@ -694,8 +698,35 @@
     });
   });
   fan.addEventListener('pointerleave', () => { hovered = null; paint(); });
-  addEventListener('resize', paint);
-  paint();
+  addEventListener('resize', () => { if (painted) paint(); });
+
+  /* The first paint is deliberately withheld until the section is on
+     screen. Before that, the cards sit in the closed-stack state defined by
+     `.socials:not(.in) .fan-card` in the CSS — plain class rules, no inline
+     transform yet. The instant an inline transform IS set, it wins over any
+     class rule regardless of specificity, so calling paint() immediately on
+     load would skip the closed state entirely and the fan would just appear
+     already open. Waiting for `.socials.in` (the same class the entrance CSS
+     watches) means the first paint() call is the one the browser animates
+     FROM the closed stack, which is what actually produces the "lands, then
+     blooms open" effect rather than a flat fade-in. */
+  let painted = false;
+  const socials = document.querySelector('.socials');
+  if (socials){
+    const startObserver = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && !painted){
+          painted = true;
+          paint();
+          startObserver.disconnect();
+        }
+      });
+    }, { threshold: .15 });
+    startObserver.observe(socials);
+  } else {
+    painted = true;
+    paint();
+  }
 })();
 
 /* ---- METHOD — pinned sequence ----
@@ -1096,47 +1127,4 @@
     requestAnimationFrame(tick);
   }
   requestAnimationFrame(tick);
-})();
-
-/* ---- BRAND MARQUEE — drives every .brand-marquee on the page ----
-   Same rAF-increment / stop-on-hover technique as the client marquee just
-   above, generalised to run on however many bands a page has (currently
-   one, right before the footer). Each instance gets its own independent
-   loop so a page could run more than one without them needing to agree on
-   speed or phase. */
-(function(){
-  const bands = Array.from(document.querySelectorAll('.brand-marquee'));
-  if (!bands.length) return;
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-  const DURATION = 34; // seconds to cross half the track — a touch brisker than the client strip
-
-  bands.forEach(wrap => {
-    const track = wrap.querySelector('.bm-track');
-    if (!track) return;
-    let half = 0, speed = 0, x = 0, paused = false, last = null;
-
-    function measure(){
-      half = track.scrollWidth / 2;
-      speed = half / DURATION;
-    }
-    measure();
-    addEventListener('resize', measure);
-
-    wrap.addEventListener('pointerenter', () => { paused = true; });
-    wrap.addEventListener('pointerleave', () => { paused = false; });
-
-    function tick(t){
-      if (last === null) last = t;
-      const dt = (t - last) / 1000;
-      last = t;
-      if (!paused && half > 0){
-        x -= speed * dt;
-        if (x <= -half) x += half;
-      }
-      track.style.transform = 'translateX(' + x.toFixed(2) + 'px)';
-      requestAnimationFrame(tick);
-    }
-    requestAnimationFrame(tick);
-  });
 })();
