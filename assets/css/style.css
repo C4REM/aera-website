@@ -275,9 +275,15 @@ header.hero .hero-statement.hero-mega{
   text-transform:uppercase;color:var(--cream);position:relative;padding-bottom:6px;
 }
 .hero-link > span{position:relative}
+/* Underline swoop — couroazul.com's nav underline doesn't just scale up and
+   back down through the same point: it wipes IN from the left on hover and
+   wipes OUT toward the right on leave, so the line reads as travelling
+   across rather than a static bar that pops in and out. Same
+   scaleX(0)-to-scaleX(1) mechanism as before, just with the transform-origin
+   swapping between right (idle/leaving) and left (hovering). */
 .hero-link::after{content:'';position:absolute;left:0;bottom:0;width:100%;height:1px;
-  background:var(--champagne);transform:scaleX(0);transform-origin:left;transition:transform .5s cubic-bezier(.19,1,.22,1)}
-.hero-link:hover::after{transform:scaleX(1)}
+  background:var(--champagne);transform:scaleX(0);transform-origin:right center;transition:transform .5s cubic-bezier(.19,1,.22,1)}
+.hero-link:hover::after{transform:scaleX(1);transform-origin:left center}
 .hero p.lead{
   max-width:540px;font-size:clamp(1rem,2.2vw,1.18rem);color:var(--cream-dim);font-weight:300;
   position:relative;z-index:2;
@@ -1083,9 +1089,14 @@ footer .foot-links a:hover{color:var(--champagne)}
 .reveal.d3{transition-delay:.24s}
 
 /* word-level version — each word resolves out of a blur, lightly staggered */
+/* Tuned to match couroazul.com's own word-blur reveal (their .word.add-blur
+   is filter:blur(15px), 1s, and each word carries its own delay step) —
+   nearly twice the blur radius and a slower, linear resolve compared to
+   what was here before, so words genuinely swim into focus rather than
+   just fading. */
 .split .w{
-  display:inline-block;opacity:0;filter:blur(8px);
-  transition:opacity .55s ease,filter .68s cubic-bezier(.2,.8,.2,1);
+  display:inline-block;opacity:0;filter:blur(15px);
+  transition:opacity .8s ease,filter 1s linear;
   will-change:opacity,filter;
 }
 .split.in .w{opacity:1;filter:blur(0)}
@@ -1343,10 +1354,10 @@ body.preloading.preloader-seen .preloader-word{animation-duration:1s;animation-d
 .nav-links a:not(.nav-cta){position:relative;padding-bottom:5px}
 .nav-links a:not(.nav-cta)::after{
   content:'';position:absolute;left:0;bottom:0;height:1px;width:100%;
-  background:var(--champagne);transform:scaleX(0);transform-origin:left;
+  background:var(--champagne);transform:scaleX(0);transform-origin:right center;
   transition:transform .5s cubic-bezier(.19,1,.22,1);
 }
-.nav-links a:not(.nav-cta):hover::after,.nav-links a.active::after{transform:scaleX(1)}
+.nav-links a:not(.nav-cta):hover::after,.nav-links a.active::after{transform:scaleX(1);transform-origin:left center}
 
 /* Text hover-swap — the technique landonorris.com uses on its social links:
    the label sits twice, stacked in an overflow-hidden mask, and hovering
@@ -1355,9 +1366,15 @@ body.preloading.preloader-seen .preloader-word{animation-duration:1s;animation-d
    changing colour. Pairs with the underline wipe below rather than
    replacing it — underline sweeps in while the text rolls, same as the
    reference site layers a couple of small moves on one hover. */
-.swap{overflow:hidden;display:inline-block;vertical-align:top}
+/* Height has to be pinned explicitly: with only `overflow:hidden` and no
+   height, an inline-block sizes to fit BOTH stacked copies (nothing to
+   clip), so both lines show at once instead of one hidden underneath —
+   that's what showed as "several pieces of text" on the Instagram links.
+   Fixing the box to exactly one line's height (in em, so it scales with
+   whatever font-size it's dropped into) is what makes the mask work. */
+.swap{overflow:hidden;display:inline-block;vertical-align:top;height:1.3em;line-height:1.3}
 .swap-stack{display:block;transition:transform .5s cubic-bezier(.65,0,.35,1)}
-.swap-stack span{display:block}
+.swap-stack span{display:block;line-height:1.3}
 a:hover .swap-stack{transform:translateY(-50%)}
 @media(prefers-reduced-motion:reduce){
   .swap-stack{transition:none}
@@ -1367,10 +1384,10 @@ a:hover .swap-stack{transform:translateY(-50%)}
 .foot-links a,.contact .socials a{position:relative;padding-bottom:3px}
 .foot-links a::after,.contact .socials a::after{
   content:'';position:absolute;left:0;bottom:0;height:1px;width:100%;
-  background:var(--champagne);transform:scaleX(0);transform-origin:left;
+  background:var(--champagne);transform:scaleX(0);transform-origin:right center;
   transition:transform .5s cubic-bezier(.19,1,.22,1);
 }
-.foot-links a:hover::after,.contact .socials a:hover::after{transform:scaleX(1)}
+.foot-links a:hover::after,.contact .socials a:hover::after{transform:scaleX(1);transform-origin:left center}
 
 /* magnetic elements are nudged toward the cursor by JS. No transition here —
    JS applies one only for the spring-back, otherwise it fights every move. */
