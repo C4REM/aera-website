@@ -268,7 +268,14 @@
     const words = [];
     splitInto(el, words);
     if (!words.length) return;
-    words.forEach((w, i) => { w.style.transitionDelay = (i * 0.045).toFixed(3) + 's'; });
+    /* Step widened from 0.045s to 0.09s to match couroazul.com's own word
+       stagger (their .delay-0/1/2/3 classes step in 0.2s, but that's tuned
+       for their typically 3-4 word headlines — 0.09s reads with the same
+       "arriving one at a time" feel without very long Aera headlines, like
+       the motto's three short sentences, dragging the reveal out past two
+       seconds). Capped at 8 words' worth so an unusually long line doesn't
+       keep pushing delay out indefinitely. */
+    words.forEach((w, i) => { w.style.transitionDelay = (Math.min(i, 8) * 0.09).toFixed(3) + 's'; });
     el.classList.add('split');
     el.dataset.split = '1';
   });
@@ -1140,4 +1147,217 @@
     requestAnimationFrame(tick);
   }
   requestAnimationFrame(tick);
+})();
+
+/* ==========================================================================
+   SERVICE-PAGE SIGNATURE DEVICES
+   Each of these is scoped to one page by its selector — if the element isn't
+   on the page the block costs one querySelector and exits. All of them are
+   progressive enhancement: with JS off the CSS leaves readable, laid-out
+   content (see the .no-js rules and the static fallbacks in style.css).
+   ========================================================================== */
+
+/* ---- SCROLL-MASK PARAGRAPH (.smask) ----
+   Words light from --stone to --cream as the block crosses the viewport, so
+   the copy resolves at reading pace instead of all at once. Deliberately its
+   OWN splitter rather than an entry in the sitewide SELECTORS list: that list
+   drives the one-shot .split/.in blur reveal, and this needs per-word state
+   tied to a continuously-updating scroll position, which is a different
+   animation model on the same markup. */
+(function(){
+  const blocks = Array.from(document.querySelectorAll('.smask'));
+  if (!blocks.length) return;
+
+  function splitInto(node, out){
+    Array.from(node.childNodes).forEach(child => {
+      if (child.nodeType === 3){
+        const parts = child.textContent.split(/(\s+)/);
+        const frag = document.createDocumentFragment();
+        parts.forEach(part => {
+          if (!part) return;
+          if (/^\s+$/.test(part)){ frag.appendChild(document.createTextNode(part)); return; }
+          const s = document.createElement('span');
+          s.className = 'w';
+          s.textContent = part;
+          frag.appendChild(s);
+          out.push(s);
+        });
+        child.replaceWith(frag);
+      } else if (child.nodeType === 1 && !child.classList.contains('w')){
+        splitInto(child, out);
+      }
+    });
+  }
+
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const items = blocks.map(el => {
+    const words = [];
+    splitInto(el, words);
+    return { el, words };
+  }).filter(i => i.words.length);
+
+  if (reduce){
+    items.forEach(i => i.words.forEach(w => w.classList.add('lit')));
+    return;
+  }
+
+  let ticking = false;
+  function update(){
+    ticking = false;
+    const vh = innerHeight;
+    items.forEach(({ el, words }) => {
+      const r = el.getBoundingClientRect();
+      /* progress runs 0→1 as the block travels from "top just entered the
+         lower third" to "bottom has reached the upper third", which keeps the
+         whole fill inside the comfortable reading band rather than finishing
+         while the text is still near the bottom edge */
+      const start = vh * 0.82;
+      const end   = vh * 0.32;
+      const p = (start - r.top) / Math.max(1, (start - end) + r.height * 0.55);
+      const lit = Math.round(Math.min(1, Math.max(0, p)) * words.length);
+      words.forEach((w, i) => w.classList.toggle('lit', i < lit));
+    });
+  }
+  addEventListener('scroll', () => {
+    if (!ticking){ ticking = true; requestAnimationFrame(update); }
+  }, { passive: true });
+  addEventListener('resize', update);
+  update();
+})();
+
+/* ---- STORY TRAY (.tray) ----
+   Click a ring, that step's panel shows. Keyboard works for free because the
+   rings are real <button>s. The first ring is opened on load so the section
+   never renders as an empty shelf. */
+(function(){
+  const tray = document.querySelector('.tray');
+  if (!tray) return;
+  const rings  = Array.from(tray.querySelectorAll('.ring'));
+  const panels = Array.from(tray.querySelectorAll('.tray-panel'));
+  if (!rings.length || rings.length !== panels.length) return;
+
+  function show(i){
+    rings.forEach((r, n) => {
+      const on = n === i;
+      r.classList.toggle('on', on);
+      r.setAttribute('aria-selected', on ? 'true' : 'false');
+    });
+    panels.forEach((p, n) => p.classList.toggle('on', n === i));
+  }
+  rings.forEach((r, i) => r.addEventListener('click', () => show(i)));
+  show(0);
+})();
+
+/* ---- CONTACT SHEET (.csheet) ----
+   Vertical scroll through the tall .csheet-track is remapped to horizontal
+   travel of the row inside the sticky pin. Same mechanism as the About page's
+   .htrack, kept separate so tuning one can't disturb the other. Bails out
+   under 880px, where the CSS has already unpinned it into a column. */
+(function(){
+  const sheet = document.querySelector('.csheet');
+  if (!sheet) return;
+  const track = sheet.querySelector('.csheet-track');
+  const pin   = sheet.querySelector('.csheet-pin');
+  const row   = sheet.querySelector('.csheet-row');
+  const bar   = sheet.querySelector('.csheet-bar span');
+  const count = sheet.querySelector('.csheet-count b');
+  const frames= Array.from(sheet.querySelectorAll('.frame'));
+  if (!track || !pin || !row) return;
+
+  let maxX = 0;
+  function measure(){
+    maxX = Math.max(0, row.scrollWidth - innerWidth);
+    /* the track only needs to be as tall as the horizontal distance to cover,
+       plus one viewport to hold the pin — a fixed 300vh either runs out early
+       on a wide screen or leaves dead scroll on a narrow one */
+    track.style.height = (innerHeight + maxX) + 'px';
+  }
+
+  let ticking = false;
+  function update(){
+    ticking = false;
+    if (innerWidth <= 880){ row.style.transform = ''; return; }
+    const r = track.getBoundingClientRect();
+    const total = track.offsetHeight - innerHeight;
+    const p = Math.min(1, Math.max(0, -r.top / Math.max(1, total)));
+    row.style.transform = 'translateX(' + (-p * maxX).toFixed(2) + 'px)';
+    if (bar) bar.style.width = (p * 100).toFixed(1) + '%';
+    if (count && frames.length){
+      count.textContent = String(Math.min(frames.length, Math.floor(p * frames.length) + 1)).padStart(2, '0');
+    }
+  }
+
+  addEventListener('scroll', () => {
+    if (!ticking){ ticking = true; requestAnimationFrame(update); }
+  }, { passive: true });
+  addEventListener('resize', () => { measure(); update(); });
+  measure(); update();
+})();
+
+/* ---- RUN OF SHOW (.runsheet) ----
+   The champagne rule grows down the spine as you scroll, and each cue lights
+   as the rule reaches it — so the fill and the highlighting can never disagree
+   with each other, because both read the same number. */
+(function(){
+  const sheet = document.querySelector('.runsheet');
+  if (!sheet) return;
+  const fill = sheet.querySelector('.runsheet-fill');
+  const cues = Array.from(sheet.querySelectorAll('.cue'));
+  if (!cues.length) return;
+
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches){
+    cues.forEach(c => c.classList.add('lit'));
+    if (fill) fill.style.height = '100%';
+    return;
+  }
+
+  let ticking = false;
+  function update(){
+    ticking = false;
+    const r = sheet.getBoundingClientRect();
+    /* the "playhead" is a fixed line 62% down the viewport; everything above
+       it has happened, everything below hasn't yet */
+    const head = innerHeight * 0.62;
+    const p = Math.min(1, Math.max(0, (head - r.top) / Math.max(1, r.height)));
+    if (fill) fill.style.height = (p * 100).toFixed(2) + '%';
+    const reached = r.top + r.height * p;
+    cues.forEach(c => {
+      const cr = c.getBoundingClientRect();
+      c.classList.toggle('lit', cr.top <= reached + 4);
+    });
+  }
+  addEventListener('scroll', () => {
+    if (!ticking){ ticking = true; requestAnimationFrame(update); }
+  }, { passive: true });
+  addEventListener('resize', update);
+  update();
+})();
+
+/* ---- ENQUIRE CHIPS (home) ----
+   Retarget the mailto's subject to whatever the visitor picks, so the enquiry
+   lands pre-categorised. Multi-select, because "socials AND a launch event" is
+   a completely normal brief. Purely additive: the link already has a working
+   href in the markup, this only ever rewrites the ?subject= on it. */
+(function(){
+  const pick = document.querySelector('.ask-pick');
+  const mail = document.querySelector('.contact .email');
+  if (!pick || !mail) return;
+  const chips = Array.from(pick.querySelectorAll('.ask-chip'));
+  if (!chips.length) return;
+
+  const base = mail.getAttribute('href').split('?')[0];
+  function sync(){
+    const picked = chips.filter(c => c.classList.contains('on')).map(c => c.dataset.svc);
+    const subject = picked.length
+      ? 'Aera enquiry — ' + picked.join(' + ')
+      : 'Aera enquiry';
+    mail.setAttribute('href', base + '?subject=' + encodeURIComponent(subject));
+  }
+  chips.forEach(c => c.addEventListener('click', () => {
+    c.classList.toggle('on');
+    c.setAttribute('aria-pressed', c.classList.contains('on') ? 'true' : 'false');
+    sync();
+  }));
+  sync();
 })();
