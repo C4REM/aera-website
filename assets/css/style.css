@@ -870,10 +870,12 @@ body.tm-open{overflow:hidden}
 .marquee-track{
   display:flex;align-items:center;width:max-content;
   gap:clamp(38px,5.5vw,88px);
-  animation:marquee 46s linear infinite;will-change:transform;
+  will-change:transform;
+  /* Position is driven by JS (see main.js) rather than a CSS keyframe +
+     animation-play-state:paused toggle — pausing a running CSS animation on
+     hover visibly snapped the strip backwards in some browsers. A rAF loop
+     that simply stops incrementing on hover has no such snap. */
 }
-.marquee:hover .marquee-track{animation-play-state:paused}
-@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 .cl{
   display:flex;align-items:center;flex:none;
   transition:opacity .35s ease,transform .35s cubic-bezier(.2,.8,.2,1);
