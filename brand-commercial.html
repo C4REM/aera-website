@@ -16,7 +16,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400;1,500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/style.css?v=20260803a">
+<link rel="stylesheet" href="assets/css/style.css?v=20260803b">
 <noscript><style>.preloader{display:none!important}body{overflow:visible!important;height:auto!important}.cursor-dot,.cursor-ring{display:none!important}.reveal{opacity:1!important;transform:none!important;filter:none!important}.hero-statement .ln>span,.rise>span{transform:none!important}</style></noscript>
 
 <script type="application/ld+json">
@@ -116,29 +116,68 @@
 
 <section id="intro" class="tight">
   <div class="wrap">
-    <div class="section-head reveal">
-      <span class="eyebrow">The approach</span>
-      <h2 class="section-title blur-focus">Considered. Not stock photo corporate.</h2>
-      <p>Most small businesses don't need an agency retainer, they need one properly good shoot:
-        hero images for the website, product stills that don't look lit with a phone torch,
-        portraits that don't scream "stock photo." Same brief every time — a studio finish,
-        delivered by someone who actually minds if it turns out badly. If a shot doesn't look
-        right, it gets reshot, even if that means running twenty minutes over.</p>
+    <span class="eyebrow rise"><span>The approach</span></span>
+    <p class="smask">Most businesses don't need an agency retainer. They need <em>one properly good
+      shoot</em> — hero images for the site, product stills that weren't lit with a phone torch,
+      portraits that don't scream stock photo. If a shot doesn't look right it gets reshot, even
+      if that means running twenty minutes over.</p>
+    <div class="chips reveal">
+      <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="14" rx="3"/><circle cx="12" cy="13" r="4"/><path d="M8 6l1.5-2h5L16 6"/></svg>Product stills</span>
+      <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg>Portraits</span>
+      <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 15l5-5 4 4 3-3 6 6"/></svg>Website hero imagery</span>
+      <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Full edited gallery</span>
     </div>
   </div>
 </section>
 
-<section id="process" class="tight">
-  <div class="wrap">
-    <div class="section-head reveal">
-      <span class="eyebrow">How it works</span>
-      <h2 class="section-title blur-focus">How it comes together.</h2>
-    </div>
-    <div class="process reveal">
-      <div class="step"><span class="num">01</span><h4>Discovery call</h4><p>A real conversation about your brand and what these images actually need to do — not a form to fill in.</p></div>
-      <div class="step"><span class="num">02</span><h4>Shot list &amp; styling</h4><p>A simple plan agreed up front, so shoot day doesn't turn into standing around deciding things.</p></div>
-      <div class="step"><span class="num">03</span><h4>Shoot day</h4><p>On-site or in-studio, worked through efficiently — you're not billed by the hour of indecision.</p></div>
-      <div class="step"><span class="num">04</span><h4>Edited delivery</h4><p>A finished gallery, ready to drop straight onto your website and socials, no further faffing required.</p></div>
+<!-- Contact sheet: the four steps as a strip of film that travels horizontally
+     as you scroll down. See "CONTACT SHEET" in main.js / style.css. Unpins into
+     a plain column under 880px. -->
+<section id="process" class="csheet">
+  <div class="csheet-track">
+    <div class="csheet-pin">
+      <div class="wrap" style="margin-bottom:clamp(24px,4vh,44px)">
+        <span class="eyebrow rise"><span>How it works</span></span>
+        <h2 class="section-title blur-focus" style="margin-top:14px">How it comes together.</h2>
+      </div>
+      <div class="csheet-row">
+        <div class="frame">
+          <div class="frame-inner">
+            <span class="frame-num">Frame 01</span>
+            <div class="frame-shot"><img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/956771b0-d277-4ee9-bde0-2c1b6d0a8d8c/Green+Planet+Photos-12.jpg" loading="lazy" alt="Discovery call"></div>
+            <h4>Discovery call</h4>
+            <p>A real conversation about your brand and what these images actually need to do — not a form to fill in.</p>
+          </div>
+        </div>
+        <div class="frame">
+          <div class="frame-inner">
+            <span class="frame-num">Frame 02</span>
+            <div class="frame-shot"><img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/ebc2d86a-43dc-45da-8c9a-9c069df080d2/Insta-Post-Dubai-23-24-_01.jpg" loading="lazy" alt="Shot list and styling"></div>
+            <h4>Shot list &amp; styling</h4>
+            <p>A simple plan agreed up front, so shoot day doesn't turn into standing around deciding things.</p>
+          </div>
+        </div>
+        <div class="frame">
+          <div class="frame-inner">
+            <span class="frame-num">Frame 03</span>
+            <div class="frame-shot"><img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/f5c5d3ac-57b1-4757-ab6c-6ac16ca6e090/Hauntfest++Poster.png" loading="lazy" alt="Shoot day"></div>
+            <h4>Shoot day</h4>
+            <p>On-site or in-studio, worked through efficiently — you're not billed by the hour of indecision.</p>
+          </div>
+        </div>
+        <div class="frame">
+          <div class="frame-inner">
+            <span class="frame-num">Frame 04</span>
+            <div class="frame-shot"><img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/956771b0-d277-4ee9-bde0-2c1b6d0a8d8c/Green+Planet+Photos-12.jpg" loading="lazy" alt="Edited delivery"></div>
+            <h4>Edited delivery</h4>
+            <p>A finished gallery, ready to drop straight onto your website and socials, no further faffing required.</p>
+          </div>
+        </div>
+      </div>
+      <div class="csheet-foot">
+        <div class="csheet-bar"><span></span></div>
+        <div class="csheet-count"><b>01</b> / 04</div>
+      </div>
     </div>
   </div>
 </section>
@@ -270,7 +309,7 @@
   </div>
 </footer>
 
-<script src="assets/js/lenis.min.js?v=20260803a"></script>
-<script src="assets/js/main.js?v=20260803a"></script>
+<script src="assets/js/lenis.min.js?v=20260803b"></script>
+<script src="assets/js/main.js?v=20260803b"></script>
 </body>
 </html>

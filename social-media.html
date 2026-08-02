@@ -16,7 +16,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400;1,500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/style.css?v=20260803a">
+<link rel="stylesheet" href="assets/css/style.css?v=20260803b">
 <noscript><style>.preloader{display:none!important}body{overflow:visible!important;height:auto!important}.cursor-dot,.cursor-ring{display:none!important}.reveal{opacity:1!important;transform:none!important;filter:none!important}.hero-statement .ln>span,.rise>span{transform:none!important}</style></noscript>
 
 <script type="application/ld+json">
@@ -116,14 +116,16 @@
 
 <section id="intro" class="tight">
   <div class="wrap">
-    <div class="section-head reveal">
-      <span class="eyebrow">The approach</span>
-      <h2 class="section-title blur-focus">Fewer, stronger posts.</h2>
-      <p>Most small business feeds don't fail because they post too little — they fail because
-        they post whatever, whenever, with zero thought for how it all sits together. We do the
-        opposite: fewer, better posts, shot and edited to one consistent style, so the account
-        looks like it belongs to a brand twice its actual size. If a post isn't good enough to
-        stop a scroll, it doesn't go up — even if that leaves a gap in the calendar that week.</p>
+    <span class="eyebrow rise"><span>The approach</span></span>
+    <p class="smask">Most feeds don't fail because they post too little. They fail because they post
+      <em>whatever, whenever</em> — with no thought for how any of it sits together. We do the
+      opposite: fewer, better posts, cut to one consistent style, so the account looks like it
+      belongs to a brand twice its actual size.</p>
+    <div class="chips reveal">
+      <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg>Instagram</span>
+      <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 3v12.5a3.5 3.5 0 1 1-3.5-3.5H6"/><path d="M9 3c0 3 2.5 5.5 6 5.5"/></svg>TikTok</span>
+      <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="3"/><path d="m10 9 5 3-5 3z"/></svg>Reels &amp; Shorts</span>
+      <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 17V7m0 0 6 10 6-10v10"/><path d="M21 7v10"/></svg>Campaign graphics</span>
     </div>
   </div>
 </section>
@@ -131,14 +133,25 @@
 <section id="process" class="tight">
   <div class="wrap">
     <div class="section-head reveal">
-      <span class="eyebrow">How it works</span>
+      <span class="eyebrow rise"><span>How it works</span></span>
       <h2 class="section-title blur-focus">How the month runs.</h2>
+      <p>Four steps, and you only really turn up for one of them. Tap through.</p>
     </div>
-    <div class="process reveal">
-      <div class="step"><span class="num">01</span><h4>Discovery call</h4><p>A real chat about your brand, your audience, and what "considered" actually means for you specifically.</p></div>
-      <div class="step"><span class="num">02</span><h4>Content calendar</h4><p>A simple monthly plan, agreed in advance, so shoot day doesn't turn into deciding everything on the spot.</p></div>
-      <div class="step"><span class="num">03</span><h4>Monthly shoot day</h4><p>Stills and reels, shot in one focused session — we're not turning up every week to bother your staff.</p></div>
-      <div class="step"><span class="num">04</span><h4>Edit &amp; deliver</h4><p>Ready-to-post content, or fully scheduled if you'd rather never open the app again.</p></div>
+    <!-- Story tray: the four steps as a pickable ring row rather than a 01-02-03-04
+         list. See "STORY TRAY" in main.js / style.css. -->
+    <div class="tray reveal">
+      <div class="tray-rings" role="tablist" aria-label="How the month runs">
+        <button class="ring" role="tab" aria-selected="true"><span class="ring-img"><span>01</span></span><span class="ring-label">Discovery<br>call</span></button>
+        <button class="ring" role="tab" aria-selected="false"><span class="ring-img"><span>02</span></span><span class="ring-label">Content<br>calendar</span></button>
+        <button class="ring" role="tab" aria-selected="false"><span class="ring-img"><span>03</span></span><span class="ring-label">Shoot<br>day</span></button>
+        <button class="ring" role="tab" aria-selected="false"><span class="ring-img"><span>04</span></span><span class="ring-label">Edit &amp;<br>deliver</span></button>
+      </div>
+      <div class="tray-panels">
+        <div class="tray-panel" role="tabpanel"><span class="tp-num">Step 01</span><h4>Discovery call</h4><p>A real chat about your brand, your audience, and what "considered" actually means for you specifically — not a form to fill in.</p></div>
+        <div class="tray-panel" role="tabpanel"><span class="tp-num">Step 02</span><h4>Content calendar</h4><p>A simple monthly plan, agreed in advance, so shoot day doesn't turn into deciding everything on the spot.</p></div>
+        <div class="tray-panel" role="tabpanel"><span class="tp-num">Step 03</span><h4>Monthly shoot day</h4><p>Stills and reels, shot in one focused session — we're not turning up every week to bother your staff.</p></div>
+        <div class="tray-panel" role="tabpanel"><span class="tp-num">Step 04</span><h4>Edit &amp; deliver</h4><p>Ready-to-post content, or fully scheduled if you'd rather never open the app again.</p></div>
+      </div>
     </div>
   </div>
 </section>
@@ -270,7 +283,7 @@
   </div>
 </footer>
 
-<script src="assets/js/lenis.min.js?v=20260803a"></script>
-<script src="assets/js/main.js?v=20260803a"></script>
+<script src="assets/js/lenis.min.js?v=20260803b"></script>
+<script src="assets/js/main.js?v=20260803b"></script>
 </body>
 </html>

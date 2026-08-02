@@ -20,7 +20,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400;1,500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/style.css?v=20260803a">
+<link rel="stylesheet" href="assets/css/style.css?v=20260803b">
 <noscript><style>.preloader{display:none!important}body{overflow:visible!important;height:auto!important}.cursor-dot,.cursor-ring{display:none!important}.reveal{opacity:1!important;transform:none!important;filter:none!important}.hero-statement .ln>span,.rise>span{transform:none!important}</style></noscript>
 
 <script type="application/ld+json">
@@ -472,6 +472,17 @@
   <div class="wrap">
     <span class="eyebrow reveal rise"><span>Enquire</span></span>
     <h2 class="blur-focus">Right, what are we making?</h2>
+    <!-- Pick-your-brief chips: they rewrite the mailto subject below, so the
+         enquiry arrives already sorted. See "ENQUIRE CHIPS" in main.js. -->
+    <div class="ask-pick reveal">
+      <span class="ask-pick-label">Pick what you need — it'll fill in the subject line</span>
+      <div class="ask-chips">
+        <button class="ask-chip" type="button" aria-pressed="false" data-svc="Social Media">Social Media</button>
+        <button class="ask-chip" type="button" aria-pressed="false" data-svc="Brand &amp; Commercial">Brand &amp; Commercial</button>
+        <button class="ask-chip" type="button" aria-pressed="false" data-svc="Events">Events</button>
+        <button class="ask-chip" type="button" aria-pressed="false" data-svc="Not sure yet">Not sure yet</button>
+      </div>
+    </div>
     <a class="email" href="mailto:bookings@aerastudios.org">bookings@aerastudios.org</a>
     <div class="socials">
       <a href="https://instagram.com/_c4rem" target="_blank" rel="noopener"><span class="swap"><span class="swap-stack"><span>Instagram — @_c4rem</span><span aria-hidden="true">Instagram — @_c4rem</span></span></span></a>
@@ -496,14 +507,14 @@
   </div>
 </footer>
 
-<script src="assets/js/lenis.min.js?v=20260803a"></script>
-<script src="assets/js/main.js?v=20260803a"></script>
+<script src="assets/js/lenis.min.js?v=20260803b"></script>
+<script src="assets/js/main.js?v=20260803b"></script>
 <!-- Three.js + the mini cylinder load only here, after main.js, so THREE is
      defined by the time wheel-cylinder.js runs (same load order as the work
      page's gallery). main.js fires its first wheel update synchronously before
      this listener exists, so its index-0 event is missed — harmless, because
      wheel-cylinder.js also defaults to index 0 on init. -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="assets/js/wheel-cylinder.js?v=20260803a"></script>
+<script src="assets/js/wheel-cylinder.js?v=20260803b"></script>
 </body>
 </html>
