@@ -1789,3 +1789,272 @@ body:not(.pg-live) .pg-hud,
 body:not(.pg-live) .pg-count,
 body:not(.pg-live) .pg-hint{display:none}
 body:not(.pg-live) .pg-head{position:static;max-width:none;padding:clamp(90px,12vh,130px) 22px 0}
+
+/* ==========================================================================
+   SERVICE-PAGE SIGNATURE DEVICES
+   social-media.html, brand-commercial.html and events.html were, until now,
+   byte-for-byte the same template with different copy: page-hero → intro →
+   process → work → pricing → faq → related → contact, every section using the
+   same .section-head + .section-title. That's why they read as one page shown
+   three times. The fix isn't more animation on the same skeleton — it's giving
+   each page its OWN structural device for the same underlying content, so the
+   shape of the page tells you which service you're looking at before you read
+   a word. Ideas mixed from orionix (pill chips, soft inset panels),
+   studiomodular (geometric primitives, oversized bleeding letterforms),
+   landonorris (pinned horizontal travel), couroazul (typographic scale,
+   underline swoop) and minhpham (scroll-driven text masking, per-char reveals).
+   ========================================================================== */
+
+/* ---- SCROLL-MASK PARAGRAPH (minhpham .js-scroll-paragraph-mask) ----
+   The intro copy starts knocked back to --stone and resolves to --cream one
+   word at a time as the block travels up the viewport, so reading it and
+   scrolling it are the same gesture. Built on the EXISTING word-split system
+   (see .split .w) rather than a second splitter: main.js already tags words,
+   this just opts them into a scroll-driven opacity instead of a one-shot
+   transition. Falls back to plain readable text with no JS. */
+.smask{
+  font-family:var(--display);font-weight:var(--display-wght);
+  font-size:clamp(1.4rem,3.2vw,2.5rem);line-height:1.32;letter-spacing:-.015em;
+  max-width:20ch;color:var(--stone);
+}
+.smask .w{
+  display:inline-block;
+  color:var(--stone);
+  transition:color .35s ease;
+  /* deliberately NOT the .split blur treatment — at this size a blur on every
+     word turns the paragraph to mush before you can read it */
+  opacity:1;filter:none;
+}
+.smask .w.lit{color:var(--cream)}
+.smask em{font-family:var(--serif);font-style:italic;color:var(--champagne)}
+@media(prefers-reduced-motion:reduce){
+  .smask,.smask .w{color:var(--cream)}
+}
+
+/* ---- STORY TRAY (social-media.html) ----
+   The four process steps as an Instagram-style story tray: a row of ringed
+   thumbnails you pick between, with the chosen step's detail below. A numbered
+   1-2-3-4 list is the most generic way possible to say "here's our process";
+   a story tray says "social media" before you've read the labels, and turns a
+   static list into something you actually operate. */
+.tray{margin-top:clamp(28px,4.5vh,48px)}
+.tray-rings{
+  display:flex;gap:clamp(14px,2.4vw,30px);align-items:flex-start;
+  justify-content:flex-start;flex-wrap:wrap;
+}
+.ring{
+  background:none;border:none;padding:0;cursor:pointer;color:inherit;
+  display:flex;flex-direction:column;align-items:center;gap:10px;
+  width:clamp(74px,9vw,104px);
+}
+/* the ring itself — champagne gradient sweep, exactly the "unwatched story"
+   language, but in Aera's palette rather than Instagram's magenta */
+.ring-img{
+  position:relative;width:100%;aspect-ratio:1/1;border-radius:50%;
+  padding:2px;background:conic-gradient(from 210deg,var(--champagne),#6b5a3c 45%,var(--champagne) 78%,var(--champagne));
+  transition:transform .45s cubic-bezier(.2,.8,.2,1),opacity .35s ease;
+  opacity:.5;
+}
+.ring-img::before{
+  content:'';position:absolute;inset:2px;border-radius:50%;
+  background:var(--obsidian);
+}
+.ring-img span{
+  position:absolute;inset:4px;border-radius:50%;overflow:hidden;
+  display:grid;place-items:center;
+  background:linear-gradient(160deg,#1b191d,#0d0c0e);
+  font-family:var(--serif);font-size:clamp(1rem,1.8vw,1.35rem);color:var(--cream-dim);
+  transition:color .35s ease;
+}
+.ring:hover .ring-img{transform:translateY(-3px) scale(1.04);opacity:.8}
+.ring.on .ring-img{opacity:1;transform:scale(1.06)}
+.ring.on .ring-img span{color:var(--champagne)}
+.ring-label{
+  font-family:var(--sans);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--stone);text-align:center;line-height:1.5;transition:color .3s ease;
+}
+.ring.on .ring-label,.ring:hover .ring-label{color:var(--cream)}
+/* the detail panel — one step at a time, crossfading. Only the active panel is
+   in the box tree, so nothing below it jumps as the height changes. */
+.tray-panels{
+  margin-top:clamp(26px,4vh,44px);
+  border-top:1px solid var(--smoke);padding-top:clamp(24px,3.5vh,38px);
+}
+.tray-panel{display:none}
+.tray-panel.on{display:block;animation:trayIn .55s cubic-bezier(.2,.8,.2,1) both}
+@keyframes trayIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.tray-panel .tp-num{
+  font-family:var(--sans);font-size:10px;letter-spacing:.28em;text-transform:uppercase;
+  color:var(--champagne);
+}
+.tray-panel h4{
+  font-family:var(--display);font-weight:var(--display-wght);
+  font-size:clamp(1.5rem,3.4vw,2.4rem);line-height:1.08;letter-spacing:-.015em;
+  margin:12px 0 14px;color:var(--cream);
+}
+.tray-panel p{color:var(--cream-dim);max-width:56ch;font-size:1rem;line-height:1.75}
+@media(prefers-reduced-motion:reduce){
+  .tray-panel.on{animation:none}
+}
+/* no JS: show every panel stacked rather than hiding three quarters of the copy */
+.no-js .tray-panel{display:block;margin-bottom:34px}
+@media(max-width:620px){
+  .tray-rings{gap:12px;justify-content:space-between}
+  .ring{width:calc(25% - 9px)}
+  .ring-label{font-size:8.5px;letter-spacing:.14em}
+}
+
+/* ---- PLATFORM CHIPS (studiomodular's icon+label pills) ---- */
+.chips{display:flex;flex-wrap:wrap;gap:9px;margin-top:20px}
+.chip{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:var(--sans);font-size:10px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--cream-dim);background:rgba(234,223,205,.04);
+  border:1px solid rgba(234,223,205,.14);padding:8px 15px;border-radius:999px;
+  transition:color .3s ease,border-color .3s ease,background .3s ease,transform .3s cubic-bezier(.2,.8,.2,1);
+}
+.chip svg{width:12px;height:12px;flex:none;opacity:.75;transition:opacity .3s ease}
+.chip:hover{
+  color:var(--cream);border-color:rgba(194,168,120,.45);
+  background:rgba(194,168,120,.08);transform:translateY(-2px);
+}
+.chip:hover svg{opacity:1}
+
+/* ---- CONTACT SHEET (brand-commercial.html) ----
+   The process as a photographer's contact sheet: four frames on a strip, each
+   with a frame number, sprocket edge and a caption, laid out as a wide row that
+   travels horizontally as you scroll down (landonorris' pinned-track idea, but
+   sized for four items rather than a whole story). It's the most literal object
+   in a commercial photographer's workflow, so it says "brand shoot" without a
+   heading having to. Under 880px the pin is dropped and it becomes a normal
+   column — a hijacked horizontal scroll on a phone fights the user's thumb. */
+.csheet{position:relative;border-top:1px solid var(--smoke);border-bottom:1px solid var(--smoke)}
+.csheet-track{height:300vh}
+.csheet-pin{position:sticky;top:0;height:100vh;overflow:hidden;display:flex;flex-direction:column;justify-content:center}
+.csheet-row{
+  display:flex;align-items:center;gap:clamp(20px,3vw,48px);
+  padding:0 clamp(22px,6vw,90px);width:max-content;will-change:transform;
+}
+.frame{
+  flex:none;width:clamp(260px,30vw,400px);
+  border:1px solid var(--smoke);background:#0e0d10;
+  padding:14px 14px 18px;position:relative;
+}
+/* sprocket holes down both edges — the detail that makes it read as film rather
+   than as four bordered divs */
+.frame::before,.frame::after{
+  content:'';position:absolute;top:0;bottom:0;width:7px;
+  background-image:repeating-linear-gradient(180deg,rgba(234,223,205,.16) 0 7px,transparent 7px 17px);
+}
+.frame::before{left:3px}
+.frame::after{right:3px}
+.frame-inner{position:relative;z-index:1;padding:0 8px}
+.frame-num{
+  font-family:var(--sans);font-size:9.5px;letter-spacing:.26em;text-transform:uppercase;
+  color:var(--champagne);display:flex;align-items:center;gap:9px;
+}
+.frame-num::after{content:'';flex:1;height:1px;background:var(--smoke)}
+.frame-shot{
+  margin:12px 0 14px;aspect-ratio:3/2;overflow:hidden;background:#141317;
+  display:grid;place-items:center;
+}
+.frame-shot img{width:100%;height:100%;object-fit:cover;filter:saturate(.9);
+  transition:transform .8s cubic-bezier(.2,.8,.2,1),filter .5s ease}
+.frame:hover .frame-shot img{transform:scale(1.05);filter:saturate(1.05)}
+.frame h4{
+  font-family:var(--display);font-weight:var(--display-wght);
+  font-size:clamp(1.15rem,2vw,1.5rem);line-height:1.1;color:var(--cream);margin-bottom:9px;
+}
+.frame p{color:var(--stone);font-size:.9rem;line-height:1.7}
+.csheet-foot{
+  position:absolute;bottom:clamp(24px,5vh,46px);left:clamp(22px,6vw,90px);
+  display:flex;align-items:center;gap:16px;z-index:3;
+}
+.csheet-bar{width:clamp(80px,13vw,170px);height:1px;background:var(--smoke);position:relative;overflow:hidden}
+.csheet-bar span{position:absolute;left:0;top:0;height:100%;width:0%;background:var(--champagne);transition:width .12s linear}
+.csheet-count{font-family:var(--sans);font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--stone)}
+.csheet-count b{color:var(--champagne);font-weight:400}
+@media(max-width:880px){
+  .csheet-track{height:auto}
+  .csheet-pin{position:relative;height:auto;overflow:visible;padding:70px 0 60px}
+  .csheet-row{flex-direction:column;width:auto;gap:26px;transform:none!important;align-items:stretch}
+  .frame{width:auto}
+  .csheet-foot{display:none}
+}
+
+/* ---- RUN OF SHOW (events.html) ----
+   Events are the one service that is fundamentally about TIME, so the process
+   is shown the way a production actually plans a day: a call sheet with clock
+   times down the left and a rule that fills as you scroll. Same four steps as
+   the other pages, but the shape of it now carries information the copy would
+   otherwise have to spell out. */
+.runsheet{position:relative;margin-top:clamp(30px,5vh,54px);padding-left:clamp(64px,9vw,120px)}
+/* the spine + its scroll-driven fill */
+.runsheet::before{
+  content:'';position:absolute;left:clamp(52px,7.4vw,98px);top:8px;bottom:8px;
+  width:1px;background:var(--smoke);
+}
+.runsheet-fill{
+  position:absolute;left:clamp(52px,7.4vw,98px);top:8px;width:1px;height:0;
+  background:var(--champagne);transition:height .15s linear;z-index:1;
+}
+.cue{position:relative;padding:0 0 clamp(34px,5vh,54px)}
+.cue:last-child{padding-bottom:0}
+.cue-time{
+  position:absolute;left:calc(clamp(52px,7.4vw,98px) - clamp(64px,9vw,120px));top:0;
+  width:clamp(46px,6vw,74px);text-align:right;
+  font-family:var(--sans);font-size:11px;letter-spacing:.12em;
+  color:var(--stone);transition:color .4s ease;
+}
+/* the node on the spine */
+.cue::before{
+  content:'';position:absolute;left:calc(clamp(52px,7.4vw,98px) - clamp(64px,9vw,120px) + clamp(46px,6vw,74px) + 15px);
+  top:6px;width:7px;height:7px;border-radius:50%;
+  background:var(--obsidian);border:1px solid var(--stone);z-index:2;
+  transition:background .4s ease,border-color .4s ease,transform .4s cubic-bezier(.2,.8,.2,1);
+}
+.cue.lit::before{background:var(--champagne);border-color:var(--champagne);transform:scale(1.35)}
+.cue.lit .cue-time{color:var(--champagne)}
+.cue h4{
+  font-family:var(--display);font-weight:var(--display-wght);
+  font-size:clamp(1.3rem,2.8vw,2rem);line-height:1.1;letter-spacing:-.015em;
+  color:var(--stone);margin-bottom:10px;transition:color .4s ease;
+}
+.cue.lit h4{color:var(--cream)}
+.cue p{color:var(--stone);max-width:52ch;font-size:.96rem;line-height:1.75;transition:color .4s ease}
+.cue.lit p{color:var(--cream-dim)}
+@media(max-width:620px){
+  .runsheet{padding-left:52px}
+  .runsheet::before,.runsheet-fill{left:44px}
+  .cue-time{left:-52px;width:34px;font-size:10px}
+  .cue::before{left:-4px}
+}
+@media(prefers-reduced-motion:reduce){
+  .runsheet-fill{transition:none}
+}
+
+/* ---- ENQUIRE (home) ----
+   Was an eyebrow, a headline and a bare mailto — the least considered block on
+   the page, and the one everything else is funnelling toward. Now the first
+   question of the brief is asked right here: pick what you need and the email
+   link retargets its subject, so the message arrives already sorted instead of
+   starting "hi, do you do events?". Chips are progressive enhancement — with no
+   JS the address underneath still works exactly as before. */
+.ask-pick{margin:clamp(24px,4vh,40px) 0 clamp(26px,4vh,42px)}
+.ask-pick-label{
+  display:block;font-family:var(--sans);font-size:10px;letter-spacing:.26em;
+  text-transform:uppercase;color:var(--stone);margin-bottom:16px;
+}
+.ask-chips{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.ask-chip{
+  font-family:var(--sans);font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--cream-dim);background:none;cursor:pointer;
+  border:1px solid rgba(234,223,205,.18);padding:11px 20px;border-radius:999px;
+  transition:color .3s ease,border-color .3s ease,background .3s ease,transform .3s cubic-bezier(.2,.8,.2,1);
+}
+.ask-chip:hover{color:var(--cream);border-color:rgba(194,168,120,.5);transform:translateY(-2px)}
+.ask-chip.on{color:var(--obsidian);background:var(--champagne);border-color:var(--champagne)}
+.ask-chip.on:hover{background:var(--cream);border-color:var(--cream)}
+@media(max-width:520px){
+  .ask-chip{font-size:10px;letter-spacing:.14em;padding:10px 15px}
+}
