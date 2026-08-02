@@ -652,6 +652,39 @@
   if (!fan) return;
   const cards = Array.from(fan.querySelectorAll('.fan-card'));
   if (!cards.length) return;
+
+  /* ENTRANCE — opens once, the first time the stack scrolls into view, each
+     card a beat behind the last working OUTWARD FROM THE CENTRE (--a is the
+     distance from centre, so ordering by --a is what makes it read as one
+     stack unfolding rather than a row arriving left-to-right). This is
+     completely separate from the hover shuffle below: it only ever adds
+     `.opened` to `.fan` (once, never removed) and only ever touches
+     `transitionDelay`, which it clears again the moment the opening
+     animation finishes. Nothing here can leak into a later hover. */
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduceMotion){
+    fan.classList.add('opened');
+  } else {
+    const OPEN_TRANSFORM_MS = 550, STEP_MS = 90;
+    let opened = false;
+    function openFan(){
+      if (opened) return;
+      opened = true;
+      cards.forEach(card => {
+        const a = Math.abs(parseFloat(card.style.getPropertyValue('--i')) || 0);
+        card.style.transitionDelay = (a * STEP_MS) + 'ms';
+      });
+      fan.classList.add('opened');
+      const maxDelay = 3 * STEP_MS + OPEN_TRANSFORM_MS + 80;
+      setTimeout(() => { cards.forEach(card => { card.style.transitionDelay = ''; }); }, maxDelay);
+    }
+    const openObserver = new IntersectionObserver(entries => {
+      entries.forEach(entry => { if (entry.isIntersecting) { openFan(); openObserver.disconnect(); } });
+    }, { threshold: .15 });
+    openObserver.observe(fan);
+  }
+
+  /* HOVER SHUFFLE — desktop / fine-pointer only, unchanged from before. */
   if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
   if (window.matchMedia('(max-width:760px)').matches) return;
 
@@ -698,35 +731,15 @@
     });
   });
   fan.addEventListener('pointerleave', () => { hovered = null; paint(); });
-  addEventListener('resize', () => { if (painted) paint(); });
-
-  /* The first paint is deliberately withheld until the section is on
-     screen. Before that, the cards sit in the closed-stack state defined by
-     `.socials:not(.in) .fan-card` in the CSS — plain class rules, no inline
-     transform yet. The instant an inline transform IS set, it wins over any
-     class rule regardless of specificity, so calling paint() immediately on
-     load would skip the closed state entirely and the fan would just appear
-     already open. Waiting for `.socials.in` (the same class the entrance CSS
-     watches) means the first paint() call is the one the browser animates
-     FROM the closed stack, which is what actually produces the "lands, then
-     blooms open" effect rather than a flat fade-in. */
-  let painted = false;
-  const socials = document.querySelector('.socials');
-  if (socials){
-    const startObserver = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting && !painted){
-          painted = true;
-          paint();
-          startObserver.disconnect();
-        }
-      });
-    }, { threshold: .15 });
-    startObserver.observe(socials);
-  } else {
-    painted = true;
-    paint();
-  }
+  /* No unconditional paint() on load, and resize only repaints while a card
+     is actively hovered. Setting an inline transform at any other time would
+     permanently override the CSS resting-position formula (inline always
+     wins over a class rule) — including the closed/gathered entrance state
+     above, which would make the stack skip straight to "already open" and
+     just fade in instead of unfolding. Leaving the resting state to CSS
+     alone means it's already correct at every viewport width via the same
+     clamp() values, no JS required until the pointer actually arrives. */
+  addEventListener('resize', () => { if (hovered !== null) paint(); });
 })();
 
 /* ---- METHOD — pinned sequence ----
