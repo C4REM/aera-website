@@ -1097,3 +1097,46 @@
   }
   requestAnimationFrame(tick);
 })();
+
+/* ---- BRAND MARQUEE — drives every .brand-marquee on the page ----
+   Same rAF-increment / stop-on-hover technique as the client marquee just
+   above, generalised to run on however many bands a page has (currently
+   one, right before the footer). Each instance gets its own independent
+   loop so a page could run more than one without them needing to agree on
+   speed or phase. */
+(function(){
+  const bands = Array.from(document.querySelectorAll('.brand-marquee'));
+  if (!bands.length) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  const DURATION = 34; // seconds to cross half the track — a touch brisker than the client strip
+
+  bands.forEach(wrap => {
+    const track = wrap.querySelector('.bm-track');
+    if (!track) return;
+    let half = 0, speed = 0, x = 0, paused = false, last = null;
+
+    function measure(){
+      half = track.scrollWidth / 2;
+      speed = half / DURATION;
+    }
+    measure();
+    addEventListener('resize', measure);
+
+    wrap.addEventListener('pointerenter', () => { paused = true; });
+    wrap.addEventListener('pointerleave', () => { paused = false; });
+
+    function tick(t){
+      if (last === null) last = t;
+      const dt = (t - last) / 1000;
+      last = t;
+      if (!paused && half > 0){
+        x -= speed * dt;
+        if (x <= -half) x += half;
+      }
+      track.style.transform = 'translateX(' + x.toFixed(2) + 'px)';
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  });
+})();
