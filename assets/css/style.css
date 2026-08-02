@@ -905,6 +905,39 @@ body.tm-open{overflow:hidden}
   .marquee-track{animation:none;flex-wrap:wrap;width:auto;justify-content:center}
 }
 
+/* ---- BRAND MARQUEE — oversized scrolling statement band ----
+   A full-bleed strip of giant italic serif type that drifts sideways forever,
+   sitting right before the footer on every page. This is the landonorris.com
+   move: a huge duotone line of kinetic type used as a section divider rather
+   than a headline — texture and rhythm before the page resolves into the
+   footer, not more information. Driven by the same JS rAF pattern as the
+   client marquee (see main.js) rather than a CSS animation-play-state pause,
+   for the same reason: nothing to snap back to on hover. */
+.brand-marquee{
+  overflow:hidden;position:relative;
+  padding:clamp(22px,4.4vh,46px) 0;
+  background:var(--obsidian);
+  border-top:1px solid rgba(234,223,205,.10);
+  border-bottom:1px solid rgba(234,223,205,.10);
+}
+.bm-track{
+  display:flex;align-items:center;width:max-content;white-space:nowrap;
+  will-change:transform;
+}
+.bm-track span{
+  font-family:var(--serif);font-style:italic;font-weight:500;
+  font-size:clamp(28px,6.4vw,88px);line-height:1;
+  color:var(--cream);opacity:.85;
+  padding:0 clamp(14px,2vw,34px);
+  flex:none;
+}
+.bm-track span.bm-dot{
+  font-style:normal;color:var(--champagne);opacity:.55;font-size:.5em;
+}
+@media(prefers-reduced-motion:reduce){
+  .bm-track{width:auto;flex-wrap:wrap;justify-content:center;transform:none!important}
+}
+
 /* ---- WORK — full-bleed panels, one project at a time ---- */
 .work-panels{margin-top:clamp(40px,6vh,72px)}
 .wp{
