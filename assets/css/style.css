@@ -942,6 +942,16 @@ body.tm-open{overflow:hidden}
   position:relative;display:block;overflow:hidden;
   height:min(76vh,760px);border-top:1px solid var(--smoke);
 }
+/* Entrance — panels had no reveal at all before (they just appeared), while
+   every other section on the page fades/blurs in. Reuses the sitewide
+   `.reveal` toggle (each `.wp` carries the class itself, so the existing
+   observer picks it up with no JS changes) with a nth-child stagger scoped
+   to this section only, so the four panels settle one after another rather
+   than all four fading at once. */
+.wp.reveal{transition-delay:0s}
+.work-panels .wp.reveal:nth-child(2){transition-delay:.08s}
+.work-panels .wp.reveal:nth-child(3){transition-delay:.16s}
+.work-panels .wp.reveal:nth-child(4){transition-delay:.24s}
 .wp:last-child{border-bottom:1px solid var(--smoke)}
 .wp img{
   position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
@@ -1338,6 +1348,21 @@ body.preloading.preloader-seen .preloader-word{animation-duration:1s;animation-d
 }
 .nav-links a:not(.nav-cta):hover::after,.nav-links a.active::after{transform:scaleX(1)}
 
+/* Text hover-swap — the technique landonorris.com uses on its social links:
+   the label sits twice, stacked in an overflow-hidden mask, and hovering
+   slides the whole stack up by exactly one line so the second copy rolls in
+   to replace the first. Reads as the word turning over rather than just
+   changing colour. Pairs with the underline wipe below rather than
+   replacing it — underline sweeps in while the text rolls, same as the
+   reference site layers a couple of small moves on one hover. */
+.swap{overflow:hidden;display:inline-block;vertical-align:top}
+.swap-stack{display:block;transition:transform .5s cubic-bezier(.65,0,.35,1)}
+.swap-stack span{display:block}
+a:hover .swap-stack{transform:translateY(-50%)}
+@media(prefers-reduced-motion:reduce){
+  .swap-stack{transition:none}
+}
+
 /* footer + contact text links: same wipe */
 .foot-links a,.contact .socials a{position:relative;padding-bottom:3px}
 .foot-links a::after,.contact .socials a::after{
@@ -1364,10 +1389,25 @@ body.preloading.preloader-seen .preloader-word{animation-duration:1s;animation-d
 .tile img{transition:transform .8s cubic-bezier(.19,1,.22,1),filter .6s ease}
 .tile:hover img{transform:scale(1.05)}
 
-/* generic section headings: masked line-rise on reveal (opt-in via .rise) */
+/* generic section headings: masked line-rise on reveal (opt-in via .rise).
+   Same technique landonorris.com uses for its kicker labels: an
+   overflow-hidden mask with the text sitting inside as a block that's
+   pushed below the mask, then eased up into view — one confident move per
+   line rather than a per-letter gimmick. Piggybacks on the existing
+   `.reveal`/`.in` toggle wherever `.rise` sits inside a `.reveal` ancestor
+   (`.reveal.in .rise > span`); where `.rise` carries `.reveal` itself
+   (self-observed, e.g. standalone eyebrows), `.rise.in > span` covers it
+   directly. Either way it's the SAME observer already driving the rest of
+   the page, so nothing new to wire up or risk breaking. */
 .rise{overflow:hidden;display:block}
 .rise > span{display:block;transform:translateY(108%);transition:transform 1s cubic-bezier(.19,1,.22,1)}
 .rise.in > span,.reveal.in .rise > span{transform:none}
+/* "on socials" trails a beat behind "What's up" so the two-line title reads
+   as one unfolding move rather than both lines arriving at once. */
+.socials-title .st-b.rise > span{transition-delay:.12s}
+@media(prefers-reduced-motion:reduce){
+  .rise > span{transition:none;transform:none}
+}
 
 /* ==========================================================================
    TEAM — name list with a fixed portrait slot (McBride mechanic)
