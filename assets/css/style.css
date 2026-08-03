@@ -30,6 +30,11 @@
   --champagne:#C2A878;       /* rare accent only */
   --stone:#8C887F;
   --smoke:#1C1C1F;           /* hairline dividers on near-black */
+  /* the single photo grade every image on the site is pulled through —
+     tuned on Jack's portrait in .method first, then made canonical, so a
+     screenshot from any two pages sits together like one shoot. Component
+     hover deltas stay bespoke; only the resting grade is shared. */
+  --grade:sepia(.18) saturate(.9) contrast(1.04) brightness(1.06);
   --serif:'Cormorant Garamond',Georgia,serif;
   --display:'Makcasa','Playfair Display',Georgia,serif;
   --display-wght:400;   /* Makcasa ships a single weight */
@@ -454,17 +459,17 @@ body.wheel-live .wheel-media img{opacity:0!important}
 .hitem{
   position:absolute;top:var(--top,0);left:var(--x,0);
   width:var(--w,200px);
-  opacity:0;transform:translateY(26px);
+  opacity:0;transform:translate(64px,26px);
   transition:opacity .7s cubic-bezier(.2,.8,.2,1),transform .9s cubic-bezier(.2,.8,.2,1);
 }
 .hitem.in{opacity:1;transform:none}
 .hshot{position:relative;overflow:hidden;background:#111013;aspect-ratio:var(--ar,4/5)}
 .hshot img{
   position:absolute;inset:-7% -11%;width:122%;height:114%;object-fit:cover;
-  will-change:transform;filter:saturate(.92);
+  will-change:transform;filter:var(--grade);
   transition:transform .75s cubic-bezier(.2,.8,.2,1),filter .6s ease;
 }
-.hitem:hover .hshot img{transform:scale(1.05);filter:saturate(1.06)}
+.hitem:hover .hshot img{transform:scale(1.05);filter:sepia(.08) saturate(1) contrast(1.02) brightness(1.1)}
 .hcap{
   display:block;font-family:var(--sans);font-size:9.5px;letter-spacing:.24em;
   text-transform:uppercase;color:var(--champagne);margin-bottom:10px;
@@ -536,8 +541,18 @@ body.wheel-live .wheel-media img{opacity:0!important}
    already low-key, crushing it would lose him entirely) */
 .mt-media img{
   width:100%;height:100%;object-fit:cover;object-position:45% 55%;display:block;
-  filter:sepia(.18) saturate(.9) contrast(1.04) brightness(1.06);
+  filter:var(--grade);
   opacity:.96;
+}
+/* designxhand-style reveal: the frame opens on a near-blank top edge — just
+   enough of the photo showing to read as a real place — so the eyebrow and
+   title sit on clean ground, then the cover recedes as you scroll and the
+   full portrait resolves in. Driven by scroll progress in main.js, not CSS,
+   since it has to track the same `p` the shrink sequence already uses. */
+.mt-mask{
+  position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:linear-gradient(180deg,var(--obsidian) 0%,var(--obsidian) 32%,transparent 72%);
+  opacity:1;
 }
 /* placeholder shown until a real photo is dropped in */
 .mt-placeholder,.m-placeholder{
@@ -593,6 +608,45 @@ body.wheel-live .wheel-media img{opacity:0!important}
     padding:44px 22px 0;text-align:left}
 }
 
+/* SHOWREEL — a single interlude between the method and the motto: no grid,
+   no copy block, just the tape running. The whole section is the frame, the
+   play mark is the only thing that moves on hover, everything else holds
+   still so that one moving part reads as an invitation rather than decor. */
+.reel{position:relative;border-top:1px solid var(--smoke);border-bottom:1px solid var(--smoke);overflow:hidden}
+.reel-frame{
+  position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;
+  gap:26px;padding:clamp(90px,14vh,150px) 24px;text-decoration:none;color:inherit;
+}
+.reel-glow{
+  position:absolute;inset:-20% -10%;z-index:0;pointer-events:none;
+  background:radial-gradient(60% 55% at 50% 45%,rgba(194,168,120,.16),transparent 70%);
+  opacity:.6;transition:opacity .6s ease,transform 1.2s cubic-bezier(.2,.8,.2,1);
+}
+.reel-frame:hover .reel-glow{opacity:1;transform:scale(1.08)}
+.reel-play{
+  position:relative;z-index:1;
+  width:clamp(60px,6.4vw,80px);height:clamp(60px,6.4vw,80px);border-radius:50%;
+  display:grid;place-items:center;border:1px solid rgba(234,223,205,.3);
+  color:var(--cream);background:rgba(234,223,205,.04);
+  transition:transform .5s cubic-bezier(.2,.8,.2,1),background .4s ease,border-color .4s ease,color .4s ease;
+}
+.reel-play svg{width:20px;height:20px;margin-left:3px}
+.reel-frame:hover .reel-play{transform:scale(1.08);background:var(--champagne);border-color:var(--champagne);color:var(--obsidian)}
+.reel-copy{position:relative;z-index:1;max-width:56ch}
+.reel-copy .section-title{font-size:clamp(2.6rem,7vw,4.8rem);margin-top:14px}
+.reel-copy .section-title em{color:var(--champagne);font-style:normal}
+.reel-sub{color:var(--cream-dim);font-size:1rem;line-height:1.7;max-width:44ch;margin:16px auto 0}
+.reel-cta{
+  position:relative;z-index:1;margin-top:8px;display:inline-flex;align-items:center;gap:9px;
+  font-family:var(--sans);font-size:11px;letter-spacing:.26em;text-transform:uppercase;color:var(--champagne);
+}
+.reel-arrow{width:14px;height:14px;transition:transform .4s cubic-bezier(.2,.8,.2,1)}
+.reel-frame:hover .reel-arrow{transform:translate(4px,-4px)}
+@media(max-width:880px){
+  .reel-frame{padding:70px 22px;gap:20px}
+  .reel-copy .section-title{font-size:clamp(2.1rem,10vw,2.8rem)}
+}
+
 /* ---- TEAM — a row per person: portrait, skills, portfolio strip ---- */
 .team-list{margin-top:clamp(36px,6vh,64px);border-top:1px solid var(--smoke)}
 .member{
@@ -600,7 +654,7 @@ body.wheel-live .wheel-media img{opacity:0!important}
   gap:clamp(22px,3vw,48px);align-items:center;
   padding:clamp(26px,3.4vh,40px) 0;border-bottom:1px solid var(--smoke);
 }
-.m-portrait{width:132px;aspect-ratio:4/5;object-fit:cover;border:1px solid var(--smoke);background:#141317}
+.m-portrait{width:132px;aspect-ratio:4/5;object-fit:cover;border:1px solid var(--smoke);background:#141317;filter:var(--grade)}
 .m-name{font-family:var(--display);font-weight:var(--display-wght);font-size:clamp(1.5rem,2.6vw,2.1rem);line-height:1.05;color:var(--cream)}
 .m-role{margin-top:8px;font-family:var(--sans);font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--champagne)}
 .m-bio{margin-top:14px;color:var(--stone);font-size:.92rem;line-height:1.7;max-width:52ch}
@@ -612,6 +666,7 @@ body.wheel-live .wheel-media img{opacity:0!important}
 .m-folio{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
 .m-folio img{
   width:100%;aspect-ratio:1/1;object-fit:cover;border:1px solid var(--smoke);background:#141317;
+  filter:var(--grade);
   transition:transform .6s cubic-bezier(.2,.8,.2,1),opacity .4s ease;opacity:.72;
 }
 .m-folio a:hover img{transform:scale(1.06);opacity:1}
@@ -636,7 +691,7 @@ body.wheel-live .wheel-media img{opacity:0!important}
 .tm-photo{position:absolute;inset:0;display:block;overflow:hidden}
 .tm-photo img{
   width:100%;height:100%;object-fit:cover;object-position:45% 55%;display:block;
-  filter:sepia(.2) saturate(.8) contrast(1.05) brightness(.92);
+  filter:var(--grade);
   transform:scale(1.02);transition:transform 1.2s cubic-bezier(.2,.8,.2,1),filter .7s ease;
 }
 .tm-card:hover .tm-photo img{transform:scale(1.07);filter:sepia(.08) saturate(1) contrast(1.02) brightness(1.08)}
@@ -851,7 +906,7 @@ body.tm-open{overflow:hidden}
   transition:transform .55s cubic-bezier(.2,.8,.2,1), box-shadow .45s ease, opacity .5s ease;
   box-shadow:0 24px 50px -26px rgba(0,0,0,.85);
 }
-.fan-card img{width:100%;height:100%;object-fit:cover;transition:transform .7s cubic-bezier(.2,.8,.2,1)}
+.fan-card img{width:100%;height:100%;object-fit:cover;filter:var(--grade);transition:transform .7s cubic-bezier(.2,.8,.2,1)}
 
 /* HOVER SHUFFLE — driven from JS (see main.js "SOCIALS FAN"), not sibling
    selectors. The CSS-only version set a different transform on each of four
@@ -961,6 +1016,7 @@ body.tm-open{overflow:hidden}
 .wp:last-child{border-bottom:1px solid var(--smoke)}
 .wp img{
   position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  filter:var(--grade);
   transform:scale(1.03);transition:transform 1.4s cubic-bezier(.2,.8,.2,1);
 }
 .wp:hover img{transform:scale(1.08)}
@@ -1001,7 +1057,7 @@ body.tm-open{overflow:hidden}
   display:flex;align-items:flex-end;
 }
 .tile.wide{grid-column:span 2;aspect-ratio:3/2}
-.tile img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;transition:transform .6s ease}
+.tile img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;filter:var(--grade);transition:transform .6s ease}
 .tile:hover img{transform:scale(1.04)}
 .tile::before{
   content:'';position:absolute;inset:0;
@@ -1062,7 +1118,7 @@ body.tm-open{overflow:hidden}
   display:flex;align-items:center;justify-content:center;
   font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--stone);
 }
-.about .portrait img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.about .portrait img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:var(--grade)}
 .about p{color:var(--cream-dim);margin-top:22px;font-size:1.05rem}
 .about p + p{margin-top:18px}
 
@@ -1096,7 +1152,7 @@ footer .foot-links a:hover{color:var(--champagne)}
    just fading. */
 .split .w{
   display:inline-block;opacity:0;filter:blur(15px);
-  transition:opacity .8s ease,filter 1s linear;
+  transition:opacity 1s linear,filter 1s linear;
   will-change:opacity,filter;
 }
 .split.in .w{opacity:1;filter:blur(0)}
@@ -1490,7 +1546,7 @@ a:hover .swap-stack{transform:translateY(-50%)}
 }
 .tt-row:hover .tt-shot{opacity:1;transform:translateY(-50%) scale(1)}
 .tt-shot img{width:100%;height:100%;object-fit:cover;object-position:45% 55%;
-  filter:sepia(.18) saturate(.9) contrast(1.02) brightness(1.02)}
+  filter:var(--grade)}
 .tt-ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
   font-family:var(--sans);font-size:10px;letter-spacing:.28em;text-transform:uppercase;
   color:rgba(234,223,205,.24);background:linear-gradient(165deg,#141317,#0a090c)}
@@ -1519,7 +1575,7 @@ a:hover .swap-stack{transform:translateY(-50%)}
   mask-image:linear-gradient(180deg,#000 78%,transparent 100%);
 }
 .td-hero img{width:100%;height:100%;object-fit:cover;object-position:45% 42%;
-  filter:sepia(.18) saturate(.9) contrast(1.02) brightness(1.02)}
+  filter:var(--grade)}
 .td-hero .tt-ph{position:absolute;inset:0}
 .td-role{font-family:var(--sans);font-size:10px;letter-spacing:.26em;text-transform:uppercase;color:var(--champagne)}
 .td-name{font-family:var(--display);font-weight:var(--display-wght);
@@ -1566,7 +1622,7 @@ a:hover .swap-stack{transform:translateY(-50%)}
 
 .td-folio{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:38px}
 .td-folio img{width:100%;aspect-ratio:4/5;object-fit:cover;border:1px solid var(--smoke);
-  opacity:0;transform:translateY(22px);filter:sepia(.12) saturate(.92) brightness(.92);
+  opacity:0;transform:translateY(22px);filter:var(--grade);
   transition:opacity .55s ease,transform .8s cubic-bezier(.22,.9,.25,1),filter .6s ease;
   transition-delay:calc(var(--i,0) * 70ms + 180ms),calc(var(--i,0) * 70ms + 180ms),0s}
 .tt-detail.in .td-folio img{opacity:1;transform:none}
@@ -1613,7 +1669,7 @@ a:hover .swap-stack{transform:translateY(-50%)}
 }
 .pj-hero img{
   position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
-  filter:sepia(.12) saturate(.95) contrast(1.03) brightness(.82);
+  filter:var(--grade);
 }
 .pj-hero::after{
   content:'';position:absolute;inset:0;
@@ -1655,7 +1711,7 @@ a:hover .swap-stack{transform:translateY(-50%)}
 .pj-gal img{
   width:100%;height:100%;object-fit:cover;display:block;
   transition:transform 1.1s cubic-bezier(.2,.8,.2,1),filter .6s ease;
-  filter:sepia(.1) saturate(.95) brightness(.94);
+  filter:var(--grade);
 }
 .pj-gal figure:hover img{transform:scale(1.04);filter:none}
 .pj-gal figure{grid-column:span 2;aspect-ratio:4/5}
@@ -1769,7 +1825,7 @@ a:hover .swap-stack{transform:translateY(-50%)}
 .pg-fallback a{position:relative;display:block;overflow:hidden;aspect-ratio:4/5;
   border:1px solid var(--smoke);background:#121114}
 .pg-fallback img{width:100%;height:100%;object-fit:cover;display:block;
-  filter:sepia(.14) saturate(.94) brightness(.9);transition:transform 1s cubic-bezier(.2,.8,.2,1),filter .5s}
+  filter:var(--grade);transition:transform 1s cubic-bezier(.2,.8,.2,1),filter .5s}
 .pg-fallback a:hover img{transform:scale(1.05);filter:none}
 .pg-fallback a::after{content:'';position:absolute;inset:0;
   background:linear-gradient(180deg,rgba(6,6,7,0) 45%,rgba(6,6,7,.85))}
@@ -1958,9 +2014,9 @@ body:not(.pg-live) .pg-head{position:static;max-width:none;padding:clamp(90px,12
   margin:12px 0 14px;aspect-ratio:3/2;overflow:hidden;background:#141317;
   display:grid;place-items:center;
 }
-.frame-shot img{width:100%;height:100%;object-fit:cover;filter:saturate(.9);
+.frame-shot img{width:100%;height:100%;object-fit:cover;filter:var(--grade);
   transition:transform .8s cubic-bezier(.2,.8,.2,1),filter .5s ease}
-.frame:hover .frame-shot img{transform:scale(1.05);filter:saturate(1.05)}
+.frame:hover .frame-shot img{transform:scale(1.05);filter:sepia(.08) saturate(1) contrast(1.02) brightness(1.1)}
 .frame h4{
   font-family:var(--display);font-weight:var(--display-wght);
   font-size:clamp(1.15rem,2vw,1.5rem);line-height:1.1;color:var(--cream);margin-bottom:9px;
