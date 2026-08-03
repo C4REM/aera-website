@@ -20,7 +20,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400;1,500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/style.css?v=20260803g">
+<link rel="stylesheet" href="assets/css/style.css?v=20260803h">
 <noscript><style>.preloader{display:none!important}body{overflow:visible!important;height:auto!important}.cursor-dot,.cursor-ring{display:none!important}.reveal{opacity:1!important;transform:none!important;filter:none!important}.hero-statement .ln>span,.rise>span{transform:none!important}</style></noscript>
 
 <script type="application/ld+json">
@@ -366,30 +366,50 @@
 </section>
 
 <section id="showreel" class="reel">
-  <span class="reel-glow" aria-hidden="true"></span>
-  <div class="reel-inner">
-    <div class="reel-copy reveal">
-      <span class="eyebrow rise"><span>Now showing</span></span>
+  <div class="reel-pin" id="reelPin">
+    <div class="reel-copy" id="reelCopy">
+      <span class="eyebrow rise reveal"><span>Now showing</span></span>
       <h2 class="section-title">2026 <em>Showreel</em></h2>
-      <p class="reel-sub">A year of sets, gigs and launches, cut down to under a minute. Press play — it's the real thing, hosted right here, not a link out.</p>
+      <p class="reel-sub">A year of sets, gigs and launches, cut down to under a minute. Keep scrolling — it plays right here, full screen, sound included.</p>
     </div>
-    <div class="reel-embed">
+    <div class="reel-frame" id="reelFrame">
       <!-- Native file, not an Instagram embed — plays and scrubs like any
-           other video on the web, sound included, no third-party script. -->
+           other video on the web, sound included, no third-party script.
+           Starts muted (autoplay requires it); the mute control below hands
+           sound to the user with one click. -->
       <video
         class="reel-video"
-        controls
-        preload="metadata"
+        id="reelVideo"
+        muted
+        loop
         playsinline
-        poster="assets/img/showreel-poster.jpg?v=1"
-        width="1280" height="720">
+        preload="metadata"
+        poster="assets/img/showreel-poster.jpg?v=1">
         <source src="assets/video/showreel-2026.mp4?v=1" type="video/mp4">
         Your browser doesn't support video playback — <a href="assets/video/showreel-2026.mp4">download the showreel</a> instead.
       </video>
-      <a class="reel-cta" href="https://www.instagram.com/_c4rem/reel/DUolXiQCGxD/" target="_blank" rel="noopener noreferrer">Also on Instagram
-        <svg class="reel-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg>
-      </a>
+      <span class="reel-scrim" aria-hidden="true"></span>
+      <span class="reel-badge">Now showing — 2026 Showreel</span>
+      <button class="reel-playmark" id="reelPlayMark" type="button" aria-label="Play showreel">
+        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>
+      </button>
+      <div class="reel-controls" id="reelControls">
+        <button class="reel-ctrl reel-playpause" id="reelPlayPause" type="button" aria-label="Play or pause">
+          <svg class="ic-play" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+          <svg class="ic-pause" viewBox="0 0 24 24" fill="currentColor"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg>
+        </button>
+        <span class="reel-time" id="reelTime">0:00</span>
+        <div class="reel-scrub" id="reelScrub"><span class="reel-scrub-fill" id="reelScrubFill"></span></div>
+        <span class="reel-time reel-duration" id="reelDuration">0:00</span>
+        <button class="reel-ctrl reel-mute" id="reelMute" type="button" aria-label="Mute or unmute">
+          <svg class="ic-mute" viewBox="0 0 24 24" fill="currentColor"><path d="M5 9v6h4l5 5V4L9 9H5z"/></svg>
+          <svg class="ic-unmute" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M9.5 9H5v6h4.5l5.5 5V4z" fill="currentColor" stroke="none"/><path d="M16.5 9c1.1 1 1.8 2.3 1.8 3.5S17.6 15 16.5 16"/></svg>
+        </button>
+      </div>
     </div>
+    <a class="reel-cta" id="reelCta" href="https://www.instagram.com/_c4rem/reel/DUolXiQCGxD/" target="_blank" rel="noopener noreferrer">Also on Instagram
+      <svg class="reel-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg>
+    </a>
   </div>
 </section>
 
@@ -536,14 +556,14 @@
   </div>
 </footer>
 
-<script src="assets/js/lenis.min.js?v=20260803g"></script>
-<script src="assets/js/main.js?v=20260803g"></script>
+<script src="assets/js/lenis.min.js?v=20260803h"></script>
+<script src="assets/js/main.js?v=20260803h"></script>
 <!-- Three.js + the mini cylinder load only here, after main.js, so THREE is
      defined by the time wheel-cylinder.js runs (same load order as the work
      page's gallery). main.js fires its first wheel update synchronously before
      this listener exists, so its index-0 event is missed — harmless, because
      wheel-cylinder.js also defaults to index 0 on init. -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="assets/js/wheel-cylinder.js?v=20260803g"></script>
+<script src="assets/js/wheel-cylinder.js?v=20260803h"></script>
 </body>
 </html>
