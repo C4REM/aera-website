@@ -512,7 +512,15 @@ body.wheel-live .wheel-media img{opacity:0!important}
     display:flex;flex-direction:column;align-items:stretch;width:auto;flex:none;
     padding:0 22px;gap:38px;transform:none!important;
   }
-  .hitem{position:static;width:auto!important;left:auto;top:auto;opacity:1;transform:none}
+  /* the pin/translateX spectacle is gone, but the arrival shouldn't be —
+     each item fades and lifts up in turn as it's scrolled into view,
+     driven by a small dedicated IntersectionObserver in main.js. */
+  .hitem{
+    position:static;width:auto!important;left:auto;top:auto;
+    opacity:0;transform:translateY(24px);
+    transition:opacity .7s cubic-bezier(.2,.8,.2,1),transform .8s cubic-bezier(.2,.8,.2,1);
+  }
+  .hitem.in{opacity:1;transform:none}
   .hshot{aspect-ratio:auto}
   .hshot img{position:static;inset:auto;width:100%;height:auto;transform:none!important}
   .htrack-foot{display:none}
@@ -612,9 +620,24 @@ body.wheel-live .wheel-media img{opacity:0!important}
   .mt-title{margin:14px 0 30px;font-size:clamp(1.9rem,8vw,2.6rem)}
   .mt-media{position:relative;left:auto;top:auto;transform:none!important;
     width:calc(100% - 44px);margin:0 22px 34px;border-radius:0!important}
-  .mt-copy{position:static;width:auto;padding:0 22px;transform:none!important;opacity:1!important}
-  .mt-end{position:static;width:auto;transform:none!important;opacity:1!important;
-    padding:44px 22px 0;text-align:left}
+  /* the designxhand cover-reveal is scroll-progress-driven and that progress
+     doesn't exist once the pin is dropped — without this the mask's opacity:1
+     default just sits there as a permanent dark smear across the portrait */
+  .mt-mask{display:none}
+  .mt-copy{position:static;width:auto;padding:0 22px}
+  .mt-end{position:static;width:auto;padding:44px 22px 0;text-align:left;pointer-events:auto}
+  /* the pin/scroll-linked sequence above doesn't apply to a static stack —
+     each block gets its own fade(+lift) in as it's scrolled into view instead,
+     driven by a small dedicated observer in main.js (stacked branch only,
+     entirely separate from the desktop rig so there's no fighting over the
+     same inline styles). */
+  .mt-eyebrow,.mt-media{opacity:0;transition:opacity .7s cubic-bezier(.2,.8,.2,1)}
+  .mt-title,.mt-copy,.mt-end{
+    opacity:0;transform:translateY(22px);
+    transition:opacity .7s cubic-bezier(.2,.8,.2,1),transform .8s cubic-bezier(.2,.8,.2,1);
+  }
+  .mt-eyebrow.m-in,.mt-media.m-in{opacity:1}
+  .mt-title.m-in,.mt-copy.m-in,.mt-end.m-in{opacity:1;transform:none}
 }
 
 /* SHOWREEL — a single interlude between the method and the motto: no grid,
