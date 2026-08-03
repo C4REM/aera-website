@@ -20,7 +20,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400;1,500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/style.css?v=20260803c">
+<link rel="stylesheet" href="assets/css/style.css?v=20260803d">
 <noscript><style>.preloader{display:none!important}body{overflow:visible!important;height:auto!important}.cursor-dot,.cursor-ring{display:none!important}.reveal{opacity:1!important;transform:none!important;filter:none!important}.hero-statement .ln>span,.rise>span{transform:none!important}</style></noscript>
 
 <script type="application/ld+json">
@@ -366,21 +366,35 @@
 </section>
 
 <section id="showreel" class="reel">
-  <a class="reel-frame" href="https://www.instagram.com/_c4rem/reel/DUolXiQCGxD/" target="_blank" rel="noopener noreferrer" aria-label="Watch the 2026 Aera showreel on Instagram — opens in a new tab">
-    <span class="reel-glow" aria-hidden="true"></span>
-    <span class="reel-play" aria-hidden="true">
-      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-    </span>
+  <span class="reel-glow" aria-hidden="true"></span>
+  <div class="reel-inner">
     <div class="reel-copy reveal">
       <span class="eyebrow rise"><span>Now showing</span></span>
       <h2 class="section-title">2026 <em>Showreel</em></h2>
-      <p class="reel-sub">A year of sets, gigs and launches, cut down to ninety seconds. Best watched loud, on Instagram.</p>
+      <p class="reel-sub">A year of sets, gigs and launches, cut down to ninety seconds. Press play — it's the real thing, not a link out.</p>
     </div>
-    <span class="reel-cta">Watch on Instagram
-      <svg class="reel-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg>
-    </span>
-  </a>
+    <div class="reel-embed">
+      <!-- Instagram's own oEmbed widget — the reel plays inline, right here,
+           rather than sending anyone away to watch it. embed.js (loaded once,
+           below) finds this blockquote and swaps it for a real player; the
+           markup inside is only the no-JS fallback. -->
+      <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/reel/DUolXiQCGxD/" data-instgrm-version="14" style="background:#FFF;border:0;border-radius:6px;box-shadow:0 12px 40px rgba(0,0,0,.45);margin:0 auto;max-width:400px;min-width:260px;padding:0;width:calc(100% - 2px);">
+        <div style="padding:16px;">
+          <a href="https://www.instagram.com/reel/DUolXiQCGxD/" style="background:#FFFFFF;line-height:0;padding:0;text-align:center;text-decoration:none;width:100%;display:block;" target="_blank" rel="noopener noreferrer">
+            <div style="display:flex;align-items:center;justify-content:center;height:50px;width:50px;border-radius:50%;background:#F4F4F4;margin:0 auto 14px;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M8 5v14l11-7z" fill="#8a8a8a"/></svg>
+            </div>
+            <div style="color:#3897f0;font-family:Arial,sans-serif;font-size:14px;font-weight:600;line-height:18px;">View this reel on Instagram</div>
+          </a>
+        </div>
+      </blockquote>
+      <a class="reel-cta" href="https://www.instagram.com/_c4rem/reel/DUolXiQCGxD/" target="_blank" rel="noopener noreferrer">Open in Instagram
+        <svg class="reel-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg>
+      </a>
+    </div>
+  </div>
 </section>
+<script async src="https://www.instagram.com/embed.js"></script>
 
 <section id="motto" class="tight">
   <div class="wrap">
@@ -525,14 +539,14 @@
   </div>
 </footer>
 
-<script src="assets/js/lenis.min.js?v=20260803c"></script>
-<script src="assets/js/main.js?v=20260803c"></script>
+<script src="assets/js/lenis.min.js?v=20260803d"></script>
+<script src="assets/js/main.js?v=20260803d"></script>
 <!-- Three.js + the mini cylinder load only here, after main.js, so THREE is
      defined by the time wheel-cylinder.js runs (same load order as the work
      page's gallery). main.js fires its first wheel update synchronously before
      this listener exists, so its index-0 event is missed — harmless, because
      wheel-cylinder.js also defaults to index 0 on init. -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="assets/js/wheel-cylinder.js?v=20260803c"></script>
+<script src="assets/js/wheel-cylinder.js?v=20260803d"></script>
 </body>
 </html>
