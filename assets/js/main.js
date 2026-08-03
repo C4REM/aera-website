@@ -756,6 +756,7 @@
 (function(){
   const track = document.getElementById('methodTrack');
   const media = document.getElementById('mtMedia');
+  const mask  = document.getElementById('mtMask');
   const copy  = document.getElementById('mtCopy');
   const title = document.getElementById('mtTitle');
   const end   = document.getElementById('mtEnd');
@@ -797,6 +798,13 @@
     media.style.transform =
       `translate(-50%,-50%) translate(${tx.toFixed(1)}px, ${ty.toFixed(1)}px) scale(${scale.toFixed(3)})`;
     media.style.borderRadius = radius.toFixed(1) + '%';
+
+    // the cover recedes early in Phase A — by the time the reader has
+    // settled into the copy column, the photo is fully resolved
+    if (mask){
+      const reveal = 1 - clamp01((p / SPLIT) / 0.42);
+      mask.style.opacity = reveal.toFixed(2);
+    }
 
     // copy travels up and clears out before the shrink completes
     if (copy){
