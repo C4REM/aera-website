@@ -614,15 +614,21 @@
       return;
     }
     if (mobileObs){ mobileObs.disconnect(); mobileObs = null; }
-    // walk the items, assigning each its running horizontal offset
-    let x = 0;
+    // walk the items, assigning each its running horizontal offset.
+    // NB: .hitem is position:absolute inside this row, so `left` is measured
+    // from the row's PADDING EDGE (i.e. the row's own outer edge) — an
+    // absolutely positioned child ignores its containing block's padding
+    // entirely. That means the row's left padding never actually pushed
+    // item one inward on its own; the run-up has to be baked into item
+    // one's --x directly, which is why x starts at `pad` below rather than 0.
+    const pad = parseFloat(getComputedStyle(row).paddingLeft) || 0;
+    let x = pad;
     items.forEach(el => {
       el.style.setProperty('--x', x.toFixed(1) + 'px');
       x += el.offsetWidth + GAP;
     });
-    rowW = x;
-    const pad = parseFloat(getComputedStyle(row).paddingLeft) || 0;
-    travel = Math.max(0, rowW + pad * 2 - window.innerWidth);
+    rowW = x + pad;   // trailing run-up after the last item, mirroring the lead-in
+    travel = Math.max(0, rowW - window.innerWidth);
     section.style.height = (window.innerHeight + travel * 1.15) + 'px';
   }
 
