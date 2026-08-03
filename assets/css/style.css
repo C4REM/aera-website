@@ -640,41 +640,122 @@ body.wheel-live .wheel-media img{opacity:0!important}
   .mt-title.m-in,.mt-copy.m-in,.mt-end.m-in{opacity:1;transform:none}
 }
 
-/* SHOWREEL — a single interlude between the method and the motto: no grid,
-   no copy block, just the tape running. The whole section is the frame, the
-   play mark is the only thing that moves on hover, everything else holds
-   still so that one moving part reads as an invitation rather than decor. */
-.reel{position:relative;border-top:1px solid var(--smoke);border-bottom:1px solid var(--smoke);overflow:hidden}
-.reel-glow{
-  position:absolute;inset:-20% -10%;z-index:0;pointer-events:none;
-  background:radial-gradient(60% 55% at 50% 45%,rgba(194,168,120,.16),transparent 70%);
-  opacity:.7;
+/* SHOWREEL — scroll-grow pinned player. Starts as a small preview centred in
+   the pin; as the section's scroll range is worked through, the frame grows
+   edge-to-edge to fill the screen (object-fit:cover crops cleanly at every
+   size in between, so there's never a letterboxed in-between state). It
+   autoplays — muted, since that's the only way a browser allows autoplay at
+   all — the moment it's essentially fullscreen, and the custom on-brand
+   controls fade in at the same beat. Past the pin's scroll range the section
+   releases exactly like any other sticky element and the page continues
+   normally underneath: nothing here traps a user who just wants to keep
+   scrolling past. See the matching IIFE in main.js for the actual growth
+   math (main.js drives width/height/radius; this file only sets the still
+   states either end of that range, plus every control's resting look). */
+.reel{position:relative;height:340vh}
+.reel-pin{
+  position:sticky;top:0;height:100vh;overflow:hidden;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  border-top:1px solid var(--smoke);border-bottom:1px solid var(--smoke);
+  background:var(--obsidian);
 }
-.reel-inner{
-  position:relative;z-index:1;display:flex;align-items:center;justify-content:center;gap:clamp(40px,6vw,90px);
-  flex-wrap:wrap;padding:clamp(80px,12vh,130px) clamp(22px,5vw,72px);max-width:1180px;margin:0 auto;
-}
-.reel-copy{max-width:40ch;text-align:left}
+.reel-copy{position:relative;z-index:2;max-width:46ch;text-align:center;margin-bottom:32px}
 .reel-copy .section-title{font-size:clamp(2.2rem,4.6vw,3.4rem);margin-top:14px}
 .reel-copy .section-title em{color:var(--champagne);font-style:normal}
-.reel-sub{color:var(--cream-dim);font-size:1rem;line-height:1.75;margin:18px 0 0}
-.reel-embed{display:flex;flex-direction:column;align-items:center;gap:20px;width:min(560px,100%)}
-.reel-video{
-  width:100%;aspect-ratio:16/9;display:block;
-  border-radius:6px;box-shadow:0 12px 40px rgba(0,0,0,.45);
-  background:#000;
+.reel-sub{color:var(--cream-dim);font-size:1rem;line-height:1.75;margin:18px auto 0;max-width:40ch}
+
+.reel-frame{
+  position:relative;z-index:1;overflow:hidden;background:#000;flex:none;
+  width:min(560px,86vw);aspect-ratio:16/9;border-radius:14px;
+  box-shadow:0 20px 60px rgba(0,0,0,.5);
 }
+.reel-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.reel-scrim{
+  position:absolute;inset:auto 0 0 0;height:50%;pointer-events:none;
+  background:linear-gradient(to top,rgba(0,0,0,.8),transparent);
+  opacity:0;transition:opacity .5s ease;
+}
+.reel-frame.is-live .reel-scrim{opacity:1}
+
+.reel-badge{
+  position:absolute;left:22px;top:22px;z-index:2;
+  font-family:var(--sans);font-size:9.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--cream-dim);
+  opacity:0;transform:translateY(-6px);transition:opacity .5s ease,transform .5s ease;pointer-events:none;
+}
+.reel-frame.is-live .reel-badge{opacity:1;transform:none}
+
+.reel-playmark{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:60px;height:60px;border-radius:50%;background:var(--champagne);color:var(--obsidian);border:0;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:2;
+  transition:opacity .35s ease,transform .35s cubic-bezier(.2,.8,.2,1),background .3s ease;
+}
+.reel-playmark svg{width:20px;height:20px;margin-left:3px}
+.reel-playmark:hover{background:var(--cream)}
+.reel-frame.is-playing .reel-playmark{opacity:0;pointer-events:none;transform:translate(-50%,-50%) scale(.7)}
+.reel-frame.is-live:hover .reel-playmark{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1)}
+
+.reel-controls{
+  position:absolute;left:0;right:0;bottom:0;z-index:2;
+  display:flex;align-items:center;gap:16px;padding:12px clamp(16px,3vw,30px);
+  opacity:0;transform:translateY(8px);pointer-events:none;
+  transition:opacity .4s ease,transform .4s ease;
+}
+.reel-frame.is-live .reel-controls{opacity:1;transform:none;pointer-events:auto}
+.reel-ctrl{
+  width:26px;height:26px;flex:none;border:0;background:none;color:var(--cream);cursor:pointer;padding:0;
+  display:flex;align-items:center;justify-content:center;transition:color .25s ease;
+}
+.reel-ctrl:hover{color:var(--champagne)}
+.reel-ctrl svg{width:16px;height:16px}
+.reel-playpause .ic-pause{display:none}
+.reel-frame.is-playing .reel-playpause .ic-play{display:none}
+.reel-frame.is-playing .reel-playpause .ic-pause{display:block}
+.reel-mute .ic-unmute{display:none}
+.reel-frame:not(.is-muted) .reel-mute .ic-mute{display:none}
+.reel-frame:not(.is-muted) .reel-mute .ic-unmute{display:block}
+
+.reel-time{
+  font-family:var(--sans);font-size:10px;letter-spacing:.1em;color:var(--cream-dim);
+  flex:none;font-variant-numeric:tabular-nums;
+}
+.reel-scrub{flex:1;position:relative;height:16px;display:flex;align-items:center;cursor:pointer}
+.reel-scrub::before{
+  content:'';position:absolute;left:0;right:0;top:50%;height:1px;
+  background:rgba(234,223,205,.25);transform:translateY(-50%);
+}
+.reel-scrub-fill{
+  position:absolute;left:0;top:50%;height:1px;width:0%;background:var(--champagne);
+  transform:translateY(-50%);pointer-events:none;
+}
+.reel-scrub-fill::after{
+  content:'';position:absolute;right:-3px;top:50%;width:7px;height:7px;border-radius:50%;
+  background:var(--champagne);transform:translate(50%,-50%);
+}
+
 .reel-cta{
+  position:relative;z-index:1;margin-top:26px;
   display:inline-flex;align-items:center;gap:9px;
   font-family:var(--sans);font-size:11px;letter-spacing:.26em;text-transform:uppercase;color:var(--champagne);
   text-decoration:none;
 }
 .reel-arrow{width:14px;height:14px;transition:transform .4s cubic-bezier(.2,.8,.2,1)}
 .reel-cta:hover .reel-arrow{transform:translate(4px,-4px)}
+
+/* Under ~880px the pin/grow rig is dropped entirely, same reasoning as
+   .htrack: hijacking scroll to grow a video fights a touch-scroll gesture
+   directly, and a phone screen has no spare width to grow into anyway. The
+   player just sits at a normal size with its controls always on, like any
+   ordinary embedded video. */
 @media(max-width:880px){
-  .reel-inner{flex-direction:column;text-align:center;padding:64px 22px}
-  .reel-copy{text-align:center;max-width:none}
+  .reel{height:auto}
+  .reel-pin{position:relative;height:auto;padding:64px 22px;gap:28px}
   .reel-copy .section-title{font-size:clamp(2rem,9vw,2.6rem)}
+  .reel-frame{width:100%;border-radius:10px}
+  .reel-scrim,.reel-controls,.reel-badge{opacity:1!important;transform:none!important;pointer-events:auto!important}
+  .reel-playmark{opacity:0}
+  .reel-frame.is-playing .reel-playmark{opacity:0}
+  .reel-frame:not(.is-playing) .reel-playmark{opacity:1;pointer-events:auto}
 }
 
 /* ---- TEAM — a row per person: portrait, skills, portfolio strip ---- */
