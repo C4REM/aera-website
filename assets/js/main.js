@@ -671,6 +671,122 @@
   addEventListener('load', () => { layout(); update(); });
 })();
 
+/* ---- SHOWREEL — scroll-grow pinned player ----
+   The section is a tall (340vh) sticky pin, same rig as .htrack. Reading its
+   scroll progress the same way (section rect + offsetHeight - innerHeight),
+   the first GROW_END fraction of that progress is remapped to a 0…1 "grow"
+   value that interpolates the frame from its small resting box up to a full
+   viewport-filling one — width/height are set directly rather than through a
+   CSS transform:scale() so object-fit:cover on the video keeps recomputing
+   against the frame's real box at every step, which is what avoids ever
+   letterboxing mid-grow. Once grown, the rest of the section's height is
+   just a hold: the frame stays fullscreen and the video keeps playing, so a
+   user who stops scrolling gets to actually watch it, while a user who keeps
+   scrolling straight through releases the pin like normal and carries on to
+   the next section — nothing here can trap a scroll gesture. */
+(function(){
+  const pin = document.getElementById('reelPin');
+  const frame = document.getElementById('reelFrame');
+  const video = document.getElementById('reelVideo');
+  const copy = document.getElementById('reelCopy');
+  const playMark = document.getElementById('reelPlayMark');
+  const playPauseBtn = document.getElementById('reelPlayPause');
+  const muteBtn = document.getElementById('reelMute');
+  const scrub = document.getElementById('reelScrub');
+  const scrubFill = document.getElementById('reelScrubFill');
+  const timeEl = document.getElementById('reelTime');
+  const durEl = document.getElementById('reelDuration');
+  if (!pin || !frame || !video) return;
+
+  const section = pin.closest('.reel');
+  const GROW_END = .4;      // fraction of the section's scroll range spent growing; the rest is hold
+  let stacked = false, ticking = false, live = false;
+
+  function fmt(s){
+    if (!isFinite(s)) return '0:00';
+    s = Math.max(0, Math.floor(s));
+    return Math.floor(s / 60) + ':' + String(Math.floor(s % 60)).padStart(2, '0');
+  }
+
+  function setLive(on){
+    if (live === on) return;
+    live = on;
+    frame.classList.toggle('is-live', on);
+    if (on){ if (video.paused) video.play().catch(() => {}); }
+    else if (!video.paused) video.pause();
+  }
+
+  function update(){
+    ticking = false;
+    if (stacked) return;
+    const r = section.getBoundingClientRect();
+    const total = section.offsetHeight - window.innerHeight;
+    const p = total > 0 ? Math.min(1, Math.max(0, -r.top / total)) : 0;
+    const g = Math.min(1, p / GROW_END);
+    const ease = g * g * (3 - 2 * g);   // smoothstep — eases in and out rather than moving at one flat speed
+
+    const vw = window.innerWidth, vh = window.innerHeight;
+    const smallW = Math.min(560, vw * .86);
+    const smallH = smallW * 9 / 16;
+    frame.style.width = (smallW + (vw - smallW) * ease).toFixed(1) + 'px';
+    frame.style.height = (smallH + (vh - smallH) * ease).toFixed(1) + 'px';
+    frame.style.borderRadius = (14 * (1 - ease)).toFixed(1) + 'px';
+
+    copy.style.opacity = String(Math.max(0, 1 - g * 2.2));
+    copy.style.transform = 'translateY(' + (-g * 18).toFixed(1) + 'px)';
+    copy.style.pointerEvents = g > .4 ? 'none' : '';
+
+    setLive(p >= GROW_END * .97);
+  }
+
+  function onScroll(){ if (!ticking){ ticking = true; requestAnimationFrame(update); } }
+
+  function layout(){
+    stacked = window.matchMedia('(max-width:880px)').matches;
+    if (stacked){
+      frame.style.width = ''; frame.style.height = ''; frame.style.borderRadius = '';
+      copy.style.opacity = ''; copy.style.transform = ''; copy.style.pointerEvents = '';
+      frame.classList.add('is-live');   // mobile: no grow effect, controls are just always on
+      live = true;
+      return;
+    }
+  }
+
+  function togglePlay(){ if (video.paused) video.play().catch(() => {}); else video.pause(); }
+  playMark.addEventListener('click', togglePlay);
+  playPauseBtn.addEventListener('click', togglePlay);
+  video.addEventListener('play', () => frame.classList.add('is-playing'));
+  video.addEventListener('pause', () => frame.classList.remove('is-playing'));
+
+  muteBtn.addEventListener('click', () => {
+    video.muted = !video.muted;
+    frame.classList.toggle('is-muted', video.muted);
+  });
+  frame.classList.toggle('is-muted', video.muted);
+
+  video.addEventListener('loadedmetadata', () => { durEl.textContent = fmt(video.duration); });
+  video.addEventListener('timeupdate', () => {
+    timeEl.textContent = fmt(video.currentTime);
+    if (video.duration) scrubFill.style.width = (video.currentTime / video.duration * 100).toFixed(2) + '%';
+  });
+
+  function seek(e){
+    const rect = scrub.getBoundingClientRect();
+    const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+    const frac = Math.min(1, Math.max(0, x / rect.width));
+    if (video.duration) video.currentTime = frac * video.duration;
+  }
+  let seeking = false;
+  scrub.addEventListener('pointerdown', e => { seeking = true; seek(e); });
+  addEventListener('pointermove', e => { if (seeking) seek(e); });
+  addEventListener('pointerup', () => { seeking = false; });
+
+  layout(); update();
+  addEventListener('scroll', onScroll, { passive: true });
+  addEventListener('resize', () => { layout(); update(); });
+  addEventListener('load', () => { layout(); update(); });
+})();
+
 /* ---- SOCIALS FAN — hover shuffle ----
    Every card's position comes from ONE formula: its own index (i) plus how far
    it sits from the hovered card (d). Neighbours slide outward by an amount
