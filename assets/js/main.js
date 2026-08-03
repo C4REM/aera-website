@@ -273,9 +273,14 @@
        for their typically 3-4 word headlines — 0.09s reads with the same
        "arriving one at a time" feel without very long Aera headlines, like
        the motto's three short sentences, dragging the reveal out past two
-       seconds). Capped at 8 words' worth so an unusually long line doesn't
-       keep pushing delay out indefinitely. */
-    words.forEach((w, i) => { w.style.transitionDelay = (Math.min(i, 8) * 0.09).toFixed(3) + 's'; });
+       seconds). Capped at 14 words' worth so an unusually long line doesn't
+       keep pushing delay out indefinitely. Step is deliberately large next
+       to the word's own (shortened, see .split .w) transition duration —
+       if the gap between words is small relative to how long each one
+       takes to resolve, every word is still mid-fade at once and it just
+       reads as one soft block lighting up, not a wipe. Widening the gap is
+       what makes the eye actually track a word arriving, then the next. */
+    words.forEach((w, i) => { w.style.transitionDelay = (Math.min(i, 14) * 0.06).toFixed(3) + 's'; });
     el.classList.add('split');
     el.dataset.split = '1';
   });
@@ -615,8 +620,10 @@
     items.forEach(el => {
       const cr = el.getBoundingClientRect();
       if (cr.right < -300 || cr.left > vw + 300) return;
-      // reveal once it has genuinely entered the frame
-      if (cr.left < vw - 40) el.classList.add('in');
+      // reveal a touch before it's fully on-screen, so the settle-in has
+      // room to actually play out rather than resolving in the last few
+      // pixels of travel where it's barely perceptible
+      if (cr.left < vw + 60) el.classList.add('in');
       const img = el.firstElementChild && el.querySelector('.hshot img');
       if (img){
         const d = ((cr.left + cr.width / 2) - mid) / vw;   // -0.5…0.5
