@@ -658,8 +658,12 @@ body.wheel-live .wheel-media img{opacity:0!important}
 .reel-copy .section-title{font-size:clamp(2.2rem,4.6vw,3.4rem);margin-top:14px}
 .reel-copy .section-title em{color:var(--champagne);font-style:normal}
 .reel-sub{color:var(--cream-dim);font-size:1rem;line-height:1.75;margin:18px 0 0}
-.reel-embed{display:flex;flex-direction:column;align-items:center;gap:20px;width:min(400px,100%)}
-.reel-embed iframe{border-radius:6px!important;box-shadow:0 12px 40px rgba(0,0,0,.45)}
+.reel-embed{display:flex;flex-direction:column;align-items:center;gap:20px;width:min(560px,100%)}
+.reel-video{
+  width:100%;aspect-ratio:16/9;display:block;
+  border-radius:6px;box-shadow:0 12px 40px rgba(0,0,0,.45);
+  background:#000;
+}
 .reel-cta{
   display:inline-flex;align-items:center;gap:9px;
   font-family:var(--sans);font-size:11px;letter-spacing:.26em;text-transform:uppercase;color:var(--champagne);
