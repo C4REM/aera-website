@@ -447,7 +447,15 @@ body.wheel-live .wheel-media img{opacity:0!important}
 .htrack-row{
   position:relative;
   display:block;                       /* items are absolutely placed, not flowed */
-  padding:0 clamp(22px,8vw,140px);
+  /* left padding is deliberately huge (not a typo): main.js reads it and
+     doubles it into the total scroll travel, so the row opens on this much
+     empty run-up before item one, and closes on the same run-up after the
+     last item. Without it item one sits flush against the screen edge the
+     instant the section pins — there's nothing left to "arrive", the strip
+     is just already there. This way the first frame you see is mostly
+     empty ground past centre, and the whole first item has to travel in
+     from off the right rather than being immediately on-screen. */
+  padding:0 clamp(22px,54vw,1200px);
   flex:1;min-height:0;will-change:transform;
 }
 
@@ -459,8 +467,9 @@ body.wheel-live .wheel-media img{opacity:0!important}
 .hitem{
   position:absolute;top:var(--top,0);left:var(--x,0);
   width:var(--w,200px);
-  opacity:0;transform:translate(64px,26px);
-  transition:opacity .7s cubic-bezier(.2,.8,.2,1),transform .9s cubic-bezier(.2,.8,.2,1);
+  opacity:0;transform:translate(90px,26px);
+  transition:opacity .8s cubic-bezier(.16,.8,.24,1),transform 1.05s cubic-bezier(.16,.8,.24,1);
+  will-change:opacity,transform;
 }
 .hitem.in{opacity:1;transform:none}
 .hshot{position:relative;overflow:hidden;background:#111013;aspect-ratio:var(--ar,4/5)}
@@ -613,38 +622,32 @@ body.wheel-live .wheel-media img{opacity:0!important}
    play mark is the only thing that moves on hover, everything else holds
    still so that one moving part reads as an invitation rather than decor. */
 .reel{position:relative;border-top:1px solid var(--smoke);border-bottom:1px solid var(--smoke);overflow:hidden}
-.reel-frame{
-  position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;
-  gap:26px;padding:clamp(90px,14vh,150px) 24px;text-decoration:none;color:inherit;
-}
 .reel-glow{
   position:absolute;inset:-20% -10%;z-index:0;pointer-events:none;
   background:radial-gradient(60% 55% at 50% 45%,rgba(194,168,120,.16),transparent 70%);
-  opacity:.6;transition:opacity .6s ease,transform 1.2s cubic-bezier(.2,.8,.2,1);
+  opacity:.7;
 }
-.reel-frame:hover .reel-glow{opacity:1;transform:scale(1.08)}
-.reel-play{
-  position:relative;z-index:1;
-  width:clamp(60px,6.4vw,80px);height:clamp(60px,6.4vw,80px);border-radius:50%;
-  display:grid;place-items:center;border:1px solid rgba(234,223,205,.3);
-  color:var(--cream);background:rgba(234,223,205,.04);
-  transition:transform .5s cubic-bezier(.2,.8,.2,1),background .4s ease,border-color .4s ease,color .4s ease;
+.reel-inner{
+  position:relative;z-index:1;display:flex;align-items:center;justify-content:center;gap:clamp(40px,6vw,90px);
+  flex-wrap:wrap;padding:clamp(80px,12vh,130px) clamp(22px,5vw,72px);max-width:1180px;margin:0 auto;
 }
-.reel-play svg{width:20px;height:20px;margin-left:3px}
-.reel-frame:hover .reel-play{transform:scale(1.08);background:var(--champagne);border-color:var(--champagne);color:var(--obsidian)}
-.reel-copy{position:relative;z-index:1;max-width:56ch}
-.reel-copy .section-title{font-size:clamp(2.6rem,7vw,4.8rem);margin-top:14px}
+.reel-copy{max-width:40ch;text-align:left}
+.reel-copy .section-title{font-size:clamp(2.2rem,4.6vw,3.4rem);margin-top:14px}
 .reel-copy .section-title em{color:var(--champagne);font-style:normal}
-.reel-sub{color:var(--cream-dim);font-size:1rem;line-height:1.7;max-width:44ch;margin:16px auto 0}
+.reel-sub{color:var(--cream-dim);font-size:1rem;line-height:1.75;margin:18px 0 0}
+.reel-embed{display:flex;flex-direction:column;align-items:center;gap:20px;width:min(400px,100%)}
+.reel-embed iframe{border-radius:6px!important;box-shadow:0 12px 40px rgba(0,0,0,.45)}
 .reel-cta{
-  position:relative;z-index:1;margin-top:8px;display:inline-flex;align-items:center;gap:9px;
+  display:inline-flex;align-items:center;gap:9px;
   font-family:var(--sans);font-size:11px;letter-spacing:.26em;text-transform:uppercase;color:var(--champagne);
+  text-decoration:none;
 }
 .reel-arrow{width:14px;height:14px;transition:transform .4s cubic-bezier(.2,.8,.2,1)}
-.reel-frame:hover .reel-arrow{transform:translate(4px,-4px)}
+.reel-cta:hover .reel-arrow{transform:translate(4px,-4px)}
 @media(max-width:880px){
-  .reel-frame{padding:70px 22px;gap:20px}
-  .reel-copy .section-title{font-size:clamp(2.1rem,10vw,2.8rem)}
+  .reel-inner{flex-direction:column;text-align:center;padding:64px 22px}
+  .reel-copy{text-align:center;max-width:none}
+  .reel-copy .section-title{font-size:clamp(2rem,9vw,2.6rem)}
 }
 
 /* ---- TEAM — a row per person: portrait, skills, portfolio strip ---- */
@@ -1152,7 +1155,7 @@ footer .foot-links a:hover{color:var(--champagne)}
    just fading. */
 .split .w{
   display:inline-block;opacity:0;filter:blur(15px);
-  transition:opacity 1s linear,filter 1s linear;
+  transition:opacity .65s linear,filter .65s linear;
   will-change:opacity,filter;
 }
 .split.in .w{opacity:1;filter:blur(0)}
