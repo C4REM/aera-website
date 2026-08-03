@@ -587,14 +587,33 @@
   const GAP = 30;
   let stacked = false, travel = 0, rowW = 0, ticking = false, shownPrev = -1;
 
+  // Mobile only: the pin/translateX rig is bypassed entirely below 880px
+  // (see layout()'s stacked branch), so items would otherwise just sit
+  // permanently visible with no arrival at all. This small observer gives
+  // each one its own scroll-triggered fade+lift instead, independent of
+  // the desktop rig below so there's no risk of the two fighting.
+  let mobileObs = null;
+  function armMobileReveal(){
+    if (mobileObs || !('IntersectionObserver' in window)){
+      if (!('IntersectionObserver' in window)) items.forEach(el => el.classList.add('in'));
+      return;
+    }
+    mobileObs = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
+    }, { threshold: .2, rootMargin: '0px 0px -8% 0px' });
+    items.forEach(el => mobileObs.observe(el));
+  }
+
   function layout(){
     stacked = window.matchMedia('(max-width:880px)').matches;
     if (stacked){
       row.style.transform = '';
-      items.forEach(el => { el.style.removeProperty('--x'); el.classList.add('in'); });
+      items.forEach(el => el.style.removeProperty('--x'));
       section.style.height = '';
+      armMobileReveal();
       return;
     }
+    if (mobileObs){ mobileObs.disconnect(); mobileObs = null; }
     // walk the items, assigning each its running horizontal offset
     let x = 0;
     items.forEach(el => {
@@ -761,12 +780,13 @@
    Phase B: the photo shrinks and rounds into a small ellipse near the top,
    uncovering the closing quote and signature underneath. */
 (function(){
-  const track = document.getElementById('methodTrack');
-  const media = document.getElementById('mtMedia');
-  const mask  = document.getElementById('mtMask');
-  const copy  = document.getElementById('mtCopy');
-  const title = document.getElementById('mtTitle');
-  const end   = document.getElementById('mtEnd');
+  const track   = document.getElementById('methodTrack');
+  const media   = document.getElementById('mtMedia');
+  const mask    = document.getElementById('mtMask');
+  const copy    = document.getElementById('mtCopy');
+  const title   = document.getElementById('mtTitle');
+  const end     = document.getElementById('mtEnd');
+  const eyebrow = document.getElementById('mtEyebrow');
   if (!track || !media) return;
 
   const SPLIT = 0.52;                       // where the shrink begins
@@ -774,10 +794,34 @@
   const clamp01 = v => Math.max(0, Math.min(1, v));
   let ticking = false, stacked = false;
 
+  // Mobile only: update() bails before it ever reaches the mask/copy/title/
+  // end logic below (that's all built around the pin's scroll progress,
+  // which doesn't exist once the section is a static stack), so those
+  // elements need their own scroll-triggered entrance instead.
+  let mobileObs = null;
+  function armMobileReveal(){
+    if (mobileObs) return;
+    const targets = [eyebrow, title, media, copy, end].filter(Boolean);
+    if (!('IntersectionObserver' in window)){
+      targets.forEach(el => el.classList.add('m-in'));
+      return;
+    }
+    mobileObs = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('m-in'); });
+    }, { threshold: .2, rootMargin: '0px 0px -8% 0px' });
+    targets.forEach(el => mobileObs.observe(el));
+  }
+
   function update(){
     ticking = false;
     stacked = window.matchMedia('(max-width:880px)').matches;
-    if (stacked){ media.style.transform = ''; media.style.borderRadius = ''; return; }
+    if (stacked){
+      media.style.transform = '';
+      media.style.borderRadius = '';
+      armMobileReveal();
+      return;
+    }
+    if (mobileObs){ mobileObs.disconnect(); mobileObs = null; }
 
     const vh = innerHeight;
     const r = track.getBoundingClientRect();
