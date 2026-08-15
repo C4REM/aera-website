@@ -228,7 +228,7 @@ header.hero .hero-statement.hero-mega{
      the old `overflow:hidden` on each line cut the descenders off "Annoyingly"
      and "good" — the clipping you saw. The slide-in below doesn't need a clip
      mask because the lines come in horizontally, not vertically. */
-  font-size:clamp(3.8rem,21vw,19rem);
+  font-size:clamp(3.4rem,18.5vw,16.5rem);
   line-height:.86;letter-spacing:-.045em;
   margin:0 0 clamp(20px,3vh,34px);
   text-transform:none;
