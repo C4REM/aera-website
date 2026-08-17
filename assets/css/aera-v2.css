@@ -1,0 +1,257 @@
+/* ==========================================================================
+   AERA — BRAND SYSTEM v2
+   Layered ON TOP of style.css. Everything here is additive or an override;
+   style.css still owns the set pieces (wheel cylinder, pinned timeline,
+   showreel player, socials fan) so their JS keeps working untouched.
+
+   Built from three references, taking one specific thing from each rather
+   than blending them into mush:
+
+     valeran.eu      -> air. Short standalone paragraphs, a small label far
+                        from a large statement, and long empty stretches that
+                        make the next thing land.
+     couroazul.com   -> the split headline. Words of one phrase set at
+                        different sizes and offsets so the eye moves through
+                        it instead of reading a flat line.
+     landonorris.com -> the caption, and the stacked two-line title. Every
+                        photograph is labelled place + year in small mono.
+                        Nothing floats uncredited.
+
+   The through-line for Aera specifically: this is a photographer's site, so
+   the system is a CONTACT SHEET — indexed, captioned, annotated in the
+   margins, with the pictures given room.
+   ========================================================================== */
+
+:root{
+  /* ---- type ----------------------------------------------------------
+     --sans was Inter everywhere, which is the single biggest reason the
+     UI read as generic: Inter is the default of every AI-generated and
+     template site on the internet. It stays for long-form body copy only,
+     where its neutrality is genuinely an asset. Everything structural —
+     labels, captions, numbers, nav, buttons — moves to a mono, which is
+     what gives the page its archival/contact-sheet voice and is the
+     closest analogue to landonorris.com's small lowercase labels. */
+  --mono:'DM Mono','SFMono-Regular',ui-monospace,Menlo,monospace;
+
+  /* ---- spacing scale --------------------------------------------------
+     One ratio, used everywhere, so vertical rhythm is a system rather
+     than a per-section guess. valeran.eu's whole effect is long empty
+     stretches; --space-section is deliberately larger than feels
+     comfortable while writing the CSS. */
+  --space-xs:clamp(8px,1vw,14px);
+  --space-s:clamp(16px,2vw,26px);
+  --space-m:clamp(30px,4vw,54px);
+  --space-l:clamp(56px,7vw,104px);
+  --space-xl:clamp(90px,12vw,190px);
+  --space-section:clamp(120px,17vh,260px);
+
+  --rule:rgba(234,223,205,.14);   /* hairline that reads on obsidian */
+}
+
+/* ---------- SECTION SHELL --------------------------------------------
+   style.css centres .hero and .contact (and .section-head.center). The
+   whole point of the split headline is that its parts sit at different
+   horizontal offsets, and centring collapses that back into a symmetrical
+   stack — the exact "excessive centred layout" failure mode. Left-align is
+   the default here and centring becomes opt-in, not inherited. */
+.v2 .hero,
+.v2 .hero .wrap,
+.v2 #contact{text-align:left}
+.v2 .hero-inner{text-align:left}
+
+.v2 section{padding:var(--space-section) 0}
+.v2 .wrap{width:min(1320px,100% - clamp(22px,5vw,80px));margin-inline:auto}
+
+/* Indexed section marker: "01 —— Selected work", pinned to the left margin.
+   This is the contact-sheet idea made literal, and it does the job the
+   repeated eyebrow+headline block used to do, without the block. */
+.v2-index{
+  display:flex;align-items:baseline;gap:var(--space-s);
+  font-family:var(--mono);font-size:11px;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--stone);
+  margin-bottom:var(--space-m);
+}
+.v2-index b{color:var(--champagne);font-weight:400}
+.v2-index span{flex:1;height:1px;background:var(--rule);transform:translateY(-4px)}
+
+/* ---------- SPLIT HEADLINE (couroazul) --------------------------------
+   A phrase broken into parts that sit at different sizes and offsets.
+   .lg is the shout, .sm the aside — the aside is deliberately set in the
+   italic serif so the two voices are different, not just different sizes. */
+/* text-align:left is set HERE, on the component, not inherited from an
+   ancestor override. .hero is centred by style.css, and a centred block
+   re-centres its own text — which silently cancelled the margin-left
+   offsets below (they still applied, the text just re-centred inside the
+   wider box, so the headline looked like a plain centred stack). Owning
+   alignment on the component makes it work wherever it's dropped. */
+.v2-split{display:block;margin:0;line-height:.92;letter-spacing:-.02em;text-align:left}
+.v2-split .lg,.v2-split .sm{text-align:left}
+.v2-split .lg{
+  display:block;font-family:var(--display);font-weight:var(--display-wght);
+  font-size:clamp(2.6rem,8.4vw,7.4rem);color:var(--cream);
+}
+.v2-split .sm{
+  display:block;font-family:var(--serif);font-style:italic;font-weight:500;
+  font-size:clamp(1.2rem,2.9vw,2.5rem);color:var(--champagne);
+  line-height:1.1;letter-spacing:0;
+}
+/* the offsets are what stop it reading as a centred stack */
+.v2-split .i1{margin-left:clamp(30px,11vw,190px)}
+.v2-split .i2{margin-left:clamp(60px,22vw,380px)}
+
+/* ---------- STACKED TITLE (landonorris) -------------------------------
+   Two words, one per line, set as large as the column allows. Used where
+   a section needs to announce itself without a paragraph underneath. */
+.v2-stack{margin:0;line-height:.86;letter-spacing:-.025em;text-align:left}
+.v2-stack em{
+  display:block;font-style:normal;
+  font-family:var(--display);font-weight:var(--display-wght);
+  font-size:clamp(3rem,11vw,9rem);color:var(--cream);
+}
+.v2-stack em + em{color:var(--stone)}   /* second line recedes — depth, not repetition */
+
+/* ---------- CAPTION (landonorris) -------------------------------------
+   Every photograph on the site gets one. Place, then year. This is the
+   highest-leverage single change in the system: an uncaptioned photo
+   looks like stock, a captioned one looks like documentation. */
+.v2-cap{
+  display:flex;justify-content:space-between;gap:var(--space-s);
+  margin-top:12px;
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--stone);
+}
+.v2-cap i{font-style:normal;color:var(--cream-dim)}
+
+/* ---------- FIGURE ---------------------------------------------------- */
+.v2-fig{margin:0}
+.v2-fig .shot{
+  position:relative;overflow:hidden;background:#111013;
+  border-radius:var(--radius-img);
+}
+.v2-fig .shot img{
+  display:block;width:100%;height:100%;object-fit:cover;
+  filter:var(--grade);
+  transform:scale(1.02);
+  transition:transform 1.2s cubic-bezier(.2,.8,.2,1),filter .7s ease;
+}
+.v2-fig:hover .shot img{transform:scale(1.06)}
+
+/* ---------- BODY COPY (valeran) ---------------------------------------
+   Short paragraphs, real air between them. The gap has to exceed the line
+   gap or the break is invisible and it reads as one slab. */
+.v2-copy{max-width:44ch;color:var(--cream-dim);font-size:1.02rem;line-height:1.85}
+.v2-copy p + p{margin-top:1.5em}
+.v2-copy .lead{color:var(--cream);font-size:1.18rem;line-height:1.7}
+
+/* ---------- ASYMMETRIC TWO-COLUMN BLOCK -------------------------------
+   Statement left, supporting copy right and lower. Never a stack. */
+.v2-duo{
+  display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);
+  gap:var(--space-l);align-items:end;
+}
+.v2-duo > *:last-child{padding-bottom:.4em}
+
+/* ---------- PILLARS (valeran's Independence / Discretion / Tradition) --
+   Three named principles. Short. This is how a studio states what it is
+   without writing an "About" paragraph. */
+.v2-pillars{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:var(--space-l);
+  margin-top:var(--space-xl);
+  border-top:1px solid var(--rule);padding-top:var(--space-m);
+}
+.v2-pillar h3{
+  font-family:var(--serif);font-weight:500;font-style:italic;
+  font-size:clamp(1.5rem,2.4vw,2rem);color:var(--cream);margin:0 0 14px;
+}
+.v2-pillar p{color:var(--stone);font-size:.95rem;line-height:1.8;margin:0}
+.v2-pillar .n{
+  display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.24em;
+  color:var(--champagne);margin-bottom:18px;
+}
+
+/* ---------- MARGIN NOTE ----------------------------------------------
+   Rotated running label down the edge of a section. Reinforces the
+   archival voice and fills the empty left margin the wide layout creates. */
+.v2-margin{
+  position:absolute;left:calc(-1 * var(--space-m));top:0;
+  writing-mode:vertical-rl;
+  font-family:var(--mono);font-size:10px;letter-spacing:.3em;
+  text-transform:uppercase;color:var(--smoke);
+  filter:brightness(2.6);
+}
+
+/* ---------- RULE ------------------------------------------------------ */
+.v2-rule{height:1px;background:var(--rule);border:0;margin:0}
+
+/* ---------- MONOGRAM PUNCTUATION -------------------------------------
+   landonorris.com repeats the signature as a beat between sections. Aera
+   already owns two marks (the diamond monogram and Jack's signature), they
+   were just never used as rhythm. */
+.v2-mark{display:flex;justify-content:center;padding:var(--space-l) 0;opacity:.5}
+.v2-mark svg{width:26px;height:26px}
+
+/* ---------- LINKS / BUTTONS ------------------------------------------- */
+.v2-link{
+  display:inline-flex;align-items:center;gap:.8em;
+  font-family:var(--mono);font-size:11.5px;letter-spacing:.22em;
+  text-transform:uppercase;color:var(--cream);
+  padding-bottom:8px;border-bottom:1px solid var(--rule);
+  transition:color .35s ease,border-color .35s ease,gap .35s ease;
+}
+.v2-link:hover{color:var(--champagne);border-color:var(--champagne);gap:1.4em}
+.v2-link .ar{transition:transform .35s cubic-bezier(.2,.8,.2,1)}
+.v2-link:hover .ar{transform:translateX(4px)}
+
+/* ---------- ENTRANCE --------------------------------------------------
+   One motion for the whole site: rise + fade, staggered by --d. Reuses the
+   existing .reveal/.in observer in main.js, so no new JS. */
+.v2-rise{opacity:0;transform:translateY(26px);
+  transition:opacity .9s cubic-bezier(.2,.8,.2,1) var(--d,0s),
+             transform 1s cubic-bezier(.2,.8,.2,1) var(--d,0s);}
+.v2-rise.in{opacity:1;transform:none}
+
+/* ---------- MOBILE ---------------------------------------------------- */
+@media(max-width:880px){
+  .v2-duo{grid-template-columns:1fr;gap:var(--space-m);align-items:start}
+  .v2-duo > *:last-child{padding-bottom:0}
+  .v2-pillars{grid-template-columns:1fr;gap:var(--space-m)}
+  .v2-split .i1{margin-left:clamp(14px,6vw,40px)}
+  .v2-split .i2{margin-left:clamp(28px,12vw,80px)}
+  .v2-margin{display:none}
+  .v2-cap{flex-direction:column;gap:2px}
+}
+
+/* ==========================================================================
+   MOTION SUPPORT  (see assets/js/aera-motion.js)
+   GSAP owns the animating; CSS only sets the resting/pre-animation state
+   and the things GSAP shouldn't be recalculating every frame.
+   ========================================================================== */
+
+/* Elements GSAP will reveal start hidden, but ONLY when JS is running —
+   .no-js keeps everything visible so the page degrades to a readable
+   document rather than a blank one. */
+.js [data-anim],
+.js [data-intro]{opacity:0}
+.js [data-reveal="clip"]{clip-path:inset(0 0 100% 0)}
+
+/* SplitText's mask:'lines' injects a wrapper per line; it needs to clip and
+   it must not collapse the line box. */
+.js .ln-child{will-change:transform}
+[data-anim]{will-change:transform,opacity}
+
+/* Skewed elements need a transform origin that doesn't swing the whole
+   frame — centre-top keeps the lean anchored to where the eye already is. */
+[data-skew]{transform-origin:50% 0;will-change:transform}
+
+/* Marquee track must be exactly 2x its content for the -50% loop to be
+   seamless; the duplicate pass is in the markup. */
+[data-marquee]{will-change:transform}
+
+/* Running section readout, fixed to the viewport edge — the persistent
+   "where am I" marker the reference sites all carry. */
+.v2-readout{
+  position:fixed;left:clamp(14px,2vw,26px);bottom:clamp(14px,2.5vh,28px);z-index:60;
+  font-family:var(--mono);font-size:10px;letter-spacing:.26em;text-transform:uppercase;
+  color:var(--stone);pointer-events:none;mix-blend-mode:difference;
+}
+@media(max-width:880px){.v2-readout{display:none}}

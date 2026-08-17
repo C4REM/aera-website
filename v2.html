@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aera — v2 motion preview</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" type="image/svg+xml" href="assets/img/logo/aera-monogram-favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400;1,500&family=Inter:wght@300;400;500&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css?v=20260816e">
+<link rel="stylesheet" href="assets/css/aera-v2.css?v=20260817f">
+<script>document.documentElement.className='js';</script>
+<noscript><style>.preloader{display:none!important}body{overflow:visible!important;height:auto!important}.cursor-dot,.cursor-ring{display:none!important}.reveal{opacity:1!important;transform:none!important;filter:none!important}</style></noscript>
+</head>
+<body class="v2">
+
+<div class="bg-stage" aria-hidden="true"></div>
+<canvas id="bgGL" aria-hidden="true"></canvas>
+<canvas id="grainCanvas" aria-hidden="true"></canvas>
+<div class="grain" aria-hidden="true"></div>
+<div class="cursor-dot" id="cursorDot" aria-hidden="true"></div>
+<div class="cursor-ring" id="cursorRing" aria-hidden="true"></div>
+
+<!-- Running readout, updated by ScrollTrigger as sections pass mid-viewport -->
+<div class="v2-readout" data-section-readout>00 — Index</div>
+
+<nav id="nav">
+  <div class="nav-left">
+    <button class="burger nav-cell" id="burger" aria-label="Menu" aria-expanded="false" aria-controls="navLinks"><span></span><span></span><span></span></button>
+    <a href="#contact" class="nav-cell nav-cta magnetic">Enquire</a>
+  </div>
+  <a href="index.html" class="brand">
+    <svg class="mark" viewBox="61 51 78 98" fill="none"><path d="M100,52 L138,100 L100,148 L62,100 Z" stroke="#C2A878" stroke-width="1.5" opacity="0.5"/><path d="M100,60 L70,100 L130,100 Z M100,140 L70,100 M130,100 L100,140 M82,85 L118,85 M82,115 L118,115" stroke="#C2A878" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    AERA
+  </a>
+  <div class="nav-right">
+    <a href="https://instagram.com/_c4rem" target="_blank" rel="noopener" class="nav-cell"><span class="swap"><span class="swap-stack"><span>Instagram</span><span aria-hidden="true">Instagram</span></span></span></a>
+  </div>
+  <div class="nav-links" id="navLinks">
+    <a href="work.html">Work</a><a href="social-media.html">Social Media</a>
+    <a href="brand-commercial.html">Brand &amp; Commercial</a><a href="events.html">Events</a>
+    <a href="#about">Studio</a><a href="team.html">Team</a><a href="#contact">Enquire</a>
+  </div>
+</nav>
+
+
+<!-- ============================ HERO ============================
+     data-intro items share ONE GSAP timeline, so the beats are
+     choreographed against each other instead of each element guessing a
+     CSS transition-delay. data-anim="words" runs a SplitText masked
+     word reveal on the headline. -->
+<header class="hero" id="top" data-section-name="00 — Aera" style="min-height:100svh;display:flex;align-items:center">
+  <span class="hero-edgebadge" aria-hidden="true"><span>Leeds &amp; Yorkshire · Est. 2026</span></span>
+
+  <div class="wrap">
+    <div class="v2-index" data-intro><b>00</b><span></span>Aera — media studio, Leeds</div>
+
+    <h1 class="v2-split">
+      <span class="lg" data-anim="words">Work like</span>
+      <span class="lg i1" data-anim="words">professionals.</span>
+      <span class="sm i2" data-anim="words">Cost like students.</span>
+    </h1>
+
+    <div class="v2-duo" style="margin-top:var(--space-xl)">
+      <div data-intro>
+        <a class="v2-link magnetic" href="#services"><span>See the actual work</span><span class="ar">→</span></a>
+      </div>
+      <div class="v2-copy" data-intro>
+        <p>Editorial-grade photography, film and social content — made by
+          someone who still gets excited about a good frame.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-scrollring" aria-hidden="true">
+    <svg viewBox="0 0 120 120">
+      <path id="heroRingPath" fill="none" d="M60,60 m-48,0 a48,48 0 1,1 96,0 a48,48 0 1,1 -96,0"/>
+      <text><textPath href="#heroRingPath" startOffset="0%">Scroll to explore · Scroll to explore · </textPath></text>
+    </svg>
+    <span class="ring-arrow">↓</span>
+  </div>
+</header>
+
+
+<!-- ==================== SERVICES WHEEL (set piece, untouched) ==================== -->
+<section id="services" class="wheel" data-section-name="01 — Services" style="padding:0">
+  <div class="wheel-track"><div class="wheel-vp"><div class="wheel-inner">
+    <div class="wheel-head"><span class="eyebrow">Where our free time&nbsp;goes</span></div>
+    <div class="wheel-names" id="wheelNames">
+      <a class="wheel-item" href="social-media.html"><span class="wnum">01</span>Social Media</a>
+      <a class="wheel-item" href="brand-commercial.html"><span class="wnum">02</span>Brand &amp; Commercial</a>
+      <a class="wheel-item" href="events.html"><span class="wnum">03</span>Events</a>
+      <a class="wheel-item" href="brand-commercial.html"><span class="wnum">04</span>Portraits</a>
+      <a class="wheel-item" href="social-media.html"><span class="wnum">05</span>Film &amp; Reels</a>
+    </div>
+    <a class="wheel-media" id="wheelMedia" href="work.html" data-cursor="View Work" aria-label="See our full work">
+      <canvas id="wheelCanvas"></canvas>
+      <img src="assets/img/work/social-gameday.jpg" loading="lazy" alt="Gameday matchday graphic">
+      <img src="https://cdn.myportfolio.com/306f0dec-b99e-4a9e-a71a-768e23a6c7b5/4e1dea05-cfeb-4ec8-8bbb-edff7475ac5f_rwc_0x157x1920x768x1920.jpg?h=6da19d20ea4eb957d336eb7de3dbc5bf" loading="lazy" alt="Rolls-Royce brand film">
+      <img src="https://cdn.myportfolio.com/306f0dec-b99e-4a9e-a71a-768e23a6c7b5/ed70cf90-e328-4776-89fd-46977ef3a5aa_rw_1920.jpg?h=162659f3d53d5c4ad79c5a90cb17ccff" loading="lazy" alt="MyBrunchFit event coverage">
+      <img src="assets/img/work/wheel-portrait.jpg" loading="lazy" alt="Stage portrait">
+      <img src="assets/img/work/wheel-film-reels.jpg" loading="lazy" alt="Film and reels frame">
+    </a>
+    <div class="wheel-progress"><b id="wheelNum">01</b> / 05</div>
+  </div></div></div>
+</section>
+
+
+<!-- ==================== SELECTED WORK ====================
+     data-reveal="clip" wipes each frame open with an animating inset while
+     the photo inside counter-scales — two opposed moving parts, which is
+     what gives a reveal weight. data-skew leans them into scroll velocity.
+     data-parallax drifts them against the page as it moves. -->
+<section id="work" data-section-name="02 — Work">
+  <div class="wrap">
+    <div class="v2-index" data-anim="lines"><b>02</b><span></span>Selected work</div>
+    <div class="v2-duo">
+      <h2 class="v2-stack" data-anim="lines"><em>A look</em><em>at the frame.</em></h2>
+      <div class="v2-copy" data-anim="lines">
+        <p class="lead">This is Jack's own work, not a stock library.</p>
+        <p>The actual portfolio that convinced him to start Aera. Client
+          galleries will replace it bit by bit.</p>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(12,1fr);gap:var(--space-m);margin-top:var(--space-xl)">
+      <figure class="v2-fig" data-reveal="clip" data-skew style="grid-column:1/span 7">
+        <div class="shot" style="aspect-ratio:16/10"><img data-parallax="8" src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/b5d862b4-ff71-42f0-9e9e-ce0c231c5a80/1J6A0134.jpg" loading="lazy" alt="Studio session"></div>
+        <figcaption class="v2-cap"><span>Studio session</span><i>Leeds, 2025</i></figcaption>
+      </figure>
+      <figure class="v2-fig" data-reveal="clip" data-skew style="grid-column:9/span 4;align-self:end">
+        <div class="shot" style="aspect-ratio:4/5"><img data-parallax="14" src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/717cb03f-faa2-4ff3-bb24-2a59f2af0aad/IMG_6821.jpg" loading="lazy" alt="Portrait"></div>
+        <figcaption class="v2-cap"><span>Golden hour</span><i>Yorkshire, 2025</i></figcaption>
+      </figure>
+      <figure class="v2-fig" data-reveal="clip" data-skew style="grid-column:2/span 4">
+        <div class="shot" style="aspect-ratio:4/5"><img data-parallax="10" src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/13f98449-a6da-4ea8-b125-01a7d5fc40b4/IMG_1199.jpg" loading="lazy" alt="Event coverage"></div>
+        <figcaption class="v2-cap"><span>Launch night</span><i>Leeds, 2025</i></figcaption>
+      </figure>
+      <figure class="v2-fig" data-reveal="clip" data-skew style="grid-column:7/span 6;align-self:center">
+        <div class="shot" style="aspect-ratio:16/11"><img data-parallax="6" src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/ebc2d86a-43dc-45da-8c9a-9c069df080d2/Insta-Post-Dubai-23-24-_01.jpg" loading="lazy" alt="Campaign design"></div>
+        <figcaption class="v2-cap"><span>Campaign set</span><i>Dubai, 2024</i></figcaption>
+      </figure>
+    </div>
+
+    <div style="margin-top:var(--space-l)">
+      <a class="v2-link magnetic" href="work.html"><span>Full portfolio</span><span class="ar">→</span></a>
+    </div>
+  </div>
+</section>
+
+
+<!-- ==================== CLIENTS — velocity-driven marquee ====================
+     Speed and DIRECTION follow scroll, so the strip belongs to the same
+     physical system as the page instead of ticking along independently. -->
+<section id="clients" class="clients" data-section-name="03 — Clients" style="padding:var(--space-l) 0">
+  <div class="marquee" role="list" aria-label="Clients and collaborators">
+    <div class="marquee-track" data-marquee="42" style="animation:none">
+      <span class="cl"><img src="assets/img/clients/rolls-royce.png" alt="Rolls-Royce" loading="lazy"></span><span class="cl"><img src="assets/img/clients/kia.png" alt="KIA" loading="lazy"></span><span class="cl"><img src="assets/img/clients/lamborghini.png" alt="Lamborghini" loading="lazy"></span><span class="cl"><img src="assets/img/clients/first-motors.png" alt="F1rst Motors" loading="lazy"></span><span class="cl"><img src="assets/img/clients/diary-of-a-ceo.png" alt="The Diary of a CEO" loading="lazy"></span><span class="cl"><img src="assets/img/clients/green-planet.png" alt="The Green Planet" loading="lazy"></span><span class="cl"><img src="assets/img/clients/school-of-greatness.png" alt="The School of Greatness" loading="lazy"></span><span class="cl" aria-hidden="true"><img src="assets/img/clients/rolls-royce.png" alt="" loading="lazy"></span><span class="cl" aria-hidden="true"><img src="assets/img/clients/kia.png" alt="" loading="lazy"></span><span class="cl" aria-hidden="true"><img src="assets/img/clients/lamborghini.png" alt="" loading="lazy"></span><span class="cl" aria-hidden="true"><img src="assets/img/clients/first-motors.png" alt="" loading="lazy"></span><span class="cl" aria-hidden="true"><img src="assets/img/clients/diary-of-a-ceo.png" alt="" loading="lazy"></span><span class="cl" aria-hidden="true"><img src="assets/img/clients/green-planet.png" alt="" loading="lazy"></span><span class="cl" aria-hidden="true"><img src="assets/img/clients/school-of-greatness.png" alt="" loading="lazy"></span>
+    </div>
+  </div>
+</section>
+
+
+<!-- ==================== TIMELINE (set piece) ==================== -->
+<section id="about" class="htrack" data-section-name="04 — Studio" aria-label="How Aera began">
+  <div class="htrack-pin" id="htrackPin">
+    <div class="htrack-head">
+      <div class="v2-index"><b>04</b><span></span>The studio</div>
+      <h2 class="htrack-title">How <em>Aera</em> began.</h2>
+    </div>
+    <div class="htrack-row" id="htrackRow">
+      <div class="hitem" style="--w:196px;--top:4%;--ar:4/5"><span class="hcap">2024 — before Aera</span><div class="hshot"><img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/717cb03f-faa2-4ff3-bb24-2a59f2af0aad/IMG_6821.jpg" loading="lazy" alt=""></div></div>
+      <div class="hitem" style="--w:214px;--top:56%;--ar:16/11"><div class="hshot"><img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/13f98449-a6da-4ea8-b125-01a7d5fc40b4/IMG_1199.jpg" loading="lazy" alt=""></div></div>
+      <div class="hitem is-txt" style="--w:250px;--top:8%"><p>It started as a habit. Friends, cars, nights out — and a few hundred frames that missed.</p></div>
+      <div class="hitem" style="--w:430px;--top:30%;--ar:16/10"><div class="hshot"><img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/b5d862b4-ff71-42f0-9e9e-ce0c231c5a80/1J6A0134.jpg" loading="lazy" alt=""></div></div>
+      <div class="hitem" style="--w:158px;--top:2%;--ar:3/4"><span class="hcap">2025 — first paid work</span><div class="hshot"><img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/956771b0-d277-4ee9-bde0-2c1b6d0a8d8c/Green+Planet+Photos-12.jpg" loading="lazy" alt=""></div></div>
+      <div class="hitem" style="--w:228px;--top:48%;--ar:4/5"><div class="hshot"><img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/d68650ca-1652-44b5-823e-c43abab0b7e2/Lando+Photo.png" loading="lazy" alt=""></div></div>
+      <div class="hitem" style="--w:150px;--top:62%;--ar:1/1"><div class="hshot"><img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/50a7d34c-7a13-43f5-a5da-bc73d671fc8e/UAE+Flag.jpg" loading="lazy" alt=""></div></div>
+      <div class="hitem is-txt" style="--w:268px;--top:58%"><p>Brands wanted the whole thing: posters, campaign design, a feed that looked considered.</p></div>
+      <div class="hitem" style="--w:404px;--top:6%;--ar:16/11"><span class="hcap">2026 — Aera is named</span><div class="hshot"><img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/ebc2d86a-43dc-45da-8c9a-9c069df080d2/Insta-Post-Dubai-23-24-_01.jpg" loading="lazy" alt=""></div></div>
+      <div class="hitem" style="--w:176px;--top:14%;--ar:3/4"><span class="hcap">Sept 2026 — where we are</span><div class="hshot"><img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/13f98449-a6da-4ea8-b125-01a7d5fc40b4/IMG_1199.jpg" loading="lazy" alt=""></div></div>
+    </div>
+    <div class="htrack-foot">
+      <div class="htrack-bar"><span id="htrackBar"></span></div>
+      <div class="htrack-count"><b id="htrackNum">01</b> <span>/ 05</span></div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ==================== MOTTO — masked line reveal ==================== -->
+<section id="motto" data-section-name="05 — Motto">
+  <div class="wrap">
+    <div class="v2-index" data-anim="lines"><b>05</b><span></span>The motto</div>
+    <h2 class="v2-split" style="margin-top:var(--space-m)">
+      <span class="lg" data-anim="words">Turn up early.</span>
+      <span class="lg i1" data-anim="words">Get it right.</span>
+      <span class="sm i2" data-anim="words">Don't be weird about it.</span>
+    </h2>
+    <div class="v2-duo" style="margin-top:var(--space-xl)">
+      <div></div>
+      <div class="v2-copy" data-anim="lines">
+        <p>The overhead is a laptop, a hard drive, and a mild caffeine dependency.</p>
+        <p>What that buys you isn't only a smaller invoice — it's someone who has
+          time to sit with your edit until it's actually right.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ==================== PILLARS ==================== -->
+<section id="pillars" data-section-name="06 — Method" style="padding-top:0">
+  <div class="wrap">
+    <div class="v2-pillars">
+      <div class="v2-pillar" data-anim="lines"><span class="n">01</span><h3>Turn up early</h3><p>On site before you need us, set up before the room fills. The best frames happen while everyone else is still finding their seat.</p></div>
+      <div class="v2-pillar" data-anim="lines"><span class="n">02</span><h3>Shoot it straight</h3><p>No stage-managing, no disappearing for an hour of set-ups. If the day felt a certain way, the gallery feels that way too.</p></div>
+      <div class="v2-pillar" data-anim="lines"><span class="n">03</span><h3>Price it honestly</h3><p>No studio rent, no account managers, no one taking a cut before the person holding the camera does.</p></div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ==================== SHOWREEL (set piece) ==================== -->
+<section id="showreel" class="reel" data-section-name="07 — Showreel">
+  <div class="reel-pin" id="reelPin">
+    <div class="reel-copy" id="reelCopy">
+      <h2 class="section-title">2026 <em>Showreel</em></h2>
+      <p class="reel-sub">A year of sets, gigs and launches, cut to under a minute.</p>
+    </div>
+    <div class="reel-frame" id="reelFrame">
+      <video class="reel-video" id="reelVideo" muted loop playsinline preload="metadata" poster="assets/img/showreel-poster.jpg?v=1">
+        <source src="assets/video/showreel-2026.mp4?v=1" type="video/mp4">
+      </video>
+      <span class="reel-scrim" aria-hidden="true"></span>
+      <span class="reel-badge">Now showing — 2026 Showreel</span>
+      <button class="reel-playmark" id="reelPlayMark" type="button" aria-label="Play showreel"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="currentColor"/></svg></button>
+      <div class="reel-controls" id="reelControls">
+        <button class="reel-ctrl reel-playpause" id="reelPlayPause" type="button" aria-label="Play or pause">
+          <svg class="ic-play" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+          <svg class="ic-pause" viewBox="0 0 24 24" fill="currentColor"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg>
+        </button>
+        <span class="reel-time" id="reelTime">0:00</span>
+        <div class="reel-scrub" id="reelScrub"><span class="reel-scrub-fill" id="reelScrubFill"></span></div>
+        <span class="reel-time reel-duration" id="reelDuration">0:00</span>
+        <button class="reel-ctrl reel-mute" id="reelMute" type="button" aria-label="Mute or unmute">
+          <svg class="ic-mute" viewBox="0 0 24 24" fill="currentColor"><path d="M5 9v6h4l5 5V4L9 9H5z"/></svg>
+          <svg class="ic-unmute" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M9.5 9H5v6h4.5l5.5 5V4z" fill="currentColor" stroke="none"/><path d="M16.5 9c1.1 1 1.8 2.3 1.8 3.5S17.6 15 16.5 16"/></svg>
+        </button>
+      </div>
+    </div>
+    <a class="reel-cta" id="reelCta" href="https://www.instagram.com/_c4rem/reel/DUolXiQCGxD/" target="_blank" rel="noopener noreferrer">Also on Instagram
+      <svg class="reel-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg>
+    </a>
+  </div>
+</section>
+
+
+<!-- ==================== SOCIALS FAN (set piece) ==================== -->
+<section id="socials" class="socials" data-section-name="08 — Socials">
+  <div class="wrap">
+    <div class="v2-index" data-anim="lines"><b>08</b><span></span>What's up on socials</div>
+    <h2 class="v2-stack" data-anim="lines" style="margin-bottom:var(--space-m)"><em>Half-finished</em><em>edits.</em></h2>
+  </div>
+  <div class="fan" aria-label="Recent social posts">
+    <a class="fan-card" style="--i:-3;--a:3" href="https://instagram.com/_c4rem" target="_blank" rel="noopener"><img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/13f98449-a6da-4ea8-b125-01a7d5fc40b4/IMG_1199.jpg" loading="lazy" alt="Event coverage"></a>
+    <a class="fan-card" style="--i:-2;--a:2" href="https://instagram.com/_c4rem" target="_blank" rel="noopener"><img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/f5c5d3ac-57b1-4757-ab6c-6ac16ca6e090/Hauntfest++Poster.png" loading="lazy" alt="Campaign design"></a>
+    <a class="fan-card" style="--i:-1;--a:1" href="https://instagram.com/_c4rem" target="_blank" rel="noopener"><img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/717cb03f-faa2-4ff3-bb24-2a59f2af0aad/IMG_6821.jpg" loading="lazy" alt="Portrait work"></a>
+    <a class="fan-card" style="--i:0;--a:0" href="https://instagram.com/_c4rem" target="_blank" rel="noopener"><img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/956771b0-d277-4ee9-bde0-2c1b6d0a8d8c/Green+Planet+Photos-12.jpg" loading="lazy" alt="Brand work"></a>
+    <a class="fan-card" style="--i:1;--a:1" href="https://instagram.com/_c4rem" target="_blank" rel="noopener"><img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/ebc2d86a-43dc-45da-8c9a-9c069df080d2/Insta-Post-Dubai-23-24-_01.jpg" loading="lazy" alt="Social content design"></a>
+    <a class="fan-card" style="--i:2;--a:2" href="https://instagram.com/_c4rem" target="_blank" rel="noopener"><img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/d68650ca-1652-44b5-823e-c43abab0b7e2/Lando+Photo.png" loading="lazy" alt="Film and reels"></a>
+    <a class="fan-card" style="--i:3;--a:3" href="https://instagram.com/_c4rem" target="_blank" rel="noopener"><img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/db5c3ac4-da30-40e7-84a7-28a43271390b/IMG_0831.jpg" loading="lazy" alt="Studio work"></a>
+  </div>
+  <div class="wrap" style="text-align:center;margin-top:var(--space-l)">
+    <a class="v2-link magnetic" href="https://instagram.com/_c4rem" target="_blank" rel="noopener"><span>Follow @_c4rem</span><span class="ar">→</span></a>
+  </div>
+</section>
+
+
+<!-- ==================== CONTACT ==================== -->
+<section id="contact" class="contact" data-section-name="09 — Enquire" style="text-align:left">
+  <div class="wrap">
+    <div class="v2-index" data-anim="lines"><b>09</b><span></span>Enquire</div>
+    <h2 class="v2-split" style="margin:var(--space-m) 0 var(--space-l)">
+      <span class="lg" data-anim="words">Right, what</span>
+      <span class="lg i1" data-anim="words">are we making?</span>
+    </h2>
+    <div class="v2-duo">
+      <div>
+        <a class="email" href="mailto:bookings@aerastudios.org">bookings@aerastudios.org</a>
+        <div class="socials" style="justify-content:flex-start;margin-top:var(--space-m)">
+          <a href="https://instagram.com/_c4rem" target="_blank" rel="noopener"><span class="swap"><span class="swap-stack"><span>Instagram — @_c4rem</span><span aria-hidden="true">Instagram — @_c4rem</span></span></span></a>
+          <a href="mailto:bookings@aerastudios.org"><span class="swap"><span class="swap-stack"><span>Email</span><span aria-hidden="true">Email</span></span></span></a>
+        </div>
+      </div>
+      <div class="ask-pick" style="margin:0">
+        <span class="ask-pick-label">Pick what you need — it'll fill in the subject line</span>
+        <div class="ask-chips">
+          <button class="ask-chip" type="button" aria-pressed="false" data-svc="Social Media">Social Media</button>
+          <button class="ask-chip" type="button" aria-pressed="false" data-svc="Brand &amp; Commercial">Brand &amp; Commercial</button>
+          <button class="ask-chip" type="button" aria-pressed="false" data-svc="Events">Events</button>
+          <button class="ask-chip" type="button" aria-pressed="false" data-svc="Not sure yet">Not sure yet</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span class="brand-sm" style="display:inline-flex;align-items:center;gap:.4em;justify-content:center">
+      <svg width="16" height="16" viewBox="0 0 200 200" fill="none"><path d="M100,52 L138,100 L100,148 L62,100 Z" stroke="#C2A878" stroke-width="1.5" opacity="0.5"/><path d="M100,60 L70,100 L130,100 Z M100,140 L70,100 M130,100 L100,140 M82,85 L118,85 M82,115 L118,115" stroke="#C2A878" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      AERA
+    </span>
+    © <span id="year"></span> Aera Media Studio · Leeds, UK
+  </div>
+</footer>
+
+<!-- Lenis first, then main.js (which creates window.lenis), then GSAP, then
+     the motion layer which wires the two together. Order matters: aera-motion
+     reads window.lenis at init. -->
+<script src="assets/js/lenis.min.js?v=20260803h"></script>
+<script src="assets/js/main.js?v=20260816e"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="assets/js/wheel-cylinder.js?v=20260816a"></script>
+
+<!-- GSAP + plugins. Free for all uses since Webflow's 2025 acquisition,
+     SplitText and ScrollTrigger included — no licence key required. -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/SplitText.min.js"></script>
+<script src="assets/js/aera-motion.js?v=20260817f"></script>
+</body>
+</html>
