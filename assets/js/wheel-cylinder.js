@@ -68,11 +68,14 @@
   // the panels form a near-continuous surface instead of floating separately:
   // 30° of a 7.4-unit radius is 3.87 units of arc, and 3.6 leaves a hairline.
   const CARD_W = 3.6;
-  // These six photos are a mix of tall posters and landscape stills, and every
-  // one gets centre-cropped to the panel (see cover() below) — the wider the
-  // panel, the more a portrait source loses off its top and bottom. 6:5 keeps a
-  // poster legible without the landscape shots looking boxed in.
-  const CARD_H = 3.0;
+  // PORTRAIT panels (4:5). Was 3.0 — a 6:5 LANDSCAPE slot, which fought the
+  // content: these are posters, stage portraits and social stills, and a
+  // landscape slot centre-crops the top and bottom off every one of them (see
+  // cover() below). CARD_W can't grow, it's pinned to the 30 degree arc
+  // spacing, so portrait is reached by making the panel taller instead.
+  // 3.6 x 4.5 = 4:5, which also matches the flat fallback frame exactly, so
+  // the WebGL and no-WebGL versions now crop identically.
+  const CARD_H = 4.5;
   const SEG    = 64;               // horizontal subdivisions — the bend (raised: 40 faceted visibly at this radius)
   const ANGLE  = (Math.PI * 2) / N;
   // Gentler than the work page's rise: at 30° spacing you can see four panels

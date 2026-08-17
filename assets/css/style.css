@@ -495,7 +495,12 @@ body.wheel-live .wheel-media{
      920–1800px the current values keep a 30–95px gutter at every width
      (paired with the reduced bulge cap in main.js). */
   width:min(44vw,600px);
-  aspect-ratio:4/3;
+  /* Square frame to suit the now-portrait panels (CARD_H in
+     wheel-cylinder.js). At 4/3 the camera-fit maths pulled the camera back to
+     fit a 4:5 card inside a landscape box, shrinking the whole ring. Width is
+     deliberately unchanged - it is what preserves the measured 30-95px gutter
+     between the ring and the name column. */
+  aspect-ratio:1/1;
   right:clamp(4px,1vw,28px);
   border:0;background:none;overflow:visible;
 }
