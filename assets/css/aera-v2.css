@@ -78,7 +78,14 @@
    A phrase broken into parts that sit at different sizes and offsets.
    .lg is the shout, .sm the aside — the aside is deliberately set in the
    italic serif so the two voices are different, not just different sizes. */
-.v2-split{display:block;margin:0;line-height:.92;letter-spacing:-.02em}
+/* text-align:left is set HERE, on the component, not inherited from an
+   ancestor override. .hero is centred by style.css, and a centred block
+   re-centres its own text — which silently cancelled the margin-left
+   offsets below (they still applied, the text just re-centred inside the
+   wider box, so the headline looked like a plain centred stack). Owning
+   alignment on the component makes it work wherever it's dropped. */
+.v2-split{display:block;margin:0;line-height:.92;letter-spacing:-.02em;text-align:left}
+.v2-split .lg,.v2-split .sm{text-align:left}
 .v2-split .lg{
   display:block;font-family:var(--display);font-weight:var(--display-wght);
   font-size:clamp(2.6rem,8.4vw,7.4rem);color:var(--cream);
@@ -95,7 +102,7 @@
 /* ---------- STACKED TITLE (landonorris) -------------------------------
    Two words, one per line, set as large as the column allows. Used where
    a section needs to announce itself without a paragraph underneath. */
-.v2-stack{margin:0;line-height:.86;letter-spacing:-.025em}
+.v2-stack{margin:0;line-height:.86;letter-spacing:-.025em;text-align:left}
 .v2-stack em{
   display:block;font-style:normal;
   font-family:var(--display);font-weight:var(--display-wght);
