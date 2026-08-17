@@ -190,10 +190,15 @@
     if (now - last < interval) return;
     last = now;
     for (let i = 0; i < buf.length; i++){
-      // Narrower grey range (96–176 instead of 0–255) — real film grain is
-      // low-contrast texture, not full-swing black/white static; combined
-      // with the CSS opacity this reads as soft shimmer instead of noise.
-      const v = 96 + ((Math.random() * 80) | 0);
+      // Wide grey range again (was narrowed to 96–176, which combined with
+      // mix-blend-mode:overlay on this near-black page made the grain
+      // disappear completely — overlay's dark-backdrop math is ~2*base*
+      // source, so on an almost-black background only near-white outlier
+      // pixels ever punched through, and narrowing the range removed
+      // exactly those. Now paired with mix-blend-mode:screen (see style.css)
+      // which stays visible regardless of backdrop darkness, so the fuller
+      // range reads as genuine grain texture rather than crushed static.
+      const v = (Math.random() * 255) | 0;
       buf[i] = (255 << 24) | (v << 16) | (v << 8) | v; // grey noise, full alpha
     }
     ctx.putImageData(img, 0, 0);
@@ -553,8 +558,18 @@
        on every frame, so it turns in lockstep with the column beside it. The
        discrete event still fires for anything that only cares about "which one
        is active". */
+    // Clamped to [0, N-1] — unclamped this overshoots to roughly -2 at the very
+    // start of the scroll and +4.9 (for N=5) at the very end, because `cursor`
+    // ranges further than the name column's useful index span (padding built
+    // into `travel`/the vh*0.30 offset above). activeIdx is picked by nearest-
+    // neighbour so it's naturally robust to that overshoot and always reads
+    // 0..N-1 correctly, but the 3D cylinder trusts this raw value as its
+    // rotation target — an unclamped -2 pointed it at a completely different
+    // panel than the name list's actual first item, which is exactly the
+    // "starts and ends on the wrong thing" bug: cylinder and name list were
+    // reading two different coordinate systems at the scroll extremes.
     document.dispatchEvent(new CustomEvent('aera:wheelpos', {
-      detail: { pos: (cursor - vh * 0.30) / gap }
+      detail: { pos: Math.max(0, Math.min(N - 1, (cursor - vh * 0.30) / gap)) }
     }));
 
     if (activeIdx !== activePrev){
@@ -708,7 +723,11 @@
   if (!pin || !frame || !video) return;
 
   const section = pin.closest('.reel');
-  const GROW_END = .4;      // fraction of the section's scroll range spent growing; the rest is hold
+  // Was .4 against a taller 340vh section — combined that left a long hold
+  // after growth finished. Bumped to .6 (growth now takes more of a shorter
+  // scroll range) so there's still a genuine pause to watch, just not one
+  // that reads as "stuck".
+  const GROW_END = .6;      // fraction of the section's scroll range spent growing; the rest is hold
   let stacked = false, ticking = false, live = false;
 
   function fmt(s){
@@ -748,7 +767,11 @@
     copy.style.transform = 'translateY(' + (-g * 18).toFixed(1) + 'px)';
     copy.style.pointerEvents = g > .4 ? 'none' : '';
 
-    setLive(p >= GROW_END * .97);
+    // Was GROW_END*.97 — controls (including mute) only mount once "live",
+    // so they stayed hidden until the frame was almost done growing. .82
+    // brings them in a little before the frame settles, so there's more
+    // real time to actually notice and reach the mute button.
+    setLive(p >= GROW_END * .82);
   }
 
   function onScroll(){ if (!ticking){ ticking = true; requestAnimationFrame(update); } }

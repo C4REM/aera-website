@@ -345,8 +345,7 @@ section.tight{padding:80px 0}
    drop the eyebrow, some swap the lead voice from Makcasa to italic
    Cormorant (letting --serif actually carry a headline instead of only ever
    whispering inside a single emphasized word), some just run smaller. */
-#work .section-head .eyebrow{font-size:13px;letter-spacing:.32em}
-#work h2.section-title{font-size:clamp(1.9rem,3.6vw,2.7rem)}
+.work-title{margin-top:0;font-size:clamp(2.2rem,4.4vw,3.2rem)}
 #faq h2.section-title{font-size:clamp(1.7rem,3vw,2.3rem)}
 .motto-title{
   font-family:var(--serif);font-style:italic;font-weight:500;
@@ -372,8 +371,13 @@ section.tight{padding:80px 0}
 .wheel-track{height:340vh}
 .wheel-vp{position:sticky;top:0;height:100vh;overflow:hidden;display:flex;align-items:center}
 .wheel-inner{position:relative;width:100%;max-width:1240px;margin:0 auto;padding:0 32px;height:100%}
-.wheel-head{position:absolute;top:12%;left:32px;z-index:3;max-width:22ch}
-.wheel-head .eyebrow{display:block}
+/* Was top:12% with the base 11px/--cream-dim eyebrow — now the only label
+   in this section (the big Makcasa headline was dropped per Jack's request),
+   so it needs to read as a real label, not a whisper: bigger, brighter,
+   and sitting close enough above the name list that the two visibly
+   belong together instead of stranded near the top of the viewport. */
+.wheel-head{position:absolute;top:34%;left:32px;z-index:3;max-width:22ch}
+.wheel-head .eyebrow{display:block;font-size:15px;letter-spacing:.22em;color:var(--cream)}
 .wheel-head h2{font-family:var(--display);font-weight:var(--display-wght);font-size:clamp(1.6rem,3vw,2.4rem);line-height:1.05;letter-spacing:-.01em;margin-top:14px}
 .wheel-names{position:absolute;left:32px;top:0;bottom:0;width:60%;z-index:2}
 .wheel-item{
@@ -454,7 +458,7 @@ body.wheel-live .wheel-media img{opacity:0!important}
     width:min(30vw,136px);transform:none;opacity:.92;
   }
   .wheel-item{font-size:clamp(1.6rem,8vw,2.6rem)}
-  .wheel-head{top:9%}
+  .wheel-head{top:30%}
 }
 
 /* ---- TIMELINE (about) — horizontally-pinned track ----
@@ -627,12 +631,6 @@ body.wheel-live .wheel-media img{opacity:0!important}
 }
 .m-placeholder{aspect-ratio:4/5}
 
-/* soft radial feather — no visible edge against the near-black */
-.mt-media{
-  -webkit-mask-image:radial-gradient(ellipse closest-side at 50% 48%,#000 34%,rgba(0,0,0,.6) 68%,transparent 100%);
-  mask-image:radial-gradient(ellipse closest-side at 50% 48%,#000 34%,rgba(0,0,0,.6) 68%,transparent 100%);
-  -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
-}
 .mt-copy{
   position:absolute;right:clamp(24px,5vw,72px);top:50%;width:min(36vw,440px);z-index:3;
   will-change:transform,opacity;
@@ -735,7 +733,14 @@ body.wheel-live .wheel-media img{opacity:0!important}
    scrolling past. See the matching IIFE in main.js for the actual growth
    math (main.js drives width/height/radius; this file only sets the still
    states either end of that range, plus every control's resting look). */
-.reel{position:relative;height:340vh}
+/* Was 340vh (240vh of actual scroll once the 100vh sticky viewport is
+   subtracted). With GROW_END at .4 that left a ~144vh dead hold after the
+   frame finished growing before the section would release and let the
+   visitor keep scrolling — noticeably "one too many scrolls to get away
+   from". Cut to 220vh; see main.js for the matching GROW_END bump so the
+   hold shrinks in both absolute and proportional terms, not just because
+   the section got shorter. */
+.reel{position:relative;height:220vh}
 .reel-pin{
   position:sticky;top:0;height:100vh;overflow:hidden;
   display:flex;flex-direction:column;align-items:center;justify-content:center;
@@ -776,7 +781,13 @@ body.wheel-live .wheel-media img{opacity:0!important}
 .reel-playmark svg{width:20px;height:20px;margin-left:3px}
 .reel-playmark:hover{background:var(--cream)}
 .reel-frame.is-playing .reel-playmark{opacity:0;pointer-events:none;transform:translate(-50%,-50%) scale(.7)}
-.reel-frame.is-live:hover .reel-playmark{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1)}
+/* :not(.is-playing) added — without it this had equal-or-higher specificity
+   than the .is-playing rule above and always won on hover, so moving the
+   mouse down to the controls bar (which requires crossing the video) kept
+   bringing the big centre play button back even while it was already
+   playing. It should only reappear on hover when playback is actually
+   paused. */
+.reel-frame.is-live:hover:not(.is-playing) .reel-playmark{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1)}
 
 .reel-controls{
   position:absolute;left:0;right:0;bottom:0;z-index:2;
@@ -1464,12 +1475,20 @@ html{scrollbar-width:none;-ms-overflow-style:none}
 /* fine film grain over the whole page */
 #grainCanvas{
   position:fixed;inset:0;z-index:41;pointer-events:none;
-  opacity:.035;mix-blend-mode:overlay;width:100%;height:100%;
+  /* screen, not overlay: overlay's dark-backdrop branch is ~2*base*source,
+     which on this near-black obsidian background crushed almost the entire
+     noise range to invisible regardless of opacity — only the rare
+     near-white outlier pixels punched through at all, and narrowing the
+     noise range (see main.js) removed exactly those, so the grain vanished
+     completely rather than just looking finer. screen adds brightness
+     roughly proportional to source value regardless of how dark the
+     backdrop is, so it stays reliably visible here. */
+  opacity:.05;mix-blend-mode:screen;width:100%;height:100%;
 }
 /* static fallback (no-JS / reduced-motion): fixed corner glow + static grain */
 .grain{
   position:fixed;inset:0;z-index:40;pointer-events:none;
-  opacity:.045;mix-blend-mode:overlay;
+  opacity:.06;mix-blend-mode:screen;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 body.has-anim-grain .grain{display:none}
