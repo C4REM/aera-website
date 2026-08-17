@@ -189,6 +189,20 @@
     yPercent: 60, opacity: 0, duration: 1.2, ease: EASE, stagger: 0.08
   });
 
-  /* Recalculate once everything has loaded and laid out. */
-  addEventListener('load', function () { ScrollTrigger.refresh(); });
+  /* ---------- 10. Re-measure after late layout shifts --------------------
+     Every photo here is loading="lazy", so images arrive AFTER ScrollTrigger
+     has measured the document. Each one that lands changes the height of its
+     figure and pushes everything below it — leaving every trigger past that
+     point firing at the wrong scroll position. Refreshing on load alone
+     isn't enough because lazy images can resolve long after it.
+     Debounced so a burst of images costs one recalculation, not twenty. */
+  var refreshTimer;
+  function scheduleRefresh() {
+    clearTimeout(refreshTimer);
+    refreshTimer = setTimeout(function () { ScrollTrigger.refresh(); }, 180);
+  }
+  document.querySelectorAll('img').forEach(function (img) {
+    if (!img.complete) img.addEventListener('load', scheduleRefresh, { once: true });
+  });
+  addEventListener('load', scheduleRefresh);
 })();
