@@ -415,15 +415,27 @@ section.tight{padding:80px 0}
 .wheel-track{height:340vh}
 .wheel-vp{position:sticky;top:0;height:100vh;overflow:hidden;display:flex;align-items:center}
 .wheel-inner{position:relative;width:100%;max-width:1240px;margin:0 auto;padding:0 32px;height:100%}
-/* Was top:12% with the base 11px/--cream-dim eyebrow — now the only label
-   in this section (the big Makcasa headline was dropped per Jack's request),
-   so it needs to read as a real label, not a whisper: bigger, brighter,
-   and sitting close enough above the name list that the two visibly
-   belong together instead of stranded near the top of the viewport. */
-.wheel-head{position:absolute;top:34%;left:32px;z-index:3;max-width:22ch}
+/* The only label in this section (the big Makcasa headline was dropped), so
+   it reads as a real label rather than a whisper: bigger and brighter than
+   the base .eyebrow. Position has been wrong twice — 12% left it stranded at
+   the top, then 34% jammed it INTO the name column, sitting on the same line
+   as "Brand & Commercial". The names sweep the full height of the pin, so
+   there is no vertical slot in this column that they don't cross; the fix is
+   to clear a band for the label with a mask on .wheel-names (below) rather
+   than to keep hunting for a gap that doesn't exist. */
+.wheel-head{position:absolute;top:16%;left:32px;z-index:3;max-width:22ch}
 .wheel-head .eyebrow{display:block;font-size:15px;letter-spacing:.22em;color:var(--cream)}
 .wheel-head h2{font-family:var(--display);font-weight:var(--display-wght);font-size:clamp(1.6rem,3vw,2.4rem);line-height:1.05;letter-spacing:-.01em;margin-top:14px}
-.wheel-names{position:absolute;left:32px;top:0;bottom:0;width:60%;z-index:2}
+/* The mask keeps the top ~30% of the column clear so .wheel-head has a band
+   of its own, and gives the names somewhere to actually GO as they travel
+   up and out — before this they just faded to opacity .08 and sat there,
+   which is what made the label look like it was colliding with a ghost row
+   of text. Bottom edge feathers for the same reason on the way in. */
+.wheel-names{
+  position:absolute;left:32px;top:0;bottom:0;width:60%;z-index:2;
+  -webkit-mask-image:linear-gradient(180deg,transparent 0%,transparent 20%,#000 31%,#000 90%,transparent 100%);
+  mask-image:linear-gradient(180deg,transparent 0%,transparent 20%,#000 31%,#000 90%,transparent 100%);
+}
 .wheel-item{
   position:absolute;left:0;top:50%;white-space:nowrap;
   font-family:var(--display);font-weight:var(--display-wght);letter-spacing:-.01em;
@@ -476,8 +488,13 @@ section.tight{padding:80px 0}
    live to the sides of and above/below the front one. */
 body.wheel-live .wheel-media{
   /* Wider than tall: the ring spreads sideways, so the panels turning away need
-     width far more than they need height. */
-  width:min(52vw,660px);
+     width far more than they need height. Narrowed from 52vw/660px: at 52vw
+     the ring's left edge crossed the name column, and the longest name
+     ("Brand & Commercial") at full centre-bulge overran it by ~36px — that
+     was the photos visibly sitting on top of the text. Measured across
+     920–1800px the current values keep a 30–95px gutter at every width
+     (paired with the reduced bulge cap in main.js). */
+  width:min(44vw,600px);
   aspect-ratio:4/3;
   right:clamp(4px,1vw,28px);
   border:0;background:none;overflow:visible;
@@ -502,7 +519,7 @@ body.wheel-live .wheel-media img{opacity:0!important}
     width:min(30vw,136px);transform:none;opacity:.92;
   }
   .wheel-item{font-size:clamp(1.6rem,8vw,2.6rem)}
-  .wheel-head{top:30%}
+  .wheel-head{top:14%}
 }
 
 /* ---- TIMELINE (about) — horizontally-pinned track ----
@@ -1532,7 +1549,7 @@ html{scrollbar-width:none;-ms-overflow-style:none}
      tail of opaque specks lifts anything. Opacity can therefore sit high
      enough for the specks to actually read without the field as a whole
      washing the blacks out. */
-  opacity:.06;mix-blend-mode:screen;width:100%;height:100%;
+  opacity:.03;mix-blend-mode:screen;width:100%;height:100%;
 }
 /* static fallback (no-JS / reduced-motion): fixed corner glow + static grain */
 .grain{

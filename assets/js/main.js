@@ -177,7 +177,12 @@
   // digital static rather than fine film grain. 480 keeps the per-frame cost
   // trivial (still a plain fill loop at 14fps) while shrinking each cell
   // close to a real pixel at normal viewport widths.
-  const TILE = 480;
+  // 480 stretched across a 1440px viewport meant each noise cell rendered ~3px
+  // wide, which is coarse enough to read as visible speckle rather than grain
+  // — a large part of why this kept looking "heavy" no matter what the
+  // opacity was. 720 roughly halves the cell size and still only costs ~500k
+  // fills per frame at 14fps.
+  const TILE = 720;
   canvas.width = TILE; canvas.height = TILE;
   const img = ctx.createImageData(TILE, TILE);
   const buf = new Uint32Array(img.data.buffer);
@@ -546,7 +551,11 @@
     // instead fixes both at once, and needs no clamp downstream.
     const travel = (N - 1) * gap;
     const cursor = vh * 0.30 + p * travel;
-    const bulgeMax = Math.min(innerWidth * 0.13, 180);
+    // Reduced from 0.13/180px. The bulge pushes the centred name rightward,
+    // and at the old cap the longest name's right edge crossed the 3D ring's
+    // left edge (measured -36px at 1440 wide) so the photos landed on top of
+    // the words. See the matching .wheel-media width note in style.css.
+    const bulgeMax = Math.min(innerWidth * 0.07, 110);
     const falloff = vh * 0.42;
 
     // --- NAMES: rise upward, bulge right at centre ---
