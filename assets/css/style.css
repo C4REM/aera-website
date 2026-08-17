@@ -335,6 +335,26 @@ section.tight{padding:80px 0}
 .section-head p{margin-top:18px;color:var(--stone)}
 .section-head.center{margin-left:auto;margin-right:auto;text-align:center}
 
+/* HOME PAGE SECTION INTROS — the shared eyebrow + Makcasa headline + one
+   paragraph is right for most of the site (and stays untouched everywhere
+   else, since .section-head/.section-title/.eyebrow are shared with the
+   service pages too — see brand-commercial.html, events.html, etc.). But
+   stamped identically down six sections of one long homepage scroll it reads
+   as a repeated template rather than a considered page. These per-section,
+   ID-scoped overrides break that rhythm on the homepage only: some sections
+   drop the eyebrow, some swap the lead voice from Makcasa to italic
+   Cormorant (letting --serif actually carry a headline instead of only ever
+   whispering inside a single emphasized word), some just run smaller. */
+#work .section-head .eyebrow{font-size:13px;letter-spacing:.32em}
+#work h2.section-title{font-size:clamp(1.9rem,3.6vw,2.7rem)}
+#faq h2.section-title{font-size:clamp(1.7rem,3vw,2.3rem)}
+.motto-title{
+  font-family:var(--serif);font-style:italic;font-weight:500;
+  font-size:clamp(2.5rem,6.4vw,4.4rem);line-height:1.18;letter-spacing:0;
+}
+.motto-title em{font-style:normal;color:var(--champagne)}
+.ask-title{margin-top:0}
+
 /* SERVICES (home overview) — an editorial list, not a card grid */
 .services-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:0 56px;border-bottom:1px solid var(--smoke)}
 .service{
@@ -360,7 +380,7 @@ section.tight{padding:80px 0}
   position:absolute;left:0;top:50%;white-space:nowrap;
   font-family:var(--display);font-weight:var(--display-wght);letter-spacing:-.01em;
   font-size:clamp(1.7rem,4.6vw,3.4rem);line-height:1;color:var(--stone);
-  will-change:transform,opacity;transition:color .4s ease;
+  will-change:transform,opacity;transition:color .22s ease;
   display:flex;align-items:center;gap:.5em;
 }
 .wheel-item .wnum{font-family:var(--sans);font-size:12px;letter-spacing:.1em;color:var(--smoke);font-weight:400;transition:color .4s}
@@ -389,7 +409,7 @@ section.tight{padding:80px 0}
 .wheel-media img{
   position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
   opacity:0;will-change:opacity,transform;
-  transition:opacity .5s ease;
+  transition:opacity .22s ease;
 }
 /* Mini 3D cylinder (wheel-cylinder.js). The canvas sits over the same flat
    <img> stack used as its fallback; only body.wheel-live (added once WebGL has
@@ -729,7 +749,7 @@ body.wheel-live .wheel-media img{opacity:0!important}
 
 .reel-frame{
   position:relative;z-index:1;overflow:hidden;background:#000;flex:none;
-  width:min(560px,86vw);aspect-ratio:16/9;border-radius:14px;
+  width:min(560px,86vw);aspect-ratio:16/9;
   box-shadow:0 20px 60px rgba(0,0,0,.5);
 }
 .reel-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
@@ -814,7 +834,7 @@ body.wheel-live .wheel-media img{opacity:0!important}
   .reel{height:auto}
   .reel-pin{position:relative;height:auto;padding:64px 22px;gap:28px}
   .reel-copy .section-title{font-size:clamp(2rem,9vw,2.6rem)}
-  .reel-frame{width:100%;border-radius:10px}
+  .reel-frame{width:100%}
   .reel-scrim,.reel-controls,.reel-badge{opacity:1!important;transform:none!important;pointer-events:auto!important}
   .reel-playmark{opacity:0}
   .reel-frame.is-playing .reel-playmark{opacity:0}
@@ -1085,7 +1105,7 @@ body.tm-open{overflow:hidden}
 .fan-card{
   position:absolute;top:0;
   width:clamp(132px,15vw,200px);aspect-ratio:4/7;
-  border-radius:clamp(16px,2vw,30px);overflow:hidden;background:#111013;
+  overflow:hidden;background:#111013;
   z-index:calc(10 - var(--a));
   transform:
     translateX(calc(var(--i) * clamp(58px,6.6vw,105px)))
@@ -1140,7 +1160,6 @@ body.tm-open{overflow:hidden}
   .fan{height:clamp(210px,54vw,300px);padding:0}
   .fan-card{
     width:clamp(76px,21vw,104px);
-    border-radius:clamp(11px,3vw,16px);
     transform:
       translateX(calc(var(--i) * clamp(30px,8vw,46px)))
       translateY(calc(var(--a) * clamp(6px,1.6vw,13px)))
@@ -1445,7 +1464,7 @@ html{scrollbar-width:none;-ms-overflow-style:none}
 /* fine film grain over the whole page */
 #grainCanvas{
   position:fixed;inset:0;z-index:41;pointer-events:none;
-  opacity:.05;mix-blend-mode:overlay;width:100%;height:100%;
+  opacity:.035;mix-blend-mode:overlay;width:100%;height:100%;
 }
 /* static fallback (no-JS / reduced-motion): fixed corner glow + static grain */
 .grain{

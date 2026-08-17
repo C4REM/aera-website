@@ -304,7 +304,7 @@
     // across all five others
     // gentler than 7: the input is continuous now, so this only has to take
     // the edge off scroll jitter rather than absorb whole-panel jumps
-    current += wrap(target - current) * (1 - Math.exp(-5.5 * dt));
+    current += wrap(target - current) * (1 - Math.exp(-11 * dt));
 
     // Pick before positioning so this frame's hover feeds this frame's layout.
     const hit = pick();

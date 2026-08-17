@@ -171,7 +171,13 @@
   document.body.classList.add('has-anim-grain');
 
   const ctx = canvas.getContext('2d', { alpha: true });
-  const TILE = 160;               // small noise tile, scaled up by CSS → cheap
+  // Bumped from 160 → 480: at 160px tiled/scaled up over a full viewport via
+  // CSS, each noise cell was stretched to a visibly blocky several-pixel
+  // square — that chunky upscale, not the opacity, was what read as cheap
+  // digital static rather than fine film grain. 480 keeps the per-frame cost
+  // trivial (still a plain fill loop at 14fps) while shrinking each cell
+  // close to a real pixel at normal viewport widths.
+  const TILE = 480;
   canvas.width = TILE; canvas.height = TILE;
   const img = ctx.createImageData(TILE, TILE);
   const buf = new Uint32Array(img.data.buffer);
@@ -184,7 +190,10 @@
     if (now - last < interval) return;
     last = now;
     for (let i = 0; i < buf.length; i++){
-      const v = (Math.random() * 255) | 0;
+      // Narrower grey range (96–176 instead of 0–255) — real film grain is
+      // low-contrast texture, not full-swing black/white static; combined
+      // with the CSS opacity this reads as soft shimmer instead of noise.
+      const v = 96 + ((Math.random() * 80) | 0);
       buf[i] = (255 << 24) | (v << 16) | (v << 8) | v; // grey noise, full alpha
     }
     ctx.putImageData(img, 0, 0);
@@ -730,7 +739,10 @@
     const smallH = smallW * 9 / 16;
     frame.style.width = (smallW + (vw - smallW) * ease).toFixed(1) + 'px';
     frame.style.height = (smallH + (vh - smallH) * ease).toFixed(1) + 'px';
-    frame.style.borderRadius = (14 * (1 - ease)).toFixed(1) + 'px';
+    // Sharp corners throughout, matching every other photo/video frame on
+    // the site (work panels, timeline, team, wheel) — was 14px→0, but a
+    // soft-cornered floating player was the odd one out next to otherwise
+    // all-sharp editorial imagery.
 
     copy.style.opacity = String(Math.max(0, 1 - g * 2.2));
     copy.style.transform = 'translateY(' + (-g * 18).toFixed(1) + 'px)';
