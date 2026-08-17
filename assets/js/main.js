@@ -171,18 +171,7 @@
   document.body.classList.add('has-anim-grain');
 
   const ctx = canvas.getContext('2d', { alpha: true });
-  // Bumped from 160 → 480: at 160px tiled/scaled up over a full viewport via
-  // CSS, each noise cell was stretched to a visibly blocky several-pixel
-  // square — that chunky upscale, not the opacity, was what read as cheap
-  // digital static rather than fine film grain. 480 keeps the per-frame cost
-  // trivial (still a plain fill loop at 14fps) while shrinking each cell
-  // close to a real pixel at normal viewport widths.
-  // 480 stretched across a 1440px viewport meant each noise cell rendered ~3px
-  // wide, which is coarse enough to read as visible speckle rather than grain
-  // — a large part of why this kept looking "heavy" no matter what the
-  // opacity was. 720 roughly halves the cell size and still only costs ~500k
-  // fills per frame at 14fps.
-  const TILE = 720;
+  const TILE = 160;               // small noise tile, scaled up by CSS → cheap
   canvas.width = TILE; canvas.height = TILE;
   const img = ctx.createImageData(TILE, TILE);
   const buf = new Uint32Array(img.data.buffer);
@@ -195,31 +184,8 @@
     if (now - last < interval) return;
     last = now;
     for (let i = 0; i < buf.length; i++){
-      // Grain lives in ALPHA, not brightness. Two earlier attempts both failed
-      // for the same underlying reason — a full-coverage grey field can only
-      // ever be invisible or a veil:
-      //   grey noise + overlay  -> invisible (overlay's dark-backdrop branch
-      //                            is ~2*base*source, so on near-black almost
-      //                            nothing survives)
-      //   grey noise + screen   -> uniform grey wash (screen lifts EVERY pixel
-      //                            by source/255, and uniform 0-255 noise has
-      //                            a mean of ~127, i.e. every black pixel on
-      //                            the page got lifted ~50% * opacity)
-      // The fix isn't a different blend mode or a lower opacity, it's making
-      // the grain SPARSE: white pixels with a cubed-random alpha, so ~3/4 of
-      // the field is close to fully transparent and contributes nothing at
-      // all, while the thin tail of opaque specks reads as actual grain.
-      // That's also how film grain behaves in shadows — discrete crystals,
-      // not a continuous tone shift.
-      // Exponent tuned by measuring the mean lift this applies to a pure-black
-      // pixel: the page background is #060607 (level 6), and at ^3/.09 the
-      // grain was adding ~5.8 levels — nearly doubling the background, which
-      // is precisely the grey wash. ^5 at .06 opacity adds ~2.5 levels on
-      // average (invisible as a tone shift) while individual specks still
-      // peak around +15, so they read clearly as grain against the black.
-      const a = (Math.random() ** 5 * 255) | 0;
-      // little-endian Uint32 is 0xAABBGGRR — white RGB, noise in alpha
-      buf[i] = (a << 24) | 0x00FFFFFF;
+      const v = (Math.random() * 255) | 0;
+      buf[i] = (255 << 24) | (v << 16) | (v << 8) | v; // grey noise, full alpha
     }
     ctx.putImageData(img, 0, 0);
   }
