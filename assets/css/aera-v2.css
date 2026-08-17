@@ -48,7 +48,17 @@
   --rule:rgba(234,223,205,.14);   /* hairline that reads on obsidian */
 }
 
-/* ---------- SECTION SHELL -------------------------------------------- */
+/* ---------- SECTION SHELL --------------------------------------------
+   style.css centres .hero and .contact (and .section-head.center). The
+   whole point of the split headline is that its parts sit at different
+   horizontal offsets, and centring collapses that back into a symmetrical
+   stack — the exact "excessive centred layout" failure mode. Left-align is
+   the default here and centring becomes opt-in, not inherited. */
+.v2 .hero,
+.v2 .hero .wrap,
+.v2 #contact{text-align:left}
+.v2 .hero-inner{text-align:left}
+
 .v2 section{padding:var(--space-section) 0}
 .v2 .wrap{width:min(1320px,100% - clamp(22px,5vw,80px));margin-inline:auto}
 
