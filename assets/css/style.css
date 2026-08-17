@@ -520,20 +520,33 @@ body.wheel-live .wheel-media img{opacity:0!important}
   .htrack-pin{position:relative;height:auto;overflow:visible;padding:80px 0 60px}
   .htrack-head{padding:0 22px;margin-bottom:36px}
   .htrack-row{
-    display:flex;flex-direction:column;align-items:stretch;width:auto;flex:none;
-    padding:0 22px;gap:38px;transform:none!important;
+    display:flex;flex-direction:column;align-items:flex-start;width:auto;flex:none;
+    padding:0 22px;gap:30px;transform:none!important;
   }
   /* the pin/translateX spectacle is gone, but the arrival shouldn't be —
      each item fades and lifts up in turn as it's scrolled into view,
      driven by a small dedicated IntersectionObserver in main.js. */
   .hitem{
-    position:static;width:auto!important;left:auto;top:auto;
+    position:static;left:auto;top:auto;
+    /* landonorris.com's own mobile version (this section is modelled on
+       it — see the .htrack comment above) keeps every photo at its own
+       distinct size and staggers them left/right rather than flattening
+       everything to one full-width column; a uniform stack was reading
+       as "broken" next to that reference, not just "simplified." Each
+       item already carries its real --w/--ar inline (see index.html),
+       so reuse it here capped to a share of the column width, and
+       alternate which edge it hugs so the strip zig-zags instead of
+       running dead centre. */
+    width:var(--w);max-width:76%;align-self:flex-start;
     opacity:0;transform:translateY(24px);
     transition:opacity .7s cubic-bezier(.2,.8,.2,1),transform .8s cubic-bezier(.2,.8,.2,1);
   }
+  .hitem:nth-child(3n+2){align-self:flex-end}
+  .hitem:nth-child(3n){align-self:center;max-width:84%}
+  .hitem.is-txt{max-width:88%}
   .hitem.in{opacity:1;transform:none}
-  .hshot{aspect-ratio:auto}
-  .hshot img{position:static;inset:auto;width:100%;height:auto;transform:none!important}
+  .hshot{aspect-ratio:var(--ar,4/5)}
+  .hshot img{position:absolute;inset:-7% -11%;width:122%;height:114%;transform:none!important}
   .htrack-foot{display:none}
 }
 
@@ -626,17 +639,56 @@ body.wheel-live .wheel-media img{opacity:0!important}
 }
 @media(max-width:880px){
   .method-track{height:auto}
-  .method-vp{position:relative;height:auto;padding:90px 0 80px}
-  .mt-eyebrow,.mt-title{position:static;max-width:none;padding:0 22px}
-  .mt-title{margin:14px 0 30px;font-size:clamp(1.9rem,8vw,2.6rem)}
-  .mt-media{position:relative;left:auto;top:auto;transform:none!important;
-    width:calc(100% - 44px);margin:0 22px 34px;border-radius:0!important}
-  /* the designxhand cover-reveal is scroll-progress-driven and that progress
-     doesn't exist once the pin is dropped — without this the mask's opacity:1
-     default just sits there as a permanent dark smear across the portrait */
+  .method-vp{position:relative;height:auto;overflow:visible;padding:0 0 60px}
+
+  /* designxhand.com's own mobile Method section (the one this whole
+     scroll-mask idea already borrows from — see the "designxhand-style
+     reveal" note above) keeps the portrait as one full-bleed backdrop
+     that sticks near the top of the screen while the eyebrow, title and
+     copy scroll as one continuous piece over it. A small rounded card up
+     top with plain stacked text underneath — what this was before — read
+     as two disconnected blocks rather than the composed "photo and
+     quote" moment the desktop version is going for. */
+  .mt-media{
+    position:sticky;top:72px;left:auto;z-index:1;
+    width:100%;height:calc(78vh - 72px);margin:0;
+    transform:none!important;border-radius:0!important;
+    -webkit-mask-image:none;mask-image:none;
+  }
+  .mt-media::after{
+    content:'';position:absolute;inset:0;pointer-events:none;
+    background:linear-gradient(180deg,rgba(6,6,7,.1) 0%,rgba(6,6,7,.22) 55%,rgba(6,6,7,.97) 100%);
+  }
   .mt-mask{display:none}
-  .mt-copy{position:static;width:auto;padding:0 22px}
-  .mt-end{position:static;width:auto;padding:44px 22px 0;text-align:left;pointer-events:auto}
+
+  /* Eyebrow + title sit ABOVE the sticky photo (absolute, not sticky) so
+     they read over its top edge once, then scroll away naturally while
+     the photo stays put underneath — same beat as designxhand.com's
+     mobile Method section: heading passes over the image, image keeps
+     holding its ground. Making all three of these sticky at once was
+     tried first and two problems showed up: the top one landed exactly
+     under the fixed nav bar (invisible, not just misplaced), and two
+     independently-sticky siblings sharing one scroll range fought over
+     which stayed put. Anchoring text to the section instead of the
+     viewport sidesteps both. */
+  .mt-eyebrow{position:absolute;top:100px;bottom:auto;left:0;right:0;z-index:3;display:block;padding:0 22px}
+  .mt-title{
+    position:absolute;top:148px;bottom:auto;left:0;right:0;z-index:3;
+    max-width:none;padding:0 22px;margin:0;
+    font-size:clamp(1.9rem,8vw,2.6rem);
+  }
+
+  /* copy + closing quote follow in normal flow, pulled up under the
+     photo's gradient tail so the text reads as continuing out of the
+     image rather than starting after a hard cut */
+  /* both reset left/right/transform explicitly — the desktop rules place
+     these with `right:clamp(...)` and a JS-driven translate for the pin
+     sequence, and position:relative still honours left/right as offsets
+     from the normal-flow spot rather than clearing them, so without this
+     the block was shifting sideways and running off the right edge. */
+  .mt-copy{position:relative;left:auto;right:auto;width:auto;padding:0 22px;margin-top:-16vh;transform:none!important;z-index:2}
+  .mt-end{position:relative;left:auto;right:auto;width:auto;padding:40px 22px 0;text-align:left;pointer-events:auto;transform:none!important;z-index:2}
+
   /* the pin/scroll-linked sequence above doesn't apply to a static stack —
      each block gets its own fade(+lift) in as it's scrolled into view instead,
      driven by a small dedicated observer in main.js (stacked branch only,
@@ -985,7 +1037,21 @@ body.tm-open{overflow:hidden}
   .awards.in .award img{animation:none}
 }
 @media(max-width:620px){
-  .award-row{gap:16px}
+  /* Desktop is one centred row, hero laurel in the middle, flanked
+     symmetrically. flex-wrap doesn't have anywhere near the width for
+     that at phone size, so it was breaking mid-sequence — the hero
+     laurel (much wider than the rest) forced an early wrap and landed
+     3rd-of-3 on row one instead of centred, leaving row two an
+     unbalanced orphan pair. A small grid keeps the DOM's already-
+     symmetric order (see index.html: item, item, HERO, item, item)
+     but lays it out on purpose: the two smaller laurels either side on
+     row one, hero centred alone on row two, the last two on row three —
+     same fan shape, just stacked instead of spread sideways. */
+  .award-row{
+    display:grid;grid-template-columns:repeat(2,1fr);
+    gap:28px 20px;justify-items:center;align-items:center;
+  }
+  .award.is-hero{grid-column:1 / -1}
   .award img{height:66px}
   .award.is-hero img{height:104px}
 }
@@ -1061,16 +1127,26 @@ body.tm-open{overflow:hidden}
 
 .socials-cta{text-align:center;margin-top:clamp(30px,5vh,54px)}
 
-/* on narrow screens the arc collapses into a simple scrollable row — a
-   seven-card fan at phone width is unreadable and clips off both edges */
+/* Keeps the real fanned arc on phones too (landonorris.com does the same —
+   the stack just scales down, it never flattens into a scrollable row).
+   A flat horizontal scroller was tried first and lost the whole point of
+   the section: a compact, all-at-once arc read as "curated," a scroll
+   strip just reads as a carousel. Numbers below are a smaller replica of
+   the desktop formula in .fan-card, re-tuned so even the outermost card
+   (--i:±3) stays inside the viewport at 340px width: 3 * 46px spread +
+   half the 104px card width ≈ 190px, comfortably under half of even a
+   360px-wide phone. */
 @media(max-width:760px){
-  .fan{
-    height:auto;position:static;display:flex;gap:12px;overflow-x:auto;
-    padding:0 22px 10px;justify-content:flex-start;
-    -webkit-overflow-scrolling:touch;scrollbar-width:none;
+  .fan{height:clamp(210px,54vw,300px);padding:0}
+  .fan-card{
+    width:clamp(76px,21vw,104px);
+    border-radius:clamp(11px,3vw,16px);
+    transform:
+      translateX(calc(var(--i) * clamp(30px,8vw,46px)))
+      translateY(calc(var(--a) * clamp(6px,1.6vw,13px)))
+      rotate(calc(var(--i) * 6deg))
+      scale(calc(1 - var(--a) * 0.075));
   }
-  .fan::-webkit-scrollbar{display:none}
-  .fan-card{position:relative;flex:none;width:52vw;max-width:230px;transform:none!important;z-index:auto}
 }
 @media(prefers-reduced-motion:reduce){
   .fan-card,.fan-card img{transition:none}
