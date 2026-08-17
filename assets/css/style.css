@@ -421,7 +421,18 @@ body.wheel-live .wheel-media img{opacity:0!important}
 @media(max-width:880px){
   .wheel-track{height:300vh}
   .wheel-names{width:100%}
-  .wheel-media{display:none}
+  /* Desktop pins this beside the list; there's no spare width for that here,
+     so it drops to a small crossfading thumbnail tucked in the bottom-right
+     corner of the pinned viewport instead of disappearing outright — the
+     wheel-cylinder.js WebGL rig already skips itself under 880px and expects
+     this flat <img> stack to be the visible fallback (see the comment at the
+     top of that file), so hiding the whole container was leaving neither
+     version on screen. z-index stays below .wheel-names (2) so if a long
+     name's text passes over the corner, the word wins, not the photo. */
+  .wheel-media{
+    display:block;right:18px;left:auto;top:auto;bottom:6%;
+    width:min(30vw,136px);transform:none;opacity:.92;
+  }
   .wheel-item{font-size:clamp(1.6rem,8vw,2.6rem)}
   .wheel-head{top:9%}
 }
