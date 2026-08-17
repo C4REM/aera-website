@@ -35,6 +35,15 @@
      screenshot from any two pages sits together like one shoot. Component
      hover deltas stay bespoke; only the resting grade is shared. */
   --grade:sepia(.18) saturate(.9) contrast(1.04) brightness(1.06);
+  /* One corner language for photography sitewide. Everything that frames a
+     photo pulls from these two so a screenshot of any section sits with any
+     other — the earlier all-sharp pass made the page feel like a wireframe,
+     and before that each component had invented its own value. --radius-img
+     is the default for photo frames; --radius-img-lg is for the few large
+     free-floating cards (the socials fan) where a softer corner is part of
+     the device rather than incidental. */
+  --radius-img:clamp(10px,1.1vw,18px);
+  --radius-img-lg:clamp(16px,2vw,30px);
   --serif:'Cormorant Garamond',Georgia,serif;
   --display:'Makcasa','Playfair Display',Georgia,serif;
   --display-wght:400;   /* Makcasa ships a single weight */
@@ -331,9 +340,44 @@ header.page-hero p.lead{max-width:600px;font-size:clamp(1rem,2vw,1.12rem);color:
 /* SECTION SHELL */
 section{padding:120px 0}
 section.tight{padding:80px 0}
-.section-head{max-width:640px;margin-bottom:60px}
-.section-head p{margin-top:18px;color:var(--stone)}
-.section-head.center{margin-left:auto;margin-right:auto;text-align:center}
+/* SECTION HEAD — asymmetric, not a stacked block.
+   The old rule was `max-width:640px` with the paragraph sitting directly
+   under the headline, which is the single most template-looking arrangement
+   there is: label, headline, paragraph, repeat, every section identical and
+   all left-aligned in one narrow column. Every reference site for this
+   project (valeran.eu, designxhand.com, landonorris.com) instead SPLITS the
+   head — the statement holds one column and the supporting copy sits in a
+   second, offset and baseline-aligned to it, so the eye reads headline then
+   crosses to the body rather than marching straight down a single stack.
+   Collapses back to one column on narrow screens, where two columns of ~30ch
+   would be unreadable. */
+.section-head{
+  display:grid;
+  grid-template-columns:minmax(0,1.02fr) minmax(0,.98fr);
+  column-gap:clamp(30px,6vw,96px);
+  align-items:end;
+  max-width:none;margin-bottom:clamp(44px,7vh,80px);
+}
+.section-head > .eyebrow{grid-column:1;grid-row:1;margin-bottom:16px}
+.section-head > h2{grid-column:1;grid-row:2;max-width:15ch}
+.section-head > p{
+  grid-column:2;grid-row:2;align-self:end;
+  margin-top:0;margin-bottom:.35em;      /* optically level with the headline baseline */
+  color:var(--stone);max-width:46ch;line-height:1.8;
+}
+/* Centred variant (the motto) opts out of the split entirely — it's a single
+   statement with no supporting column, so a grid would just strand it. */
+.section-head.center{
+  display:block;max-width:640px;
+  margin-left:auto;margin-right:auto;text-align:center;
+}
+.section-head.center > h2{max-width:none}
+.section-head.center > p{max-width:none;margin-top:18px}
+@media(max-width:880px){
+  .section-head{display:block;max-width:640px}
+  .section-head > h2{max-width:none}
+  .section-head > p{margin-top:20px;margin-bottom:0;max-width:none}
+}
 
 /* HOME PAGE SECTION INTROS — the shared eyebrow + Makcasa headline + one
    paragraph is right for most of the site (and stays untouched everywhere
@@ -407,7 +451,7 @@ section.tight{padding:80px 0}
   display:block;
   position:absolute;right:clamp(24px,4vw,64px);top:50%;
   width:min(26vw,300px);aspect-ratio:4/5;transform:translateY(-50%);
-  z-index:1;overflow:hidden;
+  z-index:1;overflow:hidden;border-radius:var(--radius-img);
   border:1px solid var(--smoke);background:#141317;
 }
 .wheel-media img{
@@ -507,7 +551,7 @@ body.wheel-live .wheel-media img{opacity:0!important}
   will-change:opacity,transform;
 }
 .hitem.in{opacity:1;transform:none}
-.hshot{position:relative;overflow:hidden;background:#111013;aspect-ratio:var(--ar,4/5)}
+.hshot{position:relative;overflow:hidden;background:#111013;aspect-ratio:var(--ar,4/5);border-radius:var(--radius-img)}
 .hshot img{
   position:absolute;inset:-7% -11%;width:122%;height:114%;object-fit:cover;
   will-change:transform;filter:var(--grade);
@@ -598,7 +642,7 @@ body.wheel-live .wheel-media img{opacity:0!important}
    instead of sitting on it as a hard rectangle */
 .mt-media{
   position:absolute;left:31%;top:50%;width:min(44vw,560px);aspect-ratio:4/5;
-  overflow:hidden;background:none;border:none;
+  overflow:hidden;background:none;border:none;border-radius:var(--radius-img);
   transform:translate(-50%,-50%);will-change:transform,border-radius;z-index:2;
 }
 /* graded for a dark, tungsten-lit frame: keep its own warmth and the rim light,
@@ -635,7 +679,13 @@ body.wheel-live .wheel-media img{opacity:0!important}
   position:absolute;right:clamp(24px,5vw,72px);top:50%;width:min(36vw,440px);z-index:3;
   will-change:transform,opacity;
 }
-.mt-copy p{color:var(--cream-dim);font-size:.97rem;line-height:1.78;margin-bottom:18px}
+/* Air between thoughts. valeran.eu runs each idea as its own short block with
+   a full line of space around it rather than one dense column of prose —
+   that spacing is most of what makes the copy read as considered instead of
+   auto-generated. 18px against a 1.78 line-height was tighter than the line
+   gap itself, so paragraph breaks were invisible and it all merged into one
+   grey slab. */
+.mt-copy p{color:var(--cream-dim);font-size:.97rem;line-height:1.85;margin-bottom:1.6em}
 .mt-copy .pull{
   font-family:var(--serif);font-style:italic;font-weight:500;
   font-size:clamp(1.15rem,1.8vw,1.4rem);color:var(--cream);margin:24px 0;line-height:1.45;
@@ -754,7 +804,7 @@ body.wheel-live .wheel-media img{opacity:0!important}
 
 .reel-frame{
   position:relative;z-index:1;overflow:hidden;background:#000;flex:none;
-  width:min(560px,86vw);aspect-ratio:16/9;
+  width:min(560px,86vw);aspect-ratio:16/9;border-radius:var(--radius-img);
   box-shadow:0 20px 60px rgba(0,0,0,.5);
 }
 .reel-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
@@ -893,7 +943,7 @@ body.wheel-live .wheel-media img{opacity:0!important}
   background:none;color:inherit;text-align:left;overflow:hidden;
   height:min(68vh,660px);
 }
-.tm-photo{position:absolute;inset:0;display:block;overflow:hidden}
+.tm-photo{position:absolute;inset:0;display:block;overflow:hidden;border-radius:var(--radius-img)}
 .tm-photo img{
   width:100%;height:100%;object-fit:cover;object-position:45% 55%;display:block;
   filter:var(--grade);
@@ -1116,7 +1166,7 @@ body.tm-open{overflow:hidden}
 .fan-card{
   position:absolute;top:0;
   width:clamp(132px,15vw,200px);aspect-ratio:4/7;
-  overflow:hidden;background:#111013;
+  border-radius:var(--radius-img-lg);overflow:hidden;background:#111013;
   z-index:calc(10 - var(--a));
   transform:
     translateX(calc(var(--i) * clamp(58px,6.6vw,105px)))
@@ -1171,6 +1221,7 @@ body.tm-open{overflow:hidden}
   .fan{height:clamp(210px,54vw,300px);padding:0}
   .fan-card{
     width:clamp(76px,21vw,104px);
+    border-radius:clamp(11px,3vw,16px);
     transform:
       translateX(calc(var(--i) * clamp(30px,8vw,46px)))
       translateY(calc(var(--a) * clamp(6px,1.6vw,13px)))
@@ -1437,7 +1488,7 @@ footer .foot-links a:hover{color:var(--champagne)}
 .finder-result .fr-blurb{color:var(--cream-dim);font-size:.98rem;max-width:56ch}
 .fr-note{margin-top:14px;font-size:12.5px;color:var(--stone);font-style:italic}
 .fr-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:26px}
-.fr-grid img{width:100%;aspect-ratio:4/5;object-fit:cover;border:1px solid var(--smoke)}
+.fr-grid img{width:100%;aspect-ratio:4/5;object-fit:cover;border:1px solid var(--smoke);border-radius:calc(var(--radius-img) * .6)}
 .fr-meta{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:30px;padding-top:26px;border-top:1px solid var(--smoke)}
 .fr-meta .lbl{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--stone);margin-bottom:8px}
 .fr-meta .val{font-family:var(--serif);font-size:1.4rem;color:var(--cream)}
@@ -1475,20 +1526,18 @@ html{scrollbar-width:none;-ms-overflow-style:none}
 /* fine film grain over the whole page */
 #grainCanvas{
   position:fixed;inset:0;z-index:41;pointer-events:none;
-  /* screen, not overlay: overlay's dark-backdrop branch is ~2*base*source,
-     which on this near-black obsidian background crushed almost the entire
-     noise range to invisible regardless of opacity — only the rare
-     near-white outlier pixels punched through at all, and narrowing the
-     noise range (see main.js) removed exactly those, so the grain vanished
-     completely rather than just looking finer. screen adds brightness
-     roughly proportional to source value regardless of how dark the
-     backdrop is, so it stays reliably visible here. */
-  opacity:.05;mix-blend-mode:screen;width:100%;height:100%;
+  /* screen + SPARSE alpha-encoded noise (see the grain IIFE in main.js).
+     The sparseness is what keeps this from greying the page: most of the
+     canvas is transparent so it composites as nothing, and only the thin
+     tail of opaque specks lifts anything. Opacity can therefore sit high
+     enough for the specks to actually read without the field as a whole
+     washing the blacks out. */
+  opacity:.06;mix-blend-mode:screen;width:100%;height:100%;
 }
 /* static fallback (no-JS / reduced-motion): fixed corner glow + static grain */
 .grain{
   position:fixed;inset:0;z-index:40;pointer-events:none;
-  opacity:.06;mix-blend-mode:screen;
+  opacity:.03;mix-blend-mode:screen;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 body.has-anim-grain .grain{display:none}
@@ -1595,7 +1644,7 @@ body.preloading.preloader-seen .preloader-word{animation-duration:1s;animation-d
 .msg-bubble .fr-eyebrow{font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--champagne);display:block;margin-bottom:10px}
 .msg-bubble h4{font-family:var(--serif);font-weight:400;font-size:1.4rem;margin:2px 0 10px;color:var(--cream)}
 .msg-bubble .chat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:16px 0}
-.msg-bubble .chat-grid img{width:100%;aspect-ratio:4/5;object-fit:cover;border:1px solid var(--smoke)}
+.msg-bubble .chat-grid img{width:100%;aspect-ratio:4/5;object-fit:cover;border:1px solid var(--smoke);border-radius:calc(var(--radius-img) * .6)}
 .msg-bubble .chat-meta{display:flex;gap:30px;margin:18px 0;flex-wrap:wrap}
 .msg-bubble .chat-meta .lbl{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--stone)}
 .msg-bubble .chat-meta .val{font-family:var(--serif);font-size:1.2rem;color:var(--cream);margin-top:3px}

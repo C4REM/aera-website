@@ -190,16 +190,31 @@
     if (now - last < interval) return;
     last = now;
     for (let i = 0; i < buf.length; i++){
-      // Wide grey range again (was narrowed to 96–176, which combined with
-      // mix-blend-mode:overlay on this near-black page made the grain
-      // disappear completely — overlay's dark-backdrop math is ~2*base*
-      // source, so on an almost-black background only near-white outlier
-      // pixels ever punched through, and narrowing the range removed
-      // exactly those. Now paired with mix-blend-mode:screen (see style.css)
-      // which stays visible regardless of backdrop darkness, so the fuller
-      // range reads as genuine grain texture rather than crushed static.
-      const v = (Math.random() * 255) | 0;
-      buf[i] = (255 << 24) | (v << 16) | (v << 8) | v; // grey noise, full alpha
+      // Grain lives in ALPHA, not brightness. Two earlier attempts both failed
+      // for the same underlying reason — a full-coverage grey field can only
+      // ever be invisible or a veil:
+      //   grey noise + overlay  -> invisible (overlay's dark-backdrop branch
+      //                            is ~2*base*source, so on near-black almost
+      //                            nothing survives)
+      //   grey noise + screen   -> uniform grey wash (screen lifts EVERY pixel
+      //                            by source/255, and uniform 0-255 noise has
+      //                            a mean of ~127, i.e. every black pixel on
+      //                            the page got lifted ~50% * opacity)
+      // The fix isn't a different blend mode or a lower opacity, it's making
+      // the grain SPARSE: white pixels with a cubed-random alpha, so ~3/4 of
+      // the field is close to fully transparent and contributes nothing at
+      // all, while the thin tail of opaque specks reads as actual grain.
+      // That's also how film grain behaves in shadows — discrete crystals,
+      // not a continuous tone shift.
+      // Exponent tuned by measuring the mean lift this applies to a pure-black
+      // pixel: the page background is #060607 (level 6), and at ^3/.09 the
+      // grain was adding ~5.8 levels — nearly doubling the background, which
+      // is precisely the grey wash. ^5 at .06 opacity adds ~2.5 levels on
+      // average (invisible as a tone shift) while individual specks still
+      // peak around +15, so they read clearly as grain against the black.
+      const a = (Math.random() ** 5 * 255) | 0;
+      // little-endian Uint32 is 0xAABBGGRR — white RGB, noise in alpha
+      buf[i] = (a << 24) | 0x00FFFFFF;
     }
     ctx.putImageData(img, 0, 0);
   }
@@ -519,8 +534,18 @@
     p = Math.max(0, Math.min(1, p));
 
     const gap = vh * 0.15;                 // on-screen spacing between names
-    const travel = (N - 1) * gap + vh * 0.44;
-    const cursor = p * travel;
+    // Scroll range maps EXACTLY onto "first name centred" -> "last name
+    // centred". It used to run 0 -> (N-1)*gap + vh*0.44, which meant the
+    // first ~0.30vh and last ~0.14vh of travel were lead-in/lead-out where
+    // the column slides but nothing is centred: the continuous position fed
+    // to the 3D cylinder swung from about -2 to N-0.07 instead of 0..N-1, so
+    // the ring pointed at the wrong panel at both ends. Clamping that value
+    // was the first attempt and it traded the wrong-panel bug for a worse
+    // one — the ring sat frozen through both dead stretches, which is what
+    // read as jumpy/static on entry and exit. Removing the dead travel
+    // instead fixes both at once, and needs no clamp downstream.
+    const travel = (N - 1) * gap;
+    const cursor = vh * 0.30 + p * travel;
     const bulgeMax = Math.min(innerWidth * 0.13, 180);
     const falloff = vh * 0.42;
 
@@ -558,18 +583,11 @@
        on every frame, so it turns in lockstep with the column beside it. The
        discrete event still fires for anything that only cares about "which one
        is active". */
-    // Clamped to [0, N-1] — unclamped this overshoots to roughly -2 at the very
-    // start of the scroll and +4.9 (for N=5) at the very end, because `cursor`
-    // ranges further than the name column's useful index span (padding built
-    // into `travel`/the vh*0.30 offset above). activeIdx is picked by nearest-
-    // neighbour so it's naturally robust to that overshoot and always reads
-    // 0..N-1 correctly, but the 3D cylinder trusts this raw value as its
-    // rotation target — an unclamped -2 pointed it at a completely different
-    // panel than the name list's actual first item, which is exactly the
-    // "starts and ends on the wrong thing" bug: cylinder and name list were
-    // reading two different coordinate systems at the scroll extremes.
+    // No clamp needed: `cursor` now spans exactly vh*0.30 .. vh*0.30 +
+    // (N-1)*gap, so this lands on a clean 0..N-1 by construction and the
+    // cylinder and the name column share one coordinate system end to end.
     document.dispatchEvent(new CustomEvent('aera:wheelpos', {
-      detail: { pos: Math.max(0, Math.min(N - 1, (cursor - vh * 0.30) / gap)) }
+      detail: { pos: (cursor - vh * 0.30) / gap }
     }));
 
     if (activeIdx !== activePrev){
@@ -730,6 +748,23 @@
   const GROW_END = .6;      // fraction of the section's scroll range spent growing; the rest is hold
   let stacked = false, ticking = false, live = false;
 
+  // The frame's resting corner radius, taken from the stylesheet (--radius-img
+   // via .reel-frame) rather than hard-coded, and measured ONCE per layout —
+  // update() writes an inline borderRadius every frame, so re-reading the
+  // computed value each time would feed its own shrinking output back in and
+  // collapse the radius to 0 after a few frames. Reset on resize because the
+  // token is a clamp() and therefore viewport-dependent.
+  let _restRadius = null;
+  function restRadius(){
+    if (_restRadius === null){
+      const prev = frame.style.borderRadius;
+      frame.style.borderRadius = '';                       // fall back to the sheet
+      _restRadius = parseFloat(getComputedStyle(frame).borderRadius) || 0;
+      frame.style.borderRadius = prev;
+    }
+    return _restRadius;
+  }
+
   function fmt(s){
     if (!isFinite(s)) return '0:00';
     s = Math.max(0, Math.floor(s));
@@ -758,10 +793,10 @@
     const smallH = smallW * 9 / 16;
     frame.style.width = (smallW + (vw - smallW) * ease).toFixed(1) + 'px';
     frame.style.height = (smallH + (vh - smallH) * ease).toFixed(1) + 'px';
-    // Sharp corners throughout, matching every other photo/video frame on
-    // the site (work panels, timeline, team, wheel) — was 14px→0, but a
-    // soft-cornered floating player was the odd one out next to otherwise
-    // all-sharp editorial imagery.
+    // Corner radius eases to 0 only as the player reaches true fullscreen —
+    // a rounded corner against the viewport edge would look like a mistake,
+    // but at every smaller size it matches the sitewide photo radius.
+    frame.style.borderRadius = (restRadius() * (1 - ease)).toFixed(1) + 'px';
 
     copy.style.opacity = String(Math.max(0, 1 - g * 2.2));
     copy.style.transform = 'translateY(' + (-g * 18).toFixed(1) + 'px)';
@@ -777,6 +812,7 @@
   function onScroll(){ if (!ticking){ ticking = true; requestAnimationFrame(update); } }
 
   function layout(){
+    _restRadius = null;   // --radius-img is a clamp(), so it changes with viewport width
     stacked = window.matchMedia('(max-width:880px)').matches;
     if (stacked){
       frame.style.width = ''; frame.style.height = ''; frame.style.borderRadius = '';
