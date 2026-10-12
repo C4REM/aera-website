@@ -18,7 +18,7 @@
   const stage  = document.getElementById('vfStage');
   const video  = document.getElementById('vfVideo');
   const canvas = document.getElementById('vfGL');
-  const fades  = Array.from(hero.querySelectorAll('.vf-meta, .vf-h1, .vf-cta'));
+  const fades  = Array.from(hero.querySelectorAll('.vf-center, .vf-edge, .vf-scroll'));
 
   const fine   = matchMedia('(hover: hover) and (pointer: fine)').matches;
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -179,6 +179,20 @@ void main(){
   const onScroll = () => { scrollP = Math.min(1, Math.max(0, window.scrollY / (hero.offsetHeight || 1))); };
   addEventListener('scroll', onScroll, { passive: true });
   onScroll();
+
+  /* the quote's photograph settles from a slight push-in as it rides up */
+  const qImg = document.querySelector('.vf-quote-img');
+  if (qImg && !reduce){
+    let qt = false;
+    const q = () => {
+      qt = false;
+      const r = qImg.parentElement.getBoundingClientRect();
+      const p = Math.min(1, Math.max(0, 1 - r.top / innerHeight));
+      qImg.style.transform = `scale(${(1.12 - p * 0.12).toFixed(4)})`;
+    };
+    addEventListener('scroll', () => { if (!qt){ qt = true; requestAnimationFrame(q); } }, { passive: true });
+    q();
+  }
 
   /* ------------------------------------------------------------- the loop */
   let running = false, visible = true, last = performance.now(), frames = 0, slow = 0;
