@@ -110,8 +110,6 @@ void main(){
   col *= mix(0.86, 0.6, coc);                       // the rest of the frame recedes
   vec2 v = s - 0.5;
   col *= 1.0 - dot(v, v) * 0.7;
-  float n = fract(sin(dot(gl_FragCoord.xy + floor(uTime * 24.0) * 17.0, vec2(12.9898, 78.233))) * 43758.5453);
-  col += (n - 0.5) * 0.035;
   gl_FragColor = vec4(col, 1.0);
 }`;
 
@@ -187,6 +185,7 @@ void main(){
 
   new IntersectionObserver(es => {
     visible = es[0].isIntersecting;
+    document.body.classList.toggle('vf-visible', visible);   // sitewide film grain steps out while the reel is on screen
     if (visible){ if (opened) play(); start(); } else video.pause();
   }, { threshold: 0 }).observe(hero);
   document.addEventListener('visibilitychange', () => {
