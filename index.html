@@ -19,8 +19,9 @@
 <link rel="apple-touch-icon" href="assets/img/logo/aera-monogram-favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400;1,500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/style.css?v=20260817h">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400;1,500&family=Inter:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="assets/img/hero-poster.jpg">
+<link rel="stylesheet" href="assets/css/style.css?v=20261012a">
 <noscript><style>.preloader{display:none!important}body{overflow:visible!important;height:auto!important}.cursor-dot,.cursor-ring{display:none!important}.reveal{opacity:1!important;transform:none!important;filter:none!important}.hero-statement .ln>span,.rise>span{transform:none!important}</style></noscript>
 
 <script type="application/ld+json">
@@ -73,7 +74,7 @@
 }
 </script>
 </head>
-<body>
+<body class="has-vf">
 
 <div class="bg-stage" aria-hidden="true"></div>
 <canvas id="bgGL" aria-hidden="true"></canvas>
@@ -85,6 +86,7 @@
       <path d="M100,52 L138,100 L100,148 L62,100 Z" stroke="#C2A878" stroke-width="1.5" opacity="0.5"/><path d="M100,60 L70,100 L130,100 Z M100,140 L70,100 M130,100 L100,140 M82,85 L118,85 M82,115 L118,115" stroke="#C2A878" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
     </svg>
     <span class="preloader-word">AERA</span>
+    <span class="preloader-boot" aria-hidden="true"><span>A-cam</span><span>Lens 35mm</span><span>2 operators</span><span>Leeds · Dubai</span></span>
   </div>
 </div>
 <div class="grain" aria-hidden="true"></div>
@@ -114,29 +116,61 @@
   </div>
 </nav>
 
-<header class="hero" id="top">
-  <span class="hero-edgebadge" aria-hidden="true"><span>Leeds &amp; Yorkshire · Est. 2026</span></span>
+<!-- ============ HERO — THE VIEWFINDER ============
+     The first screen is the work, not a sentence about the work. A cut-down
+     loop of the 2026 showreel plays full-bleed behind a camera viewfinder:
+     REC + live timecode, corner frame lines, the two operators' cities on
+     live clocks. The cursor is the autofocus point — wherever it goes, a
+     WebGL lens blur racks focus to it, and the rest of the frame falls away
+     into bokeh. Click (or tap) and the shutter fires: that exact frame is
+     pulled off the reel and drops into a six-frame roll bottom-right.
+     Fill the roll and it hands you to the enquiry form.
+     Everything lives in assets/js/viewfinder.js; with JS or WebGL off the
+     video still plays sharp under the same HUD, so nothing is lost. -->
+<header class="hero vf" id="top">
+  <div class="vf-stage" id="vfStage">
+    <video class="vf-video" id="vfVideo" muted loop playsinline autoplay preload="auto" poster="assets/img/hero-poster.jpg" aria-hidden="true" tabindex="-1">
+      <source src="assets/video/hero-loop.mp4" type="video/mp4">
+      <source src="assets/video/hero-loop.webm" type="video/webm">
+    </video>
+    <canvas class="vf-gl" id="vfGL" aria-hidden="true"></canvas>
+    <div class="vf-scrim" aria-hidden="true"></div>
+    <div class="vf-flash" id="vfFlash" aria-hidden="true"></div>
 
-  <div class="hero-inner">
-    <!-- Two words, set as large as the viewport will take — the couroazul /
-         studiomodular move, where the type IS the layout rather than sitting
-         on top of one. The joke lands underneath in small type so the big
-         words stay confident on their own: the boast is the headline, the
-         self-deprecation is the footnote, not the other way round. -->
-    <h1 class="hero-statement hero-mega" data-lines>
+    <div class="vf-lines" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+    <div class="vf-hud vf-tl" aria-hidden="true">
+      <span class="vf-rec"><b></b>Rec</span>
+      <span class="vf-dim">A-cam</span>
+      <span id="vfTC">00:00:00:00</span>
+    </div>
+    <div class="vf-hud vf-tr" aria-hidden="true">
+      <span><span class="vf-dim">Leeds</span> <b id="vfClockL">--:--</b> <em id="vfDoL">editing</em></span>
+      <span><span class="vf-dim">Dubai</span> <b id="vfClockD">--:--</b> <em id="vfDoD">on set</em></span>
+    </div>
+
+    <div class="vf-af" id="vfAF" aria-hidden="true">
+      <span class="vf-af-box"></span>
+      <span class="vf-af-read" id="vfAFRead">AF-C · 2.4m</span>
+    </div>
+  </div>
+
+  <div class="vf-title">
+    <span class="vf-kicker">Photo · Film · Social &mdash; two of us, Leeds &amp; the UAE</span>
+    <h1 class="hero-statement vf-h1">
       <span class="ln"><span>Work like</span></span>
       <span class="ln"><span><em>professionals.</em></span></span>
     </h1>
-    <p class="hero-sub">Cost like students.</p>
-    <a class="hero-link magnetic" href="#services"><span>See the actual work</span></a>
+    <p class="vf-sub">Cost like students. <a href="#services" class="vf-sub-link">See the actual work</a></p>
   </div>
 
-  <div class="hero-scrollring" aria-hidden="true">
-    <svg viewBox="0 0 120 120">
-      <path id="heroRingPath" fill="none" d="M60,60 m-48,0 a48,48 0 1,1 96,0 a48,48 0 1,1 -96,0"/>
-      <text><textPath href="#heroRingPath" startOffset="0%">Scroll to explore · Scroll to explore · </textPath></text>
-    </svg>
-    <span class="ring-arrow">↓</span>
+  <div class="vf-roll" id="vfRollWrap">
+    <div class="vf-roll-strip" id="vfRoll" aria-hidden="true">
+      <span class="vf-slot"></span><span class="vf-slot"></span><span class="vf-slot"></span><span class="vf-slot"></span><span class="vf-slot"></span><span class="vf-slot"></span>
+    </div>
+    <div class="vf-roll-meta" id="vfMeta" aria-live="polite">
+      <span class="vf-count" id="vfCount">Roll 0/6</span>
+      <button class="vf-shoot" id="vfShoot" type="button"><span class="vf-hint-fine">Move to focus. Click to take the shot.</span><span class="vf-hint-touch">Tap the frame to take the shot.</span></button>
+    </div>
   </div>
 </header>
 
@@ -553,7 +587,8 @@
 </footer>
 
 <script src="assets/js/lenis.min.js?v=20260803h"></script>
-<script src="assets/js/main.js?v=20260816e"></script>
+<script src="assets/js/main.js?v=20261012a"></script>
+<script src="assets/js/viewfinder.js?v=20261012a"></script>
 <!-- Three.js + the mini cylinder load only here, after main.js, so THREE is
      defined by the time wheel-cylinder.js runs (same load order as the work
      page's gallery). main.js fires its first wheel update synchronously before

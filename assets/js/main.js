@@ -51,15 +51,31 @@
   document.body.classList.add('preloading');
   if (seen) document.body.classList.add('preloader-seen');
 
-  const hold = seen ? 650 : 2200; // snappier hold; quicker still on repeat views
+  /* On the home page the loader waits for the hero reel to be playable
+     (a real asset, not a fake timer), held for a minimum so the boot lines
+     read, and released at a hard maximum so a slow connection never traps
+     anyone behind it. Other pages keep the simple timed hold. */
+  const wait = ms => new Promise(r => setTimeout(r, ms));
+  const vid = document.getElementById('vfVideo');
+  let gate;
+  if (vid){
+    const ready = new Promise(r => {
+      if (vid.readyState >= 3) return r();
+      vid.addEventListener('canplay', r, { once: true });
+      vid.addEventListener('error', r, { once: true });
+    });
+    gate = Promise.race([Promise.all([ready, wait(seen ? 350 : 1500)]), wait(seen ? 1400 : 3200)]);
+  } else {
+    gate = wait(seen ? 650 : 2200);
+  }
 
-  setTimeout(() => {
+  gate.then(() => {
     pre.classList.add('done');
     document.body.classList.remove('preloading');
     sessionStorage.setItem('aera-seen-preloader', '1');
     window.dispatchEvent(new CustomEvent('aera:preloaderdone'));
     setTimeout(() => { pre.style.display = 'none'; }, 1100);
-  }, hold);
+  });
 })();
 
 /* ---- LIVING BACKGROUND — flowing WebGL noise field ----

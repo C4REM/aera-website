@@ -189,35 +189,212 @@ header.hero{
   text-align:center;position:relative;padding:120px clamp(24px,5vw,60px) 110px;background:transparent;
 }
 
-/* vertical ribbon pinned to the true viewport edge — a fact about the studio
-   instead of an award tag. Slides fully flush and brightens on hover. */
-.hero-edgebadge{position:fixed;left:0;top:64%;transform:translateY(-50%);z-index:56;
-  transition:transform .4s cubic-bezier(.2,.8,.2,1)}
-.hero-edgebadge span{display:block;writing-mode:vertical-rl;transform:rotate(180deg);
-  background:var(--champagne);color:var(--obsidian);font-family:var(--sans);font-size:10px;
-  font-weight:500;letter-spacing:.24em;text-transform:uppercase;padding:16px 8px;white-space:nowrap;
-  transition:background .35s ease}
-.hero-edgebadge:hover{transform:translateY(-50%) translateX(3px)}
-.hero-edgebadge:hover span{background:var(--cream)}
-@media(max-width:780px){.hero-edgebadge{display:none}}
+/* ==========================================================================
+   HERO — THE VIEWFINDER
+   The first screen is the reel itself seen through a camera: frame lines,
+   REC + timecode, live clocks for the two operators' cities, an AF point that
+   IS the cursor. viewfinder.js draws the video through a WebGL lens so focus
+   racks to wherever the AF point sits and everything else falls into bokeh.
+   Click/tap fires the shutter and that frame drops into the roll (bottom
+   right). Without JS/WebGL the <video> underneath simply plays sharp.
+   ========================================================================== */
+header.hero.vf{
+  display:block;position:relative;padding:0;gap:0;text-align:left;
+  height:100vh;height:100svh;min-height:560px;overflow:hidden;background:var(--obsidian);
+  --vf-pad:clamp(18px,3.2vw,46px);
+  --vf-top:calc(72px + clamp(10px,2vh,24px));
+  --mono:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,monospace;
+}
+.vf-stage{
+  position:absolute;inset:0;overflow:hidden;background:#000;
+  transform-origin:50% 40%;will-change:transform;
+  /* iris: closed until the preloader hands over, then opens onto the reel */
+  clip-path:circle(0% at 50% 50%);
+  transition:clip-path 1.5s cubic-bezier(.77,0,.18,1);
+}
+.vf.vf-open .vf-stage{clip-path:circle(150% at 50% 50%)}
+.vf-video,.vf-gl{position:absolute;inset:0;width:100%;height:100%;display:block}
+.vf-video{object-fit:cover;filter:saturate(.92) contrast(1.04)}
+.vf.gl-on .vf-video{opacity:0}
+.vf-scrim{
+  position:absolute;inset:0;pointer-events:none;
+  background:
+    radial-gradient(120% 70% at 0% 100%,rgba(6,6,7,.72) 0%,rgba(6,6,7,.28) 45%,transparent 70%),
+    linear-gradient(to top,rgba(6,6,7,.8) 0%,rgba(6,6,7,.3) 28%,transparent 52%),
+    linear-gradient(to bottom,rgba(6,6,7,.6) 0%,transparent 24%);
+}
+.vf-flash{position:absolute;inset:0;background:#000;opacity:0;pointer-events:none;z-index:4}
 
-/* rotating circular "scroll" badge — a dark-on-champagne disc ringed by
-   small looping text. Speeds up and the arrow nudges downward on hover, so
-   it visibly invites the click instead of just sitting there spinning. */
-.hero-scrollring{position:absolute;right:clamp(20px,4vw,52px);bottom:clamp(20px,4vh,40px);
-  width:104px;height:104px;z-index:3;cursor:pointer}
-.hero-scrollring svg{width:100%;height:100%;animation:heroSpin 14s linear infinite;transition:animation-duration .3s}
-.hero-scrollring:hover svg{animation-duration:3.5s}
-.hero-scrollring text{font-family:var(--sans);font-size:9.2px;letter-spacing:.05em;
-  text-transform:uppercase;fill:var(--stone)}
-.hero-scrollring .ring-arrow{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
-  width:38px;height:38px;border-radius:50%;background:var(--champagne);color:var(--obsidian);
-  display:flex;align-items:center;justify-content:center;font-size:15px;
-  transition:transform .3s cubic-bezier(.2,.8,.2,1)}
-.hero-scrollring:hover .ring-arrow{transform:translate(-50%,-50%) translateY(4px)}
-@keyframes heroSpin{to{transform:rotate(360deg)}}
-@media(prefers-reduced-motion:reduce){.hero-scrollring svg{animation:none}}
-@media(max-width:620px){.hero-scrollring{display:none}}
+/* frame lines — four corner brackets, the one detail that says "viewfinder" */
+.vf-lines{position:absolute;inset:var(--vf-top) var(--vf-pad) var(--vf-pad);pointer-events:none;z-index:2}
+.vf-lines i{position:absolute;width:22px;height:22px;border:0 solid rgba(234,223,205,.55)}
+.vf-lines i:nth-child(1){top:0;left:0;border-top-width:1px;border-left-width:1px}
+.vf-lines i:nth-child(2){top:0;right:0;border-top-width:1px;border-right-width:1px}
+.vf-lines i:nth-child(3){bottom:0;left:0;border-bottom-width:1px;border-left-width:1px}
+.vf-lines i:nth-child(4){bottom:0;right:0;border-bottom-width:1px;border-right-width:1px}
+
+.vf-hud{
+  position:absolute;z-index:3;pointer-events:none;
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+  color:rgba(234,223,205,.86);font-variant-numeric:tabular-nums;text-shadow:0 0 6px rgba(6,6,7,.55);
+  transition:opacity .4s ease;
+}
+.vf-hud .vf-dim{color:rgba(234,223,205,.5)}
+.vf-hud b{font-weight:500;color:var(--cream)}
+.vf-hud em{font-style:normal;color:var(--champagne)}
+.vf-tl{top:calc(var(--vf-top) + 14px);left:calc(var(--vf-pad) + 16px);display:flex;gap:18px;align-items:center}
+.vf-tr{top:calc(var(--vf-top) + 14px);right:calc(var(--vf-pad) + 16px);display:flex;flex-direction:column;gap:5px;align-items:flex-end;text-align:right}
+.vf-rec{display:inline-flex;align-items:center;gap:7px;color:var(--cream)}
+.vf-rec b{width:7px;height:7px;border-radius:50%;background:#e5484d;box-shadow:0 0 10px rgba(229,72,77,.7);animation:vfRec 1.2s steps(1) infinite}
+@keyframes vfRec{50%{opacity:.15}}
+
+/* the AF point — follows the pointer on desktop, the last tap on touch */
+.vf-af{position:absolute;left:0;top:0;z-index:3;pointer-events:none;will-change:transform;transition:opacity .35s ease}
+.vf-af-box{
+  position:absolute;left:-34px;top:-24px;width:68px;height:48px;
+  background:
+    linear-gradient(currentColor,currentColor) 0 0/12px 1px no-repeat,
+    linear-gradient(currentColor,currentColor) 0 0/1px 12px no-repeat,
+    linear-gradient(currentColor,currentColor) 100% 0/12px 1px no-repeat,
+    linear-gradient(currentColor,currentColor) 100% 0/1px 12px no-repeat,
+    linear-gradient(currentColor,currentColor) 0 100%/12px 1px no-repeat,
+    linear-gradient(currentColor,currentColor) 0 100%/1px 12px no-repeat,
+    linear-gradient(currentColor,currentColor) 100% 100%/12px 1px no-repeat,
+    linear-gradient(currentColor,currentColor) 100% 100%/1px 12px no-repeat;
+  color:rgba(234,223,205,.95);filter:drop-shadow(0 0 1.5px rgba(6,6,7,.75));
+  transition:color .25s ease,transform .3s cubic-bezier(.2,.8,.2,1);
+}
+.vf-af.locked .vf-af-box{color:var(--champagne);transform:scale(.88)}
+.vf-af-read{
+  position:absolute;left:-34px;top:30px;white-space:nowrap;
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;
+  color:rgba(234,223,205,.85);text-shadow:0 0 4px rgba(6,6,7,.9);transition:color .25s ease;
+}
+.vf-af.locked .vf-af-read{color:var(--champagne)}
+@media(hover:hover) and (pointer:fine){
+  .vf.vf-aiming,.vf.vf-aiming *{cursor:none}
+  .vf.vf-aiming .vf-roll,.vf.vf-aiming .vf-roll *,.vf.vf-aiming .vf-sub-link{cursor:pointer}
+}
+body.vf-in .cursor-dot,body.vf-in .cursor-ring{opacity:0!important}
+
+/* title — a lower third, not a billboard. The reel is the hero now. */
+.vf-title{
+  position:absolute;z-index:3;left:calc(var(--vf-pad) + 16px);bottom:calc(var(--vf-pad) + 18px);
+  max-width:min(62vw,980px);pointer-events:none;will-change:transform,opacity;
+}
+.vf-kicker{
+  display:block;margin-bottom:clamp(12px,1.8vh,20px);
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:rgba(234,223,205,.62);
+}
+header.hero .vf-h1{
+  font-family:var(--display);font-weight:var(--display-wght);
+  font-size:clamp(2.7rem,7.2vw,7.4rem);line-height:.9;letter-spacing:-.035em;
+  margin:0;color:var(--cream);text-wrap:balance;
+}
+.vf-h1 .ln{display:block;overflow:hidden;padding-bottom:.12em;margin-bottom:-.12em}
+.vf-h1 .ln > span{display:block;transform:translateY(108%);transition:transform 1.15s cubic-bezier(.16,1,.3,1)}
+.vf-h1 .ln:nth-child(2) > span{transition-delay:.09s}
+.vf-h1.in .ln > span{transform:none}
+.vf-h1 em{letter-spacing:-.02em}
+.vf-sub{
+  margin:clamp(14px,2vh,22px) 0 0;font-family:var(--sans);font-size:clamp(.9rem,1.2vw,1.05rem);
+  font-weight:300;color:var(--cream-dim);pointer-events:auto;
+}
+.vf-sub-link{
+  margin-left:14px;font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--cream);border-bottom:1px solid rgba(194,168,120,.6);padding-bottom:3px;
+  transition:color .25s ease,border-color .25s ease;
+}
+.vf-sub-link:hover{color:var(--champagne);border-color:var(--champagne)}
+
+/* the roll — six empty frames that fill as you shoot */
+.vf-roll{
+  position:absolute;z-index:3;right:calc(var(--vf-pad) + 16px);bottom:calc(var(--vf-pad) + 18px);
+  display:flex;flex-direction:column;align-items:flex-end;gap:12px;will-change:transform,opacity;
+}
+.vf-roll-strip{
+  display:flex;gap:6px;padding:12px 10px;border-radius:3px;position:relative;
+  background:rgba(6,6,7,.62);border:1px solid rgba(234,223,205,.1);
+  -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
+}
+.vf-roll-strip::before,.vf-roll-strip::after{
+  content:'';position:absolute;left:8px;right:8px;height:4px;
+  background:radial-gradient(circle,rgba(234,223,205,.28) 1.2px,transparent 1.6px) 0 50%/9px 4px repeat-x;
+}
+.vf-roll-strip::before{top:3px}
+.vf-roll-strip::after{bottom:3px}
+.vf-slot{
+  position:relative;width:clamp(44px,4.6vw,66px);aspect-ratio:16/9;border-radius:2px;overflow:hidden;
+  border:1px dashed rgba(234,223,205,.22);background:rgba(234,223,205,.03);
+  transition:border-color .3s ease;
+}
+.vf-slot canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.vf-slot.filled{border:1px solid rgba(194,168,120,.65)}
+.vf-slot.filled::after{
+  content:attr(data-n);position:absolute;left:3px;bottom:2px;
+  font-family:var(--mono);font-size:8px;letter-spacing:.06em;color:var(--cream);text-shadow:0 0 4px #000;
+}
+.vf-roll-meta{
+  display:flex;align-items:center;gap:14px;
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:rgba(234,223,205,.7);
+}
+.vf-count{color:var(--champagne)}
+.vf-shoot{
+  font:inherit;letter-spacing:inherit;text-transform:inherit;color:var(--cream);
+  background:none;border:0;padding:4px 0;cursor:pointer;
+}
+.vf-shoot::before{content:'[ ';color:var(--champagne)}
+.vf-shoot::after{content:' ]';color:var(--champagne)}
+.vf-shoot:focus-visible,.vf-sub-link:focus-visible,.vf-roll-meta a:focus-visible{outline:1px solid var(--champagne);outline-offset:4px}
+.vf-hint-touch{display:none}
+@media(hover:none),(pointer:coarse){.vf-hint-fine{display:none}.vf-hint-touch{display:inline}}
+.vf-roll-meta a{color:var(--cream);border-bottom:1px solid var(--champagne);padding-bottom:2px}
+.vf-roll-meta .vf-reset{font:inherit;letter-spacing:inherit;text-transform:inherit;background:none;border:0;color:rgba(234,223,205,.5);cursor:pointer;padding:4px 0}
+.vf-roll.full .vf-roll-strip{border-color:rgba(194,168,120,.45)}
+.vf-roll.nudge{animation:vfNudge .45s cubic-bezier(.36,.07,.19,.97)}
+@keyframes vfNudge{20%,60%{transform:translateX(-5px)}40%,80%{transform:translateX(5px)}}
+
+/* a frame on its way from the reel to the roll */
+.vf-print{
+  position:fixed;left:0;top:0;z-index:120;pointer-events:none;
+  border:3px solid var(--ivory);border-radius:2px;background:#000;
+  box-shadow:0 18px 40px rgba(0,0,0,.55);overflow:hidden;will-change:transform;
+}
+.vf-print canvas{display:block;width:100%;height:100%}
+
+@media(max-width:760px){
+  header.hero.vf{--vf-pad:14px;min-height:520px}
+  .vf-tl{gap:12px}
+  .vf-tl .vf-dim{display:none}
+  .vf-tr{gap:3px}
+  .vf-hud{font-size:9.5px}
+  .vf-title{max-width:none;right:calc(var(--vf-pad) + 12px);left:calc(var(--vf-pad) + 12px);bottom:calc(var(--vf-pad) + 96px)}
+  header.hero .vf-h1{font-size:clamp(2.6rem,13.5vw,4.2rem)}
+  .vf-sub-link{display:inline-block;margin:10px 0 0;margin-left:0}
+  .vf-sub{display:flex;flex-direction:column;align-items:flex-start}
+  .vf-roll{left:calc(var(--vf-pad) + 12px);right:calc(var(--vf-pad) + 12px);bottom:calc(var(--vf-pad) + 14px);align-items:stretch}
+  .vf-roll-strip{justify-content:space-between}
+  .vf-slot{flex:1;width:auto}
+  .vf-roll-meta{justify-content:space-between;font-size:9.5px}
+}
+@media(prefers-reduced-motion:reduce){
+  .vf-stage{transition:none;clip-path:none}
+  .vf-h1 .ln > span{transform:none;transition:none}
+  .vf-rec b{animation:none}
+}
+
+/* preloader — on the home page it boots the camera, then the iris opens */
+.preloader-boot{display:flex;gap:16px;margin-top:4px;
+  font-family:'IBM Plex Mono',ui-monospace,Menlo,monospace;font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--stone)}
+.preloader-boot span{opacity:0;animation:bootIn .35s ease forwards}
+.preloader-boot span:nth-child(1){animation-delay:.55s}
+.preloader-boot span:nth-child(2){animation-delay:.8s}
+.preloader-boot span:nth-child(3){animation-delay:1.05s}
+.preloader-boot span:nth-child(4){animation-delay:1.3s;color:var(--champagne)}
+@keyframes bootIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+body.preloader-seen .preloader-boot span{animation-delay:.1s;animation-duration:.2s}
+body.has-vf .preloader{transition:opacity .55s ease}
+body.has-vf .preloader.done{transform:none;opacity:0}
 
 .hero-inner{max-width:none;margin:0;display:flex;flex-direction:column;align-items:center}
 header.hero .hero-inner{position:relative;z-index:2}
