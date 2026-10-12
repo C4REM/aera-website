@@ -110,6 +110,16 @@
         tex.minFilter = THREE.LinearFilter;          // no mipmaps → no NPOT issues
         tex.generateMipmaps = false;
         tex.wrapS = tex.wrapT = THREE.ClampToEdgeWrapping;
+        /* Crop like CSS object-fit:cover instead of stretching. Every panel
+           is CARD_W:CARD_H (~1.7:1) but covers come in all shapes, from 3:2
+           photos to portrait frames, and mapping them straight onto the panel
+           squashed or stretched them. Shrinking the sampled UV window on the
+           overlong axis and centring it keeps the photo's real proportions. */
+        const img = tex.image, ia = img && img.width / img.height, ca = CARD_W / CARD_H;
+        if (ia && isFinite(ia)) {
+          if (ia > ca) { tex.repeat.set(ca / ia, 1); tex.offset.set((1 - ca / ia) / 2, 0); }
+          else         { tex.repeat.set(1, ia / ca); tex.offset.set(0, (1 - ia / ca) / 2); }
+        }
         mat.map = tex;
         mat.color.setHex(0xffffff);
         mat.needsUpdate = true;
