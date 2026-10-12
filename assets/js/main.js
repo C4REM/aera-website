@@ -1118,7 +1118,7 @@
           ((m.projects || []).length
             ? '<div class="td-credits"><span class="td-credits-label">Selected credits</span><ul>' +
                 m.projects.map(p =>
-                  '<li><a href="' + esc(p.url) + '" target="_blank" rel="noopener">' +
+                  '<li><a href="' + esc(p.url) + '"' + (/^https?:/.test(p.url) ? ' target="_blank" rel="noopener"' : '') + '>' +
                     '<span class="tc-name">' + esc(p.name) + '</span>' +
                     '<span class="tc-meta">' + esc(p.meta || '') + '</span>' +
                   '</a></li>').join('') +

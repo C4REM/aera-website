@@ -2723,6 +2723,10 @@ body:not(.pg-live) .pg-head{position:static;max-width:none;padding:clamp(90px,12
   .ed-contact-foot{flex-direction:column;align-items:center;gap:10px}
 }
 
+/* project credit line (guest/team photographer) */
+.pj-credit{margin:clamp(30px,5vh,52px) 0 0;font-size:13px;letter-spacing:.04em;color:var(--cream-dim)}
+.pj-credit a{color:var(--champagne)}
+
 /* Grain removed sitewide at Jack's request (12 Oct 2026). The canvas and
    .grain elements are gone from every page; this is a guard in case one
    comes back via an old template. */
