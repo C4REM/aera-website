@@ -237,7 +237,7 @@ header.hero.vf{
 header.hero .vf-h1{
   position:absolute;z-index:3;left:var(--vf-pad);right:var(--vf-pad);top:46%;margin:0;
   font-family:var(--serif);font-weight:300;
-  font-size:clamp(2.4rem,4.6vw,4.8rem);line-height:1;letter-spacing:-.012em;
+  font-size:clamp(2.8rem,6vw,6.2rem);line-height:1;letter-spacing:-.012em;
   color:var(--cream);text-wrap:balance;pointer-events:none;
 }
 .vf-h1 .ln{display:block;overflow:hidden;padding-bottom:.1em;margin-bottom:-.1em}
@@ -265,7 +265,7 @@ header.hero .vf-h1 em{font-family:var(--serif);font-style:italic;font-weight:400
 .vf-btn:focus-visible{outline:1px solid var(--cream);outline-offset:4px}
 
 @media(max-width:760px){
-  header.hero .vf-h1{top:26%;font-size:clamp(2rem,9.2vw,3rem)}
+  header.hero .vf-h1{top:30%;font-size:clamp(2.6rem,12.5vw,3.8rem)}
   .vf-meta{top:auto;bottom:calc(var(--vf-pad) + 150px)}
   .vf-fact b{font-size:12.5px}
   .vf-btn{min-width:0;width:calc(100vw - 2 * var(--vf-pad))}
