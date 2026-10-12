@@ -2537,8 +2537,6 @@ body:not(.pg-live) .pg-head{position:static;max-width:none;padding:clamp(90px,12
   --ed-gut:clamp(22px,6vw,112px);
   --ed-pad:clamp(120px,20vh,240px);
 }
-/* the smoky shader and grain were the single biggest "template" tell */
-.ed-home .bg-stage,.ed-home #bgGL,.ed-home #grainCanvas,.ed-home .grain{display:none!important}
 
 .ed{position:relative;padding:var(--ed-pad) var(--ed-gut)}
 .ed-bone{background:var(--bone);color:var(--ink)}
@@ -2726,3 +2724,32 @@ body:not(.pg-live) .pg-head{position:static;max-width:none;padding:clamp(90px,12
 @media (prefers-reduced-motion:reduce){
   .ed-photo img,.ed-index a{transition:none}
 }
+
+/* ---- Oct 12 revision: Jack wants the original animated background and the
+   obsidian / cream / champagne scheme back, keeping the new spacing and
+   layout. Every section is now transparent so the shader + grain run
+   continuously behind the whole page; the bone tokens are remapped to the
+   dark palette rather than deleted so the layout rules above stay intact. */
+.ed-home{
+  --bone:transparent;
+  --bone-2:rgba(234,223,205,.04);
+  --ink:var(--cream);
+  --ink-dim:var(--cream-dim);
+  --ink-line:rgba(234,223,205,.14);
+}
+.ed-bone,.ed-ink,.ed-home .ed-contact.contact,.ed-home footer{background:transparent;color:var(--cream)}
+.ed-home .reel-pin{background:transparent}
+.ed-drop i,.ed-ink .ed-drop i{background:var(--obsidian)}
+.ed-tick::after{background:var(--obsidian)}
+.ed-photo,.ed-ink .ed-photo{background:rgba(234,223,205,.04)}
+.ed-intro-copy p{color:var(--cream-dim)}
+.ed-home .ed-faq .faq-a p{color:var(--cream-dim)}
+.ed-statement em{color:var(--champagne)}
+.ed-ask em,.ed-home .ed-contact .ed-ask em{color:var(--champagne)}
+.ed-home .ed-faq .faq-q .icon{color:var(--champagne)}
+.ed-cap b{color:var(--cream)}
+
+/* laurels + client logos back, given room to breathe */
+.ed-sub{display:block;text-align:center;margin-bottom:clamp(36px,6vh,64px)}
+.ed-awards{padding:clamp(110px,18vh,220px) 0 0}
+.ed-clients{padding:clamp(110px,18vh,200px) 0 0;margin:0 calc(-1 * var(--ed-gut))}
