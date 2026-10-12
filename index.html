@@ -21,7 +21,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400;1,500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 <link rel="preload" as="image" href="assets/img/hero-poster.jpg?v=2">
-<link rel="stylesheet" href="assets/css/style.css?v=20261012k">
+<script>document.documentElement.classList.add('ed-js')</script>
+<link rel="stylesheet" href="assets/css/style.css?v=20261012n">
 <noscript><style>.preloader{display:none!important}body{overflow:visible!important;height:auto!important}.cursor-dot,.cursor-ring{display:none!important}.reveal{opacity:1!important;transform:none!important;filter:none!important}.hero-statement .ln>span,.rise>span{transform:none!important}</style></noscript>
 
 <script type="application/ld+json">
@@ -157,98 +158,118 @@
 </div>
 
 
-<!-- ================= EDITORIAL BODY (Oct 2026) =================
-     Everything below the hero + quote, rebuilt around negative space.
-     References: designxhand.com/experience and couroazul.com. What they
-     share, and what this copies in spirit rather than layout:
-       - sections alternate warm bone and true black, flat, no ambient glow
-       - one idea per screen, with far more empty space than content
-       - wide-tracked serif capitals for statements, tiny small-caps labels
-       - photography in black and white, sitting off-centre on a grid
-     Aera's own thread from the hero: photos stay monochrome until you
-     point at them, then the colour comes back (the lens idea again).
-     The previous homepage devices (service wheel, origin timeline, method
-     pin, socials fan, project finder) are only unhooked from this page;
-     their CSS/JS still lives in style.css / main.js. -->
+<!-- ================= EDITORIAL BODY (Oct 2026, round 4) =================
+     Below the hero + quote. References: designxhand.com/experience and
+     couroazul.com. Both keep one visual identity but give every section a
+     different shape, so the page never repeats itself. Each section here
+     borrows one of those shapes:
+       intro        — Design x Hand's "Two days. / Two patients. / One method."
+                      staggered lines, then their long-form serif paragraph
+       work         — Couro Azul's "Time matters" photo + hairline caption
+       services     — Couro Azul's Automotive/Railway/Aircraft switcher, as a
+                      pinned scroll with the photo changing per service
+       recognition  — Design x Hand's two-tone "Manhattan, / New York City"
+       socials      — the Instagram fan (kept from the previous homepage)
+       questions    — Design x Hand's split FAQ with a heading that stays put
+       enquire      — Couro Azul's closing: hairline drop, tracked capitals
+     Motion lives in assets/js/ed-home.js (data-ed attributes). -->
 
-<!-- 1 · INTRO — bone -->
-<section class="ed ed-bone ed-intro" id="intro" aria-label="About Aera">
-  <div class="ed-label-row">
+<!-- 1 · INTRO -->
+<section class="ed ed-intro" id="intro" aria-label="About Aera">
+  <div class="ed-label-row" data-ed="draw">
     <span class="ed-label">The studio</span>
     <span class="ed-label">Leeds &amp; Dubai</span>
   </div>
 
-  <span class="ed-drop" aria-hidden="true"><i></i></span>
-
-  <h2 class="ed-statement reveal">
-    <span class="ed-caps">Be there early.<br>Stay calm.</span>
-    <em>Shoot it as it happened.</em>
+  <h2 class="ed-stagger" data-ed="rise">
+    <span class="ed-line l1"><span>Be there early.</span></span>
+    <span class="ed-line l2"><span>Stay calm.</span></span>
+    <span class="ed-line l3"><span>Shoot it as it happened.</span></span>
   </h2>
 
-  <div class="ed-intro-grid">
-    <figure class="ed-photo ed-intro-photo reveal">
-      <img src="assets/img/work/method-photo.jpg" loading="lazy" alt="Jack Careem on set, working camera and lighting with the crew">
+  <div class="ed-essay">
+    <figure class="ed-essay-photo ed-photo" data-ed="clip">
+      <img data-par="0.1" src="assets/img/work/method-photo.jpg" loading="lazy" alt="Jack Careem on set, working camera and lighting with the crew">
     </figure>
-    <div class="ed-intro-copy reveal">
-      <p>Aera didn&rsquo;t start with a business plan. It started with a camera, a lot of
-        frames that missed, and a stubborn belief that good media shouldn&rsquo;t be
-        reserved for the brands that can afford an agency.</p>
-      <p>The overhead is a laptop, a hard drive, and a mild caffeine dependency. What that
-        buys you isn&rsquo;t only a smaller invoice. It&rsquo;s someone who has time to sit with
-        your edit until it&rsquo;s actually right.</p>
+    <p class="ed-essay-lede smask">Aera didn&rsquo;t start with a business plan. It started with a camera, a lot of frames that missed, and a stubborn belief that good media <em>shouldn&rsquo;t be reserved</em> for the brands that can afford an agency.</p>
+    <div class="ed-essay-side" data-ed="fade">
+      <p>The overhead is a laptop, a hard drive, and a mild caffeine dependency. What that buys you isn&rsquo;t only a smaller invoice. It&rsquo;s someone who has time to sit with your edit until it&rsquo;s actually right.</p>
       <a class="ed-link" href="team.html">Meet the studio</a>
     </div>
   </div>
 </section>
 
-<!-- 2 · SELECTED WORK — bone, editorial spread -->
-<section class="ed ed-bone ed-work" id="work" aria-label="Selected work">
-  <div class="ed-label-row">
+<!-- 2 · SELECTED WORK -->
+<section class="ed ed-work" id="work" aria-label="Selected work">
+  <div class="ed-label-row" data-ed="draw">
     <span class="ed-label">Selected work</span>
     <span class="ed-label ed-num">(04)</span>
   </div>
 
-  <a class="ed-piece ed-p1 reveal" href="rolls-royce.html">
-    <figure class="ed-photo"><img src="https://cdn.myportfolio.com/306f0dec-b99e-4a9e-a71a-768e23a6c7b5/4e1dea05-cfeb-4ec8-8bbb-edff7475ac5f_rwc_0x157x1920x768x1920.jpg?h=6da19d20ea4eb957d336eb7de3dbc5bf" loading="lazy" alt="Rolls-Royce brand film, shot in the desert outside Dubai"></figure>
-    <span class="ed-cap"><b>Rolls&#8209;Royce</b><span>Brand film &middot; Dubai</span></span>
+  <a class="ed-piece ed-p1" href="rolls-royce.html">
+    <figure class="ed-photo" data-ed="clip"><img src="https://cdn.myportfolio.com/306f0dec-b99e-4a9e-a71a-768e23a6c7b5/4e1dea05-cfeb-4ec8-8bbb-edff7475ac5f_rwc_0x157x1920x768x1920.jpg?h=6da19d20ea4eb957d336eb7de3dbc5bf" loading="lazy" alt="Rolls-Royce brand film, shot in the desert outside Dubai" data-par="0.06"></figure>
+    <span class="ed-cap" data-ed="fade"><b>Rolls&#8209;Royce</b><span>Brand film &middot; Dubai</span></span>
   </a>
 
-  <a class="ed-piece ed-p2 reveal" href="photography.html">
-    <figure class="ed-photo"><img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/db5c3ac4-da30-40e7-84a7-28a43271390b/IMG_0831.jpg" loading="lazy" alt="Portrait on a chair at the water's edge at sunset"></figure>
-    <span class="ed-cap ed-cap-side"><i class="ed-tick" aria-hidden="true"></i><b>Portraits</b><span>Photography</span></span>
+  <a class="ed-piece ed-p2" href="photography.html">
+    <figure class="ed-photo" data-ed="clip"><img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/db5c3ac4-da30-40e7-84a7-28a43271390b/IMG_0831.jpg" loading="lazy" alt="Portrait on a chair at the water's edge at sunset" data-par="0.08"></figure>
+    <span class="ed-cap ed-cap-side" data-ed="fade"><i class="ed-tick" aria-hidden="true"></i><b>Portraits</b><span>Photography</span></span>
   </a>
 
-  <a class="ed-piece ed-p3 reveal" href="events.html">
-    <figure class="ed-photo"><img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/13f98449-a6da-4ea8-b125-01a7d5fc40b4/IMG_1199.jpg" loading="lazy" alt="Inside a Formula One cockpit under red start lights"></figure>
-    <span class="ed-cap"><b>Motorsport</b><span>Event coverage</span></span>
+  <a class="ed-piece ed-p3" href="events.html">
+    <figure class="ed-photo" data-ed="clip"><img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/13f98449-a6da-4ea8-b125-01a7d5fc40b4/IMG_1199.jpg" loading="lazy" alt="Inside a Formula One cockpit under red start lights" data-par="0.08"></figure>
+    <span class="ed-cap" data-ed="fade"><b>Motorsport</b><span>Event coverage</span></span>
   </a>
 
-  <a class="ed-piece ed-p4 reveal" href="kia-motors.html">
-    <figure class="ed-photo"><img src="https://cdn.myportfolio.com/306f0dec-b99e-4a9e-a71a-768e23a6c7b5/16daea74-6710-467e-943d-5a01a1150467_rw_3840.jpg?h=7c2bac025a21c60797a1bfc4a38d48bf" loading="lazy" alt="KIA campaign shoot on the beach"></figure>
-    <span class="ed-cap"><b>KIA Motors</b><span>Campaign &middot; on set</span></span>
+  <a class="ed-piece ed-p4" href="kia-motors.html">
+    <figure class="ed-photo" data-ed="clip"><img src="https://cdn.myportfolio.com/306f0dec-b99e-4a9e-a71a-768e23a6c7b5/16daea74-6710-467e-943d-5a01a1150467_rw_3840.jpg?h=7c2bac025a21c60797a1bfc4a38d48bf" loading="lazy" alt="KIA campaign shoot on the beach" data-par="0.06"></figure>
+    <span class="ed-cap" data-ed="fade"><b>KIA Motors</b><span>Campaign &middot; on set</span></span>
   </a>
 
-  <div class="ed-center">
+  <div class="ed-center" data-ed="fade">
     <a class="ed-link" href="work.html">All work</a>
   </div>
 </section>
 
-<!-- 3 · SERVICES — black, a ruled index -->
-<section class="ed ed-ink ed-services" id="services" aria-label="Services">
-  <div class="ed-label-row">
-    <span class="ed-label">What we do</span>
-    <span class="ed-label ed-num">(05)</span>
+<!-- 3 · SERVICES — pinned; the photo and copy change as you scroll -->
+<section class="ed-svc" id="services" aria-label="Services">
+  <div class="ed-svc-track" id="svcTrack">
+    <div class="ed-svc-pin">
+      <div class="ed-svc-top">
+        <span class="ed-label">What we do</span>
+        <span class="ed-label ed-num"><b id="svcNum">01</b> / 05</span>
+      </div>
+
+      <ol class="ed-svc-list" id="svcList">
+        <li class="is-on"><a href="social-media.html"><i>I</i><span>Social Media</span></a></li>
+        <li><a href="brand-commercial.html"><i>II</i><span>Brand &amp; Commercial</span></a></li>
+        <li><a href="events.html"><i>III</i><span>Events</span></a></li>
+        <li><a href="photography.html"><i>IV</i><span>Portraits</span></a></li>
+        <li><a href="work.html"><i>V</i><span>Film &amp; Reels</span></a></li>
+      </ol>
+
+      <div class="ed-svc-media" aria-hidden="true">
+        <img class="is-on" src="assets/img/work/social-gameday.jpg" alt="" loading="lazy">
+        <img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/a5c290e2-e3f5-4aed-81bd-9e8fa29d2e44/A7400277.jpg" alt="" loading="lazy">
+        <img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/d68650ca-1652-44b5-823e-c43abab0b7e2/Lando+Photo.png" alt="" loading="lazy">
+        <img src="assets/img/work/wheel-portrait.jpg" alt="" loading="lazy">
+        <img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/b5d862b4-ff71-42f0-9e9e-ce0c231c5a80/1J6A0134.jpg" alt="" loading="lazy">
+      </div>
+
+      <div class="ed-svc-copy" id="svcCopy">
+        <div class="is-on"><p>Content, management and a bit of strategy, for brands that want a feed people actually stop scrolling for instead of one that quietly dies every March.</p><a class="ed-link" href="social-media.html">Social media</a></div>
+        <div><p>Product shots, portraits and promo photography that make a small business look like it has a marketing department. It doesn&rsquo;t. It has us.</p><a class="ed-link" href="brand-commercial.html">Brand &amp; commercial</a></div>
+        <div><p>Parties, launches, festivals, the odd chaotic corporate away-day. Covered with actual energy, and edited fast enough to still be relevant when you post it.</p><a class="ed-link" href="events.html">Events</a></div>
+        <div><p>A relaxed, considered session. Headshots, portraits or a personal shoot, done properly.</p><a class="ed-link" href="photography.html">Portraits</a></div>
+        <div><p>Short films and reels, cut for the feed as carefully as for the frame.</p><a class="ed-link" href="work.html">Film &amp; reels</a></div>
+      </div>
+
+      <div class="ed-svc-bar"><span id="svcBar"></span></div>
+    </div>
   </div>
-  <ol class="ed-index">
-    <li><a href="social-media.html"><span class="ed-i-n">01</span><span class="ed-i-t">Social Media</span><span class="ed-i-d">A feed that looks considered, every week.</span></a></li>
-    <li><a href="brand-commercial.html"><span class="ed-i-n">02</span><span class="ed-i-t">Brand &amp; Commercial</span><span class="ed-i-d">Product, portraits and promo with a studio finish.</span></a></li>
-    <li><a href="events.html"><span class="ed-i-n">03</span><span class="ed-i-t">Events</span><span class="ed-i-d">Stills and a recap edit from the same night.</span></a></li>
-    <li><a href="photography.html"><span class="ed-i-n">04</span><span class="ed-i-t">Portraits</span><span class="ed-i-d">Headshots or a personal shoot, done properly.</span></a></li>
-    <li><a href="work.html"><span class="ed-i-n">05</span><span class="ed-i-t">Film &amp; Reels</span><span class="ed-i-d">Short films cut for the feed as carefully as the frame.</span></a></li>
-  </ol>
 </section>
 
-<!-- 4 · SHOWREEL — black (unchanged mechanics) -->
+<!-- 4 · SHOWREEL -->
 <section id="showreel" class="reel">
   <div class="reel-pin" id="reelPin">
     <div class="reel-copy" id="reelCopy">
@@ -297,13 +318,16 @@
   </div>
 </section>
 
-<!-- 5 · RECOGNITION + QUESTIONS — bone -->
-<section class="ed ed-bone ed-proof" id="recognition" aria-label="Recognition and clients">
-  <span class="ed-drop" aria-hidden="true"><i></i></span>
-  <h2 class="ed-statement ed-statement-sm reveal"><span class="ed-caps">Small studio.</span><em>Serious company.</em></h2>
-
+<!-- 5 · RECOGNITION -->
+<section class="ed ed-proof" id="recognition" aria-label="Recognition and clients">
+  <div class="ed-proof-head">
+    <span class="ed-label" data-ed="fade">Recognition</span>
+    <h2 class="ed-twotone" data-ed="rise">
+      <span class="ed-line"><span>Small studio,</span></span>
+      <span class="ed-line"><span><em>serious company.</em></span></span>
+    </h2>
+  </div>
   <div class="awards ed-awards">
-    <span class="ed-label ed-sub">Recognition</span>
     <ul class="award-row">
       <li class="award" style="--n:2;--rot:-7deg"><img src="assets/img/awards/dune-creative-concept.svg" loading="lazy" alt="Nominee, Best Creative Concept — Dune Creative Festival 2026"></li>
       <li class="award" style="--n:1;--rot:-3deg"><img src="assets/img/awards/dune-cinematography.svg" loading="lazy" alt="Winner, Best Cinematography — Dune Creative Festival 2026"></li>
@@ -312,44 +336,87 @@
       <li class="award" style="--n:2;--rot:7deg"><img src="assets/img/awards/dune-mise-en-scene.svg" loading="lazy" alt="Nominee, Best Mise en Scène — Dune Creative Festival 2026"></li>
     </ul>
   </div>
-
   <div class="clients ed-clients">
-    <span class="ed-label ed-sub">Worked with</span>
+    <span class="ed-label ed-sub" data-ed="fade">Worked with</span>
   <div class="marquee" role="list" aria-label="Clients and collaborators">
     <div class="marquee-track"><span class="cl"><img src="assets/img/clients/rolls-royce.png" alt="Rolls-Royce" loading="lazy"></span><span class="cl"><img src="assets/img/clients/kia.png" alt="KIA" loading="lazy"></span><span class="cl"><img src="assets/img/clients/lamborghini.png" alt="Lamborghini" loading="lazy"></span><span class="cl"><img src="assets/img/clients/first-motors.png" alt="F1rst Motors" loading="lazy"></span><span class="cl"><img src="assets/img/clients/diary-of-a-ceo.png" alt="The Diary of a CEO" loading="lazy"></span><span class="cl"><img src="assets/img/clients/green-planet.png" alt="The Green Planet" loading="lazy"></span><span class="cl"><img src="assets/img/clients/school-of-greatness.png" alt="The School of Greatness" loading="lazy"></span><span class="cl" aria-hidden="true"><img src="assets/img/clients/rolls-royce.png" alt="" loading="lazy"></span><span class="cl" aria-hidden="true"><img src="assets/img/clients/kia.png" alt="" loading="lazy"></span><span class="cl" aria-hidden="true"><img src="assets/img/clients/lamborghini.png" alt="" loading="lazy"></span><span class="cl" aria-hidden="true"><img src="assets/img/clients/first-motors.png" alt="" loading="lazy"></span><span class="cl" aria-hidden="true"><img src="assets/img/clients/diary-of-a-ceo.png" alt="" loading="lazy"></span><span class="cl" aria-hidden="true"><img src="assets/img/clients/green-planet.png" alt="" loading="lazy"></span><span class="cl" aria-hidden="true"><img src="assets/img/clients/school-of-greatness.png" alt="" loading="lazy"></span><span class="cl"><img src="assets/img/clients/rolls-royce.png" alt="Rolls-Royce" loading="lazy"></span><span class="cl"><img src="assets/img/clients/kia.png" alt="KIA" loading="lazy"></span><span class="cl"><img src="assets/img/clients/lamborghini.png" alt="Lamborghini" loading="lazy"></span><span class="cl"><img src="assets/img/clients/first-motors.png" alt="F1rst Motors" loading="lazy"></span><span class="cl"><img src="assets/img/clients/diary-of-a-ceo.png" alt="The Diary of a CEO" loading="lazy"></span><span class="cl"><img src="assets/img/clients/green-planet.png" alt="The Green Planet" loading="lazy"></span><span class="cl"><img src="assets/img/clients/school-of-greatness.png" alt="The School of Greatness" loading="lazy"></span><span class="cl" aria-hidden="true"><img src="assets/img/clients/rolls-royce.png" alt="" loading="lazy"></span><span class="cl" aria-hidden="true"><img src="assets/img/clients/kia.png" alt="" loading="lazy"></span><span class="cl" aria-hidden="true"><img src="assets/img/clients/lamborghini.png" alt="" loading="lazy"></span><span class="cl" aria-hidden="true"><img src="assets/img/clients/first-motors.png" alt="" loading="lazy"></span><span class="cl" aria-hidden="true"><img src="assets/img/clients/diary-of-a-ceo.png" alt="" loading="lazy"></span><span class="cl" aria-hidden="true"><img src="assets/img/clients/green-planet.png" alt="" loading="lazy"></span><span class="cl" aria-hidden="true"><img src="assets/img/clients/school-of-greatness.png" alt="" loading="lazy"></span></div>
   </div>
   </div>
+</section>
 
-  <div class="ed-faq" id="faq">
-    <span class="ed-label">Good to know</span>
-    <div class="faq reveal">
-      <div class="faq-item">
-        <button class="faq-q"><span>Is Aera good for small business social media?</span><span class="icon">+</span></button>
-        <div class="faq-a"><p>Yes. Honestly, it's where most of the actual bookings come from right now. Small brands who want a feed that doesn't look like it was posted by whoever was free that day.</p></div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q"><span>What areas does Aera cover?</span><span class="icon">+</span></button>
-        <div class="faq-a"><p>Leeds and all of Yorkshire without blinking. Further afield's fine too. We might just ask you to cover a train ticket.</p></div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q"><span>When is Aera launching?</span><span class="icon">+</span></button>
-        <div class="faq-a"><p>Properly, September 2026. Unofficially, we've been taking bookings the whole time. The "launch" is mostly us tidying up and getting a website that matches the ambition.</p></div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q"><span>Why is it this cheap?</span><span class="icon">+</span></button>
-        <div class="faq-a"><p>No studio rent, no account managers, no one taking a cut before the person holding the camera sees a penny. Being this small also means we're taking on a handful of projects at a time rather than forty, so yours gets properly sat with instead of squeezed between two others.</p></div>
-      </div>
+<!-- 6 · SOCIALS — the Instagram fan -->
+<section id="socials" class="socials ed-socials">
+  <div class="socials-head ed-socials-head">
+    <span class="ed-label" data-ed="fade">Instagram &middot; @_c4rem</span>
+    <h2 class="ed-socials-title" data-ed="rise">
+      <span class="ed-line"><span>What&rsquo;s up</span></span>
+      <span class="ed-line"><span><em>on socials</em></span></span>
+    </h2>
+  </div>
+  <div class="fan" aria-label="Recent social posts">
+    <a class="fan-card" style="--i:-3;--a:3" href="https://instagram.com/_c4rem" target="_blank" rel="noopener">
+      <img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/13f98449-a6da-4ea8-b125-01a7d5fc40b4/IMG_1199.jpg" loading="lazy" alt="Event coverage">
+    </a>
+    <a class="fan-card" style="--i:-2;--a:2" href="https://instagram.com/_c4rem" target="_blank" rel="noopener">
+      <img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/f5c5d3ac-57b1-4757-ab6c-6ac16ca6e090/Hauntfest++Poster.png" loading="lazy" alt="Campaign design">
+    </a>
+    <a class="fan-card" style="--i:-1;--a:1" href="https://instagram.com/_c4rem" target="_blank" rel="noopener">
+      <img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/717cb03f-faa2-4ff3-bb24-2a59f2af0aad/IMG_6821.jpg" loading="lazy" alt="Portrait work">
+    </a>
+    <a class="fan-card" style="--i:0;--a:0" href="https://instagram.com/_c4rem" target="_blank" rel="noopener">
+      <img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/956771b0-d277-4ee9-bde0-2c1b6d0a8d8c/Green+Planet+Photos-12.jpg" loading="lazy" alt="Brand and commercial work">
+    </a>
+    <a class="fan-card" style="--i:1;--a:1" href="https://instagram.com/_c4rem" target="_blank" rel="noopener">
+      <img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/ebc2d86a-43dc-45da-8c9a-9c069df080d2/Insta-Post-Dubai-23-24-_01.jpg" loading="lazy" alt="Social content design">
+    </a>
+    <a class="fan-card" style="--i:2;--a:2" href="https://instagram.com/_c4rem" target="_blank" rel="noopener">
+      <img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/d68650ca-1652-44b5-823e-c43abab0b7e2/Lando+Photo.png" loading="lazy" alt="Film and reels">
+    </a>
+    <a class="fan-card" style="--i:3;--a:3" href="https://instagram.com/_c4rem" target="_blank" rel="noopener">
+      <img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/db5c3ac4-da30-40e7-84a7-28a43271390b/IMG_0831.jpg" loading="lazy" alt="Studio work">
+    </a>
+  </div>
+  <div class="ed-center ed-socials-cta" data-ed="fade">
+    <a class="ed-link" href="https://instagram.com/_c4rem" target="_blank" rel="noopener">Follow @_c4rem</a>
+  </div>
+</section>
+
+<!-- 7 · QUESTIONS -->
+<section class="ed ed-faqsec" id="faq" aria-label="Frequently asked questions">
+  <div class="ed-faq-head">
+    <h2 class="ed-twotone ed-faq-title" data-ed="rise">
+      <span class="ed-line"><span>Good to know</span></span>
+      <span class="ed-line"><span><em>before you email.</em></span></span>
+    </h2>
+  </div>
+  <div class="faq ed-faq" data-ed="fade">
+    <div class="faq-item">
+      <button class="faq-q"><span>Is Aera good for small business social media?</span><span class="icon">+</span></button>
+      <div class="faq-a"><p>Yes. Honestly, it's where most of the actual bookings come from right now. Small brands who want a feed that doesn't look like it was posted by whoever was free that day.</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q"><span>What areas does Aera cover?</span><span class="icon">+</span></button>
+      <div class="faq-a"><p>Leeds and all of Yorkshire without blinking. Further afield's fine too. We might just ask you to cover a train ticket.</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q"><span>When is Aera launching?</span><span class="icon">+</span></button>
+      <div class="faq-a"><p>Properly, September 2026. Unofficially, we've been taking bookings the whole time. The "launch" is mostly us tidying up and getting a website that matches the ambition.</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q"><span>Why is it this cheap?</span><span class="icon">+</span></button>
+      <div class="faq-a"><p>No studio rent, no account managers, no one taking a cut before the person holding the camera sees a penny. Being this small also means we're taking on a handful of projects at a time rather than forty, so yours gets properly sat with instead of squeezed between two others.</p></div>
     </div>
   </div>
 </section>
 
-<!-- 6 · ENQUIRE — black -->
-<section class="ed ed-ink ed-contact contact" id="contact">
-  <span class="ed-label">Enquire</span>
-  <h2 class="ed-ask">Right, what are we <em>making?</em></h2>
+<!-- 8 · ENQUIRE -->
+<section class="ed ed-contact contact" id="contact">
+  <span class="ed-drop" data-ed="drop" aria-hidden="true"><i></i></span>
+  <span class="ed-label" data-ed="fade">Enquire</span>
+  <h2 class="ed-ask" data-ed="track">Right, what are<br>we making?</h2>
   <!-- Pick-your-brief chips: they rewrite the mailto subject below, so the
        enquiry arrives already sorted. See "ENQUIRE CHIPS" in main.js. -->
-  <div class="ask-pick">
+  <div class="ask-pick" data-ed="fade">
     <span class="ask-pick-label">Pick what you need and it'll fill in the subject line</span>
     <div class="ask-chips">
       <button class="ask-chip" type="button" aria-pressed="false" data-svc="Social Media">Social Media</button>
@@ -358,8 +425,8 @@
       <button class="ask-chip" type="button" aria-pressed="false" data-svc="Not sure yet">Not sure yet</button>
     </div>
   </div>
-  <a class="email" href="mailto:bookings@aerastudios.org">bookings@aerastudios.org</a>
-  <div class="ed-contact-foot">
+  <a class="email" href="mailto:bookings@aerastudios.org" data-ed="fade">bookings@aerastudios.org</a>
+  <div class="ed-contact-foot" data-ed="draw">
     <a href="https://instagram.com/_c4rem" target="_blank" rel="noopener">Instagram &middot; @_c4rem</a>
     <span>Leeds &amp; Dubai</span>
   </div>
@@ -384,5 +451,6 @@
 <script src="assets/js/lenis.min.js?v=20260803h"></script>
 <script src="assets/js/main.js?v=20261012a"></script>
 <script src="assets/js/viewfinder.js?v=20261012d"></script>
+<script src="assets/js/ed-home.js?v=20261012a"></script>
 </body>
 </html>
