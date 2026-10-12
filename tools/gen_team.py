@@ -6,7 +6,7 @@ import json, html, re
 src = open('team.html').read()
 HEAD = src[:src.index('<header class="page-hero">')]
 FOOT = src[src.index('<footer>'):src.index('</footer>') + len('</footer>')]
-CSSV = '20261013d'
+CSSV = '20261013f'
 HEAD = re.sub(r'style\.css\?v=[0-9a-z]+', 'style.css?v=' + CSSV, HEAD)
 if 'ed-js' not in HEAD:
     HEAD = HEAD.replace('<link rel="stylesheet" href="assets/css/style.css',
