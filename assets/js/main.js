@@ -47,7 +47,8 @@
 (function(){
   const pre = document.getElementById('preloader');
   if (!pre) return;
-  const seen = sessionStorage.getItem('aera-seen-preloader');
+  let seen = null;
+  try { seen = sessionStorage.getItem('aera-seen-preloader'); } catch (e) {}   // private mode / sandboxed frames
   document.body.classList.add('preloading');
   if (seen) document.body.classList.add('preloader-seen');
 
@@ -72,7 +73,7 @@
   gate.then(() => {
     pre.classList.add('done');
     document.body.classList.remove('preloading');
-    sessionStorage.setItem('aera-seen-preloader', '1');
+    try { sessionStorage.setItem('aera-seen-preloader', '1'); } catch (e) {}
     window.dispatchEvent(new CustomEvent('aera:preloaderdone'));
     setTimeout(() => { pre.style.display = 'none'; }, 1100);
   });
