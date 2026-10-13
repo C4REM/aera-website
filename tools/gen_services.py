@@ -9,7 +9,7 @@ replaces everything from <body> to </html>.
 import re, pathlib
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-CSS_V = '20261013d'
+CSS_V = '20261013e'
 JS_V = '20261013a'
 
 SQ = 'https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/'
@@ -157,7 +157,7 @@ def rates(head_h2, head_body, rows, note=''):
 <section class="ed sv-rates-sec" id="rates" aria-label="Rates">
 {label_row("Rates", "Early days pricing")}
   <div class="sv-rates-head">
-    <h2 class="sv-h2 ed-twotone" data-ed="rise">{head_h2}</h2>
+    <h2 class="sv-h2" data-ed="rise">{head_h2}</h2>
     <p class="sv-body" data-ed="fade">{head_body}</p>
   </div>
   <ul class="sv-rates">
@@ -229,7 +229,8 @@ def social():
     story_imgs = '\n'.join(f'          <img src="{IMG[k]}" alt="" {"" if i == 0 else "loading=\"lazy\""}>' for i, k in enumerate(stories))
 
     def tile(k, cap, alt):
-        return f'      <figure class="sv-tile" data-ed="fade"><img src="{IMG[k]}" loading="lazy" alt="{alt}"><figcaption>{cap}</figcaption></figure>'
+        crop = ' crop' if k.startswith(('sienna', 'mb')) else ''
+        return f'      <figure class="sv-tile{crop}" data-ed="fade"><img src="{IMG[k]}" loading="lazy" alt="{alt}"><figcaption>{cap}</figcaption></figure>'
     cols = [
         [('sienna2', 'Sienna &middot; drinks menu', 'A cocktail being poured from a copper shaker'),
          ('matchday', 'Matchday graphic', 'A matchday graphic for a footballer'),

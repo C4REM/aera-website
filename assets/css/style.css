@@ -3029,8 +3029,10 @@ body:not(.pg-live) .pg-head{position:static;max-width:none;padding:clamp(90px,12
 .sv-col{display:flex;flex-direction:column;gap:clamp(12px,1.6vw,26px);--py:0px;transform:translate3d(0,var(--py),0);will-change:transform}
 .sv-col:nth-child(2){margin-top:clamp(80px,14vh,180px)}
 .sv-col:nth-child(3){margin-top:clamp(30px,5vh,60px)}
-.sv-tile{position:relative;margin:0;aspect-ratio:4/5;border-radius:var(--radius-img);overflow:hidden;background:rgba(234,223,205,.04)}
-.sv-tile img{width:100%;height:100%;object-fit:cover;display:block;filter:var(--grade);transform:scale(1.02);transition:transform 1.4s var(--ed-ease)}
+.sv-tile{position:relative;margin:0;border-radius:var(--radius-img);overflow:hidden;background:rgba(234,223,205,.04)}
+.sv-tile.crop{aspect-ratio:4/5}
+.sv-tile.crop img{height:100%}
+.sv-tile img{width:100%;height:auto;object-fit:cover;display:block;filter:var(--grade);transform:scale(1.02);transition:transform 1.4s var(--ed-ease)}
 .sv-tile figcaption{position:absolute;left:0;right:0;bottom:0;padding:40px 16px 14px;font-family:var(--sans);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:#fff;
   background:linear-gradient(transparent,rgba(0,0,0,.6));opacity:0;transform:translateY(8px);transition:opacity .45s ease,transform .6s var(--ed-ease)}
 @media (hover:hover){ .sv-tile:hover img{transform:scale(1.07)} .sv-tile:hover figcaption{opacity:1;transform:none} }
@@ -3077,7 +3079,8 @@ body:not(.pg-live) .pg-head{position:static;max-width:none;padding:clamp(90px,12
 
 /* ---- related: two big words, image follows on hover ---- */
 .sv-related{padding-left:var(--ed-gut);padding-right:var(--ed-gut)}
-.sv-rel-list{list-style:none;margin:0;padding:0;border-top:1px solid var(--ed-line)}
+.sv-rel-list{list-style:none;margin:0;padding:0}
+.sv-related .ed-label-row{margin-bottom:0}
 .sv-rel-list a{display:flex;justify-content:space-between;align-items:center;gap:20px;padding:clamp(22px,4vh,36px) 0;border-bottom:1px solid var(--ed-line);color:var(--cream)}
 .sv-rel-list .w{font-family:var(--serif);font-weight:300;font-size:clamp(2rem,5vw,5rem);line-height:1;transition:transform .8s var(--ed-ease),color .4s}
 .sv-rel-list .ed-label{transition:color .4s}
@@ -3125,7 +3128,7 @@ body:not(.pg-live) .pg-head{position:static;max-width:none;padding:clamp(90px,12
 /* the strip you drag through */
 .sv-strip-sec{padding-left:0;padding-right:0}
 .sv-strip-head{display:flex;justify-content:space-between;align-items:end;gap:30px;padding:0 var(--ed-gut);margin-bottom:clamp(50px,8vh,90px)}
-.sv-strip{display:flex;gap:clamp(14px,1.8vw,28px);overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x proximity;padding:0 var(--ed-gut) 10px;
+.sv-strip{display:flex;gap:clamp(14px,1.8vw,28px);overflow-x:auto;scroll-padding-left:var(--ed-gut);overscroll-behavior-x:contain;scroll-snap-type:x proximity;padding:0 var(--ed-gut) 10px;
   scrollbar-width:none;cursor:grab;-webkit-overflow-scrolling:touch}
 .sv-strip::-webkit-scrollbar{display:none}
 .sv-strip.dragging{cursor:grabbing;scroll-snap-type:none}
@@ -3228,3 +3231,4 @@ body:not(.pg-live) .pg-head{position:static;max-width:none;padding:clamp(90px,12
   .sv-print-text{padding:22px 4px 6px}
   .sv-print-foot{margin-top:24px}
 }
+.sv-strip::after{content:"";flex:0 0 1px;margin-left:calc(var(--ed-gut) - 1px)}
