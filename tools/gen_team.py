@@ -4,9 +4,13 @@ Run from the repo root: python3 tools/gen_team.py  (rewrites team.html and the p
 import json, html, re
 
 src = open('team.html').read()
-HEAD = src[:src.index('<header class="page-hero">')]
+# The template is the current team.html itself: everything up to the first
+# generated block. Safe to rerun; anything this script adds is stripped first.
+_cut = min(i for i in (src.find('<header class="page-hero">'), src.find('<!-- TEAM PAGE')) if i >= 0)
+HEAD = src[:_cut]
+HEAD = re.sub(r'<link href="https://fonts.googleapis.com/css2\?family=Oswald[^>]*>\n', '', HEAD)
 FOOT = src[src.index('<footer>'):src.index('</footer>') + len('</footer>')]
-CSSV = '20261013f'
+CSSV = '20261013h'
 HEAD = re.sub(r'style\.css\?v=[0-9a-z]+', 'style.css?v=' + CSSV, HEAD)
 if 'ed-js' not in HEAD:
     HEAD = HEAD.replace('<link rel="stylesheet" href="assets/css/style.css',
@@ -14,7 +18,7 @@ if 'ed-js' not in HEAD:
 SCRIPTS = '''<script src="assets/js/lenis.min.js?v=20260803h"></script>
 <script src="assets/js/main.js?v=20261013a"></script>
 <script src="assets/js/ed-home.js?v=20261013a"></script>
-<script src="assets/js/team-cast.js?v=20261013a"></script>
+<script src="assets/js/team-cast.js?v=20261013b"></script>
 </body>
 </html>
 '''
@@ -26,7 +30,7 @@ T = 'assets/img/team/toosh/'
 PEOPLE = [
   dict(slug='jack-careem', first='Jack', name='Jack Careem',
        role='Founder · Photographer & Filmmaker', short='Founder',
-       loc='Leeds', cut='assets/img/jack-cutout-web.webp?v=2',
+       loc='Leeds', cut='assets/img/team/cast-jack.webp?v=2',
        bio="Started with a camera and a lot of frames that missed. Shoots events, brands and portraits, and handles most of the edit and design himself.",
        skills=['Photography', 'Film', 'Editing', 'Grading', 'Design', 'Social'],
        links=[('Full portfolio', 'https://c4rem.co.uk'), ('Instagram', 'https://instagram.com/_c4rem')],
@@ -40,7 +44,7 @@ PEOPLE = [
               SQ+'b5d862b4-ff71-42f0-9e9e-ce0c231c5a80/1J6A0134.jpg']),
   dict(slug='toosh-alzaeem', first='Toosh', name='Toosh Alzaeem',
        role='Photographer & Videographer', short='Theatre, gigs & film sets',
-       loc='Bournemouth', cut=T+'toosh-cutout.webp',
+       loc='Bournemouth', cut='assets/img/team/cast-toosh.webp?v=2',
        bio="Shoots theatre, gigs, weddings and anything with a crowd and some energy in the room. Four years in, starting out in Dubai and now based in Bournemouth, and happy to travel for a good job. On independent film sets she has run the lighting as head of gaffing and shot the behind-the-scenes photography. Never poses anyone stiffly; she catches what is actually happening and keeps the mood light, because people having fun always look their best.",
        skills=['Theatre', 'Live music', 'Weddings', 'Reels', 'Gaffing', 'BTS photography', 'Social'],
        links=[('Full portfolio', 'http://madebyzooshportfolio.com'), ('Instagram', 'https://instagram.com/madebyzoosh')],
@@ -48,7 +52,7 @@ PEOPLE = [
        folio=[T+'theatre-finale.jpg', T+'theatre-yellow-suit.jpg', T+'set-clapperboard.jpg', T+'wedding-altar.jpg', T+'socotra-dragon-tree.jpg']),
   dict(slug='vance-serania', first='Vance', name='Vance Serania',
        role='Middle East Lead · Filmmaker & Photographer', short='Middle East Lead',
-       loc='UAE', cut='assets/img/team/vance/vance-cutout.webp',
+       loc='UAE', cut='assets/img/team/cast-vance.webp?v=2',
        bio="Photographer and videographer, and the reason Aera can work in the Gulf rather than just talk about it. Came to it from a family of sculptors, sketch artists and designers, started shooting on a phone, then bought a Sony and never really stopped. Picked up cinematography, lighting and grading through a media course and has been taking freelance jobs around school ever since: brand films for Rolls-Royce and KIA Motors, boxing, fashion, and a fair amount of nobody-asked-me-to short film work. Cuts in Premiere and DaVinci.",
        skills=['Film', 'Photography', 'Cinematography', 'Lighting', 'Grading', 'Premiere', 'DaVinci Resolve'],
        links=[('Full portfolio', 'https://vanceserania.myportfolio.com')],
@@ -72,35 +76,40 @@ def head(title, desc, url):
     h = re.sub(r'(<meta property="og:title" content=")[^"]*', r'\g<1>' + e(title), h)
     h = re.sub(r'(<meta property="og:description" content=")[^"]*', r'\g<1>' + e(desc), h)
     h = h.replace('https://aerastudios.org/team.html', 'https://aerastudios.org/' + url)
-    h = h.replace('<body>', '<body class="ed-home tm-page">', 1)
+    h = re.sub(r'<body[^>]*>', '<body class="ed-home tm-page">', h, count=1)
     return h
 
 ext = lambda u: u.startswith('http')
 target = lambda u: ' target="_blank" rel="noopener"' if ext(u) else ''
 
 # ---------------- team.html ----------------
-SIL = '''<svg class="cast-sil" viewBox="0 0 300 375" aria-hidden="true"><path d="M150 52c-30 0-52 25-52 58 0 24 11 44 27 53-50 12-86 52-96 112-4 26-6 60-6 100h254c0-40-2-74-6-100-10-60-46-100-96-112 16-9 27-29 27-53 0-33-22-58-52-58z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-dasharray="5 7"/></svg>'''
+# Poster order (left to right). Toosh sits on the left so her gimbal points out
+# into empty space rather than across Jack; the founder takes the centre.
+POSTER = [('toosh-alzaeem', 'cast-toosh'), ('jack-careem', 'cast-jack'), ('vance-serania', 'cast-vance')]
+BY = {p['slug']: p for p in PEOPLE}
+bill_top = []
+figs = []
+for k, (slug, img) in enumerate(POSTER):
+    p = BY[slug]
+    bill_top.append(f'<a class="pt-name" href="{slug}.html" data-i="{k}" data-ed="fade" style="--k:{k}">{e(p["name"])}</a>')
+    figs.append(
+        f'    <a class="pt-fig pt-f{k}" href="{slug}.html" data-i="{k}" aria-label="{e(p["name"])}, {e(p["role"])}">\n'
+        f'      <span class="pt-light" aria-hidden="true"></span>\n'
+        f'      <img src="assets/img/team/{img}.webp?v=2" alt="{e(p["name"])}" loading="eager" decoding="async">\n'
+        f'    </a>')
 
-cast = []
-for k, p in enumerate(PEOPLE):
-    cast.append(f'''    <a class="cast-m" href="{p['slug']}.html" style="--k:{k}" data-ed="fade">
-      <span class="cast-light" aria-hidden="true"></span>
-      <img class="cast-cut" src="{p['cut']}" alt="{e(p['name'])}" loading="eager">
-      <span class="cast-cap">
-        <span class="cast-role">{e(p['short'])}</span>
-        <span class="cast-name">{e(p['name'])}</span>
-        <span class="cast-go">View profile</span>
-      </span>
-    </a>''')
-cast.append(f'''    <a class="cast-m cast-open" href="mailto:bookings@aerastudios.org?subject=Joining%20Aera%20%C2%B7%20Design%20%26%20Art%20Direction" style="--k:3" data-ed="fade">
-      <span class="cast-light" aria-hidden="true"></span>
-      {SIL}
-      <span class="cast-cap">
-        <span class="cast-role">{e(OPEN['role'])}</span>
-        <span class="cast-name"><em>Your name here</em></span>
-        <span class="cast-go">Get in touch</span>
-      </span>
-    </a>''')
+# Billing block: the dense credit text at the foot of every film poster.
+# Small connecting words are .s, names are links to their profiles.
+def nm(slug):
+    return f'<a href="{slug}.html">{e(BY[slug]["name"])}</a>'
+billing = (f'<span class="s">Aera Studios presents</span> <span class="s">a</span> {nm("jack-careem")} <span class="s">production</span> '
+           f'<span class="s">photography by</span> {nm("toosh-alzaeem")} '
+           f'<span class="s">cinematography by</span> {nm("vance-serania")} '
+           f'<span class="s">edited &amp; graded by</span> {nm("jack-careem")} '
+           f'<span class="s">gaffer</span> {nm("toosh-alzaeem")} '
+           f'<span class="s">middle east unit</span> {nm("vance-serania")} '
+           f'<span class="s">design &amp; art direction</span> <a class="bb-open" href="mailto:bookings@aerastudios.org?subject=Joining%20Aera%20%C2%B7%20Design%20%26%20Art%20Direction">your name here</a> '
+           f'<span class="s">shot on location in</span> Leeds <span class="s">&middot;</span> Bournemouth <span class="s">&middot;</span> Dubai')
 
 credits_rows = [
   ('Founder', 'Jack Careem', 'jack-careem.html'),
@@ -113,28 +122,23 @@ credits_rows = [
 ]
 cr = '\n'.join(f'      <li data-ed="fade"><span class="cr-role">{r}</span><a class="cr-name" href="{u}">{n}</a></li>' for r, n, u in credits_rows)
 
-team = head('The Team | Aera — Media Studio in Leeds', "Meet the people behind Aera, a small studio working across Leeds, Bournemouth and Dubai.", 'team.html') + f'''<!-- TEAM PAGE (Oct 2026)
-     A media studio's team page as a film's cast: everyone stands on one stage
-     under their own light (hover moves the spotlight; touch shows everyone
-     lit), then the page closes on an end-credits roll. Each person opens on
+team = head('The Team | Aera — Media Studio in Leeds', "Meet the people behind Aera, a small studio working across Leeds, Bournemouth and Dubai.", 'team.html').replace('<link rel="stylesheet" href="assets/css/style.css', '<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@200;300&display=swap" rel="stylesheet">\n<link rel="stylesheet" href="assets/css/style.css', 1) + f'''<!-- TEAM PAGE (Oct 2026)
+     A media studio's team page as a film poster: names billed above heads,
+     the cast on one stage (pointing at someone lights them and drops the
+     rest into shadow; nothing is spotlit at rest), the title over the fade,
+     a billing block, then an end-credits roll. Each person opens on
      their own profile page, modelled on Poison Studio's member pages.
      Generated by gen_team.py; edit PEOPLE there rather than by hand. -->
-<section class="ed tm-hero">
-  <div class="ed-label-row" data-ed="draw">
-    <span class="ed-label"><a href="index.html">Home</a> &nbsp;/&nbsp; Team</span>
-    <span class="ed-label ed-num">({len(PEOPLE):02d})</span>
+<section class="tm-poster" aria-label="The team">
+  <div class="pt-crumb"><span class="ed-label"><a href="index.html">Home</a> &nbsp;/&nbsp; Team</span><span class="ed-label">Leeds &middot; Bournemouth &middot; Dubai</span></div>
+  <div class="pt-billtop">{''.join(bill_top)}</div>
+  <div class="pt-stage" id="castStage">
+{chr(10).join(figs)}
   </div>
-  <h1 class="tm-title" data-ed="rise">
-    <span class="ed-line"><span class="tm-caps">The people</span></span>
-    <span class="ed-line"><span><em>behind it.</em></span></span>
-  </h1>
-  <p class="tm-lead" data-ed="fade">A small studio by design. You deal with the person holding the camera. Pick someone to see their work.</p>
-</section>
-
-<section class="tm-cast" aria-label="The team">
-  <div class="cast-stage" id="castStage">
-{chr(10).join(cast)}
-    <span class="cast-floor" aria-hidden="true"></span>
+  <div class="pt-title">
+    <span class="pt-tag" data-ed="fade">Every project close to the heart</span>
+    <h1 class="pt-word" data-ed="track">Aera</h1>
+    <p class="pt-billing" data-ed="fade">{billing}</p>
   </div>
 </section>
 

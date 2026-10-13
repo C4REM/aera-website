@@ -1,30 +1,33 @@
 /* =====================================================================
-   TEAM CAST (Oct 2026)
-   On team.html the cast stands on one stage. Pointing at someone moves the
-   spotlight onto them: they come up to full light and colour, everyone else
-   drops back into silhouette. Leaving the stage brings everyone back to the
-   resting, evenly lit state. Touch screens never get a hover, so there the
-   resting state is the whole show.
-   On profile pages the giant first name drifts slightly against the cutout
-   as the pointer moves, for a little depth between the two layers.
+   TEAM POSTER + PROFILE DRIFT (Oct 2026)
+   team.html: nothing is spotlit at rest. Pointing at a figure, or at their
+   name billed above them, lights that person (full colour, spotlight, name
+   in champagne) and drops everyone else into shadow. Leaving the stage
+   puts everyone back to the even resting light. Touch never hovers, so
+   phones simply see the resting poster.
+   Profile pages: the giant first name and the cutout drift slightly against
+   each other as the pointer moves, for a little depth between the layers.
    ===================================================================== */
 (function () {
   var stage = document.getElementById('castStage');
+  var bill = document.querySelector('.pt-billtop');
   if (stage && window.matchMedia('(hover: hover)').matches) {
-    var members = [].slice.call(stage.querySelectorAll('.cast-m'));
-    members.forEach(function (m) {
-      m.addEventListener('mouseenter', function () {
-        stage.classList.add('has-focus');
-        members.forEach(function (o) { o.classList.toggle('is-focus', o === m); });
-      });
-      m.addEventListener('focus', function () {
-        stage.classList.add('has-focus');
-        members.forEach(function (o) { o.classList.toggle('is-focus', o === m); });
-      });
-    });
-    stage.addEventListener('mouseleave', function () {
-      stage.classList.remove('has-focus');
-      members.forEach(function (o) { o.classList.remove('is-focus'); });
+    var figs = [].slice.call(stage.querySelectorAll('.pt-fig'));
+    var names = bill ? [].slice.call(bill.querySelectorAll('.pt-name')) : [];
+    function focus(i) {
+      stage.classList.add('has-focus'); if (bill) bill.classList.add('has-focus');
+      figs.forEach(function (f) { f.classList.toggle('is-focus', f.getAttribute('data-i') === i); });
+      names.forEach(function (n) { n.classList.toggle('is-focus', n.getAttribute('data-i') === i); });
+    }
+    function clear() {
+      stage.classList.remove('has-focus'); if (bill) bill.classList.remove('has-focus');
+      figs.concat(names).forEach(function (x) { x.classList.remove('is-focus'); });
+    }
+    figs.concat(names).forEach(function (el) {
+      el.addEventListener('mouseenter', function () { focus(el.getAttribute('data-i')); });
+      el.addEventListener('focus', function () { focus(el.getAttribute('data-i')); });
+      el.addEventListener('mouseleave', clear);
+      el.addEventListener('blur', clear);
     });
   }
 
