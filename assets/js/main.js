@@ -231,6 +231,9 @@
     requestAnimationFrame(loop);
   }
   requestAnimationFrame(loop);
+  // hide the ring and dot when the pointer leaves the window, so they don't sit parked at the edge
+  document.documentElement.addEventListener('mouseleave', () => document.body.classList.remove('has-cursor'));
+  document.documentElement.addEventListener('mouseenter', () => document.body.classList.add('has-cursor'));
 
   const hoverables = 'a, button, input, .chip, .tile, .service, .related-card, .price-card';
   document.addEventListener('mouseover', e => {
@@ -1511,6 +1514,7 @@
 
   let maxX = 0;
   function measure(){
+    if (innerWidth <= 880){ track.style.height = ''; maxX = 0; return; }
     maxX = Math.max(0, row.scrollWidth - innerWidth);
     /* the track only needs to be as tall as the horizontal distance to cover,
        plus one viewport to hold the pin — a fixed 300vh either runs out early

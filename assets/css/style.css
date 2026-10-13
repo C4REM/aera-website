@@ -3235,3 +3235,16 @@ body:not(.pg-live) .pg-head{position:static;max-width:none;padding:clamp(90px,12
   .sv-print-foot{margin-top:24px}
 }
 .sv-strip::after{content:"";flex:0 0 1px;margin-left:calc(var(--ed-gut) - 1px)}
+
+/* service pages on phones: one label per row, plainer run of show */
+@media (max-width:600px){
+  .sv-page .ed-label-row > .ed-label:last-child{display:none}
+}
+@media (max-width:880px){
+  .sv-rate .ed-link{justify-self:start}
+  .sv-ros-side{position:static;padding:0;background:none}
+  .sv-ros-side .sv-h2{margin-bottom:10px}
+  .sv-clock,.sv-clock-sub,.sv-ros-line{display:none}
+  .sv-cue{opacity:1}
+  .sv-cue .ed-label{color:var(--champagne)}
+}

@@ -9,7 +9,7 @@ replaces everything from <body> to </html>.
 import re, pathlib
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-CSS_V = '20261013f'
+CSS_V = '20261013s1'
 JS_V = '20261013b'
 
 SQ = 'https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/'
@@ -288,7 +288,7 @@ def social():
 {label_row("From the feed", "Posts, reels &amp; graphics")}
   <div class="sv-feed-head">
     <h2 class="sv-h2" data-ed="rise"><span class="ed-line"><span>Things we&rsquo;ve</span></span><span class="ed-line"><span><em>put on phones.</em></span></span></h2>
-    <p class="sv-body" data-ed="fade">Real posts, reels and graphics the team has made for clients, schools and events. Hover over one to see what it was for.</p>
+    <p class="sv-body" data-ed="fade">Real posts, reels and graphics the team has made for clients, schools and events.</p>
   </div>
   <div class="sv-cols">
 {col_html}
