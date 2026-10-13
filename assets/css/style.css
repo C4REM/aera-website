@@ -2120,8 +2120,13 @@ a:hover .swap-stack{transform:translateY(-50%)}
 .pj-gal figure:hover img{transform:scale(1.04);filter:none}
 .pj-gal figure{grid-column:span 2;aspect-ratio:4/5}
 .pj-gal figure:nth-child(6n+1){grid-column:span 4;aspect-ratio:16/10}
-.pj-gal figure:nth-child(6n+4){grid-column:span 3;aspect-ratio:3/2}
-.pj-gal figure:nth-child(6n+5){grid-column:span 3;aspect-ratio:3/2}
+/* rows of six columns: [4 + 2] [2 + 4] [3 + 3], each pair sharing a height,
+   so no row ends with a dead column on the right */
+.pj-gal figure:nth-child(6n+4){grid-column:span 4;aspect-ratio:16/10}
+.pj-gal figure:nth-child(6n+5),.pj-gal figure:nth-child(6n){grid-column:span 3;aspect-ratio:3/2}
+.pj-gal figure{border-radius:var(--radius-img)}
+/* a lone frame at the end of the set takes the whole row */
+.pj-gal figure:last-child:nth-child(6n+1),.pj-gal figure:last-child:nth-child(6n+3),.pj-gal figure:last-child:nth-child(6n+5){grid-column:1/-1;aspect-ratio:21/9}
 /* A project with a single extra frame (e.g. Rolls-Royce) would otherwise render
    as a 4-of-6-column stub with a dead gap on the right, which reads as a bug
    rather than a layout. Let it span the full row instead. */
@@ -2131,7 +2136,10 @@ a:hover .swap-stack{transform:translateY(-50%)}
   .pj-gal figure,
   .pj-gal figure:nth-child(6n+1),
   .pj-gal figure:nth-child(6n+4),
-  .pj-gal figure:nth-child(6n+5){grid-column:span 1;aspect-ratio:4/5}
+  .pj-gal figure:nth-child(6n+5),
+  .pj-gal figure:nth-child(6n),
+  .pj-gal figure:last-child:nth-child(6n+3),
+  .pj-gal figure:last-child:nth-child(6n+5){grid-column:span 1;aspect-ratio:4/5}
   .pj-gal figure:nth-child(6n+1){grid-column:span 2;aspect-ratio:16/10}
 }
 
@@ -3248,3 +3256,6 @@ body:not(.pg-live) .pg-head{position:static;max-width:none;padding:clamp(90px,12
   .sv-cue{opacity:1}
   .sv-cue .ed-label{color:var(--champagne)}
 }
+.pj-body + .pj-body{margin-top:clamp(40px,6vh,64px)}
+/* the work gallery caption sits over moving photos: give it a soft shadow so it always reads */
+.pg-hud .pg-title,.pg-hud .pg-cat{text-shadow:0 2px 18px rgba(0,0,0,.85),0 0 2px rgba(0,0,0,.6)}

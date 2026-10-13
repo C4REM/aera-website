@@ -60,7 +60,7 @@ PEOPLE = [
                 ('F1rst Motors', 'Brand · 2024', 'https://vanceserania.myportfolio.com/copy-of-once-more-1'),
                 ('City Social', 'Hospitality · 2025', 'https://vanceserania.myportfolio.com/copy-of-the-beam'),
                 ('The Beam', 'Commercial · 2025', 'https://vanceserania.myportfolio.com/copy-of-the-beam-1'),
-                ('Sienna', 'Fashion · 2025', 'https://vanceserania.myportfolio.com/copy-of-once-more-2')],
+                ('Sienna', 'Hospitality · 2025', 'https://vanceserania.myportfolio.com/copy-of-once-more-2')],
        folio=[MP+'4e1dea05-cfeb-4ec8-8bbb-edff7475ac5f_rwc_0x157x1920x768x1920.jpg?h=6da19d20ea4eb957d336eb7de3dbc5bf',
               MP+'16daea74-6710-467e-943d-5a01a1150467_rw_3840.jpg?h=7c2bac025a21c60797a1bfc4a38d48bf',
               MP+'b8be5e7b-993f-4cd4-a9c8-880f69848b78_rw_1920.JPG?h=8b52edb83f11e442d9eb8da97f27b937',
