@@ -1,5 +1,5 @@
 """Rebuild the team cutouts so they sit together on one stage: same head size and
-eye-line, cleaned edges, matching fade. Outputs assets/img/team/cast-*.webp."""
+eye-line, cleaned edges, one shared warm grade, matching fade. Outputs assets/img/team/cast-*.webp."""
 import numpy as np
 from PIL import Image, ImageFilter
 S='SOURCE_DIR/'  # folder holding the full-res cutouts: toosh-cut.png, vance-isnet-general-use.png
@@ -30,9 +30,25 @@ def headwidth(a,top):
         xs=np.where(a[y]>128)[0]
         if len(xs): ws.append(xs[-1]-xs[0])
     return np.percentile(ws,85)
+
+# ---- shared grade: one light colour for the whole cast, matched to the site ----
+TARGET=np.array([1.21,0.95,0.84])      # warm highlight balance, between the site's cream and champagne
+SHADOW=np.array([34,24,17],np.float32) # the background's warm brown
+def grade(img, strength=0.7):
+    arr=np.asarray(img).astype(np.float32); rgb=arr[...,:3]; al=arr[...,3]>200
+    L=rgb.mean(-1); m=al&(L>np.percentile(L[al],85))
+    ratio=rgb[m].mean(0); ratio=ratio/ratio.mean()
+    g=1+strength*(TARGET/ratio-1); g=g/g.mean()          # white-balance toward the shared light, keep brightness
+    rgb=rgb*g
+    lum=rgb.mean(-1,keepdims=True)/255
+    sh=np.clip(1-lum/0.35,0,1)*0.14                        # shadows pick up a little of the background brown
+    rgb=rgb*(1-sh)+SHADOW*sh
+    hi=np.clip((lum-0.7)/0.3,0,1)*0.06                      # highlights lean slightly to cream
+    rgb=rgb*(1-hi)+np.array([234,223,205],np.float32)*hi
+    arr[...,:3]=np.clip(rgb,0,255); return Image.fromarray(arr.astype(np.uint8),'RGBA')
 res={}
 for n,p in SRC.items():
-    im=refine(Image.open(p)); a=np.asarray(im)[:,:,3]
+    im=grade(refine(Image.open(p))); a=np.asarray(im)[:,:,3]
     top=np.where(a.max(1)>128)[0][0]; hw=headwidth(a,top)
     s=HEAD_W/hw; im=im.resize((round(im.width*s),round(im.height*s)),Image.LANCZOS)
     a=np.asarray(im)[:,:,3]; top=np.where(a.max(1)>128)[0][0]

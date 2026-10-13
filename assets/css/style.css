@@ -2797,9 +2797,9 @@ body:not(.pg-live) .pg-head{position:static;max-width:none;padding:clamp(90px,12
 /* ---------- profile pages ---------- */
 .pf-hero{position:relative;height:100vh;min-height:620px;overflow:hidden}
 .pf-top{position:absolute;left:var(--ed-gut);right:var(--ed-gut);top:clamp(96px,13vh,130px);display:flex;justify-content:space-between;gap:20px;z-index:4}
-.pf-giant{position:absolute;left:var(--ed-gut);right:0;bottom:-.17em;margin:0;text-align:left;font-family:var(--serif);font-weight:300;
+.pf-giant{position:absolute;left:var(--ed-gut);right:0;bottom:clamp(18px,4vh,46px);margin:0;text-align:left;font-family:var(--serif);font-weight:300;
   font-size:clamp(7rem,30vw,30rem);line-height:.8;letter-spacing:-.045em;color:var(--cream);opacity:.92;z-index:1;white-space:nowrap;will-change:transform}
-.pf-giant .ed-line{overflow:hidden;padding-bottom:0}
+.pf-giant .ed-line{overflow:hidden;padding:0 0 .06em}
 .pf-glow{position:absolute;left:68%;bottom:0;width:70vw;height:90vh;transform:translateX(-50%);z-index:2;pointer-events:none;
   background:radial-gradient(ellipse 50% 60% at 50% 70%,rgba(6,6,7,.55),transparent 70%)}
 .pf-cut{position:absolute;left:68%;bottom:0;height:min(84vh,980px);width:auto;max-width:none;transform:translateX(-50%);z-index:3;filter:drop-shadow(0 30px 60px rgba(0,0,0,.45))}
@@ -2924,6 +2924,15 @@ body:not(.pg-live) .pg-head{position:static;max-width:none;padding:clamp(90px,12
   .pt-title{margin-top:-90px}
   .ed-home .pt-word{font-size:22vw}
   .pt-billing{font-size:.78rem}
+}
+
+/* profile: the label above the next person's name swaps to their role on hover */
+.pf-next-lbl{display:grid!important;justify-items:center}
+.pf-next-lbl > span{grid-area:1/1;transition:opacity .45s ease,transform .6s var(--ed-ease)}
+.pf-next-lbl > span:last-child{opacity:0;transform:translateY(8px);color:var(--champagne)}
+@media (hover:hover){
+  .pf-next:hover .pf-next-lbl > span:first-child{opacity:0;transform:translateY(-8px)}
+  .pf-next:hover .pf-next-lbl > span:last-child{opacity:1;transform:none}
 }
 
 /* Grain removed sitewide at Jack's request (12 Oct 2026). The canvas and

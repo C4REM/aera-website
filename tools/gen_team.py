@@ -10,7 +10,7 @@ _cut = min(i for i in (src.find('<header class="page-hero">'), src.find('<!-- TE
 HEAD = src[:_cut]
 HEAD = re.sub(r'<link href="https://fonts.googleapis.com/css2\?family=Oswald[^>]*>\n', '', HEAD)
 FOOT = src[src.index('<footer>'):src.index('</footer>') + len('</footer>')]
-CSSV = '20261013h'
+CSSV = '20261013i'
 HEAD = re.sub(r'style\.css\?v=[0-9a-z]+', 'style.css?v=' + CSSV, HEAD)
 if 'ed-js' not in HEAD:
     HEAD = HEAD.replace('<link rel="stylesheet" href="assets/css/style.css',
@@ -30,7 +30,7 @@ T = 'assets/img/team/toosh/'
 PEOPLE = [
   dict(slug='jack-careem', first='Jack', name='Jack Careem',
        role='Founder · Photographer & Filmmaker', short='Founder',
-       loc='Leeds', cut='assets/img/team/cast-jack.webp?v=2',
+       loc='Leeds', cut='assets/img/team/cast-jack.webp?v=3',
        bio="Started with a camera and a lot of frames that missed. Shoots events, brands and portraits, and handles most of the edit and design himself.",
        skills=['Photography', 'Film', 'Editing', 'Grading', 'Design', 'Social'],
        links=[('Full portfolio', 'https://c4rem.co.uk'), ('Instagram', 'https://instagram.com/_c4rem')],
@@ -44,7 +44,7 @@ PEOPLE = [
               SQ+'b5d862b4-ff71-42f0-9e9e-ce0c231c5a80/1J6A0134.jpg']),
   dict(slug='toosh-alzaeem', first='Toosh', name='Toosh Alzaeem',
        role='Photographer & Videographer', short='Theatre, gigs & film sets',
-       loc='Bournemouth', cut='assets/img/team/cast-toosh.webp?v=2',
+       loc='Bournemouth', cut='assets/img/team/cast-toosh.webp?v=3',
        bio="Shoots theatre, gigs, weddings and anything with a crowd and some energy in the room. Four years in, starting out in Dubai and now based in Bournemouth, and happy to travel for a good job. On independent film sets she has run the lighting as head of gaffing and shot the behind-the-scenes photography. Never poses anyone stiffly; she catches what is actually happening and keeps the mood light, because people having fun always look their best.",
        skills=['Theatre', 'Live music', 'Weddings', 'Reels', 'Gaffing', 'BTS photography', 'Social'],
        links=[('Full portfolio', 'http://madebyzooshportfolio.com'), ('Instagram', 'https://instagram.com/madebyzoosh')],
@@ -52,7 +52,7 @@ PEOPLE = [
        folio=[T+'theatre-finale.jpg', T+'theatre-yellow-suit.jpg', T+'set-clapperboard.jpg', T+'wedding-altar.jpg', T+'socotra-dragon-tree.jpg']),
   dict(slug='vance-serania', first='Vance', name='Vance Serania',
        role='Middle East Lead · Filmmaker & Photographer', short='Middle East Lead',
-       loc='UAE', cut='assets/img/team/cast-vance.webp?v=2',
+       loc='UAE', cut='assets/img/team/cast-vance.webp?v=3',
        bio="Photographer and videographer, and the reason Aera can work in the Gulf rather than just talk about it. Came to it from a family of sculptors, sketch artists and designers, started shooting on a phone, then bought a Sony and never really stopped. Picked up cinematography, lighting and grading through a media course and has been taking freelance jobs around school ever since: brand films for Rolls-Royce and KIA Motors, boxing, fashion, and a fair amount of nobody-asked-me-to short film work. Cuts in Premiere and DaVinci.",
        skills=['Film', 'Photography', 'Cinematography', 'Lighting', 'Grading', 'Premiere', 'DaVinci Resolve'],
        links=[('Full portfolio', 'https://vanceserania.myportfolio.com')],
@@ -95,7 +95,7 @@ for k, (slug, img) in enumerate(POSTER):
     figs.append(
         f'    <a class="pt-fig pt-f{k}" href="{slug}.html" data-i="{k}" aria-label="{e(p["name"])}, {e(p["role"])}">\n'
         f'      <span class="pt-light" aria-hidden="true"></span>\n'
-        f'      <img src="assets/img/team/{img}.webp?v=2" alt="{e(p["name"])}" loading="eager" decoding="async">\n'
+        f'      <img src="assets/img/team/{img}.webp?v=3" alt="{e(p["name"])}" loading="eager" decoding="async">\n'
         f'    </a>')
 
 # Billing block: the dense credit text at the foot of every film poster.
@@ -108,7 +108,7 @@ billing = (f'<span class="s">Aera Studios presents</span> <span class="s">a</spa
            f'<span class="s">edited &amp; graded by</span> {nm("jack-careem")} '
            f'<span class="s">gaffer</span> {nm("toosh-alzaeem")} '
            f'<span class="s">middle east unit</span> {nm("vance-serania")} '
-           f'<span class="s">design &amp; art direction</span> <a class="bb-open" href="mailto:bookings@aerastudios.org?subject=Joining%20Aera%20%C2%B7%20Design%20%26%20Art%20Direction">your name here</a> '
+           f'<span class="s">design &amp; art direction</span> {nm("vance-serania")} '
            f'<span class="s">shot on location in</span> Leeds <span class="s">&middot;</span> Bournemouth <span class="s">&middot;</span> Dubai')
 
 credits_rows = [
@@ -118,7 +118,7 @@ credits_rows = [
   ('Gaffing &amp; Behind the Scenes', 'Toosh Alzaeem', 'toosh-alzaeem.html'),
   ('Middle East Lead', 'Vance Serania', 'vance-serania.html'),
   ('Cinematography &amp; Grading', 'Vance Serania', 'vance-serania.html'),
-  ('Design &amp; Art Direction', '<em>Seat open</em>', 'mailto:bookings@aerastudios.org'),
+  ('Design &amp; Art Direction', 'Vance Serania', 'vance-serania.html'),
 ]
 cr = '\n'.join(f'      <li data-ed="fade"><span class="cr-role">{r}</span><a class="cr-name" href="{u}">{n}</a></li>' for r, n, u in credits_rows)
 
@@ -209,7 +209,7 @@ for k, p in enumerate(PEOPLE):
 </section>
 
 <a class="pf-next" href="{nxt['slug']}.html">
-  <span class="ed-label">Next in the cast</span>
+  <span class="ed-label pf-next-lbl"><span>Next in the cast</span><span>{e(nxt['role'])}</span></span>
   <span class="pf-next-name">{e(nxt['name'])}</span>
   <img class="pf-next-cut" src="{nxt['cut']}" alt="" loading="lazy">
 </a>
