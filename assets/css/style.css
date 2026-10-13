@@ -2705,7 +2705,7 @@ body:not(.pg-live) .pg-head{position:static;max-width:none;padding:clamp(90px,12
   .ed-stagger .l3{padding-left:16%}
   .ed-essay{margin-top:110px;row-gap:0}
   .ed-essay-photo{grid-column:5 / -1;grid-row:1}
-  .ed-essay-lede{grid-column:1 / -1;grid-row:1;margin-top:46%}
+  .ed-home .ed-essay-lede{grid-column:1 / -1;grid-row:1;margin-top:74%;text-shadow:0 2px 20px rgba(6,6,7,.9)}
   .ed-essay-side{grid-column:2 / -1;grid-row:2;margin-top:60px}
   .ed-p1{grid-column:1 / -1}
   .ed-p1 .ed-photo{aspect-ratio:16/9}

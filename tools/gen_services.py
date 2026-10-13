@@ -9,7 +9,7 @@ replaces everything from <body> to </html>.
 import re, pathlib
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-CSS_V = '20261013s2'
+CSS_V = '20261013s3'
 JS_V = '20261013b'
 
 SQ = 'https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/'
