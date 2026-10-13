@@ -251,14 +251,14 @@ def social():
     return chrome_top('social', 'social-media.html') + f'''
 <!-- 1 · hero: the feed, playing -->
 <header class="sv-hero" id="top">
-{label_row('<a href="index.html">Aera</a> &nbsp;/&nbsp; Social media', 'Instagram &middot; TikTok &middot; Reels')}
+{label_row('<a href="index.html">Aera</a> &nbsp;/&nbsp; Social media management, Leeds','Instagram &middot; TikTok &middot; Reels')}
   <div class="sv-hero-grid">
     <div class="sv-hero-text">
       <h1 class="sv-title" data-ed="rise">
         <span class="ed-line"><span>A feed people</span></span>
         <span class="ed-line"><span><em>stop on.</em></span></span>
       </h1>
-      <p class="sv-lede" data-ed="fade">Content, management and a bit of strategy for brands that want a feed people stop scrolling for, instead of one that quietly dies every March.</p>
+      <p class="sv-lede" data-ed="fade">Social media content, management and a bit of strategy for Leeds and Yorkshire brands that want a feed people stop scrolling for, instead of one that quietly dies every March.</p>
       <div class="sv-acts" data-ed="fade">
         <a class="ed-link" href="#contact">Start a conversation</a>
         <a class="ed-link" href="#rates">See the rates</a>
@@ -383,14 +383,14 @@ def events():
 <!-- 1 · hero: one full-bleed night -->
 <header class="sv-hero" id="top">
   <figure class="sv-night"><img src="{IMG['picnic']}" alt="A blue Ford GT on the lawn at the Grand Picnic car meet in Dubai, crowd behind it"></figure>
-{label_row('<a href="index.html">Aera</a> &nbsp;/&nbsp; Events', 'Launches &middot; nights &middot; shows')}
+{label_row('<a href="index.html">Aera</a> &nbsp;/&nbsp; Event photography &amp; video, Leeds','Launches &middot; nights &middot; shows')}
   <div class="sv-hero-in">
     <h1 class="sv-title" data-ed="rise">
       <span class="ed-line"><span>Event coverage</span></span>
       <span class="ed-line"><span><em>that keeps up.</em></span></span>
     </h1>
     <div class="sv-hero-foot">
-      <p class="sv-lede" data-ed="fade">Parties, launches, car meets, theatre and the odd chaotic corporate away-day. Covered with some actual energy, and edited fast enough that it&rsquo;s still worth posting.</p>
+      <p class="sv-lede" data-ed="fade">Event photography and video in Leeds, Yorkshire and Dubai. Parties, launches, car meets, theatre and the odd chaotic corporate away-day, covered with some actual energy and edited fast enough that it&rsquo;s still worth posting.</p>
       <p class="sv-credit" data-ed="fade">Grand Picnic, Dubai &middot; <b>Vance Serania</b></p>
     </div>
   </div>
@@ -525,12 +525,12 @@ def brand():
     return chrome_top('brand', 'brand-commercial.html') + f'''
 <!-- 1 · hero: the studio frame -->
 <header class="sv-hero" id="top">
-{label_row('<a href="index.html">Aera</a> &nbsp;/&nbsp; Brand &amp; commercial', 'Product &middot; portrait &middot; campaign')}
+{label_row('<a href="index.html">Aera</a> &nbsp;/&nbsp; Commercial photography &amp; video, Leeds','Product &middot; portrait &middot; campaign')}
   <h1 class="sv-title" data-ed="rise">
     <span class="ed-line"><span>Brand content</span></span>
     <span class="ed-line"><span><em>with a studio finish.</em></span></span>
   </h1>
-  <p class="sv-lede" data-ed="fade">Product shots, portraits and campaign work that make a small business look like it has a marketing department. It doesn&rsquo;t. It has us.</p>
+  <p class="sv-lede" data-ed="fade">Commercial, product and portrait photography and brand video that make a Leeds business look like it has a marketing department. It doesn&rsquo;t. It has us.</p>
   <div class="sv-acts" data-ed="fade">
     <a class="ed-link" href="#contact">Start a shoot</a>
     <a class="ed-link" href="#rates">See the rates</a>

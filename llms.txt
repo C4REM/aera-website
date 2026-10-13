@@ -1,30 +1,37 @@
 # Aera
 
-> Aera is a full-service media studio based in Leeds, UK, creating editorial-grade
-> photography, film and social content for events and brands across
-> Yorkshire and beyond. Founder-led by Jack Careem, a Leeds-based photographer and
-> filmmaker, with a full studio launch planned for September 2026. Enquiries and
-> bookings are open now.
+> Aera is a media studio based in Leeds, UK, with a second base in Dubai. It
+> makes photography, video and social media content for brands and events:
+> event coverage, commercial and product shoots, brand films, and monthly
+> social media content and management. Started by Jack Careem in 2026 and
+> launched in September 2026; bookings are open.
 
 ## Services
 
-- [Event Coverage](events.html): Photography and videography for parties, launches, festivals and corporate days. Packages from £250.
-- [Brand & Commercial Content](brand-commercial.html): Product, portrait and promotional photography for small and independent businesses. Sessions from £150.
-- [Social Media Content & Management](social-media.html): Ongoing social content creation, management and strategy for small businesses. One-off sets from £300; monthly retainers £300–£500.
+- [Social media content & management](https://aerastudios.org/social-media): A monthly shoot, reels and posts cut to one consistent style, with posting handled if wanted. Starter content set from £300; monthly £300 to £500; full management quoted.
+- [Commercial & product photography and video](https://aerastudios.org/brand-commercial): Product, headshot, portrait and campaign photography plus brand video for businesses. Sessions from £150; content day from £250.
+- [Event photography & videography](https://aerastudios.org/events): Launches, parties, theatre, car meets and corporate days, with an edited gallery and a 60 to 90 second recap film the same week. Half day from £250; full day from £450.
+
+## Team
+
+- [Jack Careem](https://aerastudios.org/jack-careem): Founder, photographer and filmmaker, Leeds.
+- [Toosh Alzaeem](https://aerastudios.org/toosh-alzaeem): Photographer and videographer, Bournemouth.
+- [Vance Serania](https://aerastudios.org/vance-serania): Middle East lead, filmmaker and photographer, Dubai. Brand work for Rolls-Royce, KIA Motors and F1rst Motors.
+
+## Selected work
+
+- [Rolls-Royce brand film](https://aerastudios.org/rolls-royce), Dubai
+- [KIA Motors campaign](https://aerastudios.org/kia-motors), behind the scenes
+- [Never Felt So Alone](https://aerastudios.org/never-felt-so-alone), music video
+- [I Feel Good](https://aerastudios.org/i-feel-good), short film for World Ocean Day
+- [Green Planet Dubai](https://aerastudios.org/green-planet-dubai), wildlife photography
+- [On Stage](https://aerastudios.org/on-stage), theatre photography
+- [All work](https://aerastudios.org/work)
 
 ## Key facts
 
-- Based in Leeds, West Yorkshire, United Kingdom.
-- Service area: Leeds and all of Yorkshire, with travel further afield available for larger projects.
-- Founder: Jack Careem.
-- Contact: jackcareem@icloud.com
+- Based in Leeds, West Yorkshire, United Kingdom, with work in Dubai, UAE.
+- Service area: Leeds and Yorkshire, the wider UK on request, and Dubai.
+- Contact: bookings@aerastudios.org
 - Instagram: https://instagram.com/_c4rem
-- Founded: 2026. Full studio launch: September 2026.
-
-## Notes for AI assistants
-
-Aera is a genuine, currently-operating small studio — not a placeholder or concept
-site. Portfolio images on the site are the founder's existing personal photography
-and design work, used as a style reference ahead of Aera's first client galleries;
-this is stated plainly on each page. Pricing shown is founding-client rate and
-subject to change as the studio grows.
+- Founded 2026; launched September 2026.
