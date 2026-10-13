@@ -549,6 +549,18 @@ input:focus,select:focus,textarea:focus{border-color:rgba(205,179,134,.5);backgr
   box-shadow:0 18px 40px -12px rgba(0,0,0,.65),0 0 0 1px rgba(205,179,134,.35);transition:none!important;animation:none!important}
 body.is-dragging,body.is-dragging *{cursor:grabbing!important}
 .daycell.dragover{background:rgba(205,179,134,.12)!important;box-shadow:inset 0 0 0 1.5px rgba(205,179,134,.7)!important}
+
+/* add / copy */
+.modal .two.optional label{color:var(--stone)}
+input::placeholder,textarea::placeholder{color:var(--faint);opacity:1}
+input.need{border-color:rgba(201,123,110,.7)!important}
+.tm-err{margin:-4px 0 10px;font-size:12.5px;color:#D9958A}
+.copyto{margin-top:6px;padding-top:16px;border-top:1px solid var(--line)}
+.copyrow{display:flex;gap:8px;align-items:center}
+.copyrow select{flex:1;min-width:0}
+.copyrow .btn{flex:none}
+.drag-ghost.is-copy::after{content:"+ Copy";position:absolute;top:-10px;right:-8px;background:var(--champagne);color:#15130f;
+  font:500 11px/1 var(--sans);padding:5px 8px;border-radius:999px}
 @media(max-width:620px){
   .wrap{padding:0 16px}
   nav.tabs button{padding:8px 14px}
@@ -618,7 +630,7 @@ body.is-dragging,body.is-dragging *{cursor:grabbing!important}
     <div class="gridwrap" id="gridwrap"><div class="plangrid" id="plangrid"></div></div>
     <div class="wk-foot">
       <div class="legend" id="legend"></div>
-      <p class="hint">Days start as <b>Off</b>. Tap Off to mark yourself working, tap a day to add work, drag a job to another day or person to move it.</p>
+      <p class="hint">Days start as <b>Off</b>. Tap Off to mark yourself working, tap a day to add work, drag a job to move it (hold <b>Option/Alt</b> to copy it instead).</p>
     </div>
   </section>
 
@@ -763,12 +775,12 @@ body.is-dragging,body.is-dragging *{cursor:grabbing!important}
     <form id="taskform">
       <div class="row">
         <label for="tm-client">Client / project</label>
-        <input id="tm-client" maxlength="60" placeholder="Rolls-Royce" list="clientlist" autocomplete="off">
+        <input id="tm-client" maxlength="60" placeholder="e.g. Rolls-Royce" list="clientlist" autocomplete="off">
       </div>
       <datalist id="clientlist"></datalist>
       <div class="row">
         <label for="tm-task">Task</label>
-        <input id="tm-task" maxlength="60" placeholder="Shoot" list="tasklist" autocomplete="off">
+        <input id="tm-task" maxlength="60" placeholder="e.g. Shoot" list="tasklist" autocomplete="off">
       </div>
       <div class="row">
         <label for="tm-status">Status</label>
@@ -791,6 +803,15 @@ body.is-dragging,body.is-dragging *{cursor:grabbing!important}
         <option>Deliver</option><option>Social cutdowns</option><option>Travel</option>
         <option>Client call</option><option>Admin</option>
       </datalist>
+      <p class="tm-err" id="tm-err" hidden>Type a client or a task first.</p>
+      <div class="copyto" id="tm-copy" hidden>
+        <label for="tm-copywho">Copy to another day</label>
+        <div class="copyrow">
+          <select id="tm-copywho" aria-label="Person"></select>
+          <select id="tm-copyday" aria-label="Day"></select>
+          <button type="button" class="btn ghost sm" id="tm-copybtn">Copy</button>
+        </div>
+      </div>
       <div class="acts">
         <button type="submit" class="btn" id="tm-save">Add</button>
         <button type="button" class="btn ghost" id="tm-cancel">Cancel</button>
@@ -1116,6 +1137,24 @@ body.is-dragging,body.is-dragging *{cursor:grabbing!important}
     paintStatusHint();
     $('tm-save').textContent = t ? 'Save' : 'Add';
     $('tm-delete').hidden = !t;
+    $('tm-err').hidden = true;
+    $('tm-client').classList.remove('need');
+    $('tm-copy').hidden = !t;
+    if (t){
+      $('tm-copywho').innerHTML = members.map(x =>
+        `<option value="${esc(x.id)}"${x.id === memberId ? ' selected' : ''}>${esc((x.name||'').split(' ')[0])}</option>`).join('');
+      // this week and next, defaulting to the day after this one
+      const start = new Date(anchor); start.setHours(12,0,0,0);
+      const next = new Date(d); next.setDate(d.getDate() + 1);
+      const opts = [];
+      for (let i = 0; i < 14; i++){
+        const x = new Date(start); x.setDate(start.getDate() + i);
+        const v = iso(x);
+        opts.push(`<option value="${v}"${v === iso(next) ? ' selected' : ''}>${
+          x.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'})}${i === 7 ? ' (next week)' : ''}</option>`);
+      }
+      $('tm-copyday').innerHTML = opts.join('');
+    }
     $('taskmodal').hidden = false;
     $('tm-client').focus();
   }
@@ -1265,10 +1304,16 @@ body.is-dragging,body.is-dragging *{cursor:grabbing!important}
     document.body.appendChild(g);
     drag.ghost = g;
     card.classList.add('dragging');
+    setCopy(drag.copy);
     document.body.classList.add('is-dragging');
     if (drag.touch && navigator.vibrate) navigator.vibrate(8);
     dragMove(drag.sx, drag.sy);
     drag.raf = requestAnimationFrame(edgeScroll);
+  }
+  function setCopy(c){
+    drag.copy = !!c;
+    if (drag.ghost) drag.ghost.classList.toggle('is-copy', drag.copy);
+    if (drag.card) drag.card.classList.toggle('dragging', !drag.copy);
   }
   function dragMove(x, y){
     drag.x = x; drag.y = y;
@@ -1295,18 +1340,19 @@ body.is-dragging,body.is-dragging *{cursor:grabbing!important}
   function dragEnd(commit){
     clearTimeout(drag.timer);
     cancelAnimationFrame(drag.raf);
-    const { card, id, over, live } = drag;
+    const { card, id, over, live, copy } = drag;
     if (drag.ghost) drag.ghost.remove();
     if (card) card.classList.remove('dragging');
     if (over) over.classList.remove('dragover');
     document.body.classList.remove('is-dragging');
-    Object.assign(drag, { card:null, id:null, ghost:null, over:null, live:false, timer:0 });
+    Object.assign(drag, { card:null, id:null, ghost:null, over:null, live:false, timer:0, copy:false });
     if (!live) return;
     suppressClick = true; setTimeout(() => { suppressClick = false; }, 0);
     if (!commit || !over) return;
     const t = tasks.find(x => x.id === id);
     if (!t) return;
     const toMember = over.dataset.member, toDate = over.dataset.date;
+    if (copy) return copyTask(t, toMember, toDate);
     if (t.memberId === toMember && t.date === toDate) return;   // dropped where it started
     const who = members.find(m => m.id === toMember);
     const day = new Date(toDate + 'T12:00:00').toLocaleDateString('en-GB', { weekday:'short' });
@@ -1325,24 +1371,48 @@ body.is-dragging,body.is-dragging *{cursor:grabbing!important}
     drag.card = card; drag.id = card.dataset.task;
     drag.sx = drag.x = e.clientX; drag.sy = drag.y = e.clientY;
     drag.touch = e.pointerType === 'touch';
+    drag.copy = e.altKey;
     if (drag.touch) drag.timer = setTimeout(dragBegin, 280);   // press and hold
   });
   window.addEventListener('pointermove', e => {
     if (!drag.card) return;
-    if (drag.live){ e.preventDefault(); return dragMove(e.clientX, e.clientY); }
+    if (drag.live){ e.preventDefault(); setCopy(e.altKey); return dragMove(e.clientX, e.clientY); }
     const moved = Math.hypot(e.clientX - drag.sx, e.clientY - drag.sy);
     if (drag.touch){ if (moved > 10) dragEnd(false); }          // it was a scroll
     else if (moved > 5) dragBegin();
   }, { passive:false });
   window.addEventListener('pointerup', () => { if (drag.card) dragEnd(true); });
   window.addEventListener('pointercancel', () => { if (drag.card) dragEnd(false); });
-  window.addEventListener('keydown', e => { if (e.key === 'Escape' && drag.live) dragEnd(false); });
+  window.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && drag.live) dragEnd(false);
+    if (e.key === 'Alt' && drag.live) setCopy(true);
+  });
+  window.addEventListener('keyup', e => { if (e.key === 'Alt' && drag.live) setCopy(false); });
   // once a touch drag is under way, stop the page scrolling under the finger
   document.addEventListener('touchmove', e => { if (drag.live) e.preventDefault(); }, { passive:false });
   // a long-press shouldn't pop the phone's copy/share menu over the board
   $('plangrid').addEventListener('contextmenu', e => { if (e.target.closest('.task')) e.preventDefault(); });
   // the click that ends a drag shouldn't also open the editor
   $('plangrid').addEventListener('click', e => { if (suppressClick){ e.stopPropagation(); e.preventDefault(); } }, true);
+
+  /* ---- copy a job to another day or person ---- */
+  function copyTask(t, toMember, toDate){
+    const who = members.find(m => m.id === toMember);
+    const day = new Date(toDate + 'T12:00:00').toLocaleDateString('en-GB', { weekday:'short', day:'numeric' });
+    return send({ op:'task.add', memberId: toMember, date: toDate, client: t.client, task: t.task,
+                  hours: t.hours || 0, status: t.status === 'Done' ? 'To do' : (t.status || 'To do') },
+                'Copied to ' + (who ? who.name.split(' ')[0] : '') + ', ' + day,
+                () => {
+                  tasks.push({ ...t, id: 'tmp-' + Date.now(), memberId: toMember, date: toDate, status: t.status === 'Done' ? 'To do' : t.status });
+                  const k = `${toDate}|${toMember}`; if (!on.includes(k)) on.push(k);
+                });
+  }
+  $('tm-copybtn').addEventListener('click', async () => {
+    const t = editing && editing.taskId ? tasks.find(x => x.id === editing.taskId) : null;
+    if (!t) return;
+    const ok = await copyTask(t, $('tm-copywho').value, $('tm-copyday').value);
+    if (ok) closeTask();
+  });
 
   $('taskform').addEventListener('submit', async e => {
     e.preventDefault();
@@ -1351,7 +1421,12 @@ body.is-dragging,body.is-dragging *{cursor:grabbing!important}
     const task   = $('tm-task').value.trim();
     const hrs    = $('tm-hours').value === '' ? 0 : Number($('tm-hours').value);
     const st     = $('tm-status').value;
-    if (!client && !task){ toast('Needs a client or a task'); return; }
+    if (!client && !task){
+      $('tm-err').hidden = false;
+      $('tm-client').classList.add('need');
+      $('tm-client').focus();
+      return;
+    }
 
     const ok = editing.taskId
       ? await send({ op:'task.update', id: editing.taskId, client, task, hours: hrs, status: st }, 'Saved')
