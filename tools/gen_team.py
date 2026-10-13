@@ -10,7 +10,7 @@ _cut = min(i for i in (src.find('<header class="page-hero">'), src.find('<!-- TE
 HEAD = src[:_cut]
 HEAD = re.sub(r'<link href="https://fonts.googleapis.com/css2\?family=Oswald[^>]*>\n', '', HEAD)
 FOOT = src[src.index('<footer>'):src.index('</footer>') + len('</footer>')]
-CSSV = '20261013i'
+CSSV = '20261013k'
 HEAD = re.sub(r'style\.css\?v=[0-9a-z]+', 'style.css?v=' + CSSV, HEAD)
 if 'ed-js' not in HEAD:
     HEAD = HEAD.replace('<link rel="stylesheet" href="assets/css/style.css',
@@ -91,7 +91,7 @@ bill_top = []
 figs = []
 for k, (slug, img) in enumerate(POSTER):
     p = BY[slug]
-    bill_top.append(f'<a class="pt-name" href="{slug}.html" data-i="{k}" data-ed="fade" style="--k:{k}">{e(p["name"])}</a>')
+    bill_top.append(f'<a class="pt-name" href="{slug}.html" data-i="{k}" data-ed="fade" style="--k:{k}"><span class="pt-role">{e(p["role"])}</span>{e(p["name"])}</a>')
     figs.append(
         f'    <a class="pt-fig pt-f{k}" href="{slug}.html" data-i="{k}" aria-label="{e(p["name"])}, {e(p["role"])}">\n'
         f'      <span class="pt-light" aria-hidden="true"></span>\n'
