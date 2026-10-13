@@ -29,7 +29,7 @@ def mark(draw, cx, cy, s, colour=CHAMPAGNE):
     def p(x, y):
         return (cx + (x - 100) * s, cy + (y - 100) * s)
     outline = [p(100, 52), p(138, 100), p(100, 148), p(62, 100), p(100, 52)]
-    draw.line(outline, fill=colour + (120,), width=max(1, int(1.5 * s)))
+    draw.line(outline, fill=colour + (120,) if draw.im.mode == 'RGBA' else tuple(int(c*0.55+o*0.45) for c,o in zip(colour,OBSIDIAN)), width=max(1, int(1.5 * s)))
     w = max(2, int(7 * s))
     for seg in [[p(100, 60), p(70, 100), p(130, 100), p(100, 60)],
                 [p(100, 140), p(70, 100)], [p(130, 100), p(100, 140)],
@@ -115,17 +115,24 @@ def card(name, photo, title, kicker, fx=0.5, fy=0.5, photo_side='full', cutouts=
 
 
 def icons():
-    for size, name in [(180, 'apple-touch-icon.png'), (192, 'icon-192.png'), (512, 'icon-512.png'), (32, 'favicon-32.png')]:
+    """Opaque obsidian squares with the mark filling ~87% of the tile height.
+
+    Safari and Google both show the icon tiny; at the old 68% fill the mark
+    read as a speck and Safari's light tab bar showed round the edge. Sizes
+    are multiples of 48 because that's what Google's search favicon wants.
+    """
+    FILL = 110  # mark units per tile: the diamond is 96 tall, so ~87% fill with a hair of margin
+    sizes = [(180, 'apple-touch-icon.png'), (192, 'icon-192.png'), (512, 'icon-512.png'),
+             (32, 'favicon-32.png'), (48, 'favicon-48.png'), (96, 'favicon-96.png')]
+    for size, name in sizes:
         big = size * 4
-        im = Image.new('RGBA', (big, big), OBSIDIAN + (255,))
-        d = ImageDraw.Draw(im)
-        mark(d, big / 2, big / 2, big / 112)
+        im = Image.new('RGB', (big, big), OBSIDIAN)
+        mark(ImageDraw.Draw(im), big / 2, big / 2, big / FILL)
         im.resize((size, size), Image.LANCZOS).save(ICONS / name)
         print('icon', name)
-    # multi-size .ico for old browsers and crawlers that only ask for /favicon.ico
     big = 256 * 4
-    im = Image.new('RGBA', (big, big), OBSIDIAN + (255,))
-    mark(ImageDraw.Draw(im), big / 2, big / 2, big / 112)
+    im = Image.new('RGB', (big, big), OBSIDIAN)
+    mark(ImageDraw.Draw(im), big / 2, big / 2, big / FILL)
     im.resize((256, 256), Image.LANCZOS).save(ROOT / 'favicon.ico', sizes=[(16, 16), (32, 32), (48, 48), (64, 64)])
     print('icon favicon.ico')
 
