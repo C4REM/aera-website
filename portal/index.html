@@ -347,11 +347,91 @@ kbd{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;border:1px solid v
   .weeklabel{min-width:0;font-size:1.05rem}
   .modal .two{grid-template-columns:1fr}
 }
+
+/* =================================================================
+   CALMER PORTAL (Oct 2026)
+   Jack: "too cluttered and hard to understand". One idea per row: the
+   week is the heading, the grid is flat hairlines instead of 28 shadowed
+   cards, work items are slim chips, and the only controls in a day are
+   an On/Off word and a + that shows on hover. Days are OFF by default.
+   ================================================================= */
+.edgetag,.statuspill,.teamrow,.pool,.totcell{display:none!important}
+header{box-shadow:0 1px 0 var(--line)}
+nav.tabs{background:none;box-shadow:none;padding:0;gap:26px;margin:6px 0 40px;border-bottom:1px solid var(--line);border-radius:0;width:100%}
+nav.tabs button{padding:14px 0 13px;border-radius:0;letter-spacing:.2em;font-size:11px;color:var(--stone);border-bottom:1px solid transparent;margin-bottom:-1px}
+nav.tabs button:hover:not([aria-selected="true"]){background:none;color:var(--cream)}
+nav.tabs button[aria-selected="true"]{background:none;color:var(--cream);border-bottom-color:var(--champagne)}
+.eyebrow{display:none}
+h2{font-size:clamp(1.9rem,3.4vw,2.6rem)}
+.lede{margin-bottom:22px}
+
+.wk-head{display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap}
+.wk-head .weeknav{display:flex;align-items:center;gap:14px}
+.wk-head .weeklabel{margin:0;min-width:0;font-family:var(--display);font-size:clamp(1.6rem,2.8vw,2.3rem);color:var(--cream);letter-spacing:-.005em}
+.wk-head .nav{width:34px;height:34px;border-radius:50%;background:none;border:1px solid var(--line2);color:var(--dim);font-size:18px;line-height:1;cursor:pointer;transition:border-color .2s,color .2s}
+.wk-head .nav:hover{border-color:var(--champagne);color:var(--cream)}
+.wk-acts{display:flex;align-items:center;gap:10px}
+p.summary{display:block;background:none;box-shadow:none;border-radius:0;margin:10px 0 28px;font-size:12.5px;letter-spacing:.04em;color:var(--stone);white-space:pre-wrap}
+
+.plangrid{grid-template-columns:150px repeat(7,minmax(128px,1fr));gap:0;min-width:1060px;border-top:1px solid var(--line);border-left:1px solid var(--line)}
+.ghead{padding:12px 12px 10px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);font-size:10px;letter-spacing:.18em}
+.ghead b{display:block;margin-top:3px;font-family:var(--display);font-weight:400;font-size:1.05rem;letter-spacing:0;text-transform:none;color:var(--dim)}
+.ghead.today,.ghead.today b{color:var(--champagne)}
+.who{background:none;box-shadow:none;border-radius:0;padding:14px 12px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);justify-content:flex-start}
+.who .nm{font-family:var(--display);font-size:1.05rem;color:var(--cream)}
+.who .rl{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--stone);margin-top:4px}
+.daycell{position:relative;min-height:104px;padding:30px 9px 30px;border-radius:0;box-shadow:none;background:transparent;
+  border-right:1px solid var(--line);border-bottom:1px solid var(--line);transition:background .25s}
+.daycell.is-off{background:transparent;opacity:1}
+.daycell:not(.is-off){background:rgba(126,155,122,.045)}
+.daycell.is-today{box-shadow:none;background-color:rgba(201,169,110,.025)}
+.ghead.today{box-shadow:inset 0 2px 0 var(--champagne)}
+.daycell:hover{background:rgba(234,223,205,.03)}
+.daycell:not(.is-off):hover{background:rgba(126,155,122,.08)}
+.dstate{position:absolute;top:8px;left:9px;background:none;border:0;padding:2px 0;cursor:pointer;font-family:var(--sans);
+  font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:#4a4842;display:flex;align-items:center;gap:6px}
+.dstate::before{content:"";width:6px;height:6px;border-radius:50%;border:1px solid currentColor}
+.daycell:not(.is-off) .dstate{color:var(--sage)}
+.daycell:not(.is-off) .dstate::before{background:var(--sage);border-color:var(--sage)}
+.dstate:hover{color:var(--cream)}
+.daycell .add{position:absolute;right:8px;bottom:7px;width:24px;height:24px;border-radius:50%;border:1px solid var(--line2);background:none;color:var(--dim);
+  font-size:15px;line-height:1;cursor:pointer;opacity:0;transition:opacity .2s,border-color .2s,color .2s}
+.daycell:hover .add{opacity:1}
+.daycell .add:hover{border-color:var(--champagne);color:var(--cream)}
+@media (hover:none){ .daycell .add{opacity:1} }
+.dayfoot,.working{display:none!important}
+
+.task{background:var(--panel2);border-radius:8px;padding:7px 9px 8px;margin-bottom:6px;gap:5px;box-shadow:none;border-left:2px solid var(--c, var(--stone))}
+.task .c{font-size:12.5px;color:var(--cream);font-family:var(--sans);font-weight:400}
+.task .k{font-size:11px;color:var(--stone)}
+.task .hrs{font-size:10px;color:var(--stone)}
+.task .pill2{font-size:9px;padding:3px 8px;align-self:flex-start}
+.task[data-status="Done"]{opacity:.5}
+
+.wk-foot{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;margin-top:18px}
+.legend{margin:0;gap:14px;font-size:10.5px}
+.legend i{width:7px;height:7px;border-radius:50%}
+.hint{margin:0;font-size:11.5px;color:var(--stone)}
+.hint b{color:var(--dim);font-weight:400}
+
+/* jobs: the add form folds away until asked for */
+#jobs .lede{margin-bottom:16px}
+#newjobbtn{margin-bottom:26px}
+.jobform{display:none;box-shadow:none;border:1px solid var(--line);background:var(--panel)}
+.jobform.open{display:block;animation:riseIn .35s var(--ease) backwards}
+@media(max-width:620px){
+  nav.tabs{gap:18px}
+  .plangrid{grid-template-columns:92px repeat(7,minmax(118px,1fr));min-width:918px}
+  .who{position:sticky;left:0;z-index:2;background:var(--obsidian);padding:12px 9px}
+  .ghead:first-child{position:sticky;left:0;z-index:3;background:var(--obsidian)}
+  .who .nm{font-size:.95rem}
+  .wk-head .weeklabel{font-size:1.45rem}
+  .wk-acts{width:100%}
+}
 </style>
 </head>
 <body>
 
-<div class="edgetag" aria-hidden="true"><span>Leeds · Dubai</span></div>
 
 <header>
   <div class="wrap hrow">
@@ -363,7 +443,6 @@ kbd{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;border:1px solid v
       </svg>
       AERA <small>Studio Portal</small>
     </div>
-    <div class="statuspill" id="statuspill"><i></i>—</div>
     <div class="hlinks">
       <a href="/" target="_blank" rel="noopener">Live site ↗</a>
       <a id="signout">Sign out</a>
@@ -373,51 +452,47 @@ kbd{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;border:1px solid v
 
 <main class="wrap">
   <nav class="tabs" role="tablist">
-    <button role="tab" aria-selected="true"  data-tab="week">Week Planner</button>
-    <button role="tab" aria-selected="false" data-tab="jobs">Job Tracker</button>
-    <button role="tab" aria-selected="false" data-tab="kit">Brand Kit</button>
+    <button role="tab" aria-selected="true"  data-tab="week">Week</button>
+    <button role="tab" aria-selected="false" data-tab="jobs">Jobs</button>
+    <button role="tab" aria-selected="false" data-tab="kit">Brand kit</button>
   </nav>
 
   <!-- ============================= WEEK PLANNER ============================ -->
   <section id="week">
-    <div class="eyebrow">Studio schedule</div>
-    <h2>Week Planner</h2>
-    <p class="lede">Everyone's week in one grid — who's on, and what they're on. Click an avatar to focus the board on that person, drag a card to move it, and tap its status to move it along.</p>
-
     <div id="plannerbanner" hidden class="banner"></div>
 
-    <div class="teamrow" id="teamrow"></div>
+    <!-- one line of controls: the week is the heading, everything else is quiet -->
+    <div class="wk-head">
+      <div class="weeknav">
+        <button class="nav" id="prevweek" aria-label="Previous week">&lsaquo;</button>
+        <h2 class="weeklabel" id="weeklabel"></h2>
+        <button class="nav" id="nextweek" aria-label="Next week">&rsaquo;</button>
+      </div>
+      <div class="wk-acts">
+        <span class="saving" id="saving">Saving&hellip;</span>
+        <button class="btn ghost sm" id="thisweek">Today</button>
+        <button class="btn ghost sm" id="teambtn">Team</button>
+      </div>
+    </div>
+    <p class="summary" id="summary"></p>
+
+    <!-- kept for the scripts, not shown -->
+    <div class="teamrow" id="teamrow" hidden></div>
     <div class="pool" id="pool" hidden></div>
 
-    <div class="weekbar">
-      <div class="weeknav">
-        <button class="nav" id="prevweek" aria-label="Previous week">‹</button>
-        <div class="weeklabel" id="weeklabel"></div>
-        <button class="nav" id="nextweek" aria-label="Next week">›</button>
-      </div>
-      <button class="btn ghost sm" id="thisweek">This week</button>
-      <span class="saving" id="saving">Saving…</span>
-      <span style="flex:1"></span>
-      <button class="btn ghost sm" id="teambtn">Edit team</button>
-    </div>
-
-    <div class="summary" id="summary"></div>
     <div class="gridwrap" id="gridwrap"><div class="plangrid" id="plangrid"></div></div>
-    <div class="legend" id="legend"></div>
-    <p class="hint">
-      <b>Click an avatar</b> to show or hide their row ·
-      <b>Drag</b> a card to move it ·
-      <b>Tap the status pill</b> to advance it ·
-      <b>Click empty space</b> to add ·
-      <kbd>←</kbd><kbd>→</kbd> change week, <kbd>T</kbd> today
-    </p>
+    <div class="wk-foot">
+      <div class="legend" id="legend"></div>
+      <p class="hint">Everyone starts the week <b>off</b>. Click <b>Off</b> to mark a day on &middot; click a day to add work &middot; drag work to move it</p>
+    </div>
   </section>
 
   <!-- ============================== JOB TRACKER ============================ -->
   <section id="jobs" hidden>
     <div class="eyebrow">Pipeline</div>
     <h2>Job Tracker</h2>
-    <p class="lede">The pipeline. The planner above is who's working this week; this is every enquiry and booking, whenever it lands.</p>
+    <p class="lede">Every enquiry and booking, from first message to delivery.</p>
+    <button type="button" class="btn sm" id="newjobbtn">+ New job</button>
 
     <div id="kvbanner" hidden class="banner"></div>
 
@@ -641,8 +716,14 @@ kbd{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;border:1px solid v
 
   // The header's status pill reports something real — today — rather than a
   // static "all systems go" that never changes and stops meaning anything.
-  $('statuspill').lastChild.textContent =
-    new Date().toLocaleDateString('en-GB', { weekday: 'long' }) + ' · studio open';
+
+
+  const nj = $('newjobbtn');
+  if (nj) nj.addEventListener('click', () => {
+    const f = $('jobform'); const show = f.classList.toggle('open');
+    nj.textContent = show ? 'Close' : '+ New job';
+    if (show) setTimeout(() => $('f-client').focus(), 50);
+  });
 
   const tabs = document.querySelectorAll('nav.tabs button');
   tabs.forEach(t => t.addEventListener('click', () => {
@@ -657,7 +738,7 @@ kbd{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;border:1px solid v
      WEEK PLANNER
      ================================================================ */
   const PLANNER = '/portal/api/roster';
-  let members = [], tasks = [], off = [], ready = false;
+  let members = [], tasks = [], on = [], ready = false;
   let anchor = startOfWeek(new Date());     // Monday of the shown week
   let editing = null;                        // {memberId, date, taskId?}
   const hiddenMembers = new Set();           // avatar-row focus filter, display only
@@ -682,7 +763,7 @@ kbd{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;border:1px solid v
   // 4 → "4h", 4.5 → "4.5h", 0 → "0h" — only ever shown as an optional tag now.
   const fmtH = n => (Math.round(n*100)/100).toString().replace(/\.00?$/,'') + 'h';
 
-  const isOff = (date, memberId) => off.includes(`${date}|${memberId}`);
+  const isOff = (date, memberId) => !on.includes(`${date}|${memberId}`);   // not working unless marked on
   const tasksFor = (date, memberId) => tasks.filter(t => t.date === date && t.memberId === memberId);
 
   const RING = ['var(--champagne)','var(--rust)','var(--sage)','var(--slate)'];
@@ -774,7 +855,7 @@ kbd{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;border:1px solid v
         const t = iso(d) === todayIso();
         return `<div class="ghead ${t?'today':''}">${d.toLocaleDateString('en-GB',{weekday:'short'})}<b>${
           d.toLocaleDateString('en-GB',{day:'numeric',month:'short'})}</b></div>`;
-      }).join('')}<div class="ghead">Total</div>`;
+      }).join('')}`;
 
     const body = visible.map(m => {
       let weekJobs = 0;
@@ -813,22 +894,15 @@ kbd{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;border:1px solid v
         }).join('');
 
         return `<div class="${cls}" data-member="${esc(m.id)}" data-date="${date}">
-          <label class="working" title="Working on ${esc(d.toLocaleDateString('en-GB',{weekday:'long'}))}">
-            <input type="checkbox" data-off="${esc(m.id)}" data-date="${date}" ${dayOff ? '' : 'checked'}>
-            <span>${dayOff ? 'Off' : 'Working'}</span>
-          </label>
+          <button type="button" class="dstate" data-onoff="${esc(m.id)}" data-date="${date}"
+                  title="${dayOff ? 'Mark' : 'Unmark'} ${esc((m.name||'').split(' ')[0])} as working on ${esc(d.toLocaleDateString('en-GB',{weekday:'long'}))}">${dayOff ? 'Off' : 'On'}</button>
           ${cards}
-          <div class="dayfoot">
-            <span class="count">${list.length ? list.length + (list.length===1?' job':' jobs') : ''}</span>
-            <button class="add" data-add="${esc(m.id)}" data-date="${date}"
-                    aria-label="Add job for ${esc(m.name)}">+</button>
-          </div>
+          <button class="add" data-add="${esc(m.id)}" data-date="${date}"
+                  aria-label="Add work for ${esc(m.name)}">+</button>
         </div>`;
       }).join('');
 
-      const tot = `<div class="totcell"><span class="n">${weekJobs}</span><span class="lbl">${weekJobs===1?'job':'jobs'}</span></div>`;
-
-      return who + cells + tot;
+      return who + cells;
     }).join('');
 
     $('plangrid').innerHTML = head + body;
@@ -915,7 +989,7 @@ kbd{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;border:1px solid v
   function renderLegend(){
     $('legend').innerHTML =
       STATUSES.map(s => `<span><i style="background:${colourFor(s)}"></i>${esc(s)}</span>`).join('') +
-      '<span style="color:var(--line2)">·</span><span>Empty cell = free</span>';
+      '';
   }
 
   /* Drop focus on the way out. Without this the cursor stays in a field that is
@@ -956,8 +1030,15 @@ kbd{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;border:1px solid v
     const cyc = e.target.closest('[data-cycle]');
     if (cyc){ e.stopPropagation(); return cycleStatus(cyc.dataset.cycle); }
 
-    // The working checkbox is its own control too.
-    if (e.target.closest('.working')) return;
+    // The On/Off switch is its own control.
+    const sw = e.target.closest('[data-onoff]');
+    if (sw){
+      const memberId = sw.dataset.onoff, date = sw.dataset.date, key = `${date}|${memberId}`;
+      const turningOn = !on.includes(key);
+      return send({ op:'on.toggle', memberId, date }, turningOn ? 'Working' : 'Not working', () => {
+        const i = on.indexOf(key); if (i === -1) on.push(key); else on.splice(i, 1);
+      });
+    }
 
     const add = e.target.closest('button[data-add]');
     if (add) return openTask({ memberId: add.dataset.add, date: add.dataset.date });
@@ -971,49 +1052,23 @@ kbd{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;border:1px solid v
     if (td) return openTask({ memberId: td.dataset.member, date: td.dataset.date });
   });
 
-  /* ---- working / day-off toggle — inline now, no detour through the modal ---- */
-  $('plangrid').addEventListener('change', e => {
-    const box = e.target.closest('input[data-off]');
-    if (!box) return;
-    const memberId = box.dataset.off, date = box.dataset.date;
-    send({ op:'off.toggle', memberId, date }, box.checked ? 'Working' : 'Marked off',
-      () => {
-        const key = `${date}|${memberId}`;
-        const i = off.indexOf(key);
-        if (i === -1) off.push(key); else off.splice(i, 1);
-      });
-  });
-
   /* ---- week summary — job-based, not hour-based ---- */
   function renderSummary(){
     const days = weekDays().map(iso);
-    let count = 0, done = 0, offCells = 0, freeCells = 0;
-    const clients = new Set();
-    const visible = members.filter(m => !hiddenMembers.has(m.id));
-    visible.forEach(m => {
-      days.forEach(d => {
-        const list = tasksFor(d, m.id);
-        count += list.length;
-        list.forEach(t => { if (t.client) clients.add(t.client); });
-        done += list.filter(t => (t.status || 'To do') === 'Done').length;
-        if (isOff(d, m.id)) offCells++;
-        else if (!list.length) freeCells++;
-      });
-    });
-    const pct = count ? Math.round(done / count * 100) : 0;
-    const rest = [
-      ['Active clients', String(clients.size), ''],
-      ['Done', count ? `${done}/${count} · ${pct}%` : '—', done && done === count && count ? 'good' : ''],
-      ['Free slots', String(freeCells), ''],
-      ['Days off', String(offCells), '']
-    ];
-    // One dominant number rather than five equal boxes — see the CSS note by
-    // .summary .hero for why.
-    $('summary').innerHTML =
-      `<div class="hero"><span class="v">${esc(count)}</span><span class="k">Job${count===1?'':'s'} this week</span></div>` +
-      `<div class="rest">${rest.map(([k,v,cls]) =>
-        `<div class="s ${cls}"><span class="v">${esc(v)}</span><span class="k">${esc(k)}</span></div>`
-      ).join('')}</div>`;
+    let count = 0, done = 0;
+    const working = new Set();
+    members.forEach(m => days.forEach(d => {
+      const list = tasksFor(d, m.id);
+      count += list.length;
+      done += list.filter(t => (t.status || 'To do') === 'Done').length;
+      if (!isOff(d, m.id)) working.add(m.id);
+    }));
+    const parts = [
+      `${count} ${count === 1 ? 'job' : 'jobs'} this week`,
+      count ? `${done} done` : null,
+      `${working.size} of ${members.length} ${members.length === 1 ? 'person' : 'people'} working`
+    ].filter(Boolean);
+    $('summary').textContent = parts.join('  ·  ');
   }
 
   const setSaving = on => $('saving').classList.toggle('on', on);
@@ -1023,17 +1078,17 @@ kbd{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;border:1px solid v
      write then fails we restore the snapshot taken beforehand — so the screen
      is never left showing a change the server rejected. */
   async function send(body, okMsg, optimistic){
-    const snap = { members: members.slice(), tasks: tasks.map(t => ({...t})), off: off.slice() };
+    const snap = { members: members.slice(), tasks: tasks.map(t => ({...t})), on: on.slice() };
     if (optimistic){ optimistic(); renderWeek(); }
     setSaving(true);
     try {
       const data = await api(PLANNER, 'POST', body);
-      members = data.members; tasks = data.tasks; off = data.off;
+      members = data.members; tasks = data.tasks; on = data.on || [];
       renderWeek();
       if (okMsg) toast(okMsg);
       return true;
     } catch (err) {
-      members = snap.members; tasks = snap.tasks; off = snap.off;
+      members = snap.members; tasks = snap.tasks; on = snap.on;
       renderWeek();
       toast(err.message || 'Save failed');
       return false;
@@ -1164,7 +1219,7 @@ kbd{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;border:1px solid v
   async function loadPlanner(){
     try {
       const data = await api(PLANNER, 'GET');
-      members = data.members; tasks = data.tasks; off = data.off;
+      members = data.members; tasks = data.tasks; on = data.on || [];
       ready = true;
       renderWeek(true); fillPeopleList(); renderLegend();
     } catch (err) {

@@ -6,7 +6,10 @@
    Shape (one KV key):
      members — the people, in row order, each with a daily capacity in hours
      tasks   — many per person per day; what they're on and for how long
-     off     — "date|memberId" markers for days someone isn't working
+     on      — "date|memberId" markers for days someone IS working. Nobody
+               is working by default (changed Oct 2026, was an "off" list where
+               everyone defaulted to working). Adding a task to a day marks
+               that person on for it automatically.
 
    Tasks are a flat list rather than nested under member/day. The board reads
    the whole week at once and filters in the browser, and a flat list means
@@ -46,21 +49,42 @@ function hours(v, fallback = 0) {
 }
 
 const DEFAULT_MEMBERS = [
-  { id: 'jack',  name: 'Jack Careem',  role: 'Founder · Photo & Film', capacity: 8 },
-  { id: 'vance', name: 'Vance Serania', role: 'Film · UAE',            capacity: 8 }
+  { id: 'jack',  name: 'Jack Careem',   role: 'Founder',          capacity: 8 },
+  { id: 'toosh', name: 'Toosh Alzaeem', role: 'Photo & Video',    capacity: 8 },
+  { id: 'vance', name: 'Vance Serania', role: 'Middle East Lead', capacity: 8 },
+  { id: 'owen',  name: 'Owen',          role: '',                 capacity: 8 }
 ];
+/* People added after the board already had a saved team. They're merged in
+   once (tracked by `v`) so a saved roster picks them up without anyone having
+   to re-enter the team; after that, Edit team is the source of truth. */
+const ADDED_V2 = DEFAULT_MEMBERS.filter(m => m.id === 'toosh' || m.id === 'owen');
 
 async function read(kv) {
   const raw = await kv.get(KEY);
-  const empty = { members: DEFAULT_MEMBERS, tasks: [], off: [] };
+  const empty = { v: 2, members: DEFAULT_MEMBERS, tasks: [], on: [] };
   if (!raw) return empty;
   try {
     const p = JSON.parse(raw);
-    return {
+    const data = {
+      v: 2,
       members: Array.isArray(p.members) && p.members.length ? p.members : DEFAULT_MEMBERS,
       tasks:   Array.isArray(p.tasks) ? p.tasks : [],
-      off:     Array.isArray(p.off)   ? p.off   : []
+      on:      Array.isArray(p.on) ? p.on : null
     };
+    if (!(p.v >= 2)) {
+      // one-off migration from the old "off" model
+      const names = new Set(data.members.map(m => (m.name || '').toLowerCase().split(' ')[0]));
+      ADDED_V2.forEach(m => {
+        if (!data.members.some(x => x.id === m.id) && !names.has(m.name.toLowerCase().split(' ')[0])) data.members.push({ ...m });
+      });
+    }
+    if (!data.on) {
+      // Days that already had work on them count as working; everything else
+      // starts as not working, which is the new default.
+      const offs = new Set(Array.isArray(p.off) ? p.off : []);
+      data.on = [...new Set(data.tasks.map(t => `${t.date}|${t.memberId}`))].filter(k => !offs.has(k));
+    }
+    return data;
   } catch {
     return empty;   // a corrupt value shouldn't brick the board
   }
@@ -107,7 +131,7 @@ export async function onRequest(context) {
       // doesn't leave orphaned tasks the board can never show or clear.
       const ids = new Set(data.members.map(m => m.id));
       data.tasks = data.tasks.filter(t => ids.has(t.memberId));
-      data.off   = data.off.filter(k => ids.has(String(k).split('|')[1]));
+      data.on    = data.on.filter(k => ids.has(String(k).split('|')[1]));
       break;
     }
 
@@ -119,6 +143,9 @@ export async function onRequest(context) {
       const client = str(body.client, 60);
       const task   = str(body.task, 60);
       if (!client && !task)       return json({ error: 'needs a client or a task' }, 400);
+
+      const onKey = `${date}|${str(body.memberId, 40)}`;
+      if (!data.on.includes(onKey)) data.on.push(onKey);   // booking someone puts them on for the day
 
       data.tasks.push({
         id: crypto.randomUUID(),
@@ -163,15 +190,17 @@ export async function onRequest(context) {
       break;
     }
 
-    /* ---- mark a person off for a day, or back on ---- */
+    /* ---- mark a person working for a day, or back to not working ----
+       ('off.toggle' is the old name; kept so a cached page still works) */
+    case 'on.toggle':
     case 'off.toggle': {
       const date = str(body.date, 10);
       if (!isDate(date))         return json({ error: 'bad date' }, 400);
       if (!known(body.memberId)) return json({ error: 'unknown member' }, 400);
       const key = `${date}|${str(body.memberId, 40)}`;
-      data.off = data.off.includes(key)
-        ? data.off.filter(k => k !== key)
-        : [...data.off, key];
+      data.on = data.on.includes(key)
+        ? data.on.filter(k => k !== key)
+        : [...data.on, key];
       break;
     }
 
