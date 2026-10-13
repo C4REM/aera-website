@@ -22,7 +22,7 @@ OG = SITE + '/assets/img/og/'
 
 PAGES_ORDER = ['index', 'social-media', 'brand-commercial', 'events', 'work', 'team',
                'jack-careem', 'toosh-alzaeem', 'vance-serania',
-               'rolls-royce', 'kia-motors', 'never-felt-so-alone', 'i-feel-good', 'green-planet-dubai',
+               'rolls-royce', 'kia-motors', 'headspace', 'never-felt-so-alone', 'i-feel-good', 'green-planet-dubai',
                'photography', 'eid-al-etihad', 'graphic-design', 'on-stage', 'on-set', '404']
 SLUGS = set(PAGES_ORDER)
 
@@ -76,6 +76,11 @@ PAGES = {
         title='KIA Motors Campaign, Behind the Scenes | Aera',
         desc='Behind the scenes of a KIA Motors campaign, with Vance Serania as camera assistant on a set of fifty-odd crew, an ARRI Alexa on the ground and a drone above.',
         kind='project', creator='vance', genre='Commercial'),
+    'headspace': dict(
+        title='Headspace | Award-Winning Short Film by Jack Careem | Aera',
+        desc='Headspace, a psychological thriller by Jack Careem: first winner of the UAE Student Film Award at the Black Sheep Film Festival, Dubai, and Best Editing at Dune.',
+        og='og-headspace.jpg', kind='project', creator='jack', genre='Psychological thriller', type='Movie',
+        award=['UAE Student Film Award, The Black Sheep Film Festival 2026', 'Best Editing, Dune Creative Festival 2026']),
     'never-felt-so-alone': dict(
         title='Never Felt So Alone | Music Video by Jack Careem | Aera',
         desc='A music video set to Labrinth and Billie Eilish’s Never Felt So Alone, directed by Jack Careem: a man sorting memory from the fact she isn’t coming back.',
@@ -207,9 +212,12 @@ def graph(slug, body, meta):
                   crumbs(home, ('Team', url('team')), (PEOPLE[meta['person']]['name'], page))]
     elif k == 'project':
         name = re.sub(r'\s*\|.*$', '', meta['title'])
-        nodes += [{'@type': 'CreativeWork', '@id': page + '#work', 'name': name, 'headline': name, 'url': page, 'description': meta['desc'],
-                   'genre': meta['genre'], 'image': first_image(body), 'creator': person_ref(meta['creator']),
-                   'publisher': {'@id': SITE + '/#studio'}},
+        work = {'@type': meta.get('type', 'CreativeWork'), '@id': page + '#work', 'name': name, 'headline': name, 'url': page, 'description': meta['desc'],
+                'genre': meta['genre'], 'image': OG + meta['og'] if meta.get('og') else first_image(body), 'creator': person_ref(meta['creator']),
+                'publisher': {'@id': SITE + '/#studio'}}
+        if meta.get('award'):
+            work['award'] = meta['award']
+        nodes += [work,
                   crumbs(home, ('Work', url('work')), (name, page))]
     else:
         return ''

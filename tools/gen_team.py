@@ -10,7 +10,7 @@ _cut = min(i for i in (src.find('<header class="page-hero">'), src.find('<!-- TE
 HEAD = src[:_cut]
 HEAD = re.sub(r'<link href="https://fonts.googleapis.com/css2\?family=Oswald[^>]*>\n', '', HEAD)
 FOOT = src[src.index('<footer>'):src.index('</footer>') + len('</footer>')]
-CSSV = '20261013l'
+CSSV = '20261013h1'
 HEAD = re.sub(r'style\.css\?v=[0-9a-z]+', 'style.css?v=' + CSSV, HEAD)
 if 'ed-js' not in HEAD:
     HEAD = HEAD.replace('<link rel="stylesheet" href="assets/css/style.css',
@@ -34,7 +34,8 @@ PEOPLE = [
        bio="Started with a camera and a lot of frames that missed. Shoots events, brands and portraits, and handles most of the edit and design himself.",
        skills=['Photography', 'Film', 'Editing', 'Grading', 'Design', 'Social'],
        links=[('Full portfolio', 'https://c4rem.co.uk'), ('Instagram', 'https://instagram.com/_c4rem')],
-       credits=[('Never Felt So Alone', 'Music video', 'never-felt-so-alone.html'),
+       credits=[('Headspace', 'Short film · Award winner', 'headspace.html'),
+                ('Never Felt So Alone', 'Music video', 'never-felt-so-alone.html'),
                 ('I Feel Good', 'Short film', 'i-feel-good.html'),
                 ('Green Planet Dubai', 'Photography', 'green-planet-dubai.html'),
                 ('Eid Al Etihad Day', 'Commissioned', 'eid-al-etihad.html'),
