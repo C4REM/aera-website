@@ -16,7 +16,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400;1,500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/style.css?v=20261012k">
+<script>document.documentElement.classList.add('ed-js')</script>
+<link rel="stylesheet" href="assets/css/style.css?v=20261013d">
 <noscript><style>.preloader{display:none!important}body{overflow:visible!important;height:auto!important}.cursor-dot,.cursor-ring{display:none!important}.reveal{opacity:1!important;transform:none!important;filter:none!important}.hero-statement .ln>span,.rise>span{transform:none!important}</style></noscript>
 
 <script type="application/ld+json">
@@ -59,7 +60,7 @@
 }
 </script>
 </head>
-<body>
+<body class="ed-home sv-page sv-brand">
 
 <div class="bg-stage" aria-hidden="true"></div>
 <canvas id="bgGL" aria-hidden="true"></canvas>
@@ -78,99 +79,171 @@
 <nav id="nav">
   <div class="nav-left">
     <button class="burger nav-cell" id="burger" aria-label="Menu" aria-expanded="false" aria-controls="navLinks"><span></span><span></span><span></span></button>
-    <a href="index.html#contact" class="nav-cell nav-cta magnetic">Enquire</a>
+    <a href="#contact" class="nav-cell nav-cta magnetic">Enquire</a>
   </div>
   <a href="index.html" class="brand">
     <svg class="mark" viewBox="61 51 78 98" fill="none"><path d="M100,52 L138,100 L100,148 L62,100 Z" stroke="#C2A878" stroke-width="1.5" opacity="0.5"/><path d="M100,60 L70,100 L130,100 Z M100,140 L70,100 M130,100 L100,140 M82,85 L118,85 M82,115 L118,115" stroke="#C2A878" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>
     AERA
   </a>
   <div class="nav-right">
-    <a href="https://instagram.com/_c4rem" target="_blank" rel="noopener" class="nav-cell">Instagram</a>
+    <a href="https://instagram.com/_c4rem" target="_blank" rel="noopener" class="nav-cell"><span class="swap"><span class="swap-stack"><span>Instagram</span><span aria-hidden="true">Instagram</span></span></span></a>
   </div>
   <div class="nav-links" id="navLinks">
     <a href="work.html">Work</a>
     <a href="social-media.html">Social Media</a>
     <a href="brand-commercial.html" class="active">Brand &amp; Commercial</a>
     <a href="events.html">Events</a>
-    <a href="index.html#about">Studio</a>
+    <a href="index.html#intro">Studio</a>
     <a href="team.html">Team</a>
-    <a href="index.html#contact">Enquire</a>
+    <a href="#contact">Enquire</a>
   </div>
 </nav>
 
-<header class="page-hero">
-  <div class="hero-inner">
-    <div class="breadcrumb reveal"><a href="index.html">Home</a><span class="sep">/</span><span class="current">Brand &amp; Commercial</span></div>
-    <span class="eyebrow">Brand &amp; Commercial · Leeds &amp; Yorkshire</span>
-    <h1 class="blur-focus">Brand content with a studio <em>finish.</em></h1>
-    <p class="lead">Product shots, portraits and promo photography that make a small business
-      look like it has a marketing department. It doesn't. It has us.</p>
-    <div class="hero-actions">
-      <a href="#contact" class="btn btn-solid">Start a shoot</a>
-      <a href="#pricing" class="btn btn-ghost">See packages</a>
-    </div>
+<!-- 1 · hero: the studio frame -->
+<header class="sv-hero" id="top">
+  <div class="ed-label-row " data-ed="draw">
+    <span class="ed-label"><a href="index.html">Aera</a> &nbsp;/&nbsp; Brand &amp; commercial</span>
+    <span class="ed-label">Product &middot; portrait &middot; campaign</span>
   </div>
+  <h1 class="sv-title" data-ed="rise">
+    <span class="ed-line"><span>Brand content</span></span>
+    <span class="ed-line"><span><em>with a studio finish.</em></span></span>
+  </h1>
+  <p class="sv-lede" data-ed="fade">Product shots, portraits and campaign work that make a small business look like it has a marketing department. It doesn&rsquo;t. It has us.</p>
+  <div class="sv-acts" data-ed="fade">
+    <a class="ed-link" href="#contact">Start a shoot</a>
+    <a class="ed-link" href="#rates">See the rates</a>
+  </div>
+  <figure class="sv-wide">
+    <figure class="ed-photo " data-ed="clip"><img src="https://cdn.myportfolio.com/306f0dec-b99e-4a9e-a71a-768e23a6c7b5/12b2d31a-fcaa-4996-b4c9-2344356b2a0d_rw_3840.jpg?h=b4d734c385b4222702b0bf9cb7228b31" loading="lazy" alt="A white Porsche GT2 RS under a light panel in a white studio, F1rst Motors on the wall" data-par="0.06"></figure>
+    <figcaption><span class="sv-credit">F1rst Motors, Dubai &middot; <b>Vance Serania</b></span><span class="ed-label">GT2 RS &middot; studio</span></figcaption>
+  </figure>
 </header>
 
-<section id="intro" class="tight">
-  <div class="wrap">
-    <span class="eyebrow rise"><span>The approach</span></span>
-    <p class="smask">Most businesses don't need an agency retainer. They need <em>one properly good
-      shoot</em> — hero images for the site, product stills that weren't lit with a phone torch,
-      portraits that don't scream stock photo. If a shot doesn't look right it gets reshot, even
-      if that means running twenty minutes over.</p>
-    <div class="chips reveal">
-      <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="14" rx="3"/><circle cx="12" cy="13" r="4"/><path d="M8 6l1.5-2h5L16 6"/></svg>Product stills</span>
-      <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg>Portraits</span>
-      <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 15l5-5 4 4 3-3 6 6"/></svg>Website hero imagery</span>
-      <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Full edited gallery</span>
-    </div>
+<!-- 2 · shot list: point at a line, see the picture -->
+<section class="ed sv-shots-sec" aria-label="What we shoot">
+  <div class="ed-label-row " data-ed="draw">
+    <span class="ed-label">Shot list</span>
+    <span class="ed-label">What we photograph &amp; film</span>
+  </div>
+  <div class="sv-shots-head">
+    <h2 class="sv-h2" data-ed="rise"><span class="ed-line"><span>What we</span></span><span class="ed-line"><span><em>point it at.</em></span></span></h2>
+    <p class="sv-body" data-ed="fade">Most businesses don&rsquo;t need an agency retainer. They need one properly good shoot: hero images for the site, product stills that weren&rsquo;t lit with a phone torch, portraits that don&rsquo;t look like stock.</p>
+  </div>
+  <ol class="sv-shots" data-float>
+    <li class="sv-shot" data-img="https://cdn.myportfolio.com/306f0dec-b99e-4a9e-a71a-768e23a6c7b5/15390b93-96b7-4cb3-b49d-cf91dad7540a_rw_1920.png?h=d2f9455db4c042790c20a22b0605ca6f" data-ed="fade">
+      <h3>Product &amp; detail</h3>
+      <figure class="ed-photo sv-thumb"><img src="https://cdn.myportfolio.com/306f0dec-b99e-4a9e-a71a-768e23a6c7b5/15390b93-96b7-4cb3-b49d-cf91dad7540a_rw_1920.png?h=d2f9455db4c042790c20a22b0605ca6f" loading="lazy" alt="The GT2 RS badge on a white Porsche"></figure>
+      <span class="ed-label">F1rst Motors</span>
+    </li>
+    <li class="sv-shot" data-img="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/db5c3ac4-da30-40e7-84a7-28a43271390b/IMG_0831.jpg?format=1500w" data-ed="fade">
+      <h3>Portraits &amp; personal brand</h3>
+      <figure class="ed-photo sv-thumb"><img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/db5c3ac4-da30-40e7-84a7-28a43271390b/IMG_0831.jpg?format=1500w" loading="lazy" alt="A man in white on a chair at the water&rsquo;s edge at sunset"></figure>
+      <span class="ed-label">Personal brand</span>
+    </li>
+    <li class="sv-shot" data-img="https://cdn.myportfolio.com/306f0dec-b99e-4a9e-a71a-768e23a6c7b5/4e1dea05-cfeb-4ec8-8bbb-edff7475ac5f_rwc_0x157x1920x768x1920.jpg?h=6da19d20ea4eb957d336eb7de3dbc5bf" data-ed="fade">
+      <h3>Campaign film</h3>
+      <figure class="ed-photo sv-thumb"><img src="https://cdn.myportfolio.com/306f0dec-b99e-4a9e-a71a-768e23a6c7b5/4e1dea05-cfeb-4ec8-8bbb-edff7475ac5f_rwc_0x157x1920x768x1920.jpg?h=6da19d20ea4eb957d336eb7de3dbc5bf" loading="lazy" alt="A Rolls-Royce on a desert road outside Dubai"></figure>
+      <span class="ed-label">Rolls-Royce</span>
+    </li>
+    <li class="sv-shot" data-img="https://cdn.myportfolio.com/306f0dec-b99e-4a9e-a71a-768e23a6c7b5/ccc63fbd-c5d8-4895-a771-fe54d74d8b81_rw_1920.png?h=84683bcfc4cb8241f00d19cc57204758" data-ed="fade">
+      <h3>Fashion &amp; lifestyle</h3>
+      <figure class="ed-photo sv-thumb"><img src="https://cdn.myportfolio.com/306f0dec-b99e-4a9e-a71a-768e23a6c7b5/ccc63fbd-c5d8-4895-a771-fe54d74d8b81_rw_1920.png?h=84683bcfc4cb8241f00d19cc57204758" loading="lazy" alt="Two women in red dresses by a window"></figure>
+      <span class="ed-label">MyBrunchFit</span>
+    </li>
+    <li class="sv-shot" data-img="https://cdn.myportfolio.com/306f0dec-b99e-4a9e-a71a-768e23a6c7b5/16daea74-6710-467e-943d-5a01a1150467_rw_3840.jpg?h=7c2bac025a21c60797a1bfc4a38d48bf" data-ed="fade">
+      <h3>On set, as crew</h3>
+      <figure class="ed-photo sv-thumb"><img src="https://cdn.myportfolio.com/306f0dec-b99e-4a9e-a71a-768e23a6c7b5/16daea74-6710-467e-943d-5a01a1150467_rw_3840.jpg?h=7c2bac025a21c60797a1bfc4a38d48bf" loading="lazy" alt="A KIA campaign shoot on the beach"></figure>
+      <span class="ed-label">KIA Motors</span>
+    </li>
+  </ol>
+</section>
+
+<!-- 3 · three briefs, stacked like prints -->
+<section class="ed sv-stack-sec" aria-label="Three briefs">
+  <div class="ed-label-row " data-ed="draw">
+    <span class="ed-label">Briefs</span>
+    <span class="ed-label">Recent commercial work</span>
+  </div>
+  <h2 class="sv-h2 sv-stack-head" data-ed="rise"><span class="ed-line"><span>Three briefs,</span></span><span class="ed-line"><span><em>start to finish.</em></span></span></h2>
+  <div class="sv-stack">
+    <article class="sv-print" style="--i:0">
+      <figure class="ed-photo"><img src="https://cdn.myportfolio.com/306f0dec-b99e-4a9e-a71a-768e23a6c7b5/67247d16-4c5c-40cc-872b-a7f78d1ba2f0_rw_1920.png?h=48d6a1fd58afd8bc017287356cf60906" loading="lazy" alt="A white Porsche GT2 RS in a white studio"></figure>
+      <div class="sv-print-text">
+        <div>
+          <span class="ed-label sv-kicker">Car dealership &middot; 2024</span>
+          <h3 class="sv-case-name">F1rst<em>Motors</em></h3>
+          <p class="sv-body">Vance emailed dealership after dealership in Dubai and collected a lot of polite no&rsquo;s. Then one of the biggest in the region said yes: an account with 2.8 million followers.</p><p class="sv-body">A GT2 RS, a white studio and a day to make it look like the poster on somebody&rsquo;s wall.</p>
+        </div>
+        <div class="sv-print-foot"><span class="ed-label">Brief one</span><span class="sv-credit">Shot by <b>Vance Serania</b></span></div>
+      </div>
+    </article>
+    <article class="sv-print" style="--i:1">
+      <figure class="ed-photo"><img src="https://cdn.myportfolio.com/306f0dec-b99e-4a9e-a71a-768e23a6c7b5/b8be5e7b-993f-4cd4-a9c8-880f69848b78_rw_1920.JPG?h=8b52edb83f11e442d9eb8da97f27b937" loading="lazy" alt="A Rolls-Royce on a single stretch of desert road"></figure>
+      <div class="sv-print-text">
+        <div>
+          <span class="ed-label sv-kicker">Brand film &middot; Dubai</span>
+          <h3 class="sv-case-name">Rolls<em>&#8209;Royce</em></h3>
+          <p class="sv-body">A film shot on one stretch of road in the desert outside Dubai. The job came the way the good ones usually do: someone who had seen Vance&rsquo;s work put his name forward.</p>
+        </div>
+        <div class="sv-print-foot"><span class="ed-label">Brief two</span><a class="ed-link" href="rolls-royce.html">The full story</a></div>
+      </div>
+    </article>
+    <article class="sv-print" style="--i:2">
+      <figure class="ed-photo"><img src="https://cdn.myportfolio.com/306f0dec-b99e-4a9e-a71a-768e23a6c7b5/16daea74-6710-467e-943d-5a01a1150467_rw_3840.jpg?h=7c2bac025a21c60797a1bfc4a38d48bf" loading="lazy" alt="A KIA campaign set on the beach"></figure>
+      <div class="sv-print-text">
+        <div>
+          <span class="ed-label sv-kicker">Campaign &middot; on set</span>
+          <h3 class="sv-case-name">KIA<em>Motors</em></h3>
+          <p class="sv-body">Fifty-odd people on set, an ARRI Alexa on the ground and a drone in the air. Vance was camera assistant, which on a set that size means learning how a proper production holds its schedule together.</p><p class="sv-body">Knowing how a big set runs is why our small ones run on time.</p>
+        </div>
+        <div class="sv-print-foot"><span class="ed-label">Brief three</span><a class="ed-link" href="kia-motors.html">The full story</a></div>
+      </div>
+    </article>
   </div>
 </section>
 
-<!-- Contact sheet: the four steps as a strip of film that travels horizontally
-     as you scroll down. See "CONTACT SHEET" in main.js / style.css. Unpins into
-     a plain column under 880px. -->
+<!-- 4 · how a shoot comes together: the contact sheet (main.js) -->
 <section id="process" class="csheet">
   <div class="csheet-track">
     <div class="csheet-pin">
       <div class="wrap" style="margin-bottom:clamp(24px,4vh,44px)">
-        <span class="eyebrow rise"><span>How it works</span></span>
-        <h2 class="section-title blur-focus" style="margin-top:14px">How it comes together.</h2>
+        <span class="ed-label">How it works</span>
+        <h2 class="section-title" style="margin-top:14px">How a shoot <em>comes together.</em></h2>
       </div>
       <div class="csheet-row">
-        <div class="frame reveal">
-          <div class="frame-inner">
-            <span class="frame-num">Frame 01</span>
-            <div class="frame-shot"><img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/956771b0-d277-4ee9-bde0-2c1b6d0a8d8c/Green+Planet+Photos-12.jpg" loading="lazy" alt="Discovery call"></div>
-            <h4>Discovery call</h4>
-            <p>A real conversation about your brand and what these images actually need to do — not a form to fill in.</p>
-          </div>
+      <div class="frame">
+        <div class="frame-inner">
+          <span class="frame-num">Call</span>
+          <div class="frame-shot"><img src="https://cdn.myportfolio.com/306f0dec-b99e-4a9e-a71a-768e23a6c7b5/c8f35e8c-80de-4737-954d-46f139d2e1f5_rw_1920.png?h=05f31cc6116271d98b85d47f93388715" loading="lazy" alt="Discovery call"></div>
+          <h4>Discovery call</h4>
+          <p>A real conversation about your brand and what these images need to do, rather than a form to fill in.</p>
         </div>
-        <div class="frame reveal d1">
-          <div class="frame-inner">
-            <span class="frame-num">Frame 02</span>
-            <div class="frame-shot"><img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/ebc2d86a-43dc-45da-8c9a-9c069df080d2/Insta-Post-Dubai-23-24-_01.jpg" loading="lazy" alt="Shot list and styling"></div>
-            <h4>Shot list &amp; styling</h4>
-            <p>A simple plan agreed up front, so shoot day doesn't turn into standing around deciding things.</p>
-          </div>
+      </div>
+      <div class="frame">
+        <div class="frame-inner">
+          <span class="frame-num">Plan</span>
+          <div class="frame-shot"><img src="https://cdn.myportfolio.com/306f0dec-b99e-4a9e-a71a-768e23a6c7b5/52106944-84c1-4f6b-ab50-4d905ba7c3ab_rw_1920.png?h=d63e1b16f801178ec89f017e7e7b239f" loading="lazy" alt="Shot list &amp; styling"></div>
+          <h4>Shot list &amp; styling</h4>
+          <p>A simple plan agreed up front, so shoot day doesn&rsquo;t turn into standing around deciding things.</p>
         </div>
-        <div class="frame reveal d2">
-          <div class="frame-inner">
-            <span class="frame-num">Frame 03</span>
-            <div class="frame-shot"><img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/f5c5d3ac-57b1-4757-ab6c-6ac16ca6e090/Hauntfest++Poster.png" loading="lazy" alt="Shoot day"></div>
-            <h4>Shoot day</h4>
-            <p>On-site or in-studio, worked through efficiently — you're not billed by the hour of indecision.</p>
-          </div>
+      </div>
+      <div class="frame">
+        <div class="frame-inner">
+          <span class="frame-num">Shoot</span>
+          <div class="frame-shot"><img src="https://cdn.myportfolio.com/306f0dec-b99e-4a9e-a71a-768e23a6c7b5/16daea74-6710-467e-943d-5a01a1150467_rw_3840.jpg?h=7c2bac025a21c60797a1bfc4a38d48bf" loading="lazy" alt="Shoot day"></div>
+          <h4>Shoot day</h4>
+          <p>On location or in a studio, worked through properly. If a shot isn&rsquo;t right it gets reshot.</p>
         </div>
-        <div class="frame reveal d3">
-          <div class="frame-inner">
-            <span class="frame-num">Frame 04</span>
-            <div class="frame-shot"><img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/956771b0-d277-4ee9-bde0-2c1b6d0a8d8c/Green+Planet+Photos-12.jpg" loading="lazy" alt="Edited delivery"></div>
-            <h4>Edited delivery</h4>
-            <p>A finished gallery, ready to drop straight onto your website and socials, no further faffing required.</p>
-          </div>
+      </div>
+      <div class="frame">
+        <div class="frame-inner">
+          <span class="frame-num">Deliver</span>
+          <div class="frame-shot"><img src="https://cdn.myportfolio.com/306f0dec-b99e-4a9e-a71a-768e23a6c7b5/8a7cd06d-234a-4b0e-a382-796778ecea91_rw_1920.png?h=23210a562ccf7ae1a8356fa84928c0d3" loading="lazy" alt="Edited delivery"></div>
+          <h4>Edited delivery</h4>
+          <p>A finished gallery, ready to go straight onto your website and socials.</p>
         </div>
+      </div>
       </div>
       <div class="csheet-foot">
         <div class="csheet-bar"><span></span></div>
@@ -180,114 +253,96 @@
   </div>
 </section>
 
-<section id="work" class="tight">
-  <div class="wrap">
-    <div class="section-head reveal">
-      <span class="eyebrow">Style reference</span>
-      <h2 class="section-title blur-focus">A look at the frame.</h2>
-      <p>Real portrait and brand work from Jack's own portfolio — the actual bar you'd be booking against.</p>
+<!-- rates -->
+<section class="ed sv-rates-sec" id="rates" aria-label="Rates">
+  <div class="ed-label-row " data-ed="draw">
+    <span class="ed-label">Rates</span>
+    <span class="ed-label">Early days pricing</span>
+  </div>
+  <div class="sv-rates-head">
+    <h2 class="sv-h2 ed-twotone" data-ed="rise"><span class="ed-line"><span>Rates before</span></span><span class="ed-line"><span><em>we know better.</em></span></span></h2>
+    <p class="sv-body" data-ed="fade">Priced so trying us once doesn&rsquo;t feel like a commitment. Full usage rights come with every image, with no re-licensing later.</p>
+  </div>
+  <ul class="sv-rates">
+    <li class="sv-rate" data-ed="fade">
+      <h3>Portrait or product session</h3>
+      <p>One location, up to two hours, 10 to 15 edited images. Good for headshots or a small range.</p>
+      <span class="sv-price">from &pound;150</span>
+      <a class="ed-link" href="#contact">Enquire</a>
+    </li>
+    <li class="sv-rate" data-ed="fade">
+      <h3>Content day</h3>
+      <p>Half a day on site, 20 to 30 edited images, hero stills and a short reel.</p>
+      <span class="sv-price">from &pound;250</span>
+      <a class="ed-link" href="#contact">Enquire</a>
+    </li>
+    <li class="sv-rate" data-ed="fade">
+      <h3>Ongoing commercial partner</h3>
+      <p>Recurring product or campaign shoots, quoted to your catalogue and schedule.</p>
+      <span class="sv-price">Quoted</span>
+      <a class="ed-link" href="#contact">Enquire</a>
+    </li>
+  </ul>
+</section>
+
+<!-- questions -->
+<section class="ed ed-faqsec" id="faq" aria-label="Frequently asked questions">
+  <div class="ed-faq-head">
+    <h2 class="ed-twotone ed-faq-title" data-ed="rise">
+      <span class="ed-line"><span>Good to know</span></span>
+      <span class="ed-line"><span><em>before the shoot.</em></span></span>
+    </h2>
+  </div>
+  <div class="faq ed-faq" data-ed="fade">
+    <div class="faq-item">
+      <button class="faq-q"><span>What&rsquo;s included in a content day?</span><span class="icon">+</span></button>
+      <div class="faq-a"><p>Half a day on site covering hero stills, product or interior shots and a short reel. Usually 20 to 30 edited images, not two hundred near-duplicates.</p></div>
     </div>
-    <div class="work-grid reveal">
-      <div class="tile wide"><img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/717cb03f-faa2-4ff3-bb24-2a59f2af0aad/IMG_6821.jpg" loading="lazy" alt="Portrait photography style reference"><div class="label"><div class="cat">Portrait</div><div class="t">Golden Hour</div></div></div>
-      <div class="tile"><img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/db5c3ac4-da30-40e7-84a7-28a43271390b/IMG_0831.jpg" loading="lazy" alt="Personal branding portrait style reference"><div class="label"><div class="cat">Portrait</div><div class="t">Personal Brand</div></div></div>
-      <div class="tile"><img src="https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/b5d862b4-ff71-42f0-9e9e-ce0c231c5a80/1J6A0134.jpg" loading="lazy" alt="Commercial portrait style reference"><div class="label"><div class="cat">Commercial</div><div class="t">Studio Set</div></div></div>
+    <div class="faq-item">
+      <button class="faq-q"><span>Do you shoot product photography for e-commerce?</span><span class="icon">+</span></button>
+      <div class="faq-a"><p>Yes. Clean, consistent stills that actually match each other, quoted per session or per range.</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q"><span>Can I get headshots for my team?</span><span class="icon">+</span></button>
+      <div class="faq-a"><p>Yes, individually or as a group, at your workplace or somewhere that isn&rsquo;t a plain grey wall.</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q"><span>How do I use the images?</span><span class="icon">+</span></button>
+      <div class="faq-a"><p>However you like. Full usage rights come with every delivered image.</p></div>
     </div>
   </div>
 </section>
 
-<section id="pricing" class="tight">
-  <div class="wrap">
-    <div class="section-head reveal">
-      <span class="eyebrow">Packages</span>
-      <h2 class="section-title blur-focus">Rates before we know better.</h2>
-      <p>Studio-quality images, charged like we're still building a reputation — because we are.
-        Priced so trying Aera once doesn't feel like a commitment. See if it's useful before
-        talking about anything ongoing.</p>
-    </div>
-    <div class="pricing reveal">
-      <div class="price-card">
-        <span class="tier">Portrait / Product Session</span>
-        <div class="amount">from £150</div>
-        <ul>
-          <li>Single location, up to 2 hours</li>
-          <li>10–15 edited images</li>
-          <li>Ideal for headshots or a small range</li>
-        </ul>
-        <a href="#contact" class="btn btn-ghost">Enquire</a>
-      </div>
-      <div class="price-card">
-        <span class="tier">Content Day</span>
-        <div class="amount">from £250</div>
-        <ul>
-          <li>Half-day on-site shoot</li>
-          <li>20–30 edited images</li>
-          <li>Hero stills + a short reel</li>
-        </ul>
-        <a href="#contact" class="btn btn-solid">Enquire</a>
-      </div>
-      <div class="price-card">
-        <span class="tier">Ongoing Commercial Partner</span>
-        <div class="amount">bespoke</div>
-        <ul>
-          <li>Recurring product or campaign shoots</li>
-          <li>Quoted to your catalogue &amp; schedule</li>
-          <li>For growing brands with regular needs</li>
-        </ul>
-        <a href="#contact" class="btn btn-ghost">Enquire</a>
-      </div>
-    </div>
+<!-- elsewhere -->
+<section class="ed sv-related" aria-label="Other services">
+  <div class="ed-label-row " data-ed="draw">
+    <span class="ed-label">Also from the studio</span>
+    <span class="ed-label">Two more ways in</span>
   </div>
+  <ul class="sv-rel-list" data-float>
+    <li><a href="social-media.html" data-img="https://cdn.myportfolio.com/306f0dec-b99e-4a9e-a71a-768e23a6c7b5/ea009fe7-dad3-405f-867a-a8d555c10eff_rw_1920.jpg?h=0a88af56bf32acacb0aac1bba05ede6a"><span class="w">Social Media</span><span class="ed-label">Posts &middot; reels &middot; management</span></a></li>
+    <li><a href="events.html" data-img="assets/img/team/toosh/theatre-finale.jpg"><span class="w">Events</span><span class="ed-label">Launches &middot; nights &middot; shows</span></a></li>
+  </ul>
 </section>
 
-<section id="faq" class="tight">
-  <div class="wrap">
-    <div class="section-head reveal">
-      <span class="eyebrow">Questions</span>
-      <h2 class="section-title blur-focus">Good to know.</h2>
-    </div>
-    <div class="faq reveal">
-      <div class="faq-item">
-        <button class="faq-q"><span>What's included in a content day?</span><span class="icon">+</span></button>
-        <div class="faq-a"><p>A half-day on-site shoot covering hero stills, product or interior shots, and a short reel — usually 20–30 edited images, not two hundred near-duplicates.</p></div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q"><span>Do you shoot product photography for e-commerce?</span><span class="icon">+</span></button>
-        <div class="faq-a"><p>Yes — clean, consistent stills that actually match each other, quoted per session or per range.</p></div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q"><span>Can I get headshots for my team?</span><span class="icon">+</span></button>
-        <div class="faq-a"><p>Yes, individually or as a group, at your workplace or somewhere that isn't a plain grey wall.</p></div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q"><span>How do I use the images?</span><span class="icon">+</span></button>
-        <div class="faq-a"><p>However you like — full usage rights come with every delivered image, no re-licensing nonsense.</p></div>
-      </div>
+<!-- enquire -->
+<section class="ed ed-contact contact" id="contact">
+  <span class="ed-drop" data-ed="drop" aria-hidden="true"><i></i></span>
+  <span class="ed-label" data-ed="fade">Enquire</span>
+  <h2 class="ed-ask" data-ed="track">What are<br>we shooting?</h2>
+  <div class="ask-pick" data-ed="fade">
+    <span class="ask-pick-label">Pick what you need and it'll fill in the subject line</span>
+    <div class="ask-chips">
+      <button class="ask-chip" type="button" aria-pressed="false" data-svc="Social Media">Social Media</button>
+      <button class="ask-chip on" type="button" aria-pressed="true" data-svc="Brand &amp; Commercial">Brand &amp; Commercial</button>
+      <button class="ask-chip" type="button" aria-pressed="false" data-svc="Events">Events</button>
+      <button class="ask-chip" type="button" aria-pressed="false" data-svc="Not sure yet">Not sure yet</button>
     </div>
   </div>
-</section>
-
-<section id="related" class="tight">
-  <div class="wrap">
-    <div class="section-head reveal">
-      <span class="eyebrow">Also worth a look</span>
-      <h2 class="section-title blur-focus">Other ways Aera can help.</h2>
-    </div>
-    <div class="related-grid reveal">
-      <a class="related-card" href="social-media.html"><span class="eyebrow">Social</span><h4>Social Media</h4><p>A feed that doesn't look abandoned by August.</p></a>
-      <a class="related-card" href="events.html"><span class="eyebrow">Events</span><h4>Event Coverage</h4><p>Parties, launches and corporate days, covered properly.</p></a>
-    </div>
-  </div>
-</section>
-
-<section id="contact" class="contact">
-  <div class="wrap">
-    <span class="eyebrow">Enquire</span>
-    <h2 class="blur-focus">Let's shoot something considered.</h2>
-    <a class="email" href="mailto:bookings@aerastudios.org?subject=Aera%20brand%20%26%20commercial%20enquiry">bookings@aerastudios.org</a>
-    <div class="socials">
-      <a href="https://instagram.com/_c4rem" target="_blank" rel="noopener">Instagram — @_c4rem</a>
-      <a href="mailto:bookings@aerastudios.org">Email</a>
-    </div>
+  <a class="email" href="mailto:bookings@aerastudios.org?subject=Aera%20enquiry%20%E2%80%94%20Brand%20%26%20Commercial" data-ed="fade">bookings@aerastudios.org</a>
+  <div class="ed-contact-foot" data-ed="draw">
+    <a href="https://instagram.com/_c4rem" target="_blank" rel="noopener">Instagram &middot; @_c4rem</a>
+    <span>Leeds &amp; Dubai</span>
   </div>
 </section>
 
@@ -297,17 +352,20 @@
       <svg width="16" height="16" viewBox="0 0 200 200" fill="none"><path d="M100,52 L138,100 L100,148 L62,100 Z" stroke="#C2A878" stroke-width="1.5" opacity="0.5"/><path d="M100,60 L70,100 L130,100 Z M100,140 L70,100 M130,100 L100,140 M82,85 L118,85 M82,115 L118,115" stroke="#C2A878" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>
       AERA
     </span>
-    © <span id="year"></span> Aera Media Studio · Leeds, UK
+    &copy; <span id="year"></span> Aera Media Studio &middot; Leeds, UK
     <div class="foot-links">
-      <a href="work.html">Work</a>
-      <a href="social-media.html">Social Media</a>
-      <a href="brand-commercial.html">Brand &amp; Commercial</a>
-      <a href="events.html">Events</a>
+      <a href="work.html"><span class="swap"><span class="swap-stack"><span>Work</span><span aria-hidden="true">Work</span></span></span></a>
+      <a href="social-media.html"><span class="swap"><span class="swap-stack"><span>Social Media</span><span aria-hidden="true">Social Media</span></span></span></a>
+      <a href="brand-commercial.html"><span class="swap"><span class="swap-stack"><span>Brand &amp; Commercial</span><span aria-hidden="true">Brand &amp; Commercial</span></span></span></a>
+      <a href="events.html"><span class="swap"><span class="swap-stack"><span>Events</span><span aria-hidden="true">Events</span></span></span></a>
+      <a href="team.html"><span class="swap"><span class="swap-stack"><span>Team</span><span aria-hidden="true">Team</span></span></span></a>
     </div>
   </div>
 </footer>
 
 <script src="assets/js/lenis.min.js?v=20260803h"></script>
 <script src="assets/js/main.js?v=20261012a"></script>
+<script src="assets/js/ed-home.js?v=20261012a"></script>
+<script src="assets/js/ed-services.js?v=20261013a"></script>
 </body>
 </html>
