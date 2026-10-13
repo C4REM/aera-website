@@ -1228,7 +1228,7 @@ body.tm-open{overflow:hidden}
   50%    {transform:translateY(-5px)}
 }
 .award img{
-  height:clamp(76px,9vw,124px);width:auto;display:block;
+  height:clamp(76px,9vw,124px);width:auto;max-width:100%;object-fit:contain;display:block;
   opacity:.68;transition:opacity .4s ease,filter .4s ease;
 }
 /* the headline award — bigger, brighter, and it stays that way */
@@ -2970,7 +2970,10 @@ body:not(.pg-live) .pg-head{position:static;max-width:none;padding:clamp(90px,12
    Behaviour lives in assets/js/ed-services.js.
    ===================================================================== */
 .sv-page .ed-photo img{filter:var(--grade)}
-.sv-page .ed{padding-top:clamp(100px,16vh,190px);padding-bottom:clamp(100px,16vh,190px)}
+.sv-page .ed{padding-top:clamp(80px,12vh,150px);padding-bottom:clamp(80px,12vh,150px)}
+.sv-page .sv-feed{padding-bottom:clamp(40px,6vh,80px)}
+.sv-page .sv-stack-sec{padding-bottom:0}
+.sv-print:last-child{margin-bottom:0}
 .sv-h2{margin:0;font-family:var(--serif);font-weight:300;font-size:clamp(2.3rem,5vw,5.2rem);line-height:1.02;letter-spacing:-.015em;color:var(--cream)}
 .sv-h2 em{font-style:italic;color:var(--champagne)}
 .sv-kicker{display:block;margin-bottom:18px}
@@ -3070,7 +3073,7 @@ body:not(.pg-live) .pg-head{position:static;max-width:none;padding:clamp(90px,12
 .sv-rates{list-style:none;margin:0;padding:0;border-top:1px solid var(--ed-line)}
 .sv-rate{display:grid;grid-template-columns:minmax(0,4fr) minmax(0,5fr) minmax(0,2.4fr) auto;gap:clamp(16px,2.4vw,40px);align-items:baseline;
   padding:clamp(26px,4vh,40px) 0;border-bottom:1px solid var(--ed-line);transition:background .4s ease}
-.sv-rate h3{margin:0;font-family:var(--serif);font-weight:300;font-size:clamp(1.5rem,2.4vw,2.3rem);color:var(--cream)}
+.sv-rate h3{margin:0;font-family:var(--serif);font-weight:300;line-height:1.15;font-size:clamp(1.5rem,2.4vw,2.3rem);color:var(--cream)}
 .sv-rate p{margin:0;font-size:14px;line-height:1.75;color:var(--cream-dim)}
 .sv-rate .sv-price{font-family:var(--serif);font-style:italic;font-size:clamp(1.15rem,1.6vw,1.5rem);color:var(--champagne);white-space:nowrap}
 .sv-rate .ed-link{white-space:nowrap}
@@ -3098,7 +3101,7 @@ body:not(.pg-live) .pg-head{position:static;max-width:none;padding:clamp(90px,12
 .sv-night{position:absolute;inset:0;margin:0}
 .sv-night img{width:100%;height:100%;object-fit:cover;filter:var(--grade) brightness(.78);animation:svDrift 24s ease-in-out infinite alternate}
 @keyframes svDrift{from{transform:scale(1.04)}to{transform:scale(1.14) translate(-1.5%,-1%)}}
-.sv-night::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,6,7,.55) 0%,rgba(6,6,7,0) 30%,rgba(6,6,7,.2) 55%,rgba(6,6,7,.92) 100%)}
+.sv-night::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,6,7,.6) 0%,rgba(6,6,7,0) 28%,rgba(6,6,7,.25) 55%,rgba(6,6,7,.9) 88%,var(--obsidian) 100%)}
 .sv-events .sv-hero-in{position:relative;z-index:2;padding:0 var(--ed-gut) clamp(40px,7vh,80px)}
 .sv-events .sv-hero .ed-label-row{position:absolute;left:var(--ed-gut);right:var(--ed-gut);top:clamp(100px,14vh,130px);z-index:2;margin:0}
 .sv-events .sv-hero-foot{display:grid;grid-template-columns:repeat(12,1fr);column-gap:clamp(16px,2vw,32px);align-items:end;margin-top:clamp(30px,5vh,50px)}
@@ -3134,9 +3137,9 @@ body:not(.pg-live) .pg-head{position:static;max-width:none;padding:clamp(90px,12
 .sv-strip.dragging{cursor:grabbing;scroll-snap-type:none}
 .sv-strip.dragging *{pointer-events:none}
 .sv-frame{flex:0 0 auto;margin:0;scroll-snap-align:start;user-select:none;-webkit-user-drag:none}
-.sv-frame .ed-photo{height:clamp(320px,58vh,600px)}
+.sv-frame .ed-photo{height:clamp(300px,52vh,540px)}
 .sv-frame .ed-photo img{width:auto;height:100%;max-width:none;-webkit-user-drag:none}
-.sv-frame:nth-child(even) .ed-photo{height:clamp(260px,46vh,480px);margin-top:clamp(40px,8vh,90px)}
+.sv-frame:nth-child(even) .ed-photo{height:clamp(240px,40vh,430px);margin-top:clamp(40px,8vh,90px)}
 .sv-frame figcaption{margin-top:14px}
 .sv-drag-hint{display:inline-flex;align-items:center;gap:12px}
 .sv-drag-hint i{display:block;width:40px;height:1px;background:var(--cream-dim);position:relative}

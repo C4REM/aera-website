@@ -156,7 +156,8 @@
     var tx = 0, ty = 0, cx = 0, cy = 0, frame = 0, on = false;
     function move() {
       cx += (tx - cx) * 0.14; cy += (ty - cy) * 0.14;
-      fl.style.transform = 'translate3d(' + (cx - fl.offsetWidth / 2).toFixed(1) + 'px,' + (cy - fl.offsetHeight / 2).toFixed(1) + 'px,0) rotate(' + ((tx - cx) * 0.02).toFixed(2) + 'deg)';
+      var fx = cx + 48 + fl.offsetWidth > window.innerWidth - 16 ? cx - 48 - fl.offsetWidth : cx + 48;
+      fl.style.transform = 'translate3d(' + fx.toFixed(1) + 'px,' + (cy - fl.offsetHeight / 2).toFixed(1) + 'px,0) rotate(' + ((tx - cx) * 0.02).toFixed(2) + 'deg)';
       frame = (on || Math.abs(tx - cx) > 0.5) ? requestAnimationFrame(move) : 0;
     }
     lists.forEach(function (list) {

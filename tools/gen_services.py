@@ -9,8 +9,8 @@ replaces everything from <body> to </html>.
 import re, pathlib
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-CSS_V = '20261013e'
-JS_V = '20261013a'
+CSS_V = '20261013f'
+JS_V = '20261013b'
 
 SQ = 'https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/'
 MP = 'https://cdn.myportfolio.com/306f0dec-b99e-4a9e-a71a-768e23a6c7b5/'
@@ -237,13 +237,13 @@ def social():
          ('mb2', 'MyBrunchFit &middot; campaign', 'Two women in party dresses against a white wall'),
          ('prague', 'Prague &middot; post', 'A street portrait in Prague laid out as an Instagram post')],
         [('dubaipost', 'Dubai 23/24 &middot; carousel', 'A boat on open water laid out as an Instagram post'),
-         ('sienna3', 'Sienna &middot; reel still', 'A cocktail glass filling with a frothy pour'),
+         ('sienna4', 'Sienna &middot; reel still', 'A finished cocktail on the bar'),
          ('newyear', 'New Year &middot; post', 'Two friends watching a sunset, with a Happy New Year title'),
          ('shawarma', 'Event poster', 'A poster for a sixth form shawarma event')],
         [('football', 'Season opener &middot; post', 'A football team in a huddle with an Instagram caption'),
          ('mb3', 'MyBrunchFit &middot; launch', 'Two women carrying shopping bags in a white room'),
          ('hauntfest', 'Hauntfest &middot; poster', 'A Halloween event poster with a bat'),
-         ('sienna4', 'Sienna &middot; reel still', 'A finished cocktail on the bar')],
+         ('sienna3', 'Sienna &middot; reel still', 'A cocktail glass filling with a frothy pour')],
     ]
     pars = ['0.06', '-0.05', '0.1']
     col_html = '\n'.join(f'    <div class="sv-col" data-par="{pars[i]}">\n' + '\n'.join(tile(*t) for t in c) + '\n    </div>' for i, c in enumerate(cols))
@@ -273,7 +273,7 @@ def social():
           <div class="sv-reply">Send message</div>
         </div>
       </div>
-      <p class="sv-phone-cap sv-credit">Sienna &amp; MyBrunchFit &middot; shot by <b>Vance Serania</b></p>
+      <p class="sv-phone-cap sv-credit">Shot by <b>Vance Serania</b></p>
     </div>
   </div>
 </header>
@@ -356,7 +356,7 @@ def social():
 def events():
     cues = [
         ('2 wks', 'Before', 'The brief', 'Tell us what it is, how long it runs and where the content is going. We&rsquo;ll say honestly if half a day is enough.', None),
-        ('18:00', 'Doors', 'In before the guests', 'The room while it&rsquo;s still clean: the setup, the details, the things the venue spent money on, before three hundred people fill it.', ('flag', 'The UAE flag against a pale sky on national day')),
+        ('18:00', 'Doors', 'In before the guests', 'The room while it&rsquo;s still clean: the setup, the details, the things the venue spent money on, before three hundred people fill it.', ('cockpit', 'A racing cockpit lit red, before the doors open')),
         ('20:30', 'The middle of it', 'Moving with it', 'Working around the event rather than stopping it every five minutes for one more shot. Nobody is paying to watch someone find their settings.', ('finale', 'A full cast throwing their arms up in a theatre finale')),
         ('+4 days', 'After', 'Same-week edit', 'Stills and a short recap film, turned around while it&rsquo;s still worth posting rather than three weeks later when nobody cares.', None),
         ('+7 days', 'Delivered', 'Yours to use', 'A shareable gallery and the edit, with full usage rights. Use it however you like.', None),
@@ -372,7 +372,6 @@ def events():
               ('lando', 'Race day', 'Jack Careem', 'A McLaren Formula One car at speed'),
               ('horns', 'School theatre', 'Toosh Alzaeem', 'A performer in horns singing in front of stained glass'),
               ('picnic', 'Grand Picnic, Dubai', 'Vance Serania', 'A blue Ford GT on the lawn at a car meet'),
-              ('cockpit', 'Motorsport', 'Jack Careem', 'A racing cockpit under red start lights'),
               ('green', 'School theatre', 'Toosh Alzaeem', 'An actor in a sparkling green suit and top hat'),
               ('flag', 'Eid Al Etihad', 'Jack Careem', 'The UAE flag against a pale sky')]
     frame_html = '\n'.join(f'''    <figure class="sv-frame">
@@ -482,14 +481,14 @@ def brand():
     </li>''' for t, c, k, alt in shots)
 
     prints = [
-        ('F1rst', 'Motors', 'fm2', 'A white Porsche GT2 RS in a white studio',
+        ('F1rst ', 'Motors', 'fm2', 'A white Porsche GT2 RS in a white studio',
          ['Vance emailed dealership after dealership in Dubai and collected a lot of polite no&rsquo;s. Then one of the biggest in the region said yes: an account with 2.8 million followers.',
           'A GT2 RS, a white studio and a day to make it look like the poster on somebody&rsquo;s wall.'],
          'Car dealership &middot; 2024', None),
         ('Rolls', '&#8209;Royce', 'rolls2', 'A Rolls-Royce on a single stretch of desert road',
          ['A film shot on one stretch of road in the desert outside Dubai. The job came the way the good ones usually do: someone who had seen Vance&rsquo;s work put his name forward.'],
          'Brand film &middot; Dubai', 'rolls-royce.html'),
-        ('KIA', 'Motors', 'kia', 'A KIA campaign set on the beach',
+        ('KIA ', 'Motors', 'kia', 'A KIA campaign set on the beach',
          ['Fifty-odd people on set, an ARRI Alexa on the ground and a drone in the air. Vance was camera assistant, which on a set that size means learning how a proper production holds its schedule together.',
           'Knowing how a big set runs is why our small ones run on time.'],
          'Campaign &middot; on set', 'kia-motors.html'),
