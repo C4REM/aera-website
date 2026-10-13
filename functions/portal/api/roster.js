@@ -179,6 +179,12 @@ export async function onRequest(context) {
       if (body.status !== undefined) t.status = status(body.status);
       t.updated = new Date().toISOString();
 
+      // moving work onto someone's day books them in for it
+      if (body.date !== undefined || body.memberId !== undefined) {
+        const k = `${t.date}|${t.memberId}`;
+        if (!data.on.includes(k)) data.on.push(k);
+      }
+
       if (!t.client && !t.task) data.tasks.splice(i, 1);   // emptied = removed
       break;
     }

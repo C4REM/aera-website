@@ -541,6 +541,14 @@ input:focus,select:focus,textarea:focus{border-color:rgba(205,179,134,.5);backgr
 .modal{background:rgba(10,9,8,.7);backdrop-filter:blur(8px)}
 .modal .box{background:var(--panel);box-shadow:0 30px 80px -20px rgba(0,0,0,.6)}
 
+
+/* dragging */
+.task{cursor:grab;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.task.dragging{opacity:.3;transform:none;box-shadow:none}
+.drag-ghost{position:fixed;left:0;top:0;margin:0;z-index:300;pointer-events:none;cursor:grabbing;
+  box-shadow:0 18px 40px -12px rgba(0,0,0,.65),0 0 0 1px rgba(205,179,134,.35);transition:none!important;animation:none!important}
+body.is-dragging,body.is-dragging *{cursor:grabbing!important}
+.daycell.dragover{background:rgba(205,179,134,.12)!important;box-shadow:inset 0 0 0 1.5px rgba(205,179,134,.7)!important}
 @media(max-width:620px){
   .wrap{padding:0 16px}
   nav.tabs button{padding:8px 14px}
@@ -610,7 +618,7 @@ input:focus,select:focus,textarea:focus{border-color:rgba(205,179,134,.5);backgr
     <div class="gridwrap" id="gridwrap"><div class="plangrid" id="plangrid"></div></div>
     <div class="wk-foot">
       <div class="legend" id="legend"></div>
-      <p class="hint">Days start as <b>Off</b>. Tap Off to mark yourself working, tap a day to add work, drag work to move it.</p>
+      <p class="hint">Days start as <b>Off</b>. Tap Off to mark yourself working, tap a day to add work, drag a job to another day or person to move it.</p>
     </div>
   </section>
 
@@ -1010,9 +1018,9 @@ input:focus,select:focus,textarea:focus{border-color:rgba(205,179,134,.5);backgr
           const cyc = `${esc(st)} — click to advance`;
           const i = cardIndex++;
           return `
-          <div class="task ${enter?'enter':''}" style="--i:${i};--c:${col}" draggable="true"
+          <div class="task ${enter?'enter':''}" style="--i:${i};--c:${col}"
                data-task="${esc(t.id)}" data-member="${esc(m.id)}" data-date="${date}"
-               data-status="${esc(st)}" title="${esc(st)} · drag to move">
+               data-status="${esc(st)}" title="Drag to move · click to edit">
             <div class="top">
               <div class="txt">
                 <div class="c">${esc(t.client || t.task)}</div>
@@ -1238,48 +1246,103 @@ input:focus,select:focus,textarea:focus{border-color:rgba(205,179,134,.5);backgr
   }
 
   /* ---- drag a card to another person or day ----
-     The API already accepts memberId/date on task.update, so a move is just an
-     edit — no special endpoint, and it inherits the same rollback. */
-  let dragId = null;
-  $('plangrid').addEventListener('dragstart', e => {
-    const card = e.target.closest('.task');
-    if (!card) return;
-    dragId = card.dataset.task;
+     Pointer events instead of HTML5 drag-and-drop, so it works the same with
+     a mouse, a trackpad, a pen or a finger. Mouse: press and move. Touch:
+     press and hold for a moment (so a normal swipe still scrolls the week),
+     then drag. A floating copy follows the pointer, the day underneath lights
+     up, and the board scrolls when you reach its edge. Dropping on a day also
+     marks that person as working that day. Esc cancels. */
+  const drag = { card:null, id:null, ghost:null, over:null, sx:0, sy:0, ox:0, oy:0, live:false, timer:0, touch:false, x:0, y:0, raf:0 };
+  let suppressClick = false;
+
+  function dragBegin(){
+    const card = drag.card, r = card.getBoundingClientRect();
+    drag.live = true;
+    drag.ox = drag.sx - r.left; drag.oy = drag.sy - r.top;
+    const g = card.cloneNode(true);
+    g.classList.add('drag-ghost'); g.classList.remove('enter');
+    g.style.width = r.width + 'px';
+    document.body.appendChild(g);
+    drag.ghost = g;
     card.classList.add('dragging');
-    e.dataTransfer.effectAllowed = 'move';
-    e.dataTransfer.setData('text/plain', dragId);   // Firefox needs a payload
-  });
-  $('plangrid').addEventListener('dragend', e => {
-    const card = e.target.closest('.task');
-    if (card) card.classList.remove('dragging');
-    document.querySelectorAll('.daycell.dragover').forEach(td => td.classList.remove('dragover'));
-    dragId = null;
-  });
-  $('plangrid').addEventListener('dragover', e => {
-    const td = e.target.closest('.daycell');
-    if (!td || !dragId) return;
-    e.preventDefault();
-    e.dataTransfer.dropEffect = 'move';
-    if (!td.classList.contains('dragover')){
-      document.querySelectorAll('.daycell.dragover').forEach(x => x.classList.remove('dragover'));
-      td.classList.add('dragover');
+    document.body.classList.add('is-dragging');
+    if (drag.touch && navigator.vibrate) navigator.vibrate(8);
+    dragMove(drag.sx, drag.sy);
+    drag.raf = requestAnimationFrame(edgeScroll);
+  }
+  function dragMove(x, y){
+    drag.x = x; drag.y = y;
+    if (drag.ghost) drag.ghost.style.transform = `translate3d(${x - drag.ox}px,${y - drag.oy}px,0) rotate(-1.5deg) scale(1.03)`;
+    const el = document.elementFromPoint(x, y);
+    const td = el && el.closest ? el.closest('#plangrid .daycell') : null;
+    if (td !== drag.over){
+      if (drag.over) drag.over.classList.remove('dragover');
+      drag.over = td;
+      if (td) td.classList.add('dragover');
     }
-  });
-  $('plangrid').addEventListener('drop', e => {
-    const td = e.target.closest('.daycell');
-    const id = dragId || e.dataTransfer.getData('text/plain');
-    if (!td || !id) return;
-    e.preventDefault();
-    td.classList.remove('dragover');
+  }
+  // keep the board moving while the pointer rests near an edge
+  function edgeScroll(){
+    if (!drag.live) return;
+    const gw = $('gridwrap'), r = gw.getBoundingClientRect(), E = 60;
+    if (drag.x < r.left + E) gw.scrollLeft -= Math.ceil((r.left + E - drag.x) / 4);
+    else if (drag.x > r.right - E) gw.scrollLeft += Math.ceil((drag.x - (r.right - E)) / 4);
+    if (drag.y < 70) window.scrollBy(0, -Math.ceil((70 - drag.y) / 4));
+    else if (drag.y > innerHeight - 70) window.scrollBy(0, Math.ceil((drag.y - (innerHeight - 70)) / 4));
+    dragMove(drag.x, drag.y);
+    drag.raf = requestAnimationFrame(edgeScroll);
+  }
+  function dragEnd(commit){
+    clearTimeout(drag.timer);
+    cancelAnimationFrame(drag.raf);
+    const { card, id, over, live } = drag;
+    if (drag.ghost) drag.ghost.remove();
+    if (card) card.classList.remove('dragging');
+    if (over) over.classList.remove('dragover');
+    document.body.classList.remove('is-dragging');
+    Object.assign(drag, { card:null, id:null, ghost:null, over:null, live:false, timer:0 });
+    if (!live) return;
+    suppressClick = true; setTimeout(() => { suppressClick = false; }, 0);
+    if (!commit || !over) return;
     const t = tasks.find(x => x.id === id);
     if (!t) return;
-    const toMember = td.dataset.member, toDate = td.dataset.date;
+    const toMember = over.dataset.member, toDate = over.dataset.date;
     if (t.memberId === toMember && t.date === toDate) return;   // dropped where it started
     const who = members.find(m => m.id === toMember);
+    const day = new Date(toDate + 'T12:00:00').toLocaleDateString('en-GB', { weekday:'short' });
     send({ op:'task.update', id, memberId: toMember, date: toDate },
-         'Moved to ' + (who ? who.name.split(' ')[0] : 'day'),
-         () => { t.memberId = toMember; t.date = toDate; });
+         'Moved to ' + (who ? who.name.split(' ')[0] : '') + ', ' + day,
+         () => {
+           t.memberId = toMember; t.date = toDate;
+           const k = `${toDate}|${toMember}`; if (!on.includes(k)) on.push(k);
+         });
+  }
+
+  $('plangrid').addEventListener('pointerdown', e => {
+    if (!ready || e.button > 0) return;
+    const card = e.target.closest('.task');
+    if (!card || e.target.closest('[data-cycle]')) return;
+    drag.card = card; drag.id = card.dataset.task;
+    drag.sx = drag.x = e.clientX; drag.sy = drag.y = e.clientY;
+    drag.touch = e.pointerType === 'touch';
+    if (drag.touch) drag.timer = setTimeout(dragBegin, 280);   // press and hold
   });
+  window.addEventListener('pointermove', e => {
+    if (!drag.card) return;
+    if (drag.live){ e.preventDefault(); return dragMove(e.clientX, e.clientY); }
+    const moved = Math.hypot(e.clientX - drag.sx, e.clientY - drag.sy);
+    if (drag.touch){ if (moved > 10) dragEnd(false); }          // it was a scroll
+    else if (moved > 5) dragBegin();
+  }, { passive:false });
+  window.addEventListener('pointerup', () => { if (drag.card) dragEnd(true); });
+  window.addEventListener('pointercancel', () => { if (drag.card) dragEnd(false); });
+  window.addEventListener('keydown', e => { if (e.key === 'Escape' && drag.live) dragEnd(false); });
+  // once a touch drag is under way, stop the page scrolling under the finger
+  document.addEventListener('touchmove', e => { if (drag.live) e.preventDefault(); }, { passive:false });
+  // a long-press shouldn't pop the phone's copy/share menu over the board
+  $('plangrid').addEventListener('contextmenu', e => { if (e.target.closest('.task')) e.preventDefault(); });
+  // the click that ends a drag shouldn't also open the editor
+  $('plangrid').addEventListener('click', e => { if (suppressClick){ e.stopPropagation(); e.preventDefault(); } }, true);
 
   $('taskform').addEventListener('submit', async e => {
     e.preventDefault();
