@@ -10,7 +10,7 @@ _cut = min(i for i in (src.find('<header class="page-hero">'), src.find('<!-- TE
 HEAD = src[:_cut]
 HEAD = re.sub(r'<link href="https://fonts.googleapis.com/css2\?family=Oswald[^>]*>\n', '', HEAD)
 FOOT = src[src.index('<footer>'):src.index('</footer>') + len('</footer>')]
-CSSV = '20261013k'
+CSSV = '20261013l'
 HEAD = re.sub(r'style\.css\?v=[0-9a-z]+', 'style.css?v=' + CSSV, HEAD)
 if 'ed-js' not in HEAD:
     HEAD = HEAD.replace('<link rel="stylesheet" href="assets/css/style.css',
@@ -87,11 +87,13 @@ target = lambda u: ' target="_blank" rel="noopener"' if ext(u) else ''
 # into empty space rather than across Jack; the founder takes the centre.
 POSTER = [('toosh-alzaeem', 'cast-toosh'), ('jack-careem', 'cast-jack'), ('vance-serania', 'cast-vance')]
 BY = {p['slug']: p for p in PEOPLE}
+# short labels that rise above the billed names on hover
+POSTER_ROLE = {'toosh-alzaeem': 'Photo & Video', 'jack-careem': 'Founder', 'vance-serania': 'Middle East Lead'}
 bill_top = []
 figs = []
 for k, (slug, img) in enumerate(POSTER):
     p = BY[slug]
-    bill_top.append(f'<a class="pt-name" href="{slug}.html" data-i="{k}" data-ed="fade" style="--k:{k}"><span class="pt-role">{e(p["role"])}</span>{e(p["name"])}</a>')
+    bill_top.append(f'<a class="pt-name" href="{slug}.html" data-i="{k}" data-ed="fade" style="--k:{k}"><span class="pt-role">{e(POSTER_ROLE[slug])}</span>{e(p["name"])}</a>')
     figs.append(
         f'    <a class="pt-fig pt-f{k}" href="{slug}.html" data-i="{k}" aria-label="{e(p["name"])}, {e(p["role"])}">\n'
         f'      <span class="pt-light" aria-hidden="true"></span>\n'
