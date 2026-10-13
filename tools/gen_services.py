@@ -46,6 +46,8 @@ IMG = {
     'cockpit': sq('13f98449-a6da-4ea8-b125-01a7d5fc40b4/IMG_1199.jpg'),
     'flag': sq('50a7d34c-7a13-43f5-a5da-bc73d671fc8e/UAE+Flag.jpg'),
     'chair': sq('db5c3ac4-da30-40e7-84a7-28a43271390b/IMG_0831.jpg'),
+    'ferrari_gold': sq('162ffb5a-27c0-49a7-b03e-a0758c417bb9/A7400284.jpg', 2500),
+    'clapper': 'assets/img/team/toosh/set-clapperboard.jpg',
     'chair2': sq('7a30cec9-bb01-4c11-83a4-5442ac014212/1J6A0215.JPG'),
     'ferrari': sq('a5c290e2-e3f5-4aed-81bd-9e8fa29d2e44/A7400277.jpg'),
     'matchday': sq('b2cbb3f8-0cba-49bc-a84c-2d3257ea6781/Personal+Match-Day+Graphic.jpg', 1000),
@@ -473,7 +475,7 @@ def brand():
              ('Portraits &amp; personal brand', 'Personal brand', 'chair', 'A man in white on a chair at the water&rsquo;s edge at sunset'),
              ('Campaign film', 'Rolls-Royce', 'rolls', 'A Rolls-Royce on a desert road outside Dubai'),
              ('Fashion &amp; lifestyle', 'MyBrunchFit', 'mb4', 'Two women in red dresses by a window'),
-             ('On set, as crew', 'KIA Motors', 'kia', 'A KIA campaign shoot on the beach')]
+             ('On set, as crew', 'Independent film', 'clapper', 'An actor peeking over a clapperboard on a short film set')]
     shot_html = '\n'.join(f'''    <li class="sv-shot" data-img="{IMG[k]}" data-ed="fade">
       <h3>{t}</h3>
       <figure class="ed-photo sv-thumb"><img src="{IMG[k]}" loading="lazy" alt="{alt}"></figure>
@@ -536,8 +538,8 @@ def brand():
     <a class="ed-link" href="#rates">See the rates</a>
   </div>
   <figure class="sv-wide">
-    {photo('fm1', 'A white Porsche GT2 RS under a light panel in a white studio, F1rst Motors on the wall', par='0.06')}
-    <figcaption><span class="sv-credit">F1rst Motors, Dubai &middot; <b>Vance Serania</b></span><span class="ed-label">GT2 RS &middot; studio</span></figcaption>
+    {photo('ferrari_gold', 'The Ferrari script badge on a yellow Ferrari, shot close in low light', par='0.06')}
+    <figcaption><span class="sv-credit">Ferrari detail &middot; <b>Jack Careem</b></span><span class="ed-label">Product &middot; detail</span></figcaption>
   </figure>
 </header>
 
