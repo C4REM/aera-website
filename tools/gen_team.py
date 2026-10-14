@@ -10,7 +10,7 @@ _cut = min(i for i in (src.find('<header class="page-hero">'), src.find('<!-- TE
 HEAD = src[:_cut]
 HEAD = re.sub(r'<link href="https://fonts.googleapis.com/css2\?family=Oswald[^>]*>\n', '', HEAD)
 FOOT = src[src.index('<footer>'):src.index('</footer>') + len('</footer>')]
-CSSV = '20261013h1'
+CSSV = '20261014p1'
 HEAD = re.sub(r'style\.css\?v=[0-9a-z]+', 'style.css?v=' + CSSV, HEAD)
 if 'ed-js' not in HEAD:
     HEAD = HEAD.replace('<link rel="stylesheet" href="assets/css/style.css',
