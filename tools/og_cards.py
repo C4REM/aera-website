@@ -135,6 +135,11 @@ def icons():
     mark(ImageDraw.Draw(im), big / 2, big / 2, big / FILL)
     im.resize((256, 256), Image.LANCZOS).save(ROOT / 'favicon.ico', sizes=[(16, 16), (32, 32), (48, 48), (64, 64)])
     print('icon favicon.ico')
+    # Safari asks for these at the site root no matter what the page links to;
+    # a 404 there is what made it draw a tiny icon on a white tile.
+    import shutil
+    for n in ('apple-touch-icon.png', 'apple-touch-icon-precomposed.png'):
+        shutil.copy(ICONS / 'apple-touch-icon.png', ROOT / n)
 
 
 if __name__ == '__main__':

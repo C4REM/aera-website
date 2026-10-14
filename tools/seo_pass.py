@@ -257,7 +257,8 @@ def meta_block(slug, meta, body):
         '<link rel="icon" type="image/png" sizes="96x96" href="/assets/img/icons/favicon-96.png">',
         '<link rel="icon" type="image/png" sizes="48x48" href="/assets/img/icons/favicon-48.png">',
         '<link rel="icon" type="image/png" sizes="32x32" href="/assets/img/icons/favicon-32.png">',
-        '<link rel="apple-touch-icon" href="/assets/img/icons/apple-touch-icon.png">',
+        '<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">',
+        '<link rel="mask-icon" href="/assets/img/logo/aera-mask-icon.svg" color="#C2A878">',
         '<link rel="manifest" href="/site.webmanifest">',
     ]
     if meta.get('og'):
@@ -268,7 +269,7 @@ def meta_block(slug, meta, body):
 HEAD_STRIP = [
     r'<title>.*?</title>\s*', r'<meta name="description"[^>]*>\s*', r'<meta name="robots"[^>]*>\s*', r'<link rel="canonical"[^>]*>\s*',
     r'<meta property="og:[^"]*"[^>]*>\s*', r'<meta name="twitter:[^"]*"[^>]*>\s*', r'<meta name="theme-color"[^>]*>\s*',
-    r'<link rel="icon"[^>]*>\s*', r'<link rel="apple-touch-icon"[^>]*>\s*', r'<link rel="manifest"[^>]*>\s*',
+    r'<link rel="icon"[^>]*>\s*', r'<link rel="apple-touch-icon"[^>]*>\s*', r'<link rel="mask-icon"[^>]*>\s*', r'<link rel="manifest"[^>]*>\s*',
     r'<script type="application/ld\+json">.*?</script>\s*', r'<!-- SEO -->\s*', r'<!-- /SEO -->\s*',
 ]
 
