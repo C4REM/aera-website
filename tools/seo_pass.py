@@ -78,7 +78,7 @@ PAGES = {
         kind='project', creator='vance', genre='Commercial'),
     'headspace': dict(
         title='Headspace | Award-Winning Short Film by Jack Careem | Aera',
-        desc='Headspace, a psychological thriller by Jack Careem: first winner of the UAE Student Film Award at the Black Sheep Film Festival, Dubai, and Best Editing at Dune.',
+        desc='Headspace: a psychological thriller about one man and the other versions of him, by Jack Careem. UAE Student Film Award winner; screening at HollyShorts MENA 2027.',
         og='og-headspace.jpg', kind='project', creator='jack', genre='Psychological thriller', type='Movie',
         award=['UAE Student Film Award, The Black Sheep Film Festival 2026', 'Best Editing, Dune Creative Festival 2026']),
     'never-felt-so-alone': dict(

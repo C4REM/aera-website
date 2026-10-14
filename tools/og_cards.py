@@ -148,4 +148,5 @@ if __name__ == '__main__':
     card('og-jack', None, 'Jack Careem', 'Founder · photographer & filmmaker', cutouts=['assets/img/team/cast-jack.webp'])
     card('og-toosh', None, 'Toosh Alzaeem', 'Photographer & videographer', cutouts=['assets/img/team/cast-toosh.webp'])
     card('og-vance', None, 'Vance Serania', 'Middle East lead · filmmaker', cutouts=['assets/img/team/cast-vance.webp'])
+    card('og-headspace', 'assets/img/work/headspace/mirror.jpg', 'Headspace', 'Short film · UAE Student Film Award', fx=0.92, photo_side='right')
     icons()
