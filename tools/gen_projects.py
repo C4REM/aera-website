@@ -195,12 +195,13 @@ P['warwick-application'] = dict(
     logline='Five minutes, straight to camera: who Jack is, and the three projects that taught him how to make things.',
     billing=[('Written, shot & edited by', 'Jack Careem'), ('Year', '2025'), ('Made for', 'University of Warwick application'), ('Runtime', '5 minutes')],
     film=dict(src='assets/video/warwick-application/index.m3u8', poster=W + 'poster.webp', title='Warwick Application', runtime='5:03'),
-    frames=[(W + 'to-camera.webp', 'Jack talking straight to camera in a dim, warm-lit room'),
-            (W + 'desk.webp', 'Jack looking down at his desk under Route 66 and licence plate signs'),
+    frames=[(W + 'laptop-reveal.webp', 'Jack lit from below as he opens a glowing laptop'),
+            (W + 'notebook.webp', '2023 written in a notebook'),
+            (W + 'flip-screen.webp', 'Jack seen on the flip-out screen of a camera'),
+            (W + 'doorway-three.webp', 'Jack in a warm-lit doorway with a large yellow number three across his back'),
+            (W + 'phone-laptop.webp', 'A phone showing 5:50 resting on a closed laptop'),
             (W + 'stick-figures.webp', 'Stick-figure animation of the three-person crew, each with a camera or clapperboard'),
-            (W + 'editing-room.webp', 'A dark room at night, an edit open on the laptop by the window'),
-            (W + 'route-66.webp', 'Jack at his desk in front of a wall of licence plates'),
-            (W + 'sofa.webp', 'Jack on a sofa, mid-sentence, talking to camera')],
+            (W + 'editing-room.webp', 'A dark room at night, an edit open on the laptop by the window')],
     blocks=[('film',),
             ('text', 'The brief', [
                 'Applicants were asked for a short video introducing themselves. Jack made a five-minute film instead: half confession, half showreel.',
@@ -209,7 +210,7 @@ P['warwick-application'] = dict(
             ('text', 'Making it', [
                 'Each project gets its own look. The Head Boy section leans into being shot on a phone, with a retro 4:3 frame and a scrapbook feel. The rest mixes talking to camera with stick-figure animation, behind-the-scenes clips and recreated scenes.',
                 'Jack wrote, shot and cut all of it around his own narration, captions included.']),
-            ('reel', 3, 6)])
+            ('reel', 3, 7)])
 
 
 def fig(src, alt, cls=''):
