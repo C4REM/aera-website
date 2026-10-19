@@ -191,16 +191,16 @@ P['on-set'] = dict(
 W = 'assets/img/work/warwick/'
 P['warwick-application'] = dict(
     name='Warwick Application', credit='A video application by Jack Careem',
-    hero=(W + 'projector.webp', 'Jack in silhouette against the beam of a cinema projector'), dark=True, origin='50% 40%',
+    hero=(W + 'asleep-hero.webp', 'Jack asleep face-down on a glowing keyboard, monitors lit behind him'), origin='45% 55%',
     logline='Five minutes, straight to camera: who Jack is, and the three projects that taught him how to make things.',
     billing=[('Written, shot & edited by', 'Jack Careem'), ('Year', '2025'), ('Made for', 'University of Warwick application'), ('Runtime', '5 minutes')],
     film=dict(src='assets/video/warwick-application/index.m3u8', poster=W + 'poster.webp', title='Warwick Application', runtime='5:03'),
-    frames=[(W + 'laptop.webp', 'Jack lit by a laptop screen, mid-sentence'),
-            (W + 'asleep.webp', 'Jack asleep face-down on a glowing keyboard'),
+    frames=[(W + 'to-camera.webp', 'Jack talking straight to camera in a dim, warm-lit room'),
+            (W + 'desk.webp', 'Jack looking down at his desk under Route 66 and licence plate signs'),
             (W + 'stick-figures.webp', 'Stick-figure animation of the three-person crew, each with a camera or clapperboard'),
-            (W + 'doorway.webp', 'A figure in a warm-lit doorway at night'),
-            (W + 'dance.webp', 'Jack dancing through a dark living room'),
-            (W + 'retro.webp', 'Jack shouting at the camera inside a retro 4:3 frame')],
+            (W + 'editing-room.webp', 'A dark room at night, an edit open on the laptop by the window'),
+            (W + 'route-66.webp', 'Jack at his desk in front of a wall of licence plates'),
+            (W + 'sofa.webp', 'Jack on a sofa, mid-sentence, talking to camera')],
     blocks=[('film',),
             ('text', 'The brief', [
                 'Applicants were asked for a short video introducing themselves. Jack made a five-minute film instead: half confession, half showreel.',

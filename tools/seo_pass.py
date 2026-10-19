@@ -85,7 +85,7 @@ PAGES = {
         title='Warwick Application | Video by Jack Careem | Aera',
         desc='A five-minute video application by Jack Careem: told to camera, with his first music video, a Head Boy campaign film and a short for World Ocean Day.',
         og='og-warwick.jpg', kind='project', creator='jack', genre='Video application', type='VideoObject',
-        video=dict(thumbnailUrl=SITE + '/assets/img/work/warwick/projector.jpg', uploadDate='2025-03-05', duration='PT5M3S',
+        video=dict(thumbnailUrl=SITE + '/assets/img/work/warwick/asleep-hero.jpg', uploadDate='2025-03-05', duration='PT5M3S',
                    contentUrl=SITE + '/assets/video/warwick-application/index.m3u8')),
     'never-felt-so-alone': dict(
         title='Never Felt So Alone | Music Video by Jack Careem | Aera',

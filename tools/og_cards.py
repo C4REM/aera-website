@@ -154,5 +154,5 @@ if __name__ == '__main__':
     card('og-toosh', None, 'Toosh Alzaeem', 'Photographer & videographer', cutouts=['assets/img/team/cast-toosh.webp'])
     card('og-vance', None, 'Vance Serania', 'Middle East lead · filmmaker', cutouts=['assets/img/team/cast-vance.webp'])
     card('og-headspace', 'assets/img/work/headspace/falling.jpg', 'Headspace', 'Short film · UAE Student Film Award', fx=0.5, fy=0.45, photo_side='right')
-    card('og-warwick', 'assets/img/work/warwick/projector.jpg', 'Warwick\nApplication', 'A video application · Jack Careem', fx=0.5, photo_side='right')
+    card('og-warwick', 'assets/img/work/warwick/asleep-hero.jpg', 'Warwick\nApplication', 'A video application · Jack Careem', fx=0.5, photo_side='right')
     icons()
