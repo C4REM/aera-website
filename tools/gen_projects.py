@@ -15,7 +15,7 @@ import html, json, pathlib, re
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 IMGS = json.loads((ROOT / 'tools/projects_images.json').read_text())
-JS_V = '20261014a'
+JS_V = '20261019w1'
 e = lambda s: html.escape(s, quote=True)
 H = 'assets/img/work/headspace/'
 
@@ -23,7 +23,7 @@ def imgs(slug):
     d = IMGS[slug]
     return d['hero'], d['gal']
 
-ORDER = ['headspace', 'never-felt-so-alone', 'i-feel-good', 'rolls-royce', 'green-planet-dubai',
+ORDER = ['headspace', 'warwick-application', 'never-felt-so-alone', 'i-feel-good', 'rolls-royce', 'green-planet-dubai',
          'photography', 'kia-motors', 'eid-al-etihad', 'graphic-design', 'on-stage', 'on-set']
 
 TOOSH_NOTE = ('Photographed by <a href="/toosh-alzaeem">Toosh Alzaeem</a>. More of her work at '
@@ -188,6 +188,29 @@ P['on-set'] = dict(
             ('reel', 0, None),
             ('note', TOOSH_NOTE)])
 
+W = 'assets/img/work/warwick/'
+P['warwick-application'] = dict(
+    name='Warwick Application', credit='A video application by Jack Careem',
+    hero=(W + 'projector.webp', 'Jack in silhouette against the beam of a cinema projector'), dark=True, origin='50% 40%',
+    logline='Five minutes, straight to camera: who Jack is, and the three projects that taught him how to make things.',
+    billing=[('Written, shot & edited by', 'Jack Careem'), ('Year', '2025'), ('Made for', 'University of Warwick application'), ('Runtime', '5 minutes')],
+    film=dict(src='assets/video/warwick-application/index.m3u8', poster=W + 'poster.webp', title='Warwick Application', runtime='5:03'),
+    frames=[(W + 'laptop.webp', 'Jack lit by a laptop screen, mid-sentence'),
+            (W + 'asleep.webp', 'Jack asleep face-down on a glowing keyboard'),
+            (W + 'stick-figures.webp', 'Stick-figure animation of the three-person crew, each with a camera or clapperboard'),
+            (W + 'doorway.webp', 'A figure in a warm-lit doorway at night'),
+            (W + 'dance.webp', 'Jack dancing through a dark living room'),
+            (W + 'retro.webp', 'Jack shouting at the camera inside a retro 4:3 frame')],
+    blocks=[('film',),
+            ('text', 'The brief', [
+                'Applicants were asked for a short video introducing themselves. Jack made a five-minute film instead: half confession, half showreel.',
+                'It opens on home videos of him as a kid, then comes back to the present to walk through how he learned to make things. A media diploma course in Dubai and his first music video. A campaign film for Head Boy, made in two weeks with nothing but a phone. A short for World Ocean Day.']),
+            ('reel', 0, 3),
+            ('text', 'Making it', [
+                'Each project gets its own look. The Head Boy section leans into being shot on a phone, with a retro 4:3 frame and a scrapbook feel. The rest mixes talking to camera with stick-figure animation, behind-the-scenes clips and recreated scenes.',
+                'Jack wrote, shot and cut all of it around his own narration, captions included.']),
+            ('reel', 3, 6)])
+
 
 def fig(src, alt, cls=''):
     return f'<figure class="sc-f{cls} reveal"><img src="{e(src)}" loading="lazy" alt="{e(alt)}"></figure>'
@@ -203,6 +226,17 @@ def reel(frames):
         else:
             out.append('<div class="sc-pair">' + fig(*frames[i]) + fig(*frames[i + 1]) + '</div>'); i += 2
     return '<section class="sc-reel" aria-label="Frames">\n  ' + '\n  '.join(out) + '\n</section>'
+
+def film(f):
+    """The full film, streamed as HLS from our own host (each segment stays under
+    Cloudflare Pages' 25 MB file limit). project.js attaches hls.js on first play;
+    Safari plays the playlist natively."""
+    return (f'<section class="sc-film reveal" aria-label="Watch the film">\n'
+            f'  <div class="sc-film-frame">\n'
+            f'    <video class="sc-video" data-hls="{e(f["src"])}" poster="{e(f["poster"])}" playsinline preload="none"></video>\n'
+            f'    <button class="sc-play" type="button" aria-label="Play {e(f["title"])}"><span class="sc-play-dot" aria-hidden="true"></span>'
+            f'<span class="sc-play-lbl">Play film</span><span class="sc-play-rt">{e(f["runtime"])}</span></button>\n'
+            f'  </div>\n</section>')
 
 def grid(frames):
     items = '\n    '.join(f'<figure class="sc-g reveal"><img src="{e(s)}" loading="lazy" alt="{e(a)}"><figcaption>{i + 1:02d}</figcaption></figure>'
@@ -243,6 +277,8 @@ def body(slug):
             if fr: parts.append(grid(fr))
         elif b[0] == 'ledger':
             parts.append(ledger(b[1], b[2]))
+        elif b[0] == 'film':
+            parts.append(film(p['film']))
         elif b[0] == 'note':
             parts.append(f'<section class="sc-text sc-note-wrap"><p class="sc-note reveal">{b[1] if "<a " in b[1] else e(b[1])}</p></section>')
     dark = ' sc-dark' if p.get('dark') else ''
@@ -287,7 +323,7 @@ for slug in ORDER:
     b = s.index('<section id="contact"')
     s = s[:a] + body(slug) + s[b:]
     s = re.sub(r'<body[^>]*>', '<body class="sc-page">', s, count=1)
-    s = re.sub(r'\n<script src="assets/js/(hs|project)\.js[^"]*"></script>', '', s)
+    s = re.sub(r'\n<script src="assets/js/(hs|project)\.js[^"]*"( defer)?></script>', '', s)
     s = s.replace('<script src="assets/js/main.js', f'<script src="assets/js/project.js?v={JS_V}" defer></script>\n<script src="assets/js/main.js', 1)
     f.write_text(s)
     print('project', slug)

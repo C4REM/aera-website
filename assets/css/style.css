@@ -3353,3 +3353,21 @@ body:not(.pg-live) .pg-head{position:static;max-width:none;padding:clamp(90px,12
   .sc-ledger .a{grid-column:2;text-align:left}
   .sc-meta .sc-crumb{display:none}
 }
+
+/* Film player on a project page (gen_projects.py film block). The frame sits
+   inset like the reel pairs, rounded like every other photo frame, and the
+   play button is a quiet label rather than a big generic circle. */
+.sc-film{padding:clamp(10px,3vh,30px) var(--sc-pad) clamp(30px,6vh,70px)}
+.sc-film-frame{position:relative;aspect-ratio:16/9;border-radius:var(--radius-img);overflow:hidden;background:#000}
+.sc-video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000}
+.sc-play{position:absolute;inset:0;display:flex;align-items:flex-end;gap:16px;padding:clamp(18px,3vw,36px);
+  border:0;background:linear-gradient(180deg,rgba(0,0,0,0) 45%,rgba(0,0,0,.65) 100%);color:var(--cream);cursor:pointer;
+  font-family:var(--sans);font-size:11px;letter-spacing:.28em;text-transform:uppercase;transition:opacity .4s ease}
+.sc-play-dot{width:54px;height:54px;border-radius:50%;border:1px solid rgba(234,223,205,.6);position:relative;flex:none;
+  transition:background .35s ease,border-color .35s ease}
+.sc-play-dot::after{content:'';position:absolute;left:52%;top:50%;transform:translate(-50%,-50%);
+  border-left:11px solid var(--cream);border-top:7px solid transparent;border-bottom:7px solid transparent}
+.sc-play:hover .sc-play-dot{background:rgba(194,168,120,.25);border-color:var(--champagne)}
+.sc-play-lbl{padding-bottom:20px}
+.sc-play-rt{padding-bottom:20px;color:var(--stone);margin-left:auto}
+.sc-film.is-playing .sc-play{opacity:0;pointer-events:none}

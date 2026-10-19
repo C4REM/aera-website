@@ -27,3 +27,34 @@
   addEventListener('resize', tick);
   tick();
 })();
+
+/* Film player (sc-film). The video carries its HLS playlist in data-hls and
+   loads nothing until someone presses play. Safari plays HLS natively; every
+   other browser gets our self-hosted hls.js light build, fetched on demand. */
+(() => {
+  document.querySelectorAll('.sc-film').forEach(box => {
+    const v = box.querySelector('video'), btn = box.querySelector('.sc-play');
+    if (!v || !btn) return;
+    let ready = false;
+    const loadScript = src => new Promise((ok, no) => {
+      const s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = no; document.head.appendChild(s);
+    });
+    const start = async () => {
+      box.classList.add('is-playing');
+      v.controls = true;  // native controls only once the film is running
+      if (!ready) {
+        ready = true;
+        const src = v.dataset.hls;
+        if (v.canPlayType('application/vnd.apple.mpegurl')) v.src = src;
+        else {
+          try { await loadScript('/assets/js/hls.light.min.js'); } catch (e) {}
+          if (window.Hls && window.Hls.isSupported()) { const h = new window.Hls({ capLevelToPlayerSize: true }); h.loadSource(src); h.attachMedia(v); }
+          else v.src = src;
+        }
+      }
+      v.play().catch(() => {});
+    };
+    btn.addEventListener('click', start);
+    v.addEventListener('play', () => box.classList.add('is-playing'));
+  });
+})();

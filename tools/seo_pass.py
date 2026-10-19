@@ -22,7 +22,7 @@ OG = SITE + '/assets/img/og/'
 
 PAGES_ORDER = ['index', 'social-media', 'brand-commercial', 'events', 'work', 'team',
                'jack-careem', 'toosh-alzaeem', 'vance-serania',
-               'rolls-royce', 'kia-motors', 'headspace', 'never-felt-so-alone', 'i-feel-good', 'green-planet-dubai',
+               'rolls-royce', 'kia-motors', 'headspace', 'warwick-application', 'never-felt-so-alone', 'i-feel-good', 'green-planet-dubai',
                'photography', 'eid-al-etihad', 'graphic-design', 'on-stage', 'on-set', '404']
 SLUGS = set(PAGES_ORDER)
 
@@ -81,6 +81,12 @@ PAGES = {
         desc='Headspace: a psychological thriller about one man and the other versions of him, by Jack Careem. UAE Student Film Award winner; screening at HollyShorts MENA 2027.',
         og='og-headspace.jpg', kind='project', creator='jack', genre='Psychological thriller', type='Movie',
         award=['UAE Student Film Award, The Black Sheep Film Festival 2026', 'Best Editing, Dune Creative Festival 2026']),
+    'warwick-application': dict(
+        title='Warwick Application | Video by Jack Careem | Aera',
+        desc='A five-minute video application by Jack Careem: told to camera, with his first music video, a Head Boy campaign film and a short for World Ocean Day.',
+        og='og-warwick.jpg', kind='project', creator='jack', genre='Video application', type='VideoObject',
+        video=dict(thumbnailUrl=SITE + '/assets/img/work/warwick/projector.jpg', uploadDate='2025-03-05', duration='PT5M3S',
+                   contentUrl=SITE + '/assets/video/warwick-application/index.m3u8')),
     'never-felt-so-alone': dict(
         title='Never Felt So Alone | Music Video by Jack Careem | Aera',
         desc='A music video set to Labrinth and Billie Eilish’s Never Felt So Alone, directed by Jack Careem: a man sorting memory from the fact she isn’t coming back.',
@@ -217,6 +223,8 @@ def graph(slug, body, meta):
                 'publisher': {'@id': SITE + '/#studio'}}
         if meta.get('award'):
             work['award'] = meta['award']
+        if meta.get('video'):  # Google needs these four for a VideoObject to be eligible
+            work.update(meta['video'])
         nodes += [work,
                   crumbs(home, ('Work', url('work')), (name, page))]
     else:
