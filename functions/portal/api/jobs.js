@@ -41,6 +41,9 @@ function clean(body, existing = {}) {
     fee:      str(body.fee      ?? existing.fee,      12),
     notes:    str(body.notes    ?? existing.notes,    600),
     status,
+    // Ticked off = finished with. Inactive jobs drop out of the planner's
+    // project picker and sit under "Inactive" on the Jobs tab until added back.
+    active:   body.active !== undefined ? !(body.active === false || body.active === 'false') : existing.active !== false,
     updated:  new Date().toISOString()
   };
 }

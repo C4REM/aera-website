@@ -52,32 +52,37 @@ const DEFAULT_MEMBERS = [
   { id: 'jack',  name: 'Jack Careem',   role: 'Founder',          capacity: 8 },
   { id: 'toosh', name: 'Toosh Alzaeem', role: 'Photo & Video',    capacity: 8 },
   { id: 'vance', name: 'Vance Serania', role: 'Middle East Lead', capacity: 8 },
-  { id: 'owen',  name: 'Owen',          role: '',                 capacity: 8 }
+  { id: 'owen',  name: 'Owen',          role: '',                 capacity: 8 },
+  { id: 'aoife', name: 'Aoife',         role: '',                 capacity: 8 }
 ];
 /* People added after the board already had a saved team. They're merged in
    once (tracked by `v`) so a saved roster picks them up without anyone having
    to re-enter the team; after that, Edit team is the source of truth. */
 const ADDED_V2 = DEFAULT_MEMBERS.filter(m => m.id === 'toosh' || m.id === 'owen');
+const ADDED_V3 = DEFAULT_MEMBERS.filter(m => m.id === 'aoife');
+const VERSION = 3;
+
+function mergeIn(members, list) {
+  const names = new Set(members.map(m => (m.name || '').toLowerCase().split(' ')[0]));
+  list.forEach(m => {
+    if (!members.some(x => x.id === m.id) && !names.has(m.name.toLowerCase().split(' ')[0])) members.push({ ...m });
+  });
+}
 
 async function read(kv) {
   const raw = await kv.get(KEY);
-  const empty = { v: 2, members: DEFAULT_MEMBERS, tasks: [], on: [] };
+  const empty = { v: VERSION, members: DEFAULT_MEMBERS, tasks: [], on: [] };
   if (!raw) return empty;
   try {
     const p = JSON.parse(raw);
     const data = {
-      v: 2,
+      v: VERSION,
       members: Array.isArray(p.members) && p.members.length ? p.members : DEFAULT_MEMBERS,
       tasks:   Array.isArray(p.tasks) ? p.tasks : [],
       on:      Array.isArray(p.on) ? p.on : null
     };
-    if (!(p.v >= 2)) {
-      // one-off migration from the old "off" model
-      const names = new Set(data.members.map(m => (m.name || '').toLowerCase().split(' ')[0]));
-      ADDED_V2.forEach(m => {
-        if (!data.members.some(x => x.id === m.id) && !names.has(m.name.toLowerCase().split(' ')[0])) data.members.push({ ...m });
-      });
-    }
+    if (!(p.v >= 2)) mergeIn(data.members, ADDED_V2);   // one-off: Toosh, Owen
+    if (!(p.v >= 3)) mergeIn(data.members, ADDED_V3);   // one-off: Aoife
     if (!data.on) {
       // Days that already had work on them count as working; everything else
       // starts as not working, which is the new default.
