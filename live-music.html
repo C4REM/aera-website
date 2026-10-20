@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- SEO -->
+<title>Live Music &amp; Gig Photography | Right by the Stage | Aera</title>
+<meta name="description" content="Live music and gig photography by Toosh Alzaeem: bands and singers shot from right up by the stage, under whatever the venue lights are doing.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://aerastudios.org/live-music">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Aera">
+<meta property="og:locale" content="en_GB">
+<meta property="og:title" content="Live Music &amp; Gig Photography | Right by the Stage | Aera">
+<meta property="og:description" content="Live music and gig photography by Toosh Alzaeem: bands and singers shot from right up by the stage, under whatever the venue lights are doing.">
+<meta property="og:url" content="https://aerastudios.org/live-music">
+<meta property="og:image" content="https://aerastudios.org/assets/img/og/og-live-music.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Live Music &amp; Gig Photography | Right by the Stage">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Live Music &amp; Gig Photography | Right by the Stage | Aera">
+<meta name="twitter:description" content="Live music and gig photography by Toosh Alzaeem: bands and singers shot from right up by the stage, under whatever the venue lights are doing.">
+<meta name="twitter:image" content="https://aerastudios.org/assets/img/og/og-live-music.jpg">
+<meta name="theme-color" content="#060607">
+<link rel="icon" type="image/svg+xml" href="/assets/img/logo/aera-monogram-favicon.svg">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/img/icons/favicon-96.png">
+<link rel="icon" type="image/png" sizes="48x48" href="/assets/img/icons/favicon-48.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/img/icons/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="mask-icon" href="/assets/img/logo/aera-mask-icon.svg" color="#C2A878">
+<link rel="manifest" href="/site.webmanifest">
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@graph": [
+  {
+   "@type": "CreativeWork",
+   "@id": "https://aerastudios.org/live-music#work",
+   "name": "Live Music & Gig Photography",
+   "headline": "Live Music & Gig Photography",
+   "url": "https://aerastudios.org/live-music",
+   "description": "Live music and gig photography by Toosh Alzaeem: bands and singers shot from right up by the stage, under whatever the venue lights are doing.",
+   "genre": "Live music photography",
+   "image": "https://aerastudios.org/assets/img/og/og-live-music.jpg",
+   "creator": {
+    "@id": "https://aerastudios.org/toosh-alzaeem#person"
+   },
+   "publisher": {
+    "@id": "https://aerastudios.org/#studio"
+   }
+  },
+  {
+   "@type": "BreadcrumbList",
+   "itemListElement": [
+    {
+     "@type": "ListItem",
+     "position": 1,
+     "name": "Home",
+     "item": "https://aerastudios.org/"
+    },
+    {
+     "@type": "ListItem",
+     "position": 2,
+     "name": "Work",
+     "item": "https://aerastudios.org/work"
+    },
+    {
+     "@type": "ListItem",
+     "position": 3,
+     "name": "Live Music & Gig Photography",
+     "item": "https://aerastudios.org/live-music"
+    }
+   ]
+  }
+ ]
+}
+</script>
+<!-- /SEO -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400;1,500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css?v=20261019w1">
+<noscript><style>.preloader{display:none!important}body{overflow:visible!important;height:auto!important}.cursor-dot,.cursor-ring{display:none!important}.reveal{opacity:1!important;transform:none!important;filter:none!important}.pg-track{height:auto!important}.pg-stage{position:relative!important;height:auto!important}.pg-cards{position:static!important;display:grid!important;grid-template-columns:repeat(3,1fr);gap:10px;padding:0 22px}.pg-card{position:static!important;width:auto!important;opacity:1!important;transform:none!important}</style></noscript>
+</head>
+<body class="sc-page">
+
+<div class="bg-stage" aria-hidden="true"></div>
+<canvas id="bgGL" aria-hidden="true"></canvas>
+
+<div class="preloader" id="preloader">
+  <div class="preloader-inner">
+    <svg class="preloader-mark" viewBox="0 0 200 200" fill="none"><path d="M100,52 L138,100 L100,148 L62,100 Z" stroke="#C2A878" stroke-width="1.5" opacity="0.5"/><path d="M100,60 L70,100 L130,100 Z M100,140 L70,100 M130,100 L100,140 M82,85 L118,85 M82,115 L118,115" stroke="#C2A878" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span class="preloader-word">AERA</span>
+  </div>
+</div>
+<div class="cursor-dot" id="cursorDot" aria-hidden="true"></div>
+<div class="cursor-ring" id="cursorRing" aria-hidden="true"></div>
+
+<nav id="nav">
+  <div class="nav-left">
+    <button class="burger nav-cell" id="burger" aria-label="Menu" aria-expanded="false" aria-controls="navLinks"><span></span><span></span><span></span></button>
+    <a href="/#contact" class="nav-cell nav-cta magnetic">Enquire</a>
+  </div>
+  <a href="/" class="brand">
+    <svg class="mark" viewBox="61 51 78 98" fill="none"><path d="M100,52 L138,100 L100,148 L62,100 Z" stroke="#C2A878" stroke-width="1.5" opacity="0.5"/><path d="M100,60 L70,100 L130,100 Z M100,140 L70,100 M130,100 L100,140 M82,85 L118,85 M82,115 L118,115" stroke="#C2A878" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    AERA
+  </a>
+  <div class="nav-right">
+    <a href="https://instagram.com/_c4rem" target="_blank" rel="noopener" class="nav-cell">Instagram</a>
+  </div>
+  <div class="nav-links" id="navLinks">
+    <a href="/work">Work</a>
+    <a href="/social-media">Social Media</a>
+    <a href="/brand-commercial">Brand &amp; Commercial</a>
+    <a href="/events">Events</a>
+    <a href="/#about">Studio</a>
+    <a href="/team">Team</a>
+    <a href="/#contact">Enquire</a>
+  </div>
+</nav>
+
+<!-- PROJECT (live-music) — generated by tools/gen_projects.py; edit the data there, not here.
+     The opening frame is held in the dark and project.js pushes the camera
+     in as you scroll; then a poster-style title and billing block, short
+     passages between the frames, and the next project as one big link. -->
+<header class="sc-open">
+  <div class="sc-stick">
+    <img class="sc-open-img" src="assets/img/work/live-music/music-02.webp" alt="A guitarist with long red hair singing at the mic, the band behind her" fetchpriority="high" style="transform-origin:55% 40%">
+    <div class="sc-meta">
+      <span>Photographs by Toosh Alzaeem</span>
+      <span class="sc-crumb"><a href="/work">Work</a> / Right by the Stage</span>
+    </div>
+    <div class="sc-cue" aria-hidden="true">Scroll</div>
+  </div>
+</header>
+
+<section class="sc-title">
+  <h1 class="sc-h1 reveal">Right by the Stage</h1>
+  <p class="sc-logline reveal">Gigs and live sets, shot from right up by the stage.</p>
+  <dl class="sc-billing reveal">
+    <div><dt>Photographed by</dt><dd>Toosh Alzaeem</dd></div>
+    <div><dt>Work</dt><dd>Live music photography</dd></div>
+    <div><dt>Shot during</dt><dd>Real gigs, from the front</dd></div>
+  </dl>
+</section>
+
+<section class="sc-text">
+  <div class="sc-row reveal">
+    <span class="sc-lbl">The job</span>
+    <div class="sc-copy">
+      <p>Toosh gets as close to the stage as she can, then waits for the moment the band really goes for it: the held note, the chorus, the guitarist leaning into the mic.</p>
+      <p>She works with whatever the venue’s lights are doing rather than fighting them, so every set comes out looking like its own room, and you can almost hear it.</p>
+    </div>
+  </div>
+</section>
+
+<section class="sc-reel" aria-label="Frames">
+  <figure class="sc-f sc-full reveal"><img src="assets/img/work/live-music/music-03.webp" loading="lazy" alt="A small venue stage under purple light, with big light-up letters on the floor"></figure>
+  <div class="sc-pair"><figure class="sc-f reveal"><img src="assets/img/work/live-music/music-04.webp" loading="lazy" alt="A guitarist with red hair singing under green and blue stage light"></figure><figure class="sc-f reveal"><img src="assets/img/work/live-music/music-08.webp" loading="lazy" alt="A singer gripping a red microphone, lit in deep blue"></figure></div>
+</section>
+
+<section class="sc-text sc-text-alt">
+  <div class="sc-row reveal">
+    <span class="sc-lbl">For bands and venues</span>
+    <div class="sc-copy">
+      <p>Nothing is staged and nobody is asked to stop. Bands and venues come away with pictures that look the way the night felt, ready for the next poster, post or press kit.</p>
+    </div>
+  </div>
+</section>
+
+<section class="sc-grid" aria-label="Frames">
+    <figure class="sc-g reveal"><img src="assets/img/work/live-music/music-01.webp" loading="lazy" alt="A singer with glasses and a red microphone, eyes closed mid-note under blue light"><figcaption>01</figcaption></figure>
+    <figure class="sc-g reveal"><img src="assets/img/work/live-music/music-06.webp" loading="lazy" alt="A singer playing guitar, lit pink and red, mid-song"><figcaption>02</figcaption></figure>
+    <figure class="sc-g reveal"><img src="assets/img/work/live-music/music-07.webp" loading="lazy" alt="A bassist in a white t-shirt playing in front of a dark curtain"><figcaption>03</figcaption></figure>
+    <figure class="sc-g reveal"><img src="assets/img/work/live-music/music-10.webp" loading="lazy" alt="A black and white shot of a bassist, head down"><figcaption>04</figcaption></figure>
+    <figure class="sc-g reveal"><img src="assets/img/work/live-music/music-05.webp" loading="lazy" alt="A singer in a blue shirt belting into the mic in front of a red curtain"><figcaption>05</figcaption></figure>
+    <figure class="sc-g reveal"><img src="assets/img/work/live-music/music-12.webp" loading="lazy" alt="A guitarist with red hair singing into the mic with green light behind her"><figcaption>06</figcaption></figure>
+    <figure class="sc-g reveal"><img src="assets/img/work/live-music/music-13.webp" loading="lazy" alt="A guitarist in a cap and hoodie playing an angular electric guitar"><figcaption>07</figcaption></figure>
+    <figure class="sc-g reveal"><img src="assets/img/work/live-music/music-09.webp" loading="lazy" alt="A singer and guitarist lit in pink and blue, mid-chorus"><figcaption>08</figcaption></figure>
+    <figure class="sc-g reveal"><img src="assets/img/work/live-music/music-14.webp" loading="lazy" alt="A singer holding a red microphone with both hands"><figcaption>09</figcaption></figure>
+</section>
+
+<section class="sc-text sc-note-wrap"><p class="sc-note reveal">Photographed by <a href="/toosh-alzaeem">Toosh Alzaeem</a>. More of her live work at <a href="https://madebyzooshportfolio.com/photography.html#live-music" target="_blank" rel="noopener">madebyzoosh</a>.</p></section>
+
+<a class="sc-next" href="/on-set">
+  <img src="assets/img/team/toosh/set-clapperboard.jpg" alt="An actor peeking over a clapperboard on a short film set" loading="lazy">
+  <span class="sc-next-lbl">Next</span>
+  <span class="sc-next-ttl">On Set</span>
+</a>
+
+<section id="contact" class="contact">
+  <div class="wrap">
+    <span class="eyebrow">Enquire</span>
+    <h2 class="blur-focus">Right, what are we making?</h2>
+    <a class="email" href="mailto:bookings@aerastudios.org">bookings@aerastudios.org</a>
+    <div class="socials">
+      <a href="https://instagram.com/_c4rem" target="_blank" rel="noopener">Instagram — @_c4rem</a>
+      <a href="/work">More work</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span class="brand-sm" style="display:inline-flex;align-items:center;gap:.4em;justify-content:center">
+      <svg width="16" height="16" viewBox="0 0 200 200" fill="none"><path d="M100,52 L138,100 L100,148 L62,100 Z" stroke="#C2A878" stroke-width="1.5" opacity="0.5"/><path d="M100,60 L70,100 L130,100 Z M100,140 L70,100 M130,100 L100,140 M82,85 L118,85 M82,115 L118,115" stroke="#C2A878" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      AERA
+    </span>
+    © <span id="year"></span> Aera Media Studio · Leeds, UK
+    <div class="foot-links">
+      <a href="/work">Work</a>
+      <a href="/social-media">Social Media</a>
+      <a href="/brand-commercial">Brand &amp; Commercial</a>
+      <a href="/events">Events</a>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/js/lenis.min.js?v=20260803h"></script>
+<script src="assets/js/project.js?v=20261019w1" defer></script>
+<script src="assets/js/main.js?v=20261013a"></script>
+</body>
+</html>

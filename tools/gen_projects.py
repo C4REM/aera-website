@@ -24,7 +24,7 @@ def imgs(slug):
     return d['hero'], d['gal']
 
 ORDER = ['headspace', 'warwick-application', 'never-felt-so-alone', 'i-feel-good', 'rolls-royce', 'green-planet-dubai',
-         'photography', 'kia-motors', 'eid-al-etihad', 'graphic-design', 'on-stage', 'on-set']
+         'photography', 'kia-motors', 'eid-al-etihad', 'graphic-design', 'on-stage', 'live-music', 'on-set']
 
 TOOSH_NOTE = ('Photographed by <a href="/toosh-alzaeem">Toosh Alzaeem</a>. More of her work at '
               '<a href="http://madebyzooshportfolio.com" target="_blank" rel="noopener">madebyzoosh</a>.')
@@ -177,6 +177,33 @@ P['on-stage'] = dict(
             ('note', TOOSH_NOTE)])
 
 h, g = imgs('on-set')
+L = 'assets/img/work/live-music/'
+P['live-music'] = dict(
+    name='Right by the Stage', credit='Photographs by Toosh Alzaeem',
+    hero=(L + 'music-02.webp', 'A guitarist with long red hair singing at the mic, the band behind her'), origin='55% 40%',
+    logline='Gigs and live sets, shot from right up by the stage.',
+    billing=[('Photographed by', 'Toosh Alzaeem'), ('Work', 'Live music photography'), ('Shot during', 'Real gigs, from the front')],
+    frames=[(L + 'music-03.webp', 'A small venue stage under purple light, with big light-up letters on the floor'),
+            (L + 'music-04.webp', 'A guitarist with red hair singing under green and blue stage light'),
+            (L + 'music-08.webp', 'A singer gripping a red microphone, lit in deep blue'),
+            (L + 'music-01.webp', 'A singer with glasses and a red microphone, eyes closed mid-note under blue light'),
+            (L + 'music-06.webp', 'A singer playing guitar, lit pink and red, mid-song'),
+            (L + 'music-07.webp', 'A bassist in a white t-shirt playing in front of a dark curtain'),
+            (L + 'music-10.webp', 'A black and white shot of a bassist, head down'),
+            (L + 'music-05.webp', 'A singer in a blue shirt belting into the mic in front of a red curtain'),
+            (L + 'music-12.webp', 'A guitarist with red hair singing into the mic with green light behind her'),
+            (L + 'music-13.webp', 'A guitarist in a cap and hoodie playing an angular electric guitar'),
+            (L + 'music-09.webp', 'A singer and guitarist lit in pink and blue, mid-chorus'),
+            (L + 'music-14.webp', 'A singer holding a red microphone with both hands')],
+    blocks=[('text', 'The job', [
+                'Toosh gets as close to the stage as she can, then waits for the moment the band really goes for it: the held note, the chorus, the guitarist leaning into the mic.',
+                'She works with whatever the venue’s lights are doing rather than fighting them, so every set comes out looking like its own room, and you can almost hear it.']),
+            ('reel', 0, 3),
+            ('text', 'For bands and venues', [
+                'Nothing is staged and nobody is asked to stop. Bands and venues come away with pictures that look the way the night felt, ready for the next poster, post or press kit.']),
+            ('grid', 3, None),
+            ('note', 'Photographed by <a href="/toosh-alzaeem">Toosh Alzaeem</a>. More of her live work at <a href="https://madebyzooshportfolio.com/photography.html#live-music" target="_blank" rel="noopener">madebyzoosh</a>.')])
+
 P['on-set'] = dict(
     name='On Set', credit='Photographs by Toosh Alzaeem', hero=(h[0], h[1]),
     logline='Lighting and behind-the-scenes photography on independent film sets.',

@@ -23,7 +23,7 @@ OG = SITE + '/assets/img/og/'
 PAGES_ORDER = ['index', 'social-media', 'brand-commercial', 'events', 'work', 'team',
                'jack-careem', 'toosh-alzaeem', 'vance-serania',
                'rolls-royce', 'kia-motors', 'headspace', 'warwick-application', 'never-felt-so-alone', 'i-feel-good', 'green-planet-dubai',
-               'photography', 'eid-al-etihad', 'graphic-design', 'on-stage', 'on-set', '404']
+               'photography', 'eid-al-etihad', 'graphic-design', 'on-stage', 'live-music', 'on-set', '404']
 SLUGS = set(PAGES_ORDER)
 
 def url(slug):
@@ -115,6 +115,10 @@ PAGES = {
         title='On Stage | Theatre Photography | Aera',
         desc='Live theatre photography by Toosh Alzaeem, shot from the stalls and the wings during the real show.',
         kind='project', creator='toosh', genre='Theatre photography'),
+    'live-music': dict(
+        title='Live Music & Gig Photography | Right by the Stage | Aera',
+        desc='Live music and gig photography by Toosh Alzaeem: bands and singers shot from right up by the stage, under whatever the venue lights are doing.',
+        og='og-live-music.jpg', kind='project', creator='toosh', genre='Live music photography'),
     'on-set': dict(
         title='On Set | Behind the Scenes Film Photography | Aera',
         desc='Lighting and behind-the-scenes photography by Toosh Alzaeem on independent film sets.',
