@@ -113,7 +113,7 @@ PAGES = {
         kind='project', creator='jack', genre='Graphic design'),
     'on-stage': dict(
         title='On Stage | Theatre Photography | Aera',
-        desc='Live theatre photography by Toosh Alzaeem, shot from the stalls and the wings during the real show.',
+        desc='Live theatre photography by Toosh Alzaeem and Jack Careem, shot from the stalls and the wings during the real show.',
         kind='project', creator='toosh', genre='Theatre photography'),
     'live-music': dict(
         title='Live Music & Gig Photography | Right by the Stage | Aera',

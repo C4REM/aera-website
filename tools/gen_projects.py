@@ -165,16 +165,25 @@ P['graphic-design'] = dict(
             ('grid', 0, None)])
 
 h, g = imgs('on-stage')
+S = 'assets/img/work/on-stage/'
 P['on-stage'] = dict(
-    name='On Stage', credit='Photographs by Toosh Alzaeem', hero=(h[0], h[1]),
+    name='On Stage', credit='Photographs by Toosh Alzaeem & Jack Careem', hero=(h[0], h[1]),
     logline='Shot from the stalls and the wings, during the real show.',
-    billing=[('Photographed by', 'Toosh Alzaeem'), ('Work', 'Theatre photography'), ('Shot during', 'Live performances, not photocalls')],
-    frames=g,
+    billing=[('Photographed by', 'Toosh Alzaeem<br>Jack Careem'), ('Work', 'Theatre photography'), ('Shot during', 'Live performances, not photocalls')],
+    frames=g + [(S + 'jack-hat-smoke.webp', 'A performer in a wide black hat and green scarf, caught in a single beam through stage haze'),
+                (S + 'jack-roses-dark.webp', 'A woman in a green dress with a basket of red roses, alone in a pool of light on a dark stage'),
+                (S + 'jack-hat-point.webp', 'The same performer in a mustard shirt, pointing skyward mid-song under blue light'),
+                (S + 'jack-roses.webp', 'The flower seller holding out a single red rose')],
     blocks=[('text', 'The job', [
                 'Toosh shoots theatre during real performances rather than a staged photocall, so what you see is the show itself: the lights, the costumes, and a cast clearly having the time of their lives.',
                 'She works from the stalls and the wings. Nothing is posed or restaged afterwards, and the cast and crew get pictures they can relive the night with.']),
-            ('reel', 0, None),
-            ('note', TOOSH_NOTE)])
+            ('reel', 0, 3),
+            ('text', 'Jack’s frames', [
+                'Jack shoots the same way, during the real show, but leans into the dark: one light, one performer, and everything else allowed to fall away to black.',
+                'It suits the quiet moments as much as the big numbers. A flower seller alone in a spotlight can carry a frame on her own.']),
+            ('reel', 3, 5),
+            ('reel', 5, 7),
+            ('note', 'Photographed by <a href="/toosh-alzaeem">Toosh Alzaeem</a> and <a href="/jack-careem">Jack Careem</a>. More of Toosh’s work at <a href="http://madebyzooshportfolio.com" target="_blank" rel="noopener">madebyzoosh</a>.')])
 
 h, g = imgs('on-set')
 L = 'assets/img/work/live-music/'
