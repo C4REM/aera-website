@@ -116,7 +116,7 @@ PAGES = {
         desc='Live theatre photography by Toosh Alzaeem and Jack Careem, shot from the stalls and the wings during the real show.',
         kind='project', creator='toosh', genre='Theatre photography'),
     'live-music': dict(
-        title='Live Music & Gig Photography | Right by the Stage | Aera',
+        title='Live Music & Gig Photography by Toosh Alzaeem | Aera',
         desc='Live music and gig photography by Toosh Alzaeem: bands and singers shot from right up by the stage, under whatever the venue lights are doing.',
         og='og-live-music.jpg', kind='project', creator='toosh', genre='Live music photography'),
     'on-set': dict(

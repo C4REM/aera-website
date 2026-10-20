@@ -51,7 +51,7 @@ PEOPLE = [
        bio="Shoots theatre, gigs, weddings and anything with a crowd and some energy in the room. Four years in, starting out in Dubai and now based in Bournemouth, and happy to travel for a good job. On independent film sets she has run the lighting as head of gaffing and shot the behind-the-scenes photography. Never poses anyone stiffly; she catches what is actually happening and keeps the mood light, because people having fun always look their best.",
        skills=['Theatre', 'Live music', 'Weddings', 'Reels', 'Gaffing', 'BTS photography', 'Social'],
        links=[('Full portfolio', 'http://madebyzooshportfolio.com'), ('Instagram', 'https://instagram.com/madebyzoosh')],
-       credits=[('On Stage', 'Theatre', 'on-stage.html'), ('Right by the Stage', 'Live music', 'live-music.html'), ('On Set', 'Behind the scenes', 'on-set.html')],
+       credits=[('On Stage', 'Theatre', 'on-stage.html'), ('Live Music', 'Gig photography', 'live-music.html'), ('On Set', 'Behind the scenes', 'on-set.html')],
        folio=[T+'theatre-finale.jpg', T+'theatre-yellow-suit.jpg', T+'set-clapperboard.jpg', T+'wedding-altar.jpg', T+'socotra-dragon-tree.jpg']),
   dict(slug='vance-serania', first='Vance', name='Vance Serania',
        role='Middle East Lead · Filmmaker & Photographer', short='Middle East Lead',

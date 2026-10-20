@@ -188,7 +188,7 @@ P['on-stage'] = dict(
 h, g = imgs('on-set')
 L = 'assets/img/work/live-music/'
 P['live-music'] = dict(
-    name='Right by the Stage', credit='Photographs by Toosh Alzaeem',
+    name='Live Music', credit='Photographs by Toosh Alzaeem',
     hero=(L + 'music-02.webp', 'A guitarist with long red hair singing at the mic, the band behind her'), origin='55% 40%',
     logline='Gigs and live sets, shot from right up by the stage.',
     billing=[('Photographed by', 'Toosh Alzaeem'), ('Work', 'Live music photography'), ('Shot during', 'Real gigs, from the front')],
