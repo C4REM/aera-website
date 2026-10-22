@@ -824,11 +824,62 @@
   video.addEventListener('play', () => frame.classList.add('is-playing'));
   video.addEventListener('pause', () => frame.classList.remove('is-playing'));
 
-  muteBtn.addEventListener('click', () => {
-    video.muted = !video.muted;
-    frame.classList.toggle('is-muted', video.muted);
+  /* ---- sound ----
+     Starts muted because browsers only autoplay silent video. One speaker
+     button toggles sound; on devices that allow it a slim slider slides out
+     beside it for the level. The "Sound on" cue in the corner is the obvious
+     first tap for anyone who hasn't spotted the controls. iOS ignores
+     video.volume (hardware buttons only), so there it's mute/unmute alone. */
+  const volRange = document.getElementById('reelVolRange');
+  const volWrap = document.getElementById('reelVol');
+  const soundCue = document.getElementById('reelSoundCue');
+  const canSetVolume = (() => { try { const v = document.createElement('video'); v.volume = .5; return v.volume === .5; } catch (e) { return false; } })();
+  if (!canSetVolume && volWrap) volWrap.classList.add('no-range');
+  let savedVol = .8;
+  try { const v = parseFloat(localStorage.getItem('aeraReelVol')); if (v > 0 && v <= 1) savedVol = v; } catch (e) {}
+  if (canSetVolume) video.volume = savedVol;
+
+  function paintSound(){
+    const silent = video.muted || video.volume === 0;
+    const level = silent ? 0 : video.volume;
+    frame.classList.toggle('is-muted', silent);
+    frame.classList.toggle('is-quiet', !silent && level < .5);
+    muteBtn.setAttribute('aria-label', silent ? 'Turn sound on' : 'Mute');
+    muteBtn.setAttribute('aria-pressed', String(!silent));
+    if (volRange){
+      volRange.value = String(level);
+      volRange.style.setProperty('--v', (level * 100).toFixed(0) + '%');
+      volRange.setAttribute('aria-valuetext', Math.round(level * 100) + '%');
+    }
+  }
+  function setSound(on){
+    if (on){
+      if (canSetVolume && video.volume === 0) video.volume = savedVol || .8;
+      video.muted = false;
+      if (video.paused) video.play().catch(() => {});
+      frame.classList.add('sound-touched');
+    } else {
+      video.muted = true;
+    }
+  }
+  muteBtn.addEventListener('click', () => setSound(video.muted || video.volume === 0));
+  if (soundCue) soundCue.addEventListener('click', () => setSound(true));
+  if (volRange) volRange.addEventListener('input', () => {
+    const v = parseFloat(volRange.value);
+    video.volume = v;
+    video.muted = v === 0;
+    if (v > 0){ savedVol = v; frame.classList.add('sound-touched'); try { localStorage.setItem('aeraReelVol', String(v)); } catch (e) {} }
   });
-  frame.classList.toggle('is-muted', video.muted);
+  video.addEventListener('volumechange', paintSound);
+  // M to mute/unmute while the reel is on screen and nothing else has focus
+  addEventListener('keydown', e => {
+    if ((e.key === 'm' || e.key === 'M') && live && !e.metaKey && !e.ctrlKey && !e.altKey &&
+        !(document.activeElement && document.activeElement.matches('textarea,select,[contenteditable],input:not([type=range]):not([type=button]):not([type=checkbox])'))){
+      const r = frame.getBoundingClientRect();
+      if (r.bottom > 0 && r.top < innerHeight) setSound(video.muted || video.volume === 0);
+    }
+  });
+  paintSound();
 
   video.addEventListener('loadedmetadata', () => { durEl.textContent = fmt(video.duration); });
   video.addEventListener('timeupdate', () => {
