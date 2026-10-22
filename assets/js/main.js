@@ -846,6 +846,10 @@
     frame.classList.toggle('is-quiet', !silent && level < .5);
     muteBtn.setAttribute('aria-label', silent ? 'Turn sound on' : 'Mute');
     muteBtn.setAttribute('aria-pressed', String(!silent));
+    if (soundCue){
+      soundCue.querySelector('.lbl').textContent = silent ? 'Sound on' : 'Sound off';
+      soundCue.setAttribute('aria-label', silent ? 'Turn sound on' : 'Turn sound off');
+    }
     if (volRange){
       volRange.value = String(level);
       volRange.style.setProperty('--v', (level * 100).toFixed(0) + '%');
@@ -863,7 +867,7 @@
     }
   }
   muteBtn.addEventListener('click', () => setSound(video.muted || video.volume === 0));
-  if (soundCue) soundCue.addEventListener('click', () => setSound(true));
+  if (soundCue) soundCue.addEventListener('click', () => setSound(video.muted || video.volume === 0));
   if (volRange) volRange.addEventListener('input', () => {
     const v = parseFloat(volRange.value);
     video.volume = v;
