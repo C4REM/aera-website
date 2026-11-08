@@ -690,25 +690,8 @@ input.need{border-color:rgba(201,123,110,.7)!important}
 .money{position:relative}
 .money span{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--champagne);font-size:14px;pointer-events:none}
 .money input{padding-left:27px}
-/* job status stepper */
-.stages{display:flex;background:var(--panel2);border-radius:999px;padding:3px;gap:2px}
-.stage{background:none;border:0;border-radius:999px;color:var(--stone);font:inherit;font-size:11.5px;padding:5px 10px;cursor:pointer;white-space:nowrap;transition:background .2s,color .2s}
-.stage:hover{color:var(--cream);background:var(--panel3)}
-.stage.past{color:var(--dim)}
-.stage[aria-pressed="true"]{color:var(--obsidian);font-weight:500}
-.job[data-status="Enquiry"] .stage[aria-pressed="true"]{background:#C9C1B2}
-.job[data-status="Confirmed"] .stage[aria-pressed="true"]{background:var(--champagne)}
-.job[data-status="Shot"] .stage[aria-pressed="true"]{background:#B7A6C4}
-.job[data-status="Editing"] .stage[aria-pressed="true"]{background:#9EAAD0}
-.job[data-status="Delivered"] .stage[aria-pressed="true"]{background:var(--sage)}
-@media(max-width:760px){
-  .job .jobtop{flex-wrap:wrap;gap:10px}
-  .job .jobclient{padding-right:84px}
-  .job .jobright{width:100%}
-  .job .jobtick{position:absolute;top:16px;right:16px}
-  .stages{width:100%}
-  .stage{flex:1;padding:6px 0;font-size:11px;min-width:0}
-}
+.jobstat{cursor:pointer;font-family:inherit;font-size:11.5px;letter-spacing:0;text-transform:none;padding:5px 12px 5px 9px;transition:transform .15s}
+.jobstat i{width:6px;height:6px}
 /* edit mode */
 .mt-form .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:12px}
 .mt-form .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
@@ -1777,6 +1760,7 @@ input.need{border-color:rgba(201,123,110,.7)!important}
      ================================================================ */
   const JOBS_API = '/portal/api/jobs';
   const ORDER = ['Enquiry','Confirmed','Shot','Editing','Delivered'];
+  const JOB_COLOUR = { Enquiry:'#C9C1B2', Confirmed:'#CDB386', Shot:'#B7A6C4', Editing:'#9EAAD0', Delivered:'#8FB08A' };
   const form = $('jobform'), board = $('board');
   const submitBtn = $('submitbtn'), cancelBtn = $('cancelbtn'), formNote = $('formnote');
   let jobs = [];
@@ -1822,10 +1806,8 @@ input.need{border-color:rgba(201,123,110,.7)!important}
           <div class="jobtop">
             <div class="jobclient">${esc(j.client)}</div>
             <div class="jobright">
-              <div class="stages" role="group" aria-label="Status">${ORDER.map((st, i) => {
-                const cur = ORDER.indexOf(j.status);
-                return `<button type="button" class="stage${i < cur ? ' past' : ''}" data-stage="${esc(st)}" data-job="${esc(j.id)}" aria-pressed="${st === j.status}">${st}</button>`;
-              }).join('')}</div>
+              <button type="button" class="pill2 jobstat" data-advance="${esc(j.id)}" title="Click to move to ${esc(ORDER[(ORDER.indexOf(j.status) + 1) % ORDER.length])}"
+                      style="--c:${JOB_COLOUR[j.status] || '#C9C1B2'};--c-bg:color-mix(in srgb, ${JOB_COLOUR[j.status] || '#C9C1B2'} 16%, transparent)"><i></i>${esc(j.status)}</button>
               <button class="jobtick" data-tick="${esc(j.id)}" title="Tick off: hides it from the planner and moves it to Inactive"><i></i>Done</button>
             </div>
           </div>
@@ -1907,13 +1889,13 @@ input.need{border-color:rgba(201,123,110,.7)!important}
   });
   board.addEventListener('deljob', e => delJob(e.detail));
 
-  // One click moves a job to any stage; the card regroups straight away and
-  // rolls back if the save fails.
+  // Same as the planner: tap the status to move it on one step.
   board.addEventListener('click', async e => {
-    const b = e.target.closest('[data-stage]'); if (!b) return;
+    const b = e.target.closest('[data-advance]'); if (!b) return;
     e.stopImmediatePropagation();
-    const j = jobs.find(x => x.id === b.dataset.job); if (!j || j.status === b.dataset.stage) return;
-    const prev = j.status; j.status = b.dataset.stage; renderJobs();
+    const j = jobs.find(x => x.id === b.dataset.advance); if (!j) return;
+    const prev = j.status;
+    j.status = ORDER[(ORDER.indexOf(prev) + 1) % ORDER.length]; renderJobs();
     try {
       const { jobs: list } = await api(JOBS_API, 'PUT', { id: j.id, status: j.status });
       jobs = list; renderJobs(); toast(`${j.client}: ${j.status}`);
