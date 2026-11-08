@@ -29,6 +29,11 @@ const STATUSES = ['Enquiry', 'Confirmed', 'Shot', 'Editing', 'Delivered'];
 /* Trim and cap every field. Only Jack and the team can reach this endpoint, so
    this isn't defending against attackers so much as against a stray paste of
    half a document into the notes box bloating the KV value. */
+const money = v => {
+  const s = String(v ?? '').trim().replace(/^£\s*/, '').slice(0, 12);
+  return s ? '£' + s : '';
+};
+
 function clean(body, existing = {}) {
   const str = (v, max) => String(v ?? '').trim().slice(0, max);
   const status = STATUSES.includes(body.status) ? body.status : (existing.status || 'Enquiry');
@@ -37,8 +42,8 @@ function clean(body, existing = {}) {
     client:   str(body.client   ?? existing.client,   80),
     type:     str(body.type     ?? existing.type,     40),
     date:     str(body.date     ?? existing.date,     10),   // YYYY-MM-DD
-    assignee: str(body.assignee ?? existing.assignee, 40),
-    fee:      str(body.fee      ?? existing.fee,      12),
+    assignee: str(body.assignee ?? existing.assignee, 200),   // team, comma-separated
+    fee:      money(body.fee    ?? existing.fee),
     notes:    str(body.notes    ?? existing.notes,    600),
     status,
     // Ticked off = finished with. Inactive jobs drop out of the planner's

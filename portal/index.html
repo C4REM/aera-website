@@ -686,6 +686,10 @@ input.need{border-color:rgba(201,123,110,.7)!important}
 .mt-who{display:flex;flex-wrap:wrap;gap:6px}
 .mt-who span{background:var(--panel2);border-radius:999px;padding:4px 12px;font-size:13px;color:var(--dim)}
 @media(max-width:620px){.mt-whenrow{grid-template-columns:1fr}}
+/* job form: £ prefix */
+.money{position:relative}
+.money span{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--champagne);font-size:14px;pointer-events:none}
+.money input{padding-left:27px}
 /* edit mode */
 .mt-form .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:12px}
 .mt-form .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
@@ -791,14 +795,18 @@ input.need{border-color:rgba(201,123,110,.7)!important}
         <div><label for="f-client">Client</label><input id="f-client" name="client" required placeholder="Rolls-Royce"></div>
         <div><label for="f-type">Job type</label><input id="f-type" name="type" placeholder="Brand film" list="types"></div>
         <div><label for="f-date">Shoot date</label><input id="f-date" name="date" type="date"></div>
-        <div><label for="f-assignee">Lead</label><input id="f-assignee" name="assignee" placeholder="Jack" list="people"></div>
-        <div><label for="f-fee">Fee</label><input id="f-fee" name="fee" placeholder="£950"></div>
+        <div><label for="f-fee">Fee</label><div class="money"><span aria-hidden="true">£</span><input id="f-fee" name="fee" inputmode="decimal" placeholder="950"></div></div>
         <div><label for="f-status">Status</label>
           <select id="f-status" name="status">
             <option>Enquiry</option><option>Confirmed</option><option>Shot</option>
             <option>Editing</option><option>Delivered</option>
           </select>
         </div>
+      </div>
+      <input type="hidden" name="assignee">
+      <div style="margin-top:14px">
+        <label>Team</label>
+        <div class="mt-ppl" id="f-team"></div>
       </div>
       <datalist id="types">
         <option>Wedding</option><option>Event</option><option>Brand film</option>
@@ -1715,7 +1723,20 @@ input.need{border-color:rgba(201,123,110,.7)!important}
 
   function fillPeopleList(){
     $('people').innerHTML = members.map(m => `<option>${esc(m.name)}</option>`).join('');
+    fillTeam(form.assignee.value);
   }
+
+  /* Job team: tick boxes for everyone on the roster, stored as "Jack, Toosh" in
+     `assignee` so older single-lead jobs still read correctly. */
+  const firstName = n => (n || '').trim().split(/\s+/)[0];
+  function fillTeam(current){
+    const chosen = String(current || '').split(',').map(x => x.trim().toLowerCase()).filter(Boolean);
+    const names = members.map(m => firstName(m.name)).filter(Boolean);
+    chosen.forEach(c => { if (!names.some(n => n.toLowerCase() === c)) names.push(c.replace(/^./, x => x.toUpperCase())); });
+    $('f-team').innerHTML = names.map(n =>
+      `<label><input type="checkbox" value="${esc(n)}"${chosen.includes(n.toLowerCase()) ? ' checked' : ''}><i></i>${esc(n)}</label>`).join('');
+  }
+  const pounds = v => { v = String(v || '').trim(); return !v ? '' : v.startsWith('£') ? v : '£' + v; };
 
   async function loadPlanner(){
     try {
@@ -1789,8 +1810,8 @@ input.need{border-color:rgba(201,123,110,.7)!important}
           <div class="jobmeta">
             ${j.type     ? `<span>${esc(j.type)}</span>` : ''}
             ${j.date     ? `<span><b>${esc(niceDate(j.date))}</b></span>` : ''}
-            ${j.assignee ? `<span>Lead: ${esc(j.assignee)}</span>` : ''}
-            ${j.fee      ? `<span>${esc(j.fee)}</span>` : ''}
+            ${j.assignee ? `<span>Team: ${esc(j.assignee)}</span>` : ''}
+            ${j.fee      ? `<span>${esc(pounds(j.fee))}</span>` : ''}
           </div>
           ${j.notes ? `<div class="jobnotes">${esc(j.notes)}</div>` : ''}
           <div class="jobacts">
@@ -1818,7 +1839,7 @@ input.need{border-color:rgba(201,123,110,.7)!important}
   }
 
   function resetForm(){
-    form.reset(); form.id.value = '';
+    form.reset(); form.id.value = ''; fillTeam('');
     form.classList.remove('open');
     if ($('newjobbtn')) $('newjobbtn').textContent = '+ New job';
     submitBtn.textContent = 'Add job';
@@ -1827,7 +1848,9 @@ input.need{border-color:rgba(201,123,110,.7)!important}
 
   form.addEventListener('submit', async e => {
     e.preventDefault();
+    form.assignee.value = [...$('f-team').querySelectorAll('input:checked')].map(x => x.value).join(', ');
     const data = Object.fromEntries(new FormData(form));
+    data.fee = pounds(data.fee.replace(/^£\s*/, ''));
     if (!data.client.trim()) return;
     submitBtn.disabled = true;
     try {
@@ -1878,7 +1901,8 @@ input.need{border-color:rgba(201,123,110,.7)!important}
       form.id.value = j.id;
       form.client.value = j.client || ''; form.type.value = j.type || '';
       form.date.value = j.date || '';     form.assignee.value = j.assignee || '';
-      form.fee.value = j.fee || '';       form.notes.value = j.notes || '';
+      fillTeam(j.assignee);
+      form.fee.value = String(j.fee || '').replace(/^£\s*/, ''); form.notes.value = j.notes || '';
       form.status.value = j.status || 'Enquiry';
       // The form is collapsed behind "+ New job" by default, so editing has
       // to open it, otherwise the fields fill in out of sight.
