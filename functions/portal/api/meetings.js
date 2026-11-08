@@ -31,9 +31,7 @@ function clean(body, existing = {}) {
     date:      str(pick('date'), 10),            // YYYY-MM-DD
     time:      str(pick('time'), 20),
     location:  str(pick('location'), 100),
-    chair:     str(pick('chair'), 40),
     attendees: str(pick('attendees'), 300),
-    apologies: str(pick('apologies'), 200),
     status:    STATUSES.includes(pick('status')) ? pick('status') : 'Draft',
     agenda: list(pick('agenda'), 25).map(a => ({
       title: str(a && a.title, 140),

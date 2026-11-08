@@ -663,6 +663,29 @@ input.need{border-color:rgba(201,123,110,.7)!important}
 .mt-file:hover{background:var(--panel3)}
 .mt-file::after{content:"\2197";color:var(--champagne);font-size:12px}
 .mt-repitem.lnk{grid-template-columns:1fr 1.4fr 30px;align-items:center}
+/* date strip + attendee ticks */
+.mt-days{display:flex;gap:6px;overflow-x:auto;padding:2px 2px 8px;scrollbar-width:thin}
+.mt-day{flex:none;width:58px;background:var(--panel2);border:1px solid transparent;border-radius:14px;padding:9px 0 8px;text-align:center;color:var(--dim);font:inherit;cursor:pointer;transition:background .2s,border-color .2s,color .2s}
+.mt-day:hover{background:var(--panel3);color:var(--cream)}
+.mt-day small{display:block;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--stone)}
+.mt-day b{display:block;font-family:var(--display);font-weight:400;font-size:1.35rem;line-height:1.15;margin:2px 0 1px}
+.mt-day[aria-pressed="true"]{background:var(--champagne);color:var(--obsidian)}
+.mt-day[aria-pressed="true"] small{color:rgba(15,14,13,.65)}
+.mt-day.other{width:auto;padding:9px 14px;display:flex;align-items:center;font-size:12.5px}
+.mt-other{display:none;max-width:200px;margin-top:4px}
+.mt-other.open{display:block}
+.mt-whenrow{display:grid;grid-template-columns:150px 1fr;gap:12px;margin:12px 0 14px}
+.mt-ppl{display:flex;flex-wrap:wrap;gap:8px}
+.mt-ppl label{display:inline-flex;align-items:center;gap:9px;margin:0;cursor:pointer;background:var(--panel2);border:1px solid transparent;border-radius:999px;padding:7px 14px 7px 8px;font-size:13.5px;letter-spacing:0;text-transform:none;color:var(--dim);transition:all .2s}
+.mt-ppl input{position:absolute;opacity:0;width:0;height:0}
+.mt-ppl i{width:18px;height:18px;border-radius:50%;border:1.5px solid var(--stone);display:grid;place-items:center;font-style:normal;font-size:10px;color:var(--obsidian);transition:all .2s}
+.mt-ppl label:has(input:checked){color:var(--cream);border-color:rgba(205,179,134,.4);background:rgba(205,179,134,.08)}
+.mt-ppl label:has(input:checked) i{background:var(--champagne);border-color:var(--champagne)}
+.mt-ppl label:has(input:checked) i::before{content:"\2713"}
+.mt-ppl input:focus-visible+i{outline:2px solid var(--champagne);outline-offset:2px}
+.mt-who{display:flex;flex-wrap:wrap;gap:6px}
+.mt-who span{background:var(--panel2);border-radius:999px;padding:4px 12px;font-size:13px;color:var(--dim)}
+@media(max-width:620px){.mt-whenrow{grid-template-columns:1fr}}
 /* edit mode */
 .mt-form .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:12px}
 .mt-form .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
@@ -1952,9 +1975,7 @@ input.need{border-color:rgba(201,123,110,.7)!important}
         </div>
       </div>
       <dl class="mt-meta">
-        ${m.chair ? `<dt>Chair</dt><dd>${esc(m.chair)}</dd>` : ''}
-        <dt>Attending</dt><dd>${esc(m.attendees) || '<span class="mt-empty">To confirm</span>'}</dd>
-        ${m.apologies ? `<dt>Apologies</dt><dd>${esc(m.apologies)}</dd>` : ''}
+        <dt>Attending</dt><dd>${splitPpl(m.attendees).length ? `<div class="mt-who">${splitPpl(m.attendees).map(n => `<span>${esc(n)}</span>`).join('')}</div>` : '<span class="mt-empty">To confirm</span>'}</dd>
       </dl>
       ${(m.links || []).length ? `<h5>Pitches &amp; files</h5><div class="mt-files">${m.links.map(l =>
         `<a class="mt-file" href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label || l.url)}</a>`).join('')}</div>` : ''}
@@ -1987,6 +2008,34 @@ input.need{border-color:rgba(201,123,110,.7)!important}
       <input data-k="due" type="date" value="${esc(a.due)}">
       <button type="button" class="x" data-rm aria-label="Remove action">×</button></div>`;
 
+  const splitPpl = s => String(s || '').split(',').map(x => x.trim()).filter(Boolean);
+  const first = n => (n || '').trim().split(/\s+/)[0].toLowerCase();
+
+  function pplOptions(att){
+    const chosen = splitPpl(att);
+    const names = teamNames();
+    chosen.forEach(c => { if (!names.some(n => n === c || first(n) === first(c))) names.push(c); });
+    return names.map(n => {
+      const on = chosen.some(c => c === n || first(c) === first(n));
+      return `<label><input type="checkbox" data-person value="${esc(n)}"${on ? ' checked' : ''}><i></i>${esc(n)}</label>`;
+    }).join('');
+  }
+
+  function dayStrip(sel){
+    const base = new Date(); base.setHours(12,0,0,0);
+    const days = Array.from({length:14}, (_, i) => { const d = new Date(base); d.setDate(base.getDate() + i); return iso(d); });
+    if (sel && !days.includes(sel)) days.unshift(sel);
+    const chip = v => {
+      const d = new Date(v + 'T12:00:00');
+      const top = v === todayIso() ? 'Today' : d.toLocaleDateString('en-GB', { weekday:'short' });
+      return `<button type="button" class="mt-day" data-day="${v}" aria-pressed="${v === sel}">
+        <small>${top}</small><b>${d.getDate()}</b><small>${d.toLocaleDateString('en-GB', { month:'short' })}</small></button>`;
+    };
+    return `<div class="mt-days">${days.map(chip).join('')}
+      <button type="button" class="mt-day other" data-day="other">Other date…</button></div>
+      <input type="date" class="mt-other" name="date" value="${esc(sel)}">`;
+  }
+
   const lnkRow = (l = {}) => `<div class="mt-repitem lnk">
       <input data-k="label" placeholder="Name, e.g. Intro pitch" value="${esc(l.label)}">
       <input data-k="url" placeholder="https://…" value="${esc(l.url)}">
@@ -2001,16 +2050,14 @@ input.need{border-color:rgba(201,123,110,.7)!important}
           <option${m.status === 'Draft' ? ' selected' : ''}>Draft</option>
           <option${m.status === 'Agreed' ? ' selected' : ''}>Agreed</option></select></div>
       </div>
-      <div class="grid3">
-        <div><label>Date</label><input name="date" type="date" value="${esc(m.date)}"></div>
-        <div><label>Time</label><input name="time" placeholder="18:00" value="${esc(m.time)}"></div>
-        <div><label>Where</label><input name="location" placeholder="Video call" value="${esc(m.location)}"></div>
+      <label>Date</label>
+      ${dayStrip(m.date)}
+      <div class="mt-whenrow">
+        <div><label>Time</label><input name="time" type="time" value="${esc(m.time)}"></div>
+        <div><label>Where</label><input name="location" placeholder="Video call, studio, café…" value="${esc(m.location)}"></div>
       </div>
-      <div class="grid3">
-        <div><label>Chair</label><input name="chair" list="people" value="${esc(m.chair)}"></div>
-        <div><label>Attending</label><input name="attendees" value="${esc(m.attendees)}"></div>
-        <div><label>Apologies</label><input name="apologies" value="${esc(m.apologies)}"></div>
-      </div>
+      <label>Attending</label>
+      <div class="mt-ppl">${pplOptions(m.attendees)}</div>
       <h5>Pitches &amp; files</h5>
       <div class="mt-rep" id="mtlinks">${(m.links || []).map(lnkRow).join('')}
         <button type="button" class="mt-add" data-add="lnk">+ Add link</button></div>
@@ -2034,6 +2081,7 @@ input.need{border-color:rgba(201,123,110,.7)!important}
   function readMtForm(){
     const f = $('mtform');
     const fd = Object.fromEntries(new FormData(f));
+    fd.attendees = [...f.querySelectorAll('[data-person]:checked')].map(x => x.value).join(', ');
     fd.agenda = [...f.querySelectorAll('#mtag .mt-repitem')].map(r => ({
       title: r.querySelector('[data-k=title]').value, notes: r.querySelector('[data-k=notes]').value }));
     fd.links = [...f.querySelectorAll('#mtlinks .mt-repitem')].map(r => ({
@@ -2048,9 +2096,7 @@ input.need{border-color:rgba(201,123,110,.7)!important}
   function mtText(m){
     const d = mtDate(m.date), L = [];
     L.push(`${m.title.toUpperCase()} (${m.status})`, [d.long, m.time, m.location].filter(Boolean).join(' · '), '');
-    if (m.chair) L.push('Chair: ' + m.chair);
     L.push('Attending: ' + (m.attendees || 'TBC'));
-    if (m.apologies) L.push('Apologies: ' + m.apologies);
     if ((m.links || []).length){ L.push('', 'PITCHES & FILES'); m.links.forEach(l => L.push(`- ${l.label}: ${l.url}`)); }
     L.push('', 'AGENDA & DISCUSSION');
     (m.agenda || []).forEach((a, i) => { L.push(`${i + 1}. ${a.title}`); if (a.notes) a.notes.split('\n').filter(s => s.trim()).forEach(s => L.push('   - ' + s.replace(/^[-•*]\s*/, ''))); });
@@ -2099,7 +2145,7 @@ input.need{border-color:rgba(201,123,110,.7)!important}
     const carried = last ? (last.actions || []).filter(a => !a.done).map(a => ({ ...a, id: undefined })) : [];
     mtEditing = {
       title: 'Team meeting', date: todayIso(), time: '', location: '', status: 'Draft',
-      chair: '', attendees: teamNames().join(', '), apologies: '',
+      attendees: teamNames().join(', '),
       agenda: [{ title: carried.length ? 'Actions from last meeting' : 'Updates', notes: '' }, { title: 'AOB', notes: '' }],
       decisions: '', links: [], actions: carried
     };
@@ -2112,6 +2158,14 @@ input.need{border-color:rgba(201,123,110,.7)!important}
   });
 
   $('mtdoc').addEventListener('click', async e => {
+    const day = e.target.closest('[data-day]');
+    if (day){
+      const f = $('mtform'), input = f.querySelector('input[name=date]');
+      f.querySelectorAll('.mt-day').forEach(b => b.setAttribute('aria-pressed', String(b === day)));
+      if (day.dataset.day === 'other'){ input.classList.add('open'); input.showPicker ? input.showPicker() : input.focus(); }
+      else { input.classList.remove('open'); input.value = day.dataset.day; }
+      return;
+    }
     const add = e.target.closest('[data-add]');
     if (add){
       add.insertAdjacentHTML('beforebegin', add.dataset.add === 'ag' ? agRow() : add.dataset.add === 'lnk' ? lnkRow() : actRow());
