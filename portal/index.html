@@ -1819,6 +1819,8 @@ input.need{border-color:rgba(201,123,110,.7)!important}
 
   function resetForm(){
     form.reset(); form.id.value = '';
+    form.classList.remove('open');
+    if ($('newjobbtn')) $('newjobbtn').textContent = '+ New job';
     submitBtn.textContent = 'Add job';
     cancelBtn.hidden = true; formNote.textContent = '';
   }
@@ -1878,6 +1880,10 @@ input.need{border-color:rgba(201,123,110,.7)!important}
       form.date.value = j.date || '';     form.assignee.value = j.assignee || '';
       form.fee.value = j.fee || '';       form.notes.value = j.notes || '';
       form.status.value = j.status || 'Enquiry';
+      // The form is collapsed behind "+ New job" by default, so editing has
+      // to open it, otherwise the fields fill in out of sight.
+      form.classList.add('open');
+      if ($('newjobbtn')) $('newjobbtn').textContent = 'Close';
       submitBtn.textContent = 'Save changes';
       cancelBtn.hidden = false;
       formNote.textContent = 'Editing ' + j.client;
