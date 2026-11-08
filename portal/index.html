@@ -690,8 +690,17 @@ input.need{border-color:rgba(201,123,110,.7)!important}
 .money{position:relative}
 .money span{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--champagne);font-size:14px;pointer-events:none}
 .money input{padding-left:27px}
-.jobstat{cursor:pointer;font-family:inherit;font-size:11.5px;letter-spacing:0;text-transform:none;padding:5px 12px 5px 9px;transition:transform .15s}
-.jobstat i{width:6px;height:6px}
+/* status pill sits level with Done: same height, same box model */
+.jobright .jobstat,.jobright .jobtick{height:30px;box-sizing:border-box;line-height:1;margin:0;align-self:center}
+.jobright .jobstat{animation:none}
+.jobstat{cursor:pointer;font-family:inherit;font-size:12px;letter-spacing:0;text-transform:none;padding:0 12px 0 10px;border:1px solid transparent;
+  transition:color .35s ease,background-color .35s ease,transform .12s ease}
+.jobstat:hover{transform:none;filter:brightness(1.12)}
+.jobstat:active{transform:scale(.96)}
+.jobstat i{width:6px;height:6px;transition:background-color .35s ease}
+#board.settle .job{animation:none}
+#board .job.moving{transition:opacity .25s ease}
+#board .job.moving.out{opacity:0}
 /* edit mode */
 .mt-form .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:12px}
 .mt-form .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
@@ -1889,17 +1898,50 @@ input.need{border-color:rgba(201,123,110,.7)!important}
   });
   board.addEventListener('deljob', e => delJob(e.detail));
 
-  // Same as the planner: tap the status to move it on one step.
-  board.addEventListener('click', async e => {
+  // Same as the planner: tap the status to move it on one step. The pill
+  // changes in place (colour cross-fades); the card only moves to its new group
+  // once you've stopped tapping, and it fades rather than re-animating the board.
+  let regroupTimer = null;
+  function paintStatus(btn, status){
+    const c = JOB_COLOUR[status] || '#C9C1B2';
+    btn.style.setProperty('--c', c);
+    btn.style.setProperty('--c-bg', `color-mix(in srgb, ${c} 16%, transparent)`);
+    btn.lastChild.textContent = status;
+    btn.title = 'Click to move to ' + ORDER[(ORDER.indexOf(status) + 1) % ORDER.length];
+    const card = btn.closest('.job'); if (card) card.dataset.status = status;
+  }
+  // Saves happen once, when tapping stops, so fast taps can't race each other.
+  const pendingStatus = new Map();   // id -> status as it was before tapping
+  async function settleBoard(){
+    const ids = [...pendingStatus.keys()];
+    const before = new Map(pendingStatus); pendingStatus.clear();
+    let failed = false;
+    for (const id of ids){
+      const j = jobs.find(x => x.id === id); if (!j) continue;
+      if (j.status === before.get(id)) continue;
+      try {
+        const { jobs: list } = await api(JOBS_API, 'PUT', { id, status: j.status });
+        jobs = list; toast(`${j.client}: ${j.status}`);
+      } catch { j.status = before.get(id); failed = true; }
+    }
+    if (failed) toast('Couldn’t save that');
+    const moved = [...board.querySelectorAll('.job.pending')];
+    moved.forEach(c => c.classList.add('moving', 'out'));
+    setTimeout(() => {
+      board.classList.add('settle'); renderJobs();
+      requestAnimationFrame(() => requestAnimationFrame(() => board.classList.remove('settle')));
+    }, moved.length ? 250 : 0);
+  }
+  board.addEventListener('click', e => {
     const b = e.target.closest('[data-advance]'); if (!b) return;
     e.stopImmediatePropagation();
     const j = jobs.find(x => x.id === b.dataset.advance); if (!j) return;
-    const prev = j.status;
-    j.status = ORDER[(ORDER.indexOf(prev) + 1) % ORDER.length]; renderJobs();
-    try {
-      const { jobs: list } = await api(JOBS_API, 'PUT', { id: j.id, status: j.status });
-      jobs = list; renderJobs(); toast(`${j.client}: ${j.status}`);
-    } catch { j.status = prev; renderJobs(); toast('Couldn’t save that'); }
+    if (!pendingStatus.has(j.id)) pendingStatus.set(j.id, j.status);
+    j.status = ORDER[(ORDER.indexOf(j.status) + 1) % ORDER.length];
+    paintStatus(b, j.status);
+    b.closest('.job').classList.add('pending');
+    clearTimeout(regroupTimer);
+    regroupTimer = setTimeout(settleBoard, 1200);
   });
   async function delJob(delId){
     const j = jobs.find(x => x.id === delId);
