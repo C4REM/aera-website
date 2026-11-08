@@ -610,6 +610,89 @@ input.need{border-color:rgba(201,123,110,.7)!important}
 .inrow button:hover{color:var(--cream)}
 .inrow button.del:hover{color:var(--rust)}
 @media (max-width:560px){ .inrow{flex-wrap:wrap} .inrow .m{display:block;margin:2px 0 0} }
+
+/* ---- meetings: list on the left, the minutes as a document on the right ---- */
+.mt-top{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:22px}
+.mt-top .lede{margin-bottom:0}
+.mt-layout{display:grid;grid-template-columns:250px minmax(0,1fr);gap:22px;align-items:start}
+.mt-list{display:flex;flex-direction:column;gap:6px;position:sticky;top:84px}
+.mt-item{display:grid;grid-template-columns:46px 1fr;gap:12px;align-items:center;text-align:left;background:var(--panel);border:1px solid transparent;border-radius:14px;padding:11px 13px;color:var(--dim);font:inherit;cursor:pointer;transition:background .2s,border-color .2s,color .2s}
+.mt-item:hover{background:var(--panel2);color:var(--cream)}
+.mt-item[aria-current="true"]{background:var(--panel2);border-color:rgba(205,179,134,.45);color:var(--cream)}
+.mt-item .d{font-family:var(--display);font-size:1.5rem;line-height:1;text-align:center;color:var(--champagne)}
+.mt-item .d small{display:block;font-family:var(--sans);font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--stone);margin-top:4px}
+.mt-item .t{font-size:13.5px;line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mt-item .s{font-size:11.5px;color:var(--stone);margin-top:2px}
+.mt-doc{background:var(--panel);border-radius:18px;padding:30px 34px 32px;min-width:0;animation:riseIn .35s var(--ease) backwards}
+.mt-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;flex-wrap:wrap;padding-bottom:20px;border-bottom:1px solid var(--line);margin-bottom:6px}
+.mt-head h4{font-family:var(--display);font-weight:400;font-size:clamp(1.6rem,3vw,2.1rem);line-height:1.05;margin-bottom:8px}
+.mt-when{font-size:13px;color:var(--stone)}
+.mt-acts{display:flex;gap:8px;flex-wrap:wrap}
+.mt-pill{display:inline-block;font-family:var(--sans);font-size:11.5px;padding:4px 11px;border-radius:999px;margin-left:8px;vertical-align:middle}
+.mt-pill.Draft{color:#C9C1B2;background:rgba(255,240,220,.06)}
+.mt-pill.Agreed{color:var(--sage);background:rgba(143,176,138,.13)}
+.mt-meta{display:grid;grid-template-columns:110px 1fr;gap:6px 16px;font-size:13.5px;padding:16px 0;border-bottom:1px solid var(--line)}
+.mt-meta dt{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--stone);padding-top:3px}
+.mt-meta dd{color:var(--dim)}
+.mt-doc h5{font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--champagne);font-weight:400;margin:26px 0 12px}
+.mt-ag{counter-reset:ag;list-style:none}
+.mt-ag>li{counter-increment:ag;display:grid;grid-template-columns:30px 1fr;gap:4px 10px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+.mt-ag>li:last-child{border-bottom:0}
+.mt-ag>li::before{content:counter(ag);font-family:var(--display);color:var(--stone);font-size:1.05rem;line-height:1.35}
+.mt-ag b{font-weight:500;color:var(--cream);font-size:14.5px}
+.mt-ag p{grid-column:2;color:var(--dim);font-size:13.5px;white-space:pre-wrap}
+.mt-ag p.tbc,.mt-empty{color:var(--stone);font-style:italic}
+.mt-dec{list-style:none}
+.mt-dec li{position:relative;padding:6px 0 6px 20px;color:var(--dim);font-size:13.5px}
+.mt-dec li::before{content:"";position:absolute;left:2px;top:14px;width:7px;height:7px;border-radius:50%;background:var(--champagne);opacity:.7}
+.mt-actrow{display:grid;grid-template-columns:26px 1fr auto auto;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:13.5px}
+.mt-actrow:last-child{border-bottom:0}
+.mt-actrow .tick{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--stone);background:none;cursor:pointer;color:var(--obsidian);font-size:11px;line-height:1;display:grid;place-items:center;padding:0;transition:all .2s}
+.mt-actrow .tick:hover{border-color:var(--sage)}
+.mt-actrow.done .tick{background:var(--sage);border-color:var(--sage)}
+.mt-actrow.done .tx{color:var(--stone);text-decoration:line-through;text-decoration-color:rgba(143,176,138,.6)}
+.mt-actrow .tx{color:var(--cream)}
+.mt-actrow .ow{font-size:12px;color:var(--champagne);background:rgba(205,179,134,.1);padding:3px 10px;border-radius:999px;white-space:nowrap}
+.mt-actrow .du{font-size:12px;color:var(--stone);white-space:nowrap;min-width:52px;text-align:right}
+.mt-foot{margin-top:24px;font-size:11.5px;color:var(--stone)}
+.mt-ag ul{grid-column:2;list-style:none;margin-top:2px}
+.mt-ag ul li{display:block;position:relative;padding:3px 0 3px 16px;border:0;color:var(--dim);font-size:13.5px}
+.mt-ag ul li::before{content:"";position:absolute;left:2px;top:12px;width:5px;height:5px;border-radius:50%;background:var(--stone)}
+.mt-files{display:flex;flex-wrap:wrap;gap:8px}
+.mt-file{display:inline-flex;align-items:center;gap:8px;background:var(--panel2);border-radius:999px;padding:8px 14px;font-size:13px;color:var(--cream);text-decoration:none;transition:background .2s}
+.mt-file:hover{background:var(--panel3)}
+.mt-file::after{content:"\2197";color:var(--champagne);font-size:12px}
+.mt-repitem.lnk{grid-template-columns:1fr 1.4fr 30px;align-items:center}
+/* edit mode */
+.mt-form .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:12px}
+.mt-form .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.mt-rep{display:flex;flex-direction:column;gap:10px}
+.mt-repitem{background:var(--panel2);border-radius:14px;padding:12px;display:grid;gap:8px;position:relative}
+.mt-repitem.act{grid-template-columns:1fr 140px 150px 30px;align-items:center}
+.mt-repitem .x{background:none;border:0;color:var(--stone);cursor:pointer;font-size:18px;line-height:1;padding:4px}
+.mt-repitem .x:hover{color:var(--rust)}
+.mt-repitem.ag .x{position:absolute;top:8px;right:8px}
+.mt-repitem.ag input{padding-right:34px}
+.mt-add{align-self:flex-start;background:none;border:1px dashed var(--line2);color:var(--stone);border-radius:999px;padding:7px 16px;font:inherit;font-size:12.5px;cursor:pointer}
+.mt-add:hover{color:var(--cream);border-color:var(--stone)}
+.mt-form .formfoot{border-top:1px solid var(--line);padding-top:18px;margin-top:24px}
+@media(max-width:900px){
+  .mt-layout{grid-template-columns:1fr}
+  .mt-list{position:static;flex-direction:row;overflow-x:auto;padding-bottom:4px}
+  .mt-item{min-width:210px}
+}
+@media(max-width:620px){
+  .mt-doc{padding:22px 18px}
+  .mt-meta{grid-template-columns:1fr;gap:2px}
+  .mt-meta dd{margin-bottom:8px}
+  .mt-form .grid3,.mt-form .grid2{grid-template-columns:1fr}
+  .mt-repitem.act{grid-template-columns:1fr 1fr}
+  .mt-repitem.act .x{grid-column:2;justify-self:end}
+  .mt-repitem.act input:first-child{grid-column:1/-1}
+  .mt-actrow{grid-template-columns:26px 1fr;}
+  .mt-actrow .ow,.mt-actrow .du{grid-column:2;justify-self:start}
+  .mt-actrow>span:empty{display:none}
+}
 </style>
 </head>
 <body>
@@ -636,6 +719,7 @@ input.need{border-color:rgba(201,123,110,.7)!important}
   <nav class="tabs" role="tablist">
     <button role="tab" aria-selected="true"  data-tab="week">Week</button>
     <button role="tab" aria-selected="false" data-tab="jobs">Jobs</button>
+    <button role="tab" aria-selected="false" data-tab="meetings">Meetings</button>
     <button role="tab" aria-selected="false" data-tab="kit">Brand kit</button>
   </nav>
 
@@ -715,6 +799,23 @@ input.need{border-color:rgba(201,123,110,.7)!important}
       <p class="inhint">Ticked off as done. They're hidden from the planner. Add one back if the client returns or there's more to do.</p>
       <div id="inactivelist"></div>
     </details>
+  </section>
+
+  <!-- ============================== MEETINGS =============================== -->
+  <section id="meetings" hidden>
+    <div class="mt-top">
+      <div>
+        <div class="eyebrow">Studio meetings</div>
+        <h2>Meetings</h2>
+        <p class="lede">Agenda before, minutes after. Tick actions off as they get done, and a new meeting carries the open ones forward.</p>
+      </div>
+      <button type="button" class="btn sm" id="newmeetingbtn">+ New meeting</button>
+    </div>
+    <div id="mtbanner" hidden class="banner"></div>
+    <div class="mt-layout">
+      <div class="mt-list" id="mtlist"></div>
+      <div id="mtdoc"><div class="empty">Loading…</div></div>
+    </div>
   </section>
 
   <!-- =============================== BRAND KIT ============================= -->
@@ -1790,6 +1891,271 @@ input.need{border-color:rgba(201,123,110,.7)!important}
       .catch(() => toast('Copy failed'));
   });
 
+
+  /* ================================================================
+     MEETINGS — agenda + minutes, stored in KV only (the repo is public)
+     ================================================================ */
+  const MEET_API = '/portal/api/meetings';
+  let meetings = [], mtSel = null, mtEditing = null, mtReady = false;
+
+  const mtDate = d => {
+    if (!d) return { day:'—', mon:'', long:'Date to be set' };
+    const dt = new Date(d + 'T12:00:00');
+    if (isNaN(dt)) return { day:'—', mon:'', long:d };
+    return {
+      day: dt.getDate(),
+      mon: dt.toLocaleDateString('en-GB', { month:'short' }),
+      long: dt.toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'long', year:'numeric' })
+    };
+  };
+  const shortDue = d => {
+    if (!d) return '';
+    const dt = new Date(d + 'T12:00:00');
+    return isNaN(dt) ? d : dt.toLocaleDateString('en-GB', { day:'numeric', month:'short' });
+  };
+  const teamNames = () => (members || []).map(m => m.name).filter(Boolean);
+
+  function renderMtList(){
+    const el = $('mtlist');
+    if (!meetings.length){ el.innerHTML = ''; return; }
+    el.innerHTML = meetings.map(m => {
+      const d = mtDate(m.date);
+      const open = (m.actions || []).filter(a => !a.done).length;
+      return `<button class="mt-item" data-mt="${esc(m.id)}" aria-current="${m.id === mtSel}">
+        <span class="d">${esc(d.day)}<small>${esc(d.mon)}</small></span>
+        <span><span class="t" style="display:block">${esc(m.title)}</span>
+        <span class="s">${esc(m.status)}${open ? ` · ${open} open action${open > 1 ? 's' : ''}` : ''}</span></span>
+      </button>`;
+    }).join('');
+  }
+
+  function renderMtDoc(){
+    const box = $('mtdoc');
+    if (mtEditing){ renderMtForm(); return; }
+    const m = meetings.find(x => x.id === mtSel);
+    if (!m){
+      box.innerHTML = '<div class="empty">No meetings yet. Start one with “+ New meeting”.</div>';
+      return;
+    }
+    const d = mtDate(m.date);
+    const when = [d.long, m.time, m.location].filter(Boolean).map(esc).join(' · ');
+    const decisions = (m.decisions || '').split('\n').map(s => s.replace(/^[-•*]\s*/, '').trim()).filter(Boolean);
+    box.innerHTML = `<article class="mt-doc">
+      <div class="mt-head">
+        <div>
+          <h4>${esc(m.title)}<span class="mt-pill ${esc(m.status)}">${esc(m.status)}</span></h4>
+          <div class="mt-when">${when}</div>
+        </div>
+        <div class="mt-acts">
+          <button class="btn ghost sm" data-mtact="copy">Copy as text</button>
+          <button class="btn ghost sm" data-mtact="edit">Edit</button>
+        </div>
+      </div>
+      <dl class="mt-meta">
+        ${m.chair ? `<dt>Chair</dt><dd>${esc(m.chair)}</dd>` : ''}
+        <dt>Attending</dt><dd>${esc(m.attendees) || '<span class="mt-empty">To confirm</span>'}</dd>
+        ${m.apologies ? `<dt>Apologies</dt><dd>${esc(m.apologies)}</dd>` : ''}
+      </dl>
+      ${(m.links || []).length ? `<h5>Pitches &amp; files</h5><div class="mt-files">${m.links.map(l =>
+        `<a class="mt-file" href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label || l.url)}</a>`).join('')}</div>` : ''}
+      <h5>Agenda &amp; discussion</h5>
+      ${(m.agenda || []).length ? `<ol class="mt-ag">${m.agenda.map(a => `<li><b>${esc(a.title)}</b>
+        ${a.notes ? `<ul>${a.notes.split('\n').map(s => s.replace(/^[-•*]\s*/, '').trim()).filter(Boolean).map(s => `<li>${esc(s)}</li>`).join('')}</ul>` : '<p class="tbc">Notes to add on the day</p>'}</li>`).join('')}</ol>`
+        : '<p class="mt-empty">No agenda yet.</p>'}
+      <h5>Decisions</h5>
+      ${decisions.length ? `<ul class="mt-dec">${decisions.map(x => `<li>${esc(x)}</li>`).join('')}</ul>`
+        : '<p class="mt-empty">None recorded yet.</p>'}
+      <h5>Actions</h5>
+      ${(m.actions || []).length ? m.actions.map(a => `<div class="mt-actrow${a.done ? ' done' : ''}">
+          <button class="tick" data-tick="${esc(a.id)}" aria-label="${a.done ? 'Mark not done' : 'Mark done'}">${a.done ? '✓' : ''}</button>
+          <span class="tx">${esc(a.text)}</span>
+          ${a.owner ? `<span class="ow">${esc(a.owner)}</span>` : '<span></span>'}
+          <span class="du">${esc(shortDue(a.due))}</span>
+        </div>`).join('') : '<p class="mt-empty">No actions yet.</p>'}
+      <p class="mt-foot">Last saved ${esc(new Date(m.updated).toLocaleString('en-GB', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' }))}</p>
+    </article>`;
+  }
+
+  /* ---- edit form ---- */
+  const agRow = (a = {}) => `<div class="mt-repitem ag">
+      <input data-k="title" placeholder="Agenda item" value="${esc(a.title)}">
+      <textarea data-k="notes" placeholder="One point per line">${esc(a.notes)}</textarea>
+      <button type="button" class="x" data-rm aria-label="Remove item">×</button></div>`;
+  const actRow = (a = {}) => `<div class="mt-repitem act" data-id="${esc(a.id || '')}" data-done="${a.done ? 1 : ''}">
+      <input data-k="text" placeholder="Action" value="${esc(a.text)}">
+      <input data-k="owner" placeholder="Owner" list="people" value="${esc(a.owner)}">
+      <input data-k="due" type="date" value="${esc(a.due)}">
+      <button type="button" class="x" data-rm aria-label="Remove action">×</button></div>`;
+
+  const lnkRow = (l = {}) => `<div class="mt-repitem lnk">
+      <input data-k="label" placeholder="Name, e.g. Intro pitch" value="${esc(l.label)}">
+      <input data-k="url" placeholder="https://…" value="${esc(l.url)}">
+      <button type="button" class="x" data-rm aria-label="Remove link">×</button></div>`;
+
+  function renderMtForm(){
+    const m = mtEditing;
+    $('mtdoc').innerHTML = `<form class="mt-doc mt-form" id="mtform">
+      <div class="grid2">
+        <div><label>Title</label><input name="title" value="${esc(m.title)}" required></div>
+        <div><label>Status</label><select name="status">
+          <option${m.status === 'Draft' ? ' selected' : ''}>Draft</option>
+          <option${m.status === 'Agreed' ? ' selected' : ''}>Agreed</option></select></div>
+      </div>
+      <div class="grid3">
+        <div><label>Date</label><input name="date" type="date" value="${esc(m.date)}"></div>
+        <div><label>Time</label><input name="time" placeholder="18:00" value="${esc(m.time)}"></div>
+        <div><label>Where</label><input name="location" placeholder="Video call" value="${esc(m.location)}"></div>
+      </div>
+      <div class="grid3">
+        <div><label>Chair</label><input name="chair" list="people" value="${esc(m.chair)}"></div>
+        <div><label>Attending</label><input name="attendees" value="${esc(m.attendees)}"></div>
+        <div><label>Apologies</label><input name="apologies" value="${esc(m.apologies)}"></div>
+      </div>
+      <h5>Pitches &amp; files</h5>
+      <div class="mt-rep" id="mtlinks">${(m.links || []).map(lnkRow).join('')}
+        <button type="button" class="mt-add" data-add="lnk">+ Add link</button></div>
+      <h5>Agenda &amp; discussion</h5>
+      <div class="mt-rep" id="mtag">${(m.agenda || []).map(agRow).join('')}
+        <button type="button" class="mt-add" data-add="ag">+ Add item</button></div>
+      <h5>Decisions</h5>
+      <textarea name="decisions" rows="4" placeholder="One per line">${esc(m.decisions)}</textarea>
+      <h5>Actions</h5>
+      <div class="mt-rep" id="mtacts">${(m.actions || []).map(actRow).join('')}
+        <button type="button" class="mt-add" data-add="act">+ Add action</button></div>
+      <div class="formfoot">
+        <button type="submit" class="btn">Save minutes</button>
+        <button type="button" class="btn ghost" data-mtact="cancel">Cancel</button>
+        <span style="flex:1"></span>
+        ${m.id ? '<button type="button" class="btn danger sm" data-mtact="delete">Delete</button>' : ''}
+      </div>
+    </form>`;
+  }
+
+  function readMtForm(){
+    const f = $('mtform');
+    const fd = Object.fromEntries(new FormData(f));
+    fd.agenda = [...f.querySelectorAll('#mtag .mt-repitem')].map(r => ({
+      title: r.querySelector('[data-k=title]').value, notes: r.querySelector('[data-k=notes]').value }));
+    fd.links = [...f.querySelectorAll('#mtlinks .mt-repitem')].map(r => ({
+      label: r.querySelector('[data-k=label]').value, url: r.querySelector('[data-k=url]').value.trim() }));
+    fd.actions = [...f.querySelectorAll('#mtacts .mt-repitem')].map(r => ({
+      id: r.dataset.id || undefined, done: !!r.dataset.done,
+      text: r.querySelector('[data-k=text]').value, owner: r.querySelector('[data-k=owner]').value,
+      due: r.querySelector('[data-k=due]').value }));
+    return fd;
+  }
+
+  function mtText(m){
+    const d = mtDate(m.date), L = [];
+    L.push(`${m.title.toUpperCase()} (${m.status})`, [d.long, m.time, m.location].filter(Boolean).join(' · '), '');
+    if (m.chair) L.push('Chair: ' + m.chair);
+    L.push('Attending: ' + (m.attendees || 'TBC'));
+    if (m.apologies) L.push('Apologies: ' + m.apologies);
+    if ((m.links || []).length){ L.push('', 'PITCHES & FILES'); m.links.forEach(l => L.push(`- ${l.label}: ${l.url}`)); }
+    L.push('', 'AGENDA & DISCUSSION');
+    (m.agenda || []).forEach((a, i) => { L.push(`${i + 1}. ${a.title}`); if (a.notes) a.notes.split('\n').filter(s => s.trim()).forEach(s => L.push('   - ' + s.replace(/^[-•*]\s*/, ''))); });
+    L.push('', 'DECISIONS');
+    const dec = (m.decisions || '').split('\n').filter(s => s.trim());
+    L.push(...(dec.length ? dec.map(s => '- ' + s.replace(/^[-•*]\s*/, '')) : ['- None recorded']));
+    L.push('', 'ACTIONS');
+    (m.actions || []).forEach(a => L.push(`[${a.done ? 'x' : ' '}] ${a.text}${a.owner ? ' (' + a.owner + ')' : ''}${a.due ? ' by ' + shortDue(a.due) : ''}`));
+    return L.join('\n');
+  }
+
+  function renderMeetings(){ renderMtList(); renderMtDoc(); }
+
+  async function loadMeetings(){
+    try {
+      const { meetings: list } = await api(MEET_API, 'GET');
+      meetings = list; mtReady = true;
+      // open the next upcoming meeting, else the most recent
+      const today = todayIso();
+      const upcoming = [...meetings].filter(m => m.date >= today).sort((a, b) => a.date.localeCompare(b.date))[0];
+      mtSel = (upcoming || meetings[0] || {}).id || null;
+      renderMeetings();
+    } catch (err) {
+      if (err.data && err.data.error === 'no-kv'){
+        $('mtbanner').hidden = false;
+        $('mtbanner').textContent = 'Storage isn’t connected yet, see the note on the Week tab.';
+      }
+      $('mtdoc').innerHTML = '<div class="empty">Couldn’t load meetings. Refresh to try again.</div>';
+    }
+  }
+
+  async function saveMeeting(data, msg){
+    const wasNew = !data.id;
+    const { meetings: list } = await api(MEET_API, wasNew ? 'POST' : 'PUT', data);
+    if (wasNew){
+      const known = new Set(meetings.map(m => m.id));
+      const fresh = list.find(m => !known.has(m.id));
+      if (fresh) mtSel = fresh.id;
+    }
+    meetings = list; toast(msg);
+  }
+
+  $('newmeetingbtn').addEventListener('click', () => {
+    if (!mtReady) return;
+    const last = [...meetings].sort((a, b) => (b.date || '').localeCompare(a.date || ''))[0];
+    const carried = last ? (last.actions || []).filter(a => !a.done).map(a => ({ ...a, id: undefined })) : [];
+    mtEditing = {
+      title: 'Team meeting', date: todayIso(), time: '', location: '', status: 'Draft',
+      chair: '', attendees: teamNames().join(', '), apologies: '',
+      agenda: [{ title: carried.length ? 'Actions from last meeting' : 'Updates', notes: '' }, { title: 'AOB', notes: '' }],
+      decisions: '', links: [], actions: carried
+    };
+    renderMeetings();
+  });
+
+  $('mtlist').addEventListener('click', e => {
+    const b = e.target.closest('[data-mt]'); if (!b) return;
+    mtSel = b.dataset.mt; mtEditing = null; renderMeetings();
+  });
+
+  $('mtdoc').addEventListener('click', async e => {
+    const add = e.target.closest('[data-add]');
+    if (add){
+      add.insertAdjacentHTML('beforebegin', add.dataset.add === 'ag' ? agRow() : add.dataset.add === 'lnk' ? lnkRow() : actRow());
+      add.previousElementSibling.querySelector('input').focus();
+      return;
+    }
+    if (e.target.closest('[data-rm]')){ e.target.closest('.mt-repitem').remove(); return; }
+
+    const tick = e.target.closest('[data-tick]');
+    if (tick){
+      const m = meetings.find(x => x.id === mtSel); if (!m) return;
+      const a = m.actions.find(x => x.id === tick.dataset.tick); if (!a) return;
+      a.done = !a.done; renderMeetings();
+      try { await saveMeeting({ id: m.id, actions: m.actions }, a.done ? 'Action done' : 'Action reopened'); renderMtList(); }
+      catch { a.done = !a.done; renderMeetings(); toast('Save failed'); }
+      return;
+    }
+
+    const act = e.target.closest('[data-mtact]'); if (!act) return;
+    const m = meetings.find(x => x.id === mtSel);
+    if (act.dataset.mtact === 'edit' && m){ mtEditing = JSON.parse(JSON.stringify(m)); renderMtDoc(); }
+    if (act.dataset.mtact === 'cancel'){ mtEditing = null; renderMtDoc(); }
+    if (act.dataset.mtact === 'copy' && m){
+      navigator.clipboard.writeText(mtText(m)).then(() => toast('Minutes copied')).catch(() => toast('Copy failed'));
+    }
+    if (act.dataset.mtact === 'delete' && mtEditing && mtEditing.id){
+      if (!confirm('Delete “' + mtEditing.title + '”? This cannot be undone.')) return;
+      try {
+        const { meetings: list } = await api(MEET_API, 'DELETE', { id: mtEditing.id });
+        meetings = list; mtEditing = null; mtSel = (meetings[0] || {}).id || null;
+        renderMeetings(); toast('Meeting deleted');
+      } catch { toast('Delete failed'); }
+    }
+  });
+
+  $('mtdoc').addEventListener('submit', async e => {
+    e.preventDefault();
+    const data = readMtForm();
+    if (mtEditing.id) data.id = mtEditing.id;
+    const btn = e.target.querySelector('[type=submit]'); btn.disabled = true;
+    try { await saveMeeting(data, 'Minutes saved'); mtEditing = null; renderMeetings(); }
+    catch { toast('Save failed'); btn.disabled = false; }
+  });
+
   $('signout').addEventListener('click', e => {
     e.preventDefault();
     document.cookie = 'aera_portal=; Path=/portal; Max-Age=0; SameSite=Lax; Secure';
@@ -1798,6 +2164,7 @@ input.need{border-color:rgba(201,123,110,.7)!important}
 
   loadPlanner();
   loadJobs();
+  loadMeetings();
 })();
 </script>
 </body>
