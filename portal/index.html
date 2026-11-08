@@ -690,6 +690,25 @@ input.need{border-color:rgba(201,123,110,.7)!important}
 .money{position:relative}
 .money span{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--champagne);font-size:14px;pointer-events:none}
 .money input{padding-left:27px}
+/* job status stepper */
+.stages{display:flex;background:var(--panel2);border-radius:999px;padding:3px;gap:2px}
+.stage{background:none;border:0;border-radius:999px;color:var(--stone);font:inherit;font-size:11.5px;padding:5px 10px;cursor:pointer;white-space:nowrap;transition:background .2s,color .2s}
+.stage:hover{color:var(--cream);background:var(--panel3)}
+.stage.past{color:var(--dim)}
+.stage[aria-pressed="true"]{color:var(--obsidian);font-weight:500}
+.job[data-status="Enquiry"] .stage[aria-pressed="true"]{background:#C9C1B2}
+.job[data-status="Confirmed"] .stage[aria-pressed="true"]{background:var(--champagne)}
+.job[data-status="Shot"] .stage[aria-pressed="true"]{background:#B7A6C4}
+.job[data-status="Editing"] .stage[aria-pressed="true"]{background:#9EAAD0}
+.job[data-status="Delivered"] .stage[aria-pressed="true"]{background:var(--sage)}
+@media(max-width:760px){
+  .job .jobtop{flex-wrap:wrap;gap:10px}
+  .job .jobclient{padding-right:84px}
+  .job .jobright{width:100%}
+  .job .jobtick{position:absolute;top:16px;right:16px}
+  .stages{width:100%}
+  .stage{flex:1;padding:6px 0;font-size:11px;min-width:0}
+}
 /* edit mode */
 .mt-form .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:12px}
 .mt-form .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
@@ -1803,7 +1822,10 @@ input.need{border-color:rgba(201,123,110,.7)!important}
           <div class="jobtop">
             <div class="jobclient">${esc(j.client)}</div>
             <div class="jobright">
-              <span class="pill">${esc(j.status)}</span>
+              <div class="stages" role="group" aria-label="Status">${ORDER.map((st, i) => {
+                const cur = ORDER.indexOf(j.status);
+                return `<button type="button" class="stage${i < cur ? ' past' : ''}" data-stage="${esc(st)}" data-job="${esc(j.id)}" aria-pressed="${st === j.status}">${st}</button>`;
+              }).join('')}</div>
               <button class="jobtick" data-tick="${esc(j.id)}" title="Tick off: hides it from the planner and moves it to Inactive"><i></i>Done</button>
             </div>
           </div>
@@ -1884,6 +1906,19 @@ input.need{border-color:rgba(201,123,110,.7)!important}
     if (b.dataset.del) board.dispatchEvent(new CustomEvent('deljob', { detail: b.dataset.del }));
   });
   board.addEventListener('deljob', e => delJob(e.detail));
+
+  // One click moves a job to any stage; the card regroups straight away and
+  // rolls back if the save fails.
+  board.addEventListener('click', async e => {
+    const b = e.target.closest('[data-stage]'); if (!b) return;
+    e.stopImmediatePropagation();
+    const j = jobs.find(x => x.id === b.dataset.job); if (!j || j.status === b.dataset.stage) return;
+    const prev = j.status; j.status = b.dataset.stage; renderJobs();
+    try {
+      const { jobs: list } = await api(JOBS_API, 'PUT', { id: j.id, status: j.status });
+      jobs = list; renderJobs(); toast(`${j.client}: ${j.status}`);
+    } catch { j.status = prev; renderJobs(); toast('Couldn’t save that'); }
+  });
   async function delJob(delId){
     const j = jobs.find(x => x.id === delId);
     if (!confirm('Delete "' + (j ? j.client : 'this job') + '"? This cannot be undone.')) return;
