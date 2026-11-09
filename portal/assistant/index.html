@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<title>Assistant — Aera Portal</title>
+<link rel="icon" type="image/svg+xml" href="/assets/img/logo/aera-monogram-favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+/* Own page for the leads assistant. Same tokens as /portal/ so it reads as part of it. */
+:root{
+  --obsidian:#060607; --panel:#0D0D0F; --panel2:#121215; --line:#1C1C1F;
+  --cream:#EADFCD; --dim:#B7AE9C; --stone:#8C887F; --ivory:#F5F1E9;
+  --champagne:#C2A878; --sage:#7E9B7A; --slate:#7E8BAF; --rust:#C97B6E;
+  --display:'Playfair Display',Georgia,serif; --sans:'Inter',-apple-system,sans-serif;
+  --ease:cubic-bezier(.16,1,.3,1); --r-md:16px; --r-pill:999px;
+  --grad:radial-gradient(circle at 18% 0%,#17171b,#0a0a0c 65%);
+  --shadow:0 10px 26px -14px rgba(0,0,0,.7);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:radial-gradient(circle at 22% -8%,#111114 0%,#060607 55%) fixed;color:var(--cream);font-family:var(--sans);font-weight:300;font-size:15px;line-height:1.6;min-height:100vh}
+a{color:inherit}
+.wrap{max-width:1100px;margin:0 auto;padding:0 28px 60px}
+header{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:24px 0 6px}
+.brand{font-family:var(--display);letter-spacing:.3em;font-size:17px;color:var(--ivory);text-decoration:none}
+.brand small{font-family:var(--sans);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--stone);margin-left:12px}
+.hlinks{display:flex;gap:22px;font-size:13px;color:var(--stone)}
+.hlinks a{text-decoration:none;transition:color .25s}.hlinks a:hover{color:var(--cream)}
+
+/* hero: the little animation — a diamond with a slow scanning ring and a pulse */
+.hero{display:flex;align-items:center;gap:22px;padding:34px 0 22px;animation:rise .7s var(--ease) backwards}
+.mark{position:relative;width:76px;height:76px;flex:none}
+.mark svg{position:absolute;inset:0;width:100%;height:100%}
+.mark .ring{transform-origin:50% 50%;animation:spin 14s linear infinite}
+.mark .pulse{transform-origin:50% 50%;animation:pulse 3.2s ease-out infinite}
+.mark .core{animation:breathe 4s ease-in-out infinite;transform-origin:50% 50%}
+.hero h1{font-family:var(--display);font-weight:500;font-size:40px;color:var(--ivory);line-height:1.1}
+.hero p{color:var(--stone);font-size:14px;margin-top:6px;max-width:52ch}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{0%{opacity:.5;transform:scale(.62)}70%,100%{opacity:0;transform:scale(1.08)}}
+@keyframes breathe{0%,100%{opacity:.85}50%{opacity:1}}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+.bar{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;align-items:center;margin-bottom:18px}
+.filters{display:flex;gap:6px;flex-wrap:wrap}
+.filters button{background:var(--panel);border:0;border-radius:var(--r-pill);color:var(--stone);font:inherit;font-size:13px;padding:8px 16px;cursor:pointer;transition:color .2s,background .2s}
+.filters button:hover{color:var(--cream)}
+.filters button[aria-pressed="true"]{background:var(--panel2);color:var(--cream);box-shadow:inset 0 0 0 1px var(--champagne)}
+.sum{font-size:13px;color:var(--stone)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,420px),1fr));gap:14px}
+.card{background:var(--grad);border-radius:var(--r-md);box-shadow:var(--shadow);padding:18px 20px;min-width:0;animation:rise .55s var(--ease) backwards;animation-delay:calc(var(--i,0)*70ms)}
+.head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.name{font-size:16.5px;color:var(--ivory);font-weight:400}.meta{font-size:12.5px;color:var(--stone)}
+.dot{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;padding:4px 10px;border-radius:var(--r-pill);background:var(--panel2);color:var(--dim);flex:none}
+.dot.strong{color:var(--sage)}.dot.good{color:var(--champagne)}.dot.medium{color:var(--slate)}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 8px}.chips span{font-size:11.5px;background:var(--panel2);color:var(--dim);border-radius:var(--r-pill);padding:3px 10px}
+.text{font-size:13.5px;color:var(--dim);line-height:1.6;margin-bottom:12px}
+.links{display:flex;gap:14px;flex-wrap:wrap;font-size:12.5px;margin-bottom:14px}
+.links a{color:var(--champagne);text-decoration:none}.links a:hover{text-decoration:underline}
+.links span{color:var(--dim)}
+.acts{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.btn{font:inherit;font-size:13px;border:0;border-radius:var(--r-pill);padding:8px 16px;cursor:pointer;background:var(--champagne);color:var(--obsidian);transition:transform .15s,opacity .2s}
+.btn:active{transform:scale(.97)}.btn:disabled{opacity:.5;cursor:default}
+.btn.ghost{background:var(--panel2);color:var(--dim)}
+.state{font-size:12px;color:var(--sage)}
+.card.out{animation:out .35s var(--ease) forwards}
+@keyframes out{to{opacity:0;transform:scale(.97) translateY(-6px)}}
+.empty{grid-column:1/-1;color:var(--stone);font-size:14px;text-align:center;padding:44px 10px;background:var(--grad);border-radius:var(--r-md)}
+details.imp{margin-top:34px;background:var(--panel);border-radius:var(--r-md);padding:14px 18px}
+details.imp summary{cursor:pointer;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--stone)}
+details.imp textarea{width:100%;min-height:130px;margin-top:12px;background:var(--obsidian);border:1px solid rgba(255,255,255,.07);border-radius:10px;color:var(--cream);padding:10px 13px;font-family:ui-monospace,Menlo,monospace;font-size:12px;outline:none}
+details.imp .row{display:flex;gap:10px;align-items:center;margin-top:10px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);background:var(--panel2);color:var(--cream);padding:10px 18px;border-radius:var(--r-pill);opacity:0;transition:.3s;z-index:90;font-size:13px;box-shadow:var(--shadow)}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.toast a{color:var(--champagne);margin-left:10px}
+:focus-visible{outline:2px solid var(--champagne);outline-offset:2px}
+@media(max-width:640px){.wrap{padding:0 16px 50px}.hero h1{font-size:32px}.mark{width:60px;height:60px}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.pitch{margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
+.pitch .pl{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--stone);margin-bottom:8px}
+.pitch a.btn{text-decoration:none;display:inline-block}
+.reveal{margin-top:10px;display:flex;flex-direction:column;gap:8px}
+.reveal p{font-size:12.5px;color:var(--stone)}
+.reveal textarea,.reveal input{width:100%;background:var(--obsidian);border:1px solid rgba(255,255,255,.07);border-radius:10px;color:var(--cream);padding:9px 12px;font-family:inherit;font-size:12.5px;outline:none}
+.reveal .btn{align-self:flex-start}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <a class="brand" href="/portal/">AERA<small>Studio Portal</small></a>
+    <div class="hlinks"><a href="/portal/">← Back to portal</a></div>
+  </header>
+
+  <section class="hero">
+    <div class="mark" aria-hidden="true">
+      <svg viewBox="0 0 100 100" fill="none">
+        <circle class="pulse" cx="50" cy="50" r="46" stroke="#C2A878" stroke-width="1"/>
+        <g class="ring"><circle cx="50" cy="50" r="40" stroke="#C2A878" stroke-width="1" stroke-dasharray="2 9" opacity=".6"/><circle cx="50" cy="10" r="2.6" fill="#C2A878"/></g>
+        <g class="core"><path d="M50,26 L69,50 L50,74 L31,50 Z" stroke="#C2A878" stroke-width="1.5" opacity=".6"/><path d="M50,30 L35,50 L65,50 Z M50,70 L35,50 M65,50 L50,70" stroke="#C2A878" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/></g>
+      </svg>
+    </div>
+    <div><h1>Assistant</h1><p>Leads I've found, with my read on each. Pursue one and it moves into Jobs as an enquiry.</p></div>
+  </section>
+
+  <div class="bar">
+    <div class="filters" id="filters">
+      <button data-f="New" aria-pressed="true">New</button>
+      <button data-f="Pursuing" aria-pressed="false">Pursuing</button>
+      <button data-f="Dismissed" aria-pressed="false">Dismissed</button>
+    </div>
+    <div class="sum" id="sum"></div>
+  </div>
+  <div class="grid" id="list"></div>
+
+  <details class="imp">
+    <summary>Import leads</summary>
+    <textarea id="json" placeholder="Paste the leads JSON from Claude here"></textarea>
+    <div class="row"><button class="btn" id="import">Import</button><span class="state" id="importmsg"></span></div>
+  </details>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+(function(){
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const ok = u => /^https?:\/\//i.test(u || '');
+  const LEADS = '/portal/api/leads', JOBS = '/portal/api/jobs';
+  // Where "Edit in Claude" and "Request pitch" send you. Change this to your Aera project's link if you want it to land there.
+  const CLAUDE_URL = 'https://claude.ai/new';
+  let leads = [], filter = 'New';
+  const shown = {};   // id -> prompt text revealed under the card
+
+  /*API*/
+  async function api(url, method, body){
+    const res = await fetch(url, { method, headers: body ? {'Content-Type':'application/json'} : undefined, body: body ? JSON.stringify(body) : undefined });
+    if (res.status === 401){ location.reload(); throw new Error('signed out'); }
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw Object.assign(new Error(data.message || data.error || 'Request failed'), { data });
+    return data;
+  }
+  /*END-API*/
+
+  function say(m, link){
+    const t = $('toast'); t.innerHTML = esc(m) + (link ? ' <a href="'+link.href+'">'+esc(link.text)+'</a>' : '');
+    t.classList.remove('show'); void t.offsetWidth; t.classList.add('show');
+    clearTimeout(say.t); say.t = setTimeout(() => t.classList.remove('show'), 3200);
+  }
+
+  function promptFor(l){
+    return ['Build the Aera pitch for ' + l.name + ' (' + [l.type, l.area].filter(Boolean).join(', ') + ').',
+      'Use the pitch template in the Aera project (templates/pitch-presenter): a website mock-up, an Instagram kit and the presenter page, all in their own visual identity, not Aera\'s.',
+      'My notes on them: ' + (l.assessment || 'none') + (l.signals && l.signals.length ? ' Signals: ' + l.signals.join(', ') + '.' : ''),
+      (l.facebook ? 'Facebook: ' + l.facebook : ''), (l.website ? 'Website: ' + l.website : ''),
+      'Publish it as a private artifact and give me the link so I can add it in the portal.'].filter(Boolean).join('\n');
+  }
+  function editPromptFor(l){ return 'Update the pitch for ' + l.name + ' (' + l.pitchUrl + '). Republish it to the same link so the portal shows it. Changes I want: '; }
+  function pitchBlock(l){
+    const id = esc(l.id);
+    let body;
+    if (l.pitchUrl){
+      body = `<a class="btn" href="${esc(l.pitchUrl)}" target="_blank" rel="noopener noreferrer">Open pitch ↗</a><button class="btn ghost" data-a="pitch-edit" data-id="${id}">Edit in Claude</button><button class="btn ghost" data-a="pitch-link" data-id="${id}">Change link</button>`;
+    } else if (l.pitchStatus === 'requested'){
+      body = `<span class="state">Requested. Paste the link when Claude sends it.</span><button class="btn ghost" data-a="pitch-link" data-id="${id}">Add link</button><button class="btn ghost" data-a="pitch-request" data-id="${id}">Copy request again</button>`;
+    } else {
+      body = `<button class="btn" data-a="pitch-request" data-id="${id}">Request pitch deck</button>`;
+    }
+    const reveal = shown[l.id] ? `<div class="reveal"><p>Copied. If it didn't copy, select and copy this, then paste it into Claude.</p><textarea readonly rows="5">${esc(shown[l.id].text)}</textarea><a class="btn ghost" href="${esc(CLAUDE_URL)}" target="_blank" rel="noopener noreferrer">Open Claude ↗</a></div>` : '';
+    const linkForm = shown[l.id] && shown[l.id].link ? `<div class="reveal"><input type="url" id="pl-${id}" placeholder="Paste the pitch link (claude.ai/artifact/…)" value="${esc(l.pitchUrl || '')}"><button class="btn" data-a="pitch-save" data-id="${id}">Save link</button></div>` : '';
+    return `<div class="pitch"><div class="pl">Pitch deck</div><div class="acts">${body}</div>${reveal}${linkForm}</div>`;
+  }
+  function card(l, i){
+    const links = [
+      ok(l.website)   && `<a href="${esc(l.website)}" target="_blank" rel="noopener noreferrer">Website ↗</a>`,
+      ok(l.facebook)  && `<a href="${esc(l.facebook)}" target="_blank" rel="noopener noreferrer">Facebook ↗</a>`,
+      ok(l.instagram) && `<a href="${esc(l.instagram)}" target="_blank" rel="noopener noreferrer">Instagram ↗</a>`,
+      l.phone && `<a href="tel:${esc(String(l.phone).replace(/[^+0-9]/g,''))}">${esc(l.phone)}</a>`,
+      l.email && `<a href="mailto:${esc(l.email)}">${esc(l.email)}</a>`
+    ].filter(Boolean).join('');
+    const acts = l.status === 'New'
+      ? `<button class="btn" data-a="pursue" data-id="${esc(l.id)}">Pursue → Jobs</button><button class="btn ghost" data-a="dismiss" data-id="${esc(l.id)}">Dismiss</button>`
+      : l.status === 'Pursuing'
+      ? `<span class="state">In Jobs as an enquiry</span><button class="btn ghost" data-a="restore" data-id="${esc(l.id)}">Back to New</button>`
+      : `<button class="btn ghost" data-a="restore" data-id="${esc(l.id)}">Restore</button>`;
+    return `<article class="card" style="--i:${i}" data-card="${esc(l.id)}"><div class="head"><div><div class="name">${esc(l.name)}</div><div class="meta">${esc([l.type,l.area].filter(Boolean).join(' · '))}${l.added?' · found '+esc(l.added):''}</div></div><span class="dot ${esc(l.score)}">${esc(l.score)}</span></div>
+      ${(l.signals||[]).length?`<div class="chips">${l.signals.map(x=>`<span>${esc(x)}</span>`).join('')}</div>`:''}
+      ${l.assessment?`<p class="text">${esc(l.assessment)}</p>`:''}
+      ${links?`<div class="links">${links}</div>`:''}
+      <div class="acts">${acts}</div>${l.status === 'Pursuing' ? pitchBlock(l) : ''}</article>`;
+  }
+
+  function render(){
+    document.querySelectorAll('#filters button').forEach(b => {
+      const n = leads.filter(l => l.status === b.dataset.f).length;
+      b.textContent = b.dataset.f + (n ? ' (' + n + ')' : '');
+      b.setAttribute('aria-pressed', String(b.dataset.f === filter));
+    });
+    const order = {strong:0, good:1, medium:2, low:3};
+    const rows = leads.filter(l => l.status === filter).sort((a,b) => (order[a.score] ?? 9) - (order[b.score] ?? 9));
+    $('list').innerHTML = rows.length ? rows.map(card).join('') : '<div class="empty">' + (filter === 'New' ? 'No new leads. Paste a batch under Import leads, or ask Claude for more.' : 'Nothing here.') + '</div>';
+    $('sum').textContent = leads.length ? leads.length + ' leads in total' : '';
+  }
+
+  async function load(){
+    try { leads = (await api(LEADS,'GET')).leads || []; render(); }
+    catch(e){ $('list').innerHTML = '<div class="empty">Could not load leads.</div>'; }
+  }
+  async function setStatus(id, status, extra){
+    leads = (await api(LEADS,'PUT',{ id, status, ...(extra||{}) })).leads;
+  }
+
+  $('list').addEventListener('click', async e => {
+    const b = e.target.closest('button[data-a]'); if (!b) return;
+    const id = b.dataset.id, l = leads.find(x => x.id === id); if (!l) return;
+    if (b.dataset.a.indexOf('pitch-') === 0){
+      const a = b.dataset.a;
+      if (a === 'pitch-request' || a === 'pitch-edit'){
+        const text = a === 'pitch-request' ? promptFor(l) : editPromptFor(l);
+        try { await navigator.clipboard.writeText(text); } catch(_){}
+        shown[id] = { text };
+        try { if (a === 'pitch-request' && !l.pitchStatus) await setStatus(id, 'Pursuing', { pitchStatus: 'requested' }); } catch(_){}
+        say('Prompt copied. Paste it into Claude.'); render();
+      } else if (a === 'pitch-link'){ shown[id] = Object.assign({}, shown[id], { link: true }); render(); }
+      else if (a === 'pitch-save'){
+        const inp = document.getElementById('pl-' + id);
+        try { await setStatus(id, 'Pursuing', { pitchUrl: inp ? inp.value.trim() : '' }); const now = leads.find(x => x.id === id); if (now && now.pitchUrl){ delete shown[id]; say('Pitch link saved'); } else say('That is not a Claude artifact link.'); render(); }
+        catch(err){ say(err.message || 'Could not save'); }
+      }
+      return;
+    }
+    b.disabled = true;
+    const el = document.querySelector('[data-card="'+CSS.escape(id)+'"]');
+    try {
+      if (b.dataset.a === 'pursue'){
+        const notes = ['Lead from Assistant.', l.assessment, [l.phone,l.email].filter(Boolean).join(' · ')].filter(Boolean).join(' ').slice(0,600);
+        const res = await api(JOBS,'POST',{ client:l.name, type:l.type||'Lead', status:'Enquiry', notes });
+        const jobId = (res.jobs && res.jobs[0] && res.jobs[0].id) || '';
+        await setStatus(id,'Pursuing',{ jobId });
+        say('Added to Jobs as an enquiry', { href:'/portal/', text:'Open Jobs' });
+      } else if (b.dataset.a === 'dismiss'){ await setStatus(id,'Dismissed'); say('Dismissed'); }
+      else { await setStatus(id,'New'); say('Moved back to New'); }
+      if (el){ el.classList.add('out'); setTimeout(render, 330); } else render();
+    } catch(err){ b.disabled = false; say(err.message || 'Something went wrong'); }
+  });
+  $('filters').addEventListener('click', e => { const b = e.target.closest('button[data-f]'); if (!b) return; filter = b.dataset.f; render(); });
+  $('import').addEventListener('click', async () => {
+    const msg = $('importmsg');
+    try {
+      const data = JSON.parse($('json').value);
+      const batch = Array.isArray(data) ? data : (data.leads || [data]);
+      const res = await api(LEADS,'POST',{ leads: batch });
+      leads = res.leads; $('json').value = ''; filter = 'New'; render();
+      msg.textContent = res.added + ' added, ' + res.updated + ' updated';
+    } catch(err){ msg.textContent = err instanceof SyntaxError ? 'That is not valid JSON.' : (err.message || 'Import failed'); }
+  });
+  load();
+})();
+</script>
+</body>
+</html>

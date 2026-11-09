@@ -731,6 +731,9 @@ input.need{border-color:rgba(201,123,110,.7)!important}
   .mt-actrow .ow,.mt-actrow .du{grid-column:2;justify-self:start}
   .mt-actrow>span:empty{display:none}
 }
+.as-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--champagne);margin-left:7px;vertical-align:middle;animation:asPulse 2.4s ease-in-out infinite}
+@keyframes asPulse{0%,100%{opacity:.35;transform:scale(.85)}50%{opacity:1;transform:scale(1.15)}}
+@media (prefers-reduced-motion:reduce){.as-dot{animation:none}}
 </style>
 </head>
 <body>
@@ -748,6 +751,7 @@ input.need{border-color:rgba(201,123,110,.7)!important}
     </div>
     <div class="hlinks">
       <a href="/" target="_blank" rel="noopener">Live site ↗</a>
+      <a href="/portal/assistant/" id="assistant-link" title="Leads and assistant">Assistant<i class="as-dot" id="as-dot" hidden></i></a>
       <a id="signout">Sign out</a>
     </div>
   </div>
@@ -2309,6 +2313,12 @@ input.need{border-color:rgba(201,123,110,.7)!important}
   loadJobs();
   loadMeetings();
 })();
+</script>
+<script>
+/* Small champagne dot on the Assistant link when there are New leads. Fails quietly. */
+fetch('/portal/api/leads').then(r=>r.ok?r.json():null).then(d=>{
+  if(d&&Array.isArray(d.leads)&&d.leads.some(l=>l.status==='New')){var e=document.getElementById('as-dot');if(e)e.hidden=false;}
+}).catch(function(){});
 </script>
 </body>
 </html>
