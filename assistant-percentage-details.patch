@@ -1,0 +1,115 @@
+From 059942fc4ea6350075545e3c2bf3ca0d9a02c989 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Mon, 9 Nov 2026 16:12:23 +0000
+Subject: [PATCH] Assistant: success percentage on the score badge, details
+ dropdown, longer field limits
+
+---
+ functions/portal/api/leads.js | 22 ++++++++++++++++++----
+ portal/assistant/index.html   | 28 ++++++++++++++++++++++++----
+ 2 files changed, 42 insertions(+), 8 deletions(-)
+
+diff --git a/functions/portal/api/leads.js b/functions/portal/api/leads.js
+index 192e9bf..e00b830 100644
+--- a/functions/portal/api/leads.js
++++ b/functions/portal/api/leads.js
+@@ -32,28 +32,42 @@ const url = v => {
+   return /^https?:\/\//i.test(s) ? s : '';
+ };
+ 
++/* Estimated chance of winning paid work, 0-100, or null when not given. */
++const pct = v => {
++  if (v === null || v === undefined || v === '') return null;
++  const n = Math.round(Number(v));
++  return Number.isFinite(n) ? Math.min(100, Math.max(0, n)) : null;
++};
++/* Optional breakdown shown in the card's dropdown: [{label, pct}]. */
++const ests = v => (Array.isArray(v) ? v : []).slice(0, 8).map(e => ({
++  label: String((e && e.label) ?? '').trim().slice(0, 120),
++  pct: pct(e && e.pct)
++})).filter(e => e.label && e.pct !== null);
++
+ function clean(body, existing = {}) {
+   const str = (v, max) => String(v ?? '').trim().slice(0, max);
+   const pick = (v, list, fallback) => (list.includes(v) ? v : fallback);
+   const signals = Array.isArray(body.signals ?? existing.signals)
+-    ? (body.signals ?? existing.signals).map(x => str(x, 40)).filter(Boolean).slice(0, 8)
++    ? (body.signals ?? existing.signals).map(x => str(x, 160)).filter(Boolean).slice(0, 10)
+     : [];
+   const name = str(body.name ?? existing.name, 80);
+   const area = str(body.area ?? existing.area, 60);
+   return {
+     id:         existing.id || slug(name + ' ' + area) || crypto.randomUUID(),
+     name,
+-    type:       str(body.type       ?? existing.type,       40),
++    type:       str(body.type       ?? existing.type,       90),
+     area,
+     website:    url(body.website    ?? existing.website),
+     facebook:   url(body.facebook   ?? existing.facebook),
+     instagram:  url(body.instagram  ?? existing.instagram),
+     phone:      str(body.phone      ?? existing.phone,      30),
+     email:      str(body.email      ?? existing.email,      80),
+-    assessment: str(body.assessment ?? existing.assessment, 700),
++    assessment: str(body.assessment ?? existing.assessment, 3000),
+     signals,
+     score:      pick(body.score ?? existing.score, SCORES, 'medium'),
+-    source:     str(body.source     ?? existing.source,     60),
++    source:     str(body.source     ?? existing.source,     240),
++    chance:     pct(body.chance ?? existing.chance),
++    estimates:  ests(body.estimates ?? existing.estimates),
+     added:      existing.added || str(body.added, 10) || new Date().toISOString().slice(0, 10),
+     status:     pick(body.status ?? existing.status, STATUSES, 'New'),
+     jobId:      str(body.jobId      ?? existing.jobId,      80),
+diff --git a/portal/assistant/index.html b/portal/assistant/index.html
+index 33fcc7f..ff81550 100644
+--- a/portal/assistant/index.html
++++ b/portal/assistant/index.html
+@@ -57,7 +57,18 @@ header{display:flex;justify-content:space-between;align-items:center;gap:16px;pa
+ .dot{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;padding:4px 10px;border-radius:var(--r-pill);background:var(--panel2);color:var(--dim);flex:none}
+ .dot.strong{color:var(--sage)}.dot.good{color:var(--champagne)}.dot.medium{color:var(--slate)}
+ .chips{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 8px}.chips span{font-size:11.5px;background:var(--panel2);color:var(--dim);border-radius:var(--r-pill);padding:3px 10px}
+-.text{font-size:13.5px;color:var(--dim);line-height:1.6;margin-bottom:12px}
++.text{font-size:13.5px;color:var(--dim);line-height:1.6;white-space:pre-line;overflow-wrap:anywhere}
++.dot b{font-weight:400;color:var(--cream);margin-left:6px;letter-spacing:.04em}
++details.more{margin:12px 0 4px;background:var(--panel);border-radius:var(--r-md);padding:10px 14px}
++details.more summary{cursor:pointer;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--stone);list-style:none}
++details.more summary::-webkit-details-marker{display:none}
++details.more summary::after{content:' +';color:var(--champagne)}
++details.more[open] summary::after{content:' \2212'}
++details.more .chips{margin:12px 0 6px}
++details.more .text{margin-top:10px}
++.est{list-style:none;margin:12px 0 2px;padding:0;display:grid;gap:6px;font-size:13px;color:var(--dim)}
++.est li{display:flex;justify-content:space-between;gap:14px}
++.est b{font-weight:400;color:var(--cream);flex:none}
+ .links{display:flex;gap:14px;flex-wrap:wrap;font-size:12.5px;margin-bottom:14px}
+ .links a{color:var(--champagne);text-decoration:none}.links a:hover{text-decoration:underline}
+ .links span{color:var(--dim)}
+@@ -186,13 +197,22 @@ details.imp .row{display:flex;gap:10px;align-items:center;margin-top:10px}
+       : l.status === 'Pursuing'
+       ? `<span class="state">In Jobs as an enquiry</span><button class="btn ghost" data-a="restore" data-id="${esc(l.id)}">Back to New</button>`
+       : `<button class="btn ghost" data-a="restore" data-id="${esc(l.id)}">Restore</button>`;
+-    return `<article class="card" style="--i:${i}" data-card="${esc(l.id)}"><div class="head"><div><div class="name">${esc(l.name)}</div><div class="meta">${esc([l.type,l.area].filter(Boolean).join(' · '))}${l.added?' · found '+esc(l.added):''}</div></div><span class="dot ${esc(l.score)}">${esc(l.score)}</span></div>
+-      ${(l.signals||[]).length?`<div class="chips">${l.signals.map(x=>`<span>${esc(x)}</span>`).join('')}</div>`:''}
+-      ${l.assessment?`<p class="text">${esc(l.assessment)}</p>`:''}
++    const pctTxt = (l.chance !== null && l.chance !== undefined) ? `<b>${esc(l.chance)}%</b>` : '';
++    const est = (l.estimates||[]).length ? `<ul class="est">${l.estimates.map(e=>`<li><span>${esc(e.label)}</span><b>${esc(e.pct)}%</b></li>`).join('')}</ul>` : '';
++    const hasMore = (l.signals||[]).length || l.assessment || est || l.source;
++    const more = hasMore ? `<details class="more" data-more="${esc(l.id)}"${opened.has(l.id)?' open':''}><summary>Details</summary>
++        ${est}${(l.signals||[]).length?`<div class="chips">${l.signals.map(x=>`<span>${esc(x)}</span>`).join('')}</div>`:''}
++        ${l.assessment?`<p class="text">${esc(l.assessment)}</p>`:''}
++        ${l.source?`<p class="text" style="margin-top:10px;color:var(--stone)">Source: ${esc(l.source)}</p>`:''}</details>` : '';
++    return `<article class="card" style="--i:${i}" data-card="${esc(l.id)}"><div class="head"><div><div class="name">${esc(l.name)}</div><div class="meta">${esc([l.type,l.area].filter(Boolean).join(' · '))}${l.added?' · found '+esc(l.added):''}</div></div><span class="dot ${esc(l.score)}">${esc(l.score)}${pctTxt}</span></div>
++      ${more}
+       ${links?`<div class="links">${links}</div>`:''}
+       <div class="acts">${acts}</div>${l.status === 'Pursuing' ? pitchBlock(l) : ''}</article>`;
+   }
+ 
++  const opened = new Set();
++  document.addEventListener('toggle', e => { const d = e.target; if (d && d.dataset && d.dataset.more){ d.open ? opened.add(d.dataset.more) : opened.delete(d.dataset.more); } }, true);
++
+   function render(){
+     document.querySelectorAll('#filters button').forEach(b => {
+       const n = leads.filter(l => l.status === b.dataset.f).length;
+-- 
+2.43.0
+
