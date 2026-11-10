@@ -663,6 +663,18 @@ input.need{border-color:rgba(201,123,110,.7)!important}
 .mt-ag ul li.done{opacity:.42}
 .mt-ag ul li.done .pt-tick{background:var(--sage);border-color:var(--sage)}
 .mt-ag ul li.done .pt-tick::before{content:"\2713"}
+.pt-text{flex:1;outline:none;border-radius:6px;padding:0 4px;margin:0 -4px;cursor:text;transition:background .2s}
+.pt-text:hover{background:rgba(255,255,255,.03)}
+.pt-text:focus{background:var(--panel2);color:var(--cream)}
+.pt-del{flex:none;background:none;border:0;color:var(--stone);font-size:16px;line-height:1;padding:2px 4px;cursor:pointer;opacity:0;transition:opacity .2s,color .2s}
+.mt-ag ul li:hover .pt-del,.pt-del:focus{opacity:1}
+.pt-del:hover{color:var(--rust)}
+.mt-ag ul li.pt-new{align-items:center;opacity:.75;transition:opacity .2s}
+.mt-ag ul li.pt-new:focus-within,.mt-ag ul li.pt-new:hover{opacity:1}
+.pt-plus{flex:none;width:17px;text-align:center;color:var(--stone);font-size:15px}
+.pt-new input{flex:1;background:none;border:0;border-bottom:1px solid transparent;border-radius:0;padding:3px 0;font-size:13.5px;color:var(--cream)}
+.pt-new input:focus{border-bottom-color:rgba(205,179,134,.45);background:none}
+@media(hover:none){.pt-del{opacity:.6}}
 .mt-dec-ed{display:flex;flex-direction:column;gap:6px}
 .mt-dec-row{display:flex;align-items:center;gap:10px}
 .mt-dec-row::before{content:"";flex:none;width:7px;height:7px;border-radius:50%;background:var(--champagne);opacity:.7}
@@ -2100,7 +2112,8 @@ input.need{border-color:rgba(201,123,110,.7)!important}
         `<a class="mt-file" href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label || l.url)}</a>`).join('')}</div>` : ''}
       <h5>Agenda &amp; discussion</h5>
       ${(m.agenda || []).length ? `<ol class="mt-ag">${m.agenda.map((a, ai) => `<li><b>${esc(a.title)}</b>
-        ${a.notes ? `<ul>${notePoints(a.notes).map((pt, k) => `<li class="${pt.done ? 'done' : ''}"><button type="button" class="pt-tick" data-pt="${ai}:${pt.line}" aria-label="${pt.done ? 'Untick' : 'Tick off'}"></button><span>${esc(pt.text)}</span></li>`).join('')}</ul>` : '<p class="tbc">Notes to add on the day</p>'}</li>`).join('')}</ol>`
+        <ul>${notePoints(a.notes).map(pt => `<li class="${pt.done ? 'done' : ''}"><button type="button" class="pt-tick" data-pt="${ai}:${pt.line}" aria-label="${pt.done ? 'Untick' : 'Tick off'}"></button><span class="pt-text" contenteditable="plaintext-only" spellcheck="true" data-ptedit="${ai}:${pt.line}">${esc(pt.text)}</span><button type="button" class="pt-del" data-ptdel="${ai}:${pt.line}" aria-label="Remove point">×</button></li>`).join('')}
+          <li class="pt-new"><span class="pt-plus">+</span><input data-ptadd="${ai}" placeholder="${a.notes ? 'Add a point' : 'Add notes as you go'}" aria-label="Add a point to ${esc(a.title)}"></li></ul></li>`).join('')}</ol>`
         : '<p class="mt-empty">No agenda yet.</p>'}
       <h5>Decisions</h5>
       ${decisions.length ? `<ul class="mt-dec">${decisions.map(x => `<li>${esc(x)}</li>`).join('')}</ul>`
@@ -2296,6 +2309,17 @@ input.need{border-color:rgba(201,123,110,.7)!important}
     }
     if (e.target.closest('[data-rm]')){ e.target.closest('.mt-repitem, .mt-dec-row').remove(); return; }
 
+    const del = e.target.closest('[data-ptdel]');
+    if (del){
+      const m = meetings.find(x => x.id === mtSel); if (!m) return;
+      const [ai, line] = del.dataset.ptdel.split(':').map(Number);
+      const before = m.agenda[ai].notes;
+      const lines = String(before || '').split('\n'); lines.splice(line, 1);
+      m.agenda[ai].notes = lines.join('\n'); renderMtDoc();
+      try { await api(MEET_API, 'PUT', { id: m.id, agenda: m.agenda }); }
+      catch { m.agenda[ai].notes = before; renderMtDoc(); toast('Couldn’t save that'); }
+      return;
+    }
     const pt = e.target.closest('[data-pt]');
     if (pt){
       const m = meetings.find(x => x.id === mtSel); if (!m) return;
@@ -2351,6 +2375,48 @@ input.need{border-color:rgba(201,123,110,.7)!important}
       const prev = row.previousElementSibling;
       if (prev && prev.classList.contains('mt-dec-row')){ e.preventDefault(); row.remove(); const pi = prev.querySelector('input'); pi.focus(); pi.setSelectionRange(pi.value.length, pi.value.length); }
     }
+  });
+
+  // Live notes in the minutes view: add a point with Enter, edit any point by
+  // clicking its text (saves when you click away or press Enter), × removes it.
+  async function saveAgenda(m, msg){
+    try { await api(MEET_API, 'PUT', { id: m.id, agenda: m.agenda }); if (msg) toast(msg); return true; }
+    catch { toast('Couldn’t save that'); return false; }
+  }
+  const curMeeting = () => meetings.find(x => x.id === mtSel);
+  $('mtdoc').addEventListener('keydown', async e => {
+    const add = e.target.closest('[data-ptadd]');
+    if (add && e.key === 'Enter'){
+      e.preventDefault();
+      const v = add.value.trim(); if (!v) return;
+      const m = curMeeting(); if (!m) return;
+      const ai = +add.dataset.ptadd;
+      m.agenda[ai].notes = [m.agenda[ai].notes, v].filter(x => x && x.trim()).join('\n');
+      add.value = '';
+      renderMtDoc();
+      const again = $('mtdoc').querySelector(`[data-ptadd="${ai}"]`); if (again) again.focus();
+      await saveAgenda(m);
+      return;
+    }
+    const ed = e.target.closest('[data-ptedit]');
+    if (ed && e.key === 'Enter'){ e.preventDefault(); ed.blur(); }
+    if (ed && e.key === 'Escape'){ ed.textContent = ed.dataset.orig || ed.textContent; ed.blur(); }
+  });
+  $('mtdoc').addEventListener('focusin', e => {
+    const ed = e.target.closest('[data-ptedit]'); if (ed) ed.dataset.orig = ed.textContent;
+  });
+  $('mtdoc').addEventListener('focusout', async e => {
+    const ed = e.target.closest('[data-ptedit]'); if (!ed) return;
+    const text = ed.textContent.replace(/\s+/g, ' ').trim();
+    if (text === (ed.dataset.orig || '').trim()) return;
+    const m = curMeeting(); if (!m) return;
+    const [ai, line] = ed.dataset.ptedit.split(':').map(Number);
+    const lines = String(m.agenda[ai].notes || '').split('\n');
+    const done = DONE_RE.test(lines[line] || '');
+    if (text) lines[line] = (done ? '✓ ' : '') + text; else lines.splice(line, 1);
+    m.agenda[ai].notes = lines.join('\n');
+    if (!text) renderMtDoc();
+    await saveAgenda(m, 'Saved');
   });
 
   // Textareas size to their content so nothing hides behind a scrollbar.
