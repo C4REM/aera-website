@@ -86,6 +86,16 @@ details.imp .row{display:flex;gap:10px;align-items:center;margin-top:10px}
 .reveal p{font-size:12.5px;color:var(--stone)}
 .reveal textarea,.reveal input{width:100%;background:var(--obsidian);border:1px solid rgba(255,255,255,.07);border-radius:10px;color:var(--cream);padding:9px 12px;font-family:inherit;font-size:12.5px;outline:none}
 .reveal .btn{align-self:flex-start}
+/* draft email */
+.mail{margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
+.mail .pl{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--stone);margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
+.mail .pl span{letter-spacing:0;text-transform:none;font-size:11.5px;color:var(--sage)}
+.mail input,.mail textarea{width:100%;background:var(--obsidian);border:1px solid rgba(255,255,255,.07);border-radius:10px;color:var(--cream);padding:10px 13px;font-family:inherit;font-size:13.5px;line-height:1.6;outline:none;transition:border-color .2s}
+.mail input:focus,.mail textarea:focus{border-color:rgba(194,168,120,.55)}
+.mail input{margin-bottom:8px}
+.mail textarea{min-height:260px;resize:vertical;overflow:hidden}
+.mail .acts{margin-top:10px}
+.mail a.btn{text-decoration:none;display:inline-block}
 </style>
 </head>
 <body>
@@ -173,6 +183,63 @@ details.imp .row{display:flex;gap:10px;align-items:center;margin-top:10px}
     const linkForm = shown[l.id] && shown[l.id].link ? `<div class="reveal"><input type="url" id="pl-${id}" placeholder="Paste the pitch link (claude.ai/artifact/…)" value="${esc(l.pitchUrl || '')}"><button class="btn" data-a="pitch-save" data-id="${id}">Save link</button></div>` : '';
     return `<div class="pitch"><div class="pl">Pitch deck</div><div class="acts">${body}</div>${reveal}${linkForm}</div>`;
   }
+  /* ---- Draft email, in Aera's voice ----
+     Warm, plain, specific, short. Leads with something true about them, offers
+     one clear thing, asks before talking price, signs off from the studio
+     address. Never pastes in the internal assessment (that's our notes, not
+     theirs). A draft Claude wrote on import (l.draft) wins over the template. */
+  const openMail = {};
+  function hookFor(l){
+    const t = ((l.type || '') + ' ' + (l.signals || []).join(' ')).toLowerCase();
+    if (/barber|hair|salon|beauty|nail|lash|brow|tattoo/.test(t)) return 'The work your team puts out deserves to be seen properly, and most of that happens on a phone screen before anyone walks through the door.';
+    if (/restaurant|caf|coffee|bar|pub|bakery|kitchen|food/.test(t)) return 'A room like yours is hard to get across on a phone, and the first few photos people see decide whether they book.';
+    if (/wedding|venue|barn|hall|hotel/.test(t)) return 'Couples choose a venue on what they see first, so the photos and film on your pages are doing a lot of the work.';
+    if (/event|ball|festival|gala|market|club|night/.test(t)) return 'With that many people involved, everyone wants something good to share the next day.';
+    if (/gym|fitness|pilates|yoga|studio/.test(t)) return 'Classes like yours sell on how they feel, and that is very hard to show with stock photos.';
+    if (/shop|boutique|brand|store|fashion|jewel/.test(t)) return 'Good products deserve photos that match them, and it shows when they do.';
+    return 'Good work deserves photos and film that match it, and it shows when it does.';
+  }
+  function defaultMail(l){
+    const where = /leeds/i.test(l.area || '') ? 'here in Leeds' : 'based in Leeds';
+    const subject = 'Photo and film for ' + l.name;
+    const body = [
+      'Hi there,',
+      '',
+      `I'm Jack, I run Aera, a small photo and film studio ${where}. I came across ${l.name} and wanted to get in touch.`,
+      '',
+      hookFor(l),
+      '',
+      'We shoot photo and short video together in one visit, so you come away with a month of posts, images for your website and a couple of reels, at a price that makes sense for an independent business rather than an agency budget.',
+      '',
+      'No pressure at all. If it would be useful, I can send over a few examples, or pop in for ten minutes and show you what I would shoot.',
+      '',
+      'Thanks,',
+      'Jack',
+      'Aera · aerastudios.org',
+      'bookings@aerastudios.org'
+    ].join('\n');
+    return { subject, body };
+  }
+  function mailFor(l){
+    const d = defaultMail(l);
+    return { subject: l.draftSubject || d.subject, body: l.draft || d.body };
+  }
+  function mailtoFor(l, m){
+    return 'mailto:' + encodeURIComponent(l.email || '') + '?subject=' + encodeURIComponent(m.subject) + '&body=' + encodeURIComponent(m.body);
+  }
+  function mailBlock(l){
+    const m = mailFor(l), id = esc(l.id);
+    return `<div class="mail"><div class="pl">Draft email${l.draft ? '<span>Saved</span>' : ''}</div>
+      <input id="ms-${id}" value="${esc(m.subject)}" aria-label="Subject">
+      <textarea id="mb-${id}" aria-label="Email">${esc(m.body)}</textarea>
+      <div class="acts">
+        <a class="btn" id="mo-${id}" href="${esc(mailtoFor(l, m))}">${l.email ? 'Open in Mail' : 'Open in Mail (no address yet)'}</a>
+        <button class="btn ghost" data-a="mail-copy" data-id="${id}">Copy</button>
+        <button class="btn ghost" data-a="mail-save" data-id="${id}">Save draft</button>
+        <button class="btn ghost" data-a="mail-reset" data-id="${id}">Start again</button>
+      </div></div>`;
+  }
+
   function card(l, i){
     const links = [
       ok(l.website)   && `<a href="${esc(l.website)}" target="_blank" rel="noopener noreferrer">Website ↗</a>`,
@@ -190,7 +257,7 @@ details.imp .row{display:flex;gap:10px;align-items:center;margin-top:10px}
       ${(l.signals||[]).length?`<div class="chips">${l.signals.map(x=>`<span>${esc(x)}</span>`).join('')}</div>`:''}
       ${l.assessment?`<p class="text">${esc(l.assessment)}</p>`:''}
       ${links?`<div class="links">${links}</div>`:''}
-      <div class="acts">${acts}</div>${l.status === 'Pursuing' ? pitchBlock(l) : ''}</article>`;
+      <div class="acts">${acts}<button class="btn ghost" data-a="mail" data-id="${esc(l.id)}">${openMail[l.id] ? 'Hide email' : 'Draft email'}</button></div>${openMail[l.id] ? mailBlock(l) : ''}${l.status === 'Pursuing' ? pitchBlock(l) : ''}</article>`;
   }
 
   function render(){
@@ -216,6 +283,18 @@ details.imp .row{display:flex;gap:10px;align-items:center;margin-top:10px}
   $('list').addEventListener('click', async e => {
     const b = e.target.closest('button[data-a]'); if (!b) return;
     const id = b.dataset.id, l = leads.find(x => x.id === id); if (!l) return;
+    if (b.dataset.a === 'mail'){ openMail[id] = !openMail[id]; render(); return; }
+    if (b.dataset.a.indexOf('mail-') === 0){
+      const subj = document.getElementById('ms-' + id), body = document.getElementById('mb-' + id);
+      if (b.dataset.a === 'mail-copy'){
+        try { await navigator.clipboard.writeText('Subject: ' + subj.value + '\n\n' + body.value); say('Email copied'); } catch(_){ say('Select the text and copy it'); }
+      } else if (b.dataset.a === 'mail-save'){
+        try { await setStatus(id, l.status, { draftSubject: subj.value, draft: body.value }); say('Draft saved'); render(); } catch(err){ say(err.message || 'Could not save'); }
+      } else if (b.dataset.a === 'mail-reset'){
+        try { await setStatus(id, l.status, { draftSubject: '', draft: '' }); say('Back to the starting draft'); render(); } catch(err){ say(err.message || 'Could not reset'); }
+      }
+      return;
+    }
     if (b.dataset.a.indexOf('pitch-') === 0){
       const a = b.dataset.a;
       if (a === 'pitch-request' || a === 'pitch-edit'){
@@ -245,6 +324,16 @@ details.imp .row{display:flex;gap:10px;align-items:center;margin-top:10px}
       else { await setStatus(id,'New'); say('Moved back to New'); }
       if (el){ el.classList.add('out'); setTimeout(render, 330); } else render();
     } catch(err){ b.disabled = false; say(err.message || 'Something went wrong'); }
+  });
+  // The email box grows to fit the whole draft, so nothing hides behind a scrollbar.
+  function fitMail(t){ t.style.height = 'auto'; t.style.height = (t.scrollHeight + 2) + 'px'; }
+  new MutationObserver(() => document.querySelectorAll('.mail textarea').forEach(fitMail)).observe($('list'), { childList: true, subtree: true });
+  $('list').addEventListener('input', e => {
+    if (e.target.matches('.mail textarea')) fitMail(e.target);
+    const m = e.target.id && e.target.id.match(/^m[sb]-(.+)$/); if (!m) return;
+    const l = leads.find(x => x.id === m[1]); if (!l) return;
+    const a = document.getElementById('mo-' + m[1]);
+    if (a) a.href = mailtoFor(l, { subject: document.getElementById('ms-' + m[1]).value, body: document.getElementById('mb-' + m[1]).value });
   });
   $('filters').addEventListener('click', e => { const b = e.target.closest('button[data-f]'); if (!b) return; filter = b.dataset.f; render(); });
   $('import').addEventListener('click', async () => {

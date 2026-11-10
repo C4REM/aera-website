@@ -51,6 +51,8 @@ function clean(body, existing = {}) {
     phone:      str(body.phone      ?? existing.phone,      30),
     email:      str(body.email      ?? existing.email,      80),
     assessment: str(body.assessment ?? existing.assessment, 700),
+    draftSubject: str(body.draftSubject ?? existing.draftSubject, 140),
+    draft:      str(body.draft      ?? existing.draft,      3000),
     signals,
     score:      pick(body.score ?? existing.score, SCORES, 'medium'),
     source:     str(body.source     ?? existing.source,     60),
