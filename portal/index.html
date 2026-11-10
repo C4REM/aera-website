@@ -728,6 +728,27 @@ input.need{border-color:rgba(201,123,110,.7)!important}
 .mt-form textarea{min-height:96px;font-size:14.5px;line-height:1.6;padding:12px 14px;resize:vertical;overflow:hidden;
   transition:min-height .25s ease,border-color .25s,background .25s}
 .mt-form textarea:focus{min-height:200px}
+/* job priority */
+.prihead{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+.prihint{font-size:12px;color:var(--stone)}
+.priempty{color:var(--stone);font-size:13.5px;padding:22px;text-align:center;background:var(--panel);border-radius:18px;margin-bottom:8px}
+.jobname{display:flex;align-items:center;gap:8px;min-width:0}
+.star{flex:none;background:none;border:0;color:var(--stone);font-size:17px;line-height:1;cursor:pointer;padding:2px;transition:color .2s,transform .15s}
+.star:hover{color:var(--champagne)}
+.star:active{transform:scale(.88)}
+.star[aria-pressed="true"]{color:var(--champagne)}
+.grip{flex:none;color:var(--stone);font-size:16px;line-height:1;cursor:grab;padding:4px 2px;touch-action:none;user-select:none}
+.grip:hover{color:var(--cream)}
+.job.lifting{box-shadow:0 18px 40px -16px rgba(0,0,0,.8)!important;background:var(--panel2);cursor:grabbing;animation:none}
+.job-ph{border:1px dashed var(--line2);border-radius:18px;margin-bottom:8px}
+.job.is-pri{box-shadow:inset 3px 0 0 0 var(--champagne)!important}
+details.others{margin-top:26px}
+details.others summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:9px;font-size:13px;color:var(--stone);padding:10px 0}
+details.others summary::-webkit-details-marker{display:none}
+details.others summary::before{content:"";width:6px;height:6px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(-45deg);transition:transform .2s}
+details.others[open] summary::before{transform:rotate(45deg)}
+details.others summary span{background:var(--panel2);border-radius:999px;padding:1px 9px;font-size:11.5px}
+details.others summary:hover{color:var(--cream)}
 /* edit mode */
 .mt-form .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:12px}
 .mt-form .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
@@ -1835,16 +1856,35 @@ input.need{border-color:rgba(201,123,110,.7)!important}
       board.innerHTML = `<div class="empty">${jobs.length ? 'Nothing active. Everything’s ticked off.' : 'No jobs yet. Add the first one above.'}</div>`;
       return;
     }
+    // Priority jobs first, in the order you've dragged them into. Everything
+    // else is tucked away (grouped by status) until you open it.
+    const pri = live.filter(j => j.priority).sort((a, b) => (a.rank ?? 9999) - (b.rank ?? 9999));
+    const rest = live.filter(j => !j.priority);
     const groups = ORDER
-      .map(s => [s, live.filter(j => j.status === s)])
+      .map(s => [s, rest.filter(j => j.status === s)])
       .filter(([, list]) => list.length);
 
-    board.innerHTML = groups.map(([status, list]) => `
-      <h3>${status} · ${list.length}</h3>
-      ${list.map(j => `
-        <div class="job" data-status="${esc(j.status)}">
+    board.innerHTML = `
+      <div class="prihead"><h3>Priority · ${pri.length}</h3>${pri.length > 1 ? '<span class="prihint">Drag ⠿ to reorder</span>' : ''}</div>
+      <div class="prilist" id="prilist">${pri.length ? pri.map(jobCard).join('') :
+        '<div class="priempty">Star a job (☆) to pin it here. Your priorities show first; everything else stays tucked away below.</div>'}</div>
+      ${rest.length ? `<details class="others" id="others"${othersOpen || !pri.length ? ' open' : ''}>
+        <summary>Everything else <span>${rest.length}</span></summary>
+        ${groups.map(([status, list]) => `<h3>${status} · ${list.length}</h3>${list.map(jobCard).join('')}`).join('')}
+      </details>` : ''}`;
+    const od = $('others'); if (od) od.addEventListener('toggle', () => { othersOpen = od.open; });
+  }
+
+  let othersOpen = false;
+  function jobCard(j){
+    return `
+        <div class="job${j.priority ? ' is-pri' : ''}" data-status="${esc(j.status)}" data-job="${esc(j.id)}">
           <div class="jobtop">
-            <div class="jobclient">${esc(j.client)}</div>
+            <div class="jobname">
+              ${j.priority ? `<span class="grip" data-grip="${esc(j.id)}" title="Drag to reorder" aria-label="Drag to reorder">⠿</span>` : ''}
+              <button type="button" class="star" data-star="${esc(j.id)}" aria-pressed="${!!j.priority}" title="${j.priority ? 'Remove from priority' : 'Make a priority'}">${j.priority ? '★' : '☆'}</button>
+              <div class="jobclient">${esc(j.client)}</div>
+            </div>
             <div class="jobright">
               <button type="button" class="pill2 jobstat" data-advance="${esc(j.id)}" title="Click to move to ${esc(ORDER[(ORDER.indexOf(j.status) + 1) % ORDER.length])}"
                       style="--c:${JOB_COLOUR[j.status] || '#C9C1B2'};--c-bg:color-mix(in srgb, ${JOB_COLOUR[j.status] || '#C9C1B2'} 16%, transparent)"><i></i>${esc(j.status)}</button>
@@ -1862,8 +1902,7 @@ input.need{border-color:rgba(201,123,110,.7)!important}
             <button data-edit="${esc(j.id)}">Edit</button>
             <button class="del" data-del="${esc(j.id)}">Delete</button>
           </div>
-        </div>`).join('')}
-    `).join('');
+        </div>`;
   }
 
   async function loadJobs(){
@@ -1928,6 +1967,55 @@ input.need{border-color:rgba(201,123,110,.7)!important}
     if (b.dataset.del) board.dispatchEvent(new CustomEvent('deljob', { detail: b.dataset.del }));
   });
   board.addEventListener('deljob', e => delJob(e.detail));
+
+  // ☆ / ★ — pin a job to the Priority list (it goes to the bottom of it).
+  board.addEventListener('click', async e => {
+    const st = e.target.closest('[data-star]'); if (!st) return;
+    e.stopImmediatePropagation();
+    const j = jobs.find(x => x.id === st.dataset.star); if (!j) return;
+    const on = !j.priority;
+    const maxRank = Math.max(-1, ...jobs.filter(x => x.priority).map(x => +x.rank || 0));
+    const prev = { priority: j.priority, rank: j.rank };
+    j.priority = on; if (on) j.rank = maxRank + 1;
+    renderJobs();
+    try {
+      const { jobs: list } = await api(JOBS_API, 'PUT', { id: j.id, priority: on, rank: j.rank ?? 9999 });
+      jobs = list; renderJobs(); toast(on ? `${j.client} pinned to priority` : `${j.client} unpinned`);
+    } catch { Object.assign(j, prev); renderJobs(); toast('Couldn’t save that'); }
+  });
+
+  // Drag ⠿ to reorder priority jobs. Pointer events, so mouse and touch both work.
+  let pdrag = null;
+  board.addEventListener('pointerdown', e => {
+    const g = e.target.closest('[data-grip]'); if (!g) return;
+    const card = g.closest('.job'), list = $('prilist'); if (!card || !list) return;
+    e.preventDefault();
+    const r = card.getBoundingClientRect();
+    pdrag = { card, list, startY: e.clientY, offset: e.clientY - r.top, ph: document.createElement('div') };
+    pdrag.ph.className = 'job-ph'; pdrag.ph.style.height = r.height + 'px';
+    card.after(pdrag.ph);
+    Object.assign(card.style, { position:'fixed', left: r.left + 'px', top: r.top + 'px', width: r.width + 'px', zIndex: 80, pointerEvents: 'none' });
+    card.classList.add('lifting');
+    g.setPointerCapture && g.setPointerCapture(e.pointerId);
+  });
+  window.addEventListener('pointermove', e => {
+    if (!pdrag) return;
+    pdrag.card.style.top = (e.clientY - pdrag.offset) + 'px';
+    const others = [...pdrag.list.querySelectorAll('.job')].filter(c => c !== pdrag.card);
+    let before = null;
+    for (const c of others){ const r = c.getBoundingClientRect(); if (e.clientY < r.top + r.height / 2){ before = c; break; } }
+    if (before) pdrag.list.insertBefore(pdrag.ph, before); else pdrag.list.appendChild(pdrag.ph);
+  });
+  window.addEventListener('pointerup', async () => {
+    if (!pdrag) return;
+    const { card, list, ph } = pdrag; pdrag = null;
+    ph.replaceWith(card);
+    card.removeAttribute('style'); card.classList.remove('lifting');
+    const order = [...list.querySelectorAll('.job')].map(c => c.dataset.job);
+    order.forEach((id, n) => { const j = jobs.find(x => x.id === id); if (j) j.rank = n; });
+    try { const { jobs: l } = await api(JOBS_API, 'PUT', { order }); jobs = l; toast('Order saved'); }
+    catch { toast('Couldn’t save the order'); renderJobs(); }
+  });
 
   // Same as the planner: tap the status to move it on one step. The pill
   // changes in place (colour cross-fades); the card only moves to its new group

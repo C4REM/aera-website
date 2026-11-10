@@ -49,6 +49,10 @@ function clean(body, existing = {}) {
     // Ticked off = finished with. Inactive jobs drop out of the planner's
     // project picker and sit under "Inactive" on the Jobs tab until added back.
     active:   body.active !== undefined ? !(body.active === false || body.active === 'false') : existing.active !== false,
+    // Priority jobs sit at the top of the Jobs tab in the order Jack drags them
+    // into; `rank` is that order (lower = higher up).
+    priority: body.priority !== undefined ? body.priority === true || body.priority === 'true' : existing.priority === true,
+    rank:     Number.isFinite(+body.rank) ? +body.rank : (Number.isFinite(+existing.rank) ? +existing.rank : 9999),
     updated:  new Date().toISOString()
   };
 }
@@ -95,6 +99,16 @@ export async function onRequest(context) {
       return json({ error: 'Client name is required' }, 400);
     }
     jobs.unshift(clean(body));
+    await kv.put(KEY, JSON.stringify(jobs));
+    return json({ jobs });
+  }
+
+  if (method === 'PUT' && Array.isArray(body.order)) {
+    // Reorder only: set each listed job's rank to its position, touch nothing else.
+    body.order.slice(0, 200).forEach((id, n) => {
+      const j = jobs.find(x => x.id === id);
+      if (j) j.rank = n;
+    });
     await kv.put(KEY, JSON.stringify(jobs));
     return json({ jobs });
   }
