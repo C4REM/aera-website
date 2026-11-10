@@ -701,6 +701,12 @@ input.need{border-color:rgba(201,123,110,.7)!important}
 #board.settle .job{animation:none}
 #board .job.moving{transition:opacity .25s ease}
 #board .job.moving.out{opacity:0}
+/* minutes boxes: roomy, grow with what's typed, bigger while you're in one */
+.mt-form textarea{min-height:96px;font-size:14.5px;line-height:1.6;padding:12px 14px;resize:vertical;overflow:hidden;
+  transition:min-height .25s ease,border-color .25s,background .25s}
+.mt-form textarea:focus{min-height:200px}
+.mt-form textarea[name=decisions]{min-height:110px}
+.mt-form textarea[name=decisions]:focus{min-height:200px}
 /* edit mode */
 .mt-form .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:12px}
 .mt-form .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
@@ -2293,6 +2299,13 @@ input.need{border-color:rgba(201,123,110,.7)!important}
       } catch { toast('Delete failed'); }
     }
   });
+
+  // Textareas size to their content so nothing hides behind a scrollbar.
+  function fitBox(t){ t.style.height = 'auto'; t.style.height = (t.scrollHeight + 2) + 'px'; }
+  $('mtdoc').addEventListener('input', e => { if (e.target.matches('.mt-form textarea')) fitBox(e.target); });
+  $('mtdoc').addEventListener('focusin', e => { if (e.target.matches('.mt-form textarea')) requestAnimationFrame(() => fitBox(e.target)); });
+  new MutationObserver(() => $('mtdoc').querySelectorAll('.mt-form textarea').forEach(fitBox))
+    .observe($('mtdoc'), { childList: true, subtree: true });
 
   $('mtdoc').addEventListener('submit', async e => {
     e.preventDefault();
