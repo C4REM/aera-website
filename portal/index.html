@@ -656,8 +656,19 @@ input.need{border-color:rgba(201,123,110,.7)!important}
 .mt-actrow .du{font-size:12px;color:var(--stone);white-space:nowrap;min-width:52px;text-align:right}
 .mt-foot{margin-top:24px;font-size:11.5px;color:var(--stone)}
 .mt-ag ul{grid-column:2;list-style:none;margin-top:2px}
-.mt-ag ul li{display:block;position:relative;padding:3px 0 3px 16px;border:0;color:var(--dim);font-size:13.5px}
-.mt-ag ul li::before{content:"";position:absolute;left:2px;top:12px;width:5px;height:5px;border-radius:50%;background:var(--stone)}
+.mt-ag ul li{display:flex;align-items:flex-start;gap:10px;padding:4px 0;border:0;color:var(--dim);font-size:13.5px;transition:opacity .3s ease,color .3s ease}
+.mt-ag ul li::before{display:none}
+.pt-tick{flex:none;width:17px;height:17px;margin-top:2px;border-radius:5px;border:1.5px solid var(--stone);background:none;cursor:pointer;padding:0;display:grid;place-items:center;color:var(--obsidian);font-size:10px;line-height:1;transition:background .2s,border-color .2s}
+.pt-tick:hover{border-color:var(--sage)}
+.mt-ag ul li.done{opacity:.42}
+.mt-ag ul li.done .pt-tick{background:var(--sage);border-color:var(--sage)}
+.mt-ag ul li.done .pt-tick::before{content:"\2713"}
+.mt-dec-ed{display:flex;flex-direction:column;gap:6px}
+.mt-dec-row{display:flex;align-items:center;gap:10px}
+.mt-dec-row::before{content:"";flex:none;width:7px;height:7px;border-radius:50%;background:var(--champagne);opacity:.7}
+.mt-dec-row input{flex:1}
+.mt-dec-row .x{background:none;border:0;color:var(--stone);cursor:pointer;font-size:18px;padding:4px}
+.mt-dec-row .x:hover{color:var(--rust)}
 .mt-files{display:flex;flex-wrap:wrap;gap:8px}
 .mt-file{display:inline-flex;align-items:center;gap:8px;background:var(--panel2);border-radius:999px;padding:8px 14px;font-size:13px;color:var(--cream);text-decoration:none;transition:background .2s}
 .mt-file:hover{background:var(--panel3)}
@@ -705,8 +716,6 @@ input.need{border-color:rgba(201,123,110,.7)!important}
 .mt-form textarea{min-height:96px;font-size:14.5px;line-height:1.6;padding:12px 14px;resize:vertical;overflow:hidden;
   transition:min-height .25s ease,border-color .25s,background .25s}
 .mt-form textarea:focus{min-height:200px}
-.mt-form textarea[name=decisions]{min-height:110px}
-.mt-form textarea[name=decisions]:focus{min-height:200px}
 /* edit mode */
 .mt-form .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:12px}
 .mt-form .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
@@ -2051,6 +2060,17 @@ input.need{border-color:rgba(201,123,110,.7)!important}
     }).join('');
   }
 
+  // Agenda notes: one point per line. A point ticked off in the minutes is
+  // stored with a leading "✓ " so it survives editing as plain text.
+  const DONE_RE = /^\s*(?:✓|\[x\])\s*/i;
+  function notePoints(notes){
+    return String(notes || '').split('\n').map((raw, line) => {
+      const done = DONE_RE.test(raw);
+      const text = raw.replace(DONE_RE, '').replace(/^[-•*]\s*/, '').trim();
+      return { line, done, text };
+    }).filter(p => p.text);
+  }
+
   function renderMtDoc(){
     const box = $('mtdoc');
     if (mtEditing){ renderMtForm(); return; }
@@ -2079,8 +2099,8 @@ input.need{border-color:rgba(201,123,110,.7)!important}
       ${(m.links || []).length ? `<h5>Pitches &amp; files</h5><div class="mt-files">${m.links.map(l =>
         `<a class="mt-file" href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label || l.url)}</a>`).join('')}</div>` : ''}
       <h5>Agenda &amp; discussion</h5>
-      ${(m.agenda || []).length ? `<ol class="mt-ag">${m.agenda.map(a => `<li><b>${esc(a.title)}</b>
-        ${a.notes ? `<ul>${a.notes.split('\n').map(s => s.replace(/^[-•*]\s*/, '').trim()).filter(Boolean).map(s => `<li>${esc(s)}</li>`).join('')}</ul>` : '<p class="tbc">Notes to add on the day</p>'}</li>`).join('')}</ol>`
+      ${(m.agenda || []).length ? `<ol class="mt-ag">${m.agenda.map((a, ai) => `<li><b>${esc(a.title)}</b>
+        ${a.notes ? `<ul>${notePoints(a.notes).map((pt, k) => `<li class="${pt.done ? 'done' : ''}"><button type="button" class="pt-tick" data-pt="${ai}:${pt.line}" aria-label="${pt.done ? 'Untick' : 'Tick off'}"></button><span>${esc(pt.text)}</span></li>`).join('')}</ul>` : '<p class="tbc">Notes to add on the day</p>'}</li>`).join('')}</ol>`
         : '<p class="mt-empty">No agenda yet.</p>'}
       <h5>Decisions</h5>
       ${decisions.length ? `<ul class="mt-dec">${decisions.map(x => `<li>${esc(x)}</li>`).join('')}</ul>`
@@ -2135,6 +2155,7 @@ input.need{border-color:rgba(201,123,110,.7)!important}
       <input type="date" class="mt-other" name="date" value="${esc(sel)}">`;
   }
 
+  const decRow = (v = '') => `<div class="mt-dec-row"><input data-dec placeholder="${v ? '' : 'Type a decision, Enter for the next one'}" value="${esc(v)}"><button type="button" class="x" data-rm aria-label="Remove">×</button></div>`;
   const lnkRow = (l = {}) => `<div class="mt-repitem lnk">
       <input data-k="label" placeholder="Name, e.g. Intro pitch" value="${esc(l.label)}">
       <input data-k="url" placeholder="https://…" value="${esc(l.url)}">
@@ -2164,7 +2185,8 @@ input.need{border-color:rgba(201,123,110,.7)!important}
       <div class="mt-rep" id="mtag">${(m.agenda || []).map(agRow).join('')}
         <button type="button" class="mt-add" data-add="ag">+ Add item</button></div>
       <h5>Decisions</h5>
-      <textarea name="decisions" rows="4" placeholder="One per line">${esc(m.decisions)}</textarea>
+      <div class="mt-dec-ed" id="mtdec">${(m.decisions || '').split('\n').map(x => x.replace(/^[-•*]\s*/, '').trim()).filter(Boolean).concat(['']).map(decRow).join('')}
+        <button type="button" class="mt-add" data-add="dec">+ Add decision</button></div>
       <h5>Actions</h5>
       <div class="mt-rep" id="mtacts">${(m.actions || []).map(actRow).join('')}
         <button type="button" class="mt-add" data-add="act">+ Add action</button></div>
@@ -2180,6 +2202,7 @@ input.need{border-color:rgba(201,123,110,.7)!important}
   function readMtForm(){
     const f = $('mtform');
     const fd = Object.fromEntries(new FormData(f));
+    fd.decisions = [...f.querySelectorAll('[data-dec]')].map(x => x.value.trim()).filter(Boolean).join('\n');
     fd.attendees = [...f.querySelectorAll('[data-person]:checked')].map(x => x.value).join(', ');
     fd.agenda = [...f.querySelectorAll('#mtag .mt-repitem')].map(r => ({
       title: r.querySelector('[data-k=title]').value, notes: r.querySelector('[data-k=notes]').value }));
@@ -2198,7 +2221,7 @@ input.need{border-color:rgba(201,123,110,.7)!important}
     L.push('Attending: ' + (m.attendees || 'TBC'));
     if ((m.links || []).length){ L.push('', 'PITCHES & FILES'); m.links.forEach(l => L.push(`- ${l.label}: ${l.url}`)); }
     L.push('', 'AGENDA & DISCUSSION');
-    (m.agenda || []).forEach((a, i) => { L.push(`${i + 1}. ${a.title}`); if (a.notes) a.notes.split('\n').filter(s => s.trim()).forEach(s => L.push('   - ' + s.replace(/^[-•*]\s*/, ''))); });
+    (m.agenda || []).forEach((a, i) => { L.push(`${i + 1}. ${a.title}`); notePoints(a.notes).forEach(pt => L.push(`   ${pt.done ? '[x]' : '-'} ${pt.text}`)); });
     L.push('', 'DECISIONS');
     const dec = (m.decisions || '').split('\n').filter(s => s.trim());
     L.push(...(dec.length ? dec.map(s => '- ' + s.replace(/^[-•*]\s*/, '')) : ['- None recorded']));
@@ -2267,11 +2290,26 @@ input.need{border-color:rgba(201,123,110,.7)!important}
     }
     const add = e.target.closest('[data-add]');
     if (add){
-      add.insertAdjacentHTML('beforebegin', add.dataset.add === 'ag' ? agRow() : add.dataset.add === 'lnk' ? lnkRow() : actRow());
+      add.insertAdjacentHTML('beforebegin', add.dataset.add === 'ag' ? agRow() : add.dataset.add === 'lnk' ? lnkRow() : add.dataset.add === 'dec' ? decRow() : actRow());
       add.previousElementSibling.querySelector('input').focus();
       return;
     }
-    if (e.target.closest('[data-rm]')){ e.target.closest('.mt-repitem').remove(); return; }
+    if (e.target.closest('[data-rm]')){ e.target.closest('.mt-repitem, .mt-dec-row').remove(); return; }
+
+    const pt = e.target.closest('[data-pt]');
+    if (pt){
+      const m = meetings.find(x => x.id === mtSel); if (!m) return;
+      const [ai, line] = pt.dataset.pt.split(':').map(Number);
+      const lines = String(m.agenda[ai].notes || '').split('\n');
+      const raw = lines[line] || '';
+      lines[line] = DONE_RE.test(raw) ? raw.replace(DONE_RE, '') : '✓ ' + raw.replace(/^[-•*]\s*/, '');
+      const before = m.agenda[ai].notes;
+      m.agenda[ai].notes = lines.join('\n');
+      pt.closest('li').classList.toggle('done');
+      try { await api(MEET_API, 'PUT', { id: m.id, agenda: m.agenda }); }
+      catch { m.agenda[ai].notes = before; renderMtDoc(); toast('Couldn’t save that'); }
+      return;
+    }
 
     const tick = e.target.closest('[data-tick]');
     if (tick){
@@ -2297,6 +2335,21 @@ input.need{border-color:rgba(201,123,110,.7)!important}
         meetings = list; mtEditing = null; mtSel = (meetings[0] || {}).id || null;
         renderMeetings(); toast('Meeting deleted');
       } catch { toast('Delete failed'); }
+    }
+  });
+
+  // Decisions behave like a bullet list: Enter adds the next one, Backspace on
+  // an empty one removes it and goes back up.
+  $('mtdoc').addEventListener('keydown', e => {
+    const inp = e.target.closest('[data-dec]'); if (!inp) return;
+    const row = inp.closest('.mt-dec-row');
+    if (e.key === 'Enter'){
+      e.preventDefault();
+      row.insertAdjacentHTML('afterend', decRow());
+      row.nextElementSibling.querySelector('input').focus();
+    } else if (e.key === 'Backspace' && !inp.value){
+      const prev = row.previousElementSibling;
+      if (prev && prev.classList.contains('mt-dec-row')){ e.preventDefault(); row.remove(); const pi = prev.querySelector('input'); pi.focus(); pi.setSelectionRange(pi.value.length, pi.value.length); }
     }
   });
 
