@@ -46,7 +46,8 @@ export async function onRequest({ request, env }) {
       people.push({ memberId, name: doc.name, key,
         open: items.filter(i => !i.done).length, done: items.filter(i => i.done).length });
     }
-    return json({ people });
+    const settings = await readJSON(kv, 'todo:settings', {});
+    return json({ people, igChat: settings.igChat || '' });
   }
 
   let body;
@@ -81,6 +82,17 @@ export async function onRequest({ request, env }) {
     }
     await kv.put('todo:keys', JSON.stringify(keys));
     return json({ keys: out });
+  }
+
+  if (request.method === 'PUT') {
+    // { igChat } — the team's Instagram group chat, where the links get sent.
+    const s = str(body.igChat, 300);
+    if (s && !/^https:\/\/(www\.)?(instagram\.com\/direct\/|ig\.me\/)/i.test(s))
+      return json({ error: 'That doesn’t look like an Instagram chat link' }, 400);
+    const settings = await readJSON(kv, 'todo:settings', {});
+    settings.igChat = s;
+    await kv.put('todo:settings', JSON.stringify(settings));
+    return json({ igChat: s });
   }
 
   if (request.method === 'DELETE') {

@@ -773,6 +773,10 @@ details.others summary:hover{color:var(--cream)}
 .td-new{font-size:12px;color:var(--stone);font-style:italic}
 .td-note{font-size:12.5px;color:var(--stone)}
 @media(max-width:620px){.td-row{grid-template-columns:26px 1fr}.td-row select{grid-column:2}}
+.td-gc{background:var(--panel2);border-radius:14px;padding:14px 16px}
+.td-gc pre{font-family:inherit;font-size:13px;color:var(--dim);white-space:pre-wrap;word-break:break-all;margin-bottom:12px;line-height:1.55}
+.td-gcacts,.td-gcset{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.td-gcset input{flex:1;min-width:220px}
 /* edit mode */
 .mt-form .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:12px}
 .mt-form .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
@@ -2203,7 +2207,17 @@ details.others summary:hover{color:var(--cream)}
   const TODO_API = '/portal/api/todos';
   let mtTodo = null, todoPeople = [];
   const todoUrl = key => location.origin + '/todo/#' + key;
-  async function loadTodoPeople(){ try { todoPeople = (await api(TODO_API, 'GET')).people || []; } catch { todoPeople = []; } }
+  let igChat = '';
+  async function loadTodoPeople(){ try { const d = await api(TODO_API, 'GET'); todoPeople = d.people || []; igChat = d.igChat || ''; } catch { todoPeople = []; } }
+
+  // One message with everyone's link, ready to paste into the team's Instagram GC.
+  function gcMessage(){
+    const T = mtTodo; if (!T) return '';
+    const lines = T.people.map(p => { const k = (todoPeople.find(x => x.memberId === p.memberId) || {}).key;
+      return k ? `${p.name.split(' ')[0]}: ${todoUrl(k)}` : null; }).filter(Boolean);
+    if (!lines.length) return '';
+    return [`To-do lists from ${T.meeting.title} (${mtDate(T.meeting.date).long})`, 'Open yours, tick things off as you go:', '', ...lines].join('\n');
+  }
 
   function attendeesAsMembers(m){
     const names = splitPpl(m.attendees);
@@ -2247,6 +2261,14 @@ details.others summary:hover{color:var(--cream)}
       <button type="button" class="mt-add" data-tdadd>+ Add task</button>
       ${T.links.length ? `<h5>Pitch decks &amp; files</h5><p class="td-hint">Everyone gets these on their list.</p>
         <div class="mt-ppl">${T.links.map((l, i) => `<label><input type="checkbox" data-tl="${i}"${l.on ? ' checked' : ''}><i></i>${esc(l.label || l.url)}</label>`).join('')}</div>` : ''}
+      <h5>Send to the group chat</h5>
+      ${gcMessage() ? `<div class="td-gc">
+        <pre>${esc(gcMessage())}</pre>
+        ${igChat ? `<div class="td-gcacts"><button class="btn sm" data-mtact="todo-gc">Copy &amp; open Instagram GC</button>
+          <button class="td-rot" data-mtact="todo-gc-change">Change chat</button></div>`
+        : `<div class="td-gcset"><input id="td-ig" placeholder="Paste the group chat link (instagram.com/direct/t/…)"><button class="btn ghost sm" data-mtact="todo-gc-save">Save</button></div>
+           <p class="td-hint">One-off: open the GC on instagram.com, copy the address from the browser bar, paste it here.</p>`}
+      </div>` : '<p class="td-hint">Create the lists first, then everyone\'s links appear here as one message for the GC.</p>'}
       <h5>Who gets a list</h5>
       <div class="td-people">${people.map(p => {
         const key = linkFor(p.memberId);
@@ -2569,6 +2591,19 @@ details.others summary:hover{color:var(--cream)}
     if (act.dataset.mtact === 'todo' && m){ openTodoPanel(m); return; }
     if (act.dataset.mtact === 'todo-back'){ mtTodo = null; renderMtDoc(); return; }
     if (act.dataset.mtact === 'todo-send'){ sendTodos(); return; }
+    if (act.dataset.mtact === 'todo-gc'){
+      // Instagram can't take pre-filled text, so copy first, then open the chat to paste.
+      try { await navigator.clipboard.writeText(gcMessage()); toast('Copied. Paste it in the chat'); } catch { toast('Copy the message above, then paste it'); }
+      window.open(igChat, '_blank', 'noopener');
+      return;
+    }
+    if (act.dataset.mtact === 'todo-gc-change'){ igChat = ''; renderTodoPanel(); return; }
+    if (act.dataset.mtact === 'todo-gc-save'){
+      const v = ($('td-ig') || {}).value || '';
+      try { igChat = (await api(TODO_API, 'PUT', { igChat: v.trim() })).igChat; renderTodoPanel(); toast('Group chat saved'); }
+      catch (err) { toast(err.message || 'Couldn’t save that'); }
+      return;
+    }
     if (act.dataset.mtact === 'todo-copy'){ const t = act.dataset.text; navigator.clipboard.writeText(t).then(() => toast('Link copied')).catch(() => toast('Copy failed')); return; }
     if (act.dataset.mtact === 'todo-rotate'){
       if (!confirm('Make a new link for ' + act.dataset.name + '? Their old link will stop working.')) return;
