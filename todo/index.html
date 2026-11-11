@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="referrer" content="no-referrer">
+<title>Your list — Aera</title>
+<link rel="icon" type="image/svg+xml" href="/assets/img/logo/aera-monogram-favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+/* A person's private to-do list. Opened from their own link (/todo/#key);
+   the key never leaves the browser except in a request header. */
+:root{
+  --obsidian:#0F0E0D; --panel:#171614; --panel2:#1F1D1A; --panel3:#262420; --line:#2A2824;
+  --cream:#EADFCD; --dim:#B7AE9C; --stone:#8C887F; --champagne:#CDB386; --sage:#8FB08A; --rust:#C97B6E;
+  --display:'Playfair Display',Georgia,serif; --sans:'Inter',-apple-system,sans-serif;
+  --ease:cubic-bezier(.16,1,.3,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{background:var(--obsidian)}
+body{background:radial-gradient(circle at 22% -8%,#1a1815 0%,#0F0E0D 55%) fixed;color:var(--cream);font-family:var(--sans);font-weight:300;font-size:15px;line-height:1.6;min-height:100vh}
+a{color:inherit}
+.wrap{max-width:760px;margin:0 auto;padding:max(28px,env(safe-area-inset-top)) 22px 70px}
+.top{display:flex;align-items:center;gap:10px;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--stone)}
+.top svg{width:20px;height:20px}
+h1{font-family:var(--display);font-weight:500;font-size:clamp(2.1rem,7vw,3rem);line-height:1.05;margin:26px 0 8px;animation:rise .6s var(--ease) backwards}
+.lede{color:var(--stone);font-size:14px;margin-bottom:30px}
+.bar{height:4px;background:var(--panel2);border-radius:999px;overflow:hidden;margin:-12px 0 30px}
+.bar i{display:block;height:100%;background:var(--sage);border-radius:999px;transition:width .5s var(--ease)}
+h2{font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--champagne);font-weight:400;margin:34px 0 12px}
+.group{background:var(--panel);border-radius:18px;padding:6px 18px;margin-bottom:10px;animation:rise .5s var(--ease) backwards}
+.group .from{font-size:11.5px;color:var(--stone);padding:12px 0 2px}
+.task{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.04);transition:opacity .3s ease}
+.task:last-child{border-bottom:0}
+.task.done{opacity:.42}
+.tick{flex:none;width:22px;height:22px;margin-top:1px;border-radius:7px;border:1.5px solid var(--stone);background:none;cursor:pointer;display:grid;place-items:center;color:var(--obsidian);font-size:12px;transition:background .2s,border-color .2s}
+.tick:hover{border-color:var(--sage)}
+.task.done .tick{background:var(--sage);border-color:var(--sage)}
+.task.done .tick::before{content:"\2713"}
+.task .t{font-size:15px;color:var(--cream)}
+.task.done .t{text-decoration:line-through;text-decoration-color:rgba(143,176,138,.6)}
+.task .tl{display:flex;gap:10px;flex-wrap:wrap;margin-top:4px}
+.task .tl a{font-size:12.5px;color:var(--champagne);text-decoration:none}
+.files{display:flex;flex-direction:column;gap:6px}
+.file{display:flex;justify-content:space-between;align-items:center;gap:12px;background:var(--panel);border-radius:14px;padding:13px 16px;text-decoration:none;color:var(--cream);font-size:14px;transition:background .2s}
+.file:hover{background:var(--panel2)}
+.file::after{content:"\2197";color:var(--champagne)}
+.team{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,220px),1fr));gap:10px}
+.who{background:var(--panel);border-radius:16px;padding:14px 16px}
+.who.me{box-shadow:inset 0 0 0 1px rgba(205,179,134,.35)}
+.who b{display:block;font-weight:500;font-size:14px;margin-bottom:6px}
+.who b small{font-weight:300;color:var(--champagne);font-size:11.5px;margin-left:6px}
+.who ul{list-style:none}
+.who li{font-size:13px;color:var(--dim);padding:2px 0 2px 12px;position:relative}
+.who li::before{content:"";position:absolute;left:0;top:10px;width:4px;height:4px;border-radius:50%;background:var(--stone)}
+.who li.job{color:var(--cream)}
+.who li.job::before{background:var(--champagne)}
+.who li.job span{color:var(--stone);font-size:11.5px;margin-left:5px}
+.who .none{font-size:12.5px;color:var(--stone);font-style:italic}
+.empty{color:var(--stone);font-size:14px;background:var(--panel);border-radius:18px;padding:26px;text-align:center}
+.foot{margin-top:40px;font-size:12px;color:var(--stone)}
+@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+:focus-visible{outline:2px solid var(--champagne);outline-offset:2px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <svg viewBox="61 51 78 98" fill="none" aria-hidden="true"><path d="M100,52 L138,100 L100,148 L62,100 Z" stroke="#CDB386" stroke-width="1.5" opacity=".5"/><path d="M100,60 L70,100 L130,100 Z M100,140 L70,100 M130,100 L100,140 M82,85 L118,85 M82,115 L118,115" stroke="#CDB386" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    Aera · Your list
+  </div>
+  <div id="app"><h1>Loading…</h1></div>
+</div>
+<script>
+(function(){
+  'use strict';
+  const app = document.getElementById('app');
+  const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const ok = u => /^https?:\/\//i.test(u || '');
+  // Key lives in the #hash so it is never sent to the server in the URL.
+  const key = (location.hash || '').replace(/^#/, '').trim();
+  let data = null;
+
+  async function call(method, body){
+    const res = await fetch('/api/todo', { method, cache: 'no-store',
+      headers: Object.assign({ 'X-Todo-Key': key }, body ? { 'Content-Type': 'application/json' } : {}),
+      body: body ? JSON.stringify(body) : undefined });
+    if (!res.ok) throw new Error(res.status);
+    return res.json();
+  }
+
+  const niceDate = d => { if (!d) return ''; const x = new Date(d + 'T12:00:00'); return isNaN(x) ? d : x.toLocaleDateString('en-GB', { day:'numeric', month:'short' }); };
+
+  function render(){
+    const items = data.items || [];
+    const done = items.filter(i => i.done).length;
+    const first = (data.name || '').split(' ')[0];
+    // group by meeting, newest first
+    const groups = {};
+    items.forEach(i => { const k = i.meetingId || 'other'; (groups[k] = groups[k] || { title: i.meetingTitle, date: i.meetingDate, items: [] }).items.push(i); });
+    const gl = Object.values(groups).sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+    app.innerHTML = `
+      <h1>${esc(first)}, here's your list.</h1>
+      <p class="lede">${items.length ? `${items.length - done} to do · ${done} done. This is your private link.` : 'Nothing on your list right now.'}</p>
+      ${items.length ? `<div class="bar"><i style="width:${Math.round(done / items.length * 100)}%"></i></div>` : ''}
+      <h2>Your tasks</h2>
+      ${gl.length ? gl.map((g, gi) => `<div class="group" style="animation-delay:${gi * 60}ms">
+        <div class="from">From ${esc(g.title || 'a meeting')}${g.date ? ' · ' + esc(niceDate(g.date)) : ''}</div>
+        ${g.items.map(i => `<div class="task${i.done ? ' done' : ''}">
+          <button class="tick" data-id="${esc(i.id)}" aria-label="${i.done ? 'Mark not done' : 'Mark done'}"></button>
+          <div><div class="t">${esc(i.text)}</div>
+          ${(i.links || []).filter(l => ok(l.url)).length ? `<div class="tl">${i.links.filter(l => ok(l.url)).map(l => `<a href="${esc(l.url)}" target="_blank" rel="noopener noreferrer">${esc(l.label || 'Link')} ↗</a>`).join('')}</div>` : ''}</div>
+        </div>`).join('')}</div>`).join('') : '<div class="empty">No tasks yet.</div>'}
+      <h2>Pitch decks &amp; links</h2>
+      ${(data.files || []).filter(f => ok(f.url)).length ? `<div class="files">${data.files.filter(f => ok(f.url)).map(f => `<a class="file" href="${esc(f.url)}" target="_blank" rel="noopener noreferrer">${esc(f.label || f.url)}</a>`).join('')}</div>` : '<div class="empty">Nothing shared yet.</div>'}
+      <h2>Who's working on what</h2>
+      <div class="team">${(data.team || []).map(t => `<div class="who${t.me ? ' me' : ''}"><b>${esc((t.name || '').split(' ')[0])}${t.me ? '<small>you</small>' : ''}</b>
+        ${(t.jobs || []).length || (t.tasks || []).length ? `<ul>${(t.jobs || []).map(j => `<li class="job">${esc(j.client)}<span>${esc(j.status)}</span></li>`).join('')}${(t.tasks || []).slice(0, 6).map(x => `<li>${esc(x)}</li>`).join('')}${(t.tasks || []).length > 6 ? `<li>+${t.tasks.length - 6} more</li>` : ''}</ul>` : '<div class="none">Nothing open</div>'}
+      </div>`).join('')}</div>
+      <p class="foot">Keep this link to yourself. Ticks save as you go.</p>`;
+  }
+
+  app.addEventListener('click', async e => {
+    const b = e.target.closest('.tick'); if (!b) return;
+    const it = data.items.find(i => i.id === b.dataset.id); if (!it) return;
+    it.done = !it.done;
+    const me = (data.team || []).find(t => t.me); if (me) me.tasks = data.items.filter(i => !i.done).map(i => i.text);
+    render();
+    try { await call('PUT', { id: it.id, done: it.done }); }
+    catch { it.done = !it.done; render(); }
+  });
+
+  (async () => {
+    if (!/^[a-f0-9]{36}$/.test(key)){ app.innerHTML = '<h1>Link not recognised.</h1><p class="lede">Ask Jack for your personal link.</p>'; return; }
+    try { data = await call('GET'); render(); }
+    catch { app.innerHTML = '<h1>Link not recognised.</h1><p class="lede">This link may have been replaced. Ask Jack for your current one.</p>'; }
+  })();
+})();
+</script>
+</body>
+</html>

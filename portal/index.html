@@ -749,6 +749,30 @@ details.others summary::before{content:"";width:6px;height:6px;border-right:1.5p
 details.others[open] summary::before{transform:rotate(45deg)}
 details.others summary span{background:var(--panel2);border-radius:999px;padding:1px 9px;font-size:11.5px}
 details.others summary:hover{color:var(--cream)}
+/* to-do lists panel */
+.td-hint{font-size:12.5px;color:var(--stone);margin:-4px 0 12px}
+.td-list{display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
+.td-row{display:grid;grid-template-columns:26px 1fr 150px;gap:10px;align-items:center;background:var(--panel2);border-radius:12px;padding:6px 10px;transition:opacity .25s}
+.td-row.off{opacity:.45}
+.td-row input[data-tk=text]{background:none;border:0;padding:6px 2px;font-size:14px}
+.td-row select{padding:7px 10px;font-size:13px}
+.td-on{display:grid;place-items:center;margin:0;cursor:pointer}
+.td-on input{position:absolute;opacity:0;width:0;height:0}
+.td-on i{width:18px;height:18px;border-radius:6px;border:1.5px solid var(--stone);display:grid;place-items:center;font-style:normal;font-size:10px;color:var(--obsidian);transition:all .2s}
+.td-on input:checked+i{background:var(--champagne);border-color:var(--champagne)}
+.td-on input:checked+i::before{content:"\2713"}
+.td-on input:focus-visible+i{outline:2px solid var(--champagne);outline-offset:2px}
+.td-people{display:flex;flex-direction:column;gap:6px}
+.td-person{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;background:var(--panel2);border-radius:14px;padding:12px 14px}
+.td-person b{font-weight:500;font-size:14px;margin-right:10px}
+.td-person span{font-size:12.5px;color:var(--stone)}
+.td-link{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.td-link a.btn{text-decoration:none}
+.td-rot{background:none;border:0;color:var(--stone);font:inherit;font-size:12px;cursor:pointer;padding:4px 6px}
+.td-rot:hover{color:var(--rust)}
+.td-new{font-size:12px;color:var(--stone);font-style:italic}
+.td-note{font-size:12.5px;color:var(--stone)}
+@media(max-width:620px){.td-row{grid-template-columns:26px 1fr}.td-row select{grid-column:2}}
 /* edit mode */
 .mt-form .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:12px}
 .mt-form .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
@@ -2171,9 +2195,114 @@ details.others summary:hover{color:var(--cream)}
     }).filter(p => p.text);
   }
 
+  /* ================================================================
+     TO-DO LISTS FROM A MEETING
+     Pick who does what, then each attendee gets a private link
+     (/todo/#key) showing only their tasks, who's on what, and the decks.
+     ================================================================ */
+  const TODO_API = '/portal/api/todos';
+  let mtTodo = null, todoPeople = [];
+  const todoUrl = key => location.origin + '/todo/#' + key;
+  async function loadTodoPeople(){ try { todoPeople = (await api(TODO_API, 'GET')).people || []; } catch { todoPeople = []; } }
+
+  function attendeesAsMembers(m){
+    const names = splitPpl(m.attendees);
+    return names.map(n => {
+      const mem = members.find(x => x.name === n || first(x.name) === first(n));
+      return { memberId: mem ? mem.id : first(n).replace(/[^a-z0-9]/g, ''), name: mem ? mem.name : n };
+    }).filter((p, i, arr) => p.memberId && arr.findIndex(q => q.memberId === p.memberId) === i);
+  }
+
+  async function openTodoPanel(m){
+    const people = attendeesAsMembers(m);
+    const ownerFor = o => { const p = people.find(x => first(x.name) === first(o)); return p ? p.memberId : ''; };
+    const tasks = (m.actions || []).filter(a => !a.done).map(a => ({ on: true, text: a.text, owner: ownerFor(a.owner), due: a.due || '' }));
+    // Open agenda points are offered too, unticked, in case some are really tasks.
+    (m.agenda || []).forEach(a => notePoints(a.notes).filter(pt => !pt.done).forEach(pt => tasks.push({ on: false, text: pt.text, owner: '', due: '' })));
+    mtTodo = { meeting: m, people, tasks, links: (m.links || []).map(l => ({ ...l, on: true })), sent: null };
+    renderTodoPanel();
+    await loadTodoPeople(); renderTodoPanel();
+  }
+
+  function todoRow(t, i, people){
+    return `<div class="td-row${t.on ? '' : ' off'}" data-ti="${i}">
+      <label class="td-on"><input type="checkbox" data-tk="on"${t.on ? ' checked' : ''}><i></i></label>
+      <input data-tk="text" value="${esc(t.text)}" placeholder="Task">
+      <select data-tk="owner"><option value="">Who?</option><option value="*"${t.owner === '*' ? ' selected' : ''}>Everyone</option>
+        ${people.map(p => `<option value="${esc(p.memberId)}"${t.owner === p.memberId ? ' selected' : ''}>${esc(p.name.split(' ')[0])}</option>`).join('')}</select>
+    </div>`;
+  }
+
+  function renderTodoPanel(){
+    const T = mtTodo; if (!T) return;
+    const { meeting: m, people } = T;
+    const linkFor = id => (todoPeople.find(p => p.memberId === id) || {}).key;
+    const counts = id => T.tasks.filter(t => t.on && t.text.trim() && (t.owner === id || t.owner === '*')).length;
+    $('mtdoc').innerHTML = `<div class="mt-doc td-panel">
+      <div class="mt-head"><div><h4>To-do lists</h4><div class="mt-when">From ${esc(m.title)} · ${esc(mtDate(m.date).long)}</div></div>
+        <div class="mt-acts"><button class="btn ghost sm" data-mtact="todo-back">Back to minutes</button></div></div>
+      <h5>Tasks</h5>
+      <p class="td-hint">Tick the ones that are real tasks, then pick who's doing each. Actions from the minutes are ticked already; open agenda points are listed underneath in case you want them.</p>
+      <div class="td-list">${T.tasks.map((t, i) => todoRow(t, i, people)).join('')}</div>
+      <button type="button" class="mt-add" data-tdadd>+ Add task</button>
+      ${T.links.length ? `<h5>Pitch decks &amp; files</h5><p class="td-hint">Everyone gets these on their list.</p>
+        <div class="mt-ppl">${T.links.map((l, i) => `<label><input type="checkbox" data-tl="${i}"${l.on ? ' checked' : ''}><i></i>${esc(l.label || l.url)}</label>`).join('')}</div>` : ''}
+      <h5>Who gets a list</h5>
+      <div class="td-people">${people.map(p => {
+        const key = linkFor(p.memberId);
+        return `<div class="td-person"><div><b>${esc(p.name)}</b><span>${counts(p.memberId)} task${counts(p.memberId) === 1 ? '' : 's'}</span></div>
+          ${key ? `<div class="td-link"><button class="btn ghost sm" data-mtact="todo-copy" data-text="${esc(todoUrl(key))}">Copy link</button>
+            <a class="btn ghost sm" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent('Your Aera to-do list from ' + m.title + ': ' + todoUrl(key))}">WhatsApp</a>
+            <a class="btn ghost sm" target="_blank" rel="noopener" href="${esc(todoUrl(key))}">Open</a>
+            <button class="td-rot" data-mtact="todo-rotate" data-member="${esc(p.memberId)}" data-name="${esc(p.name)}" title="Make a new link; the old one stops working">New link</button></div>`
+            : '<span class="td-new">Link made when you create the lists</span>'}</div>`;
+      }).join('') || '<p class="mt-empty">Nobody is ticked as attending.</p>'}</div>
+      <div class="formfoot">
+        <button class="btn" data-mtact="todo-send">${T.sent ? 'Update lists' : 'Create lists'}</button>
+        <span class="td-note">${T.sent ? 'Lists updated. Send each person their link.' : 'Sending again for this meeting replaces its tasks, keeping anything already ticked.'}</span>
+      </div></div>`;
+  }
+
+  // keep the panel's model in sync with what's typed/picked
+  $('mtdoc').addEventListener('change', e => {
+    if (!mtTodo) return;
+    const row = e.target.closest('[data-ti]');
+    if (row){ const t = mtTodo.tasks[+row.dataset.ti]; const k = e.target.dataset.tk;
+      if (k === 'on'){ t.on = e.target.checked; row.classList.toggle('off', !t.on); }
+      if (k === 'owner') t.owner = e.target.value;
+      if (k === 'on' || k === 'owner') renderTodoPanel();
+      return; }
+    if (e.target.dataset.tl !== undefined) mtTodo.links[+e.target.dataset.tl].on = e.target.checked;
+  });
+  $('mtdoc').addEventListener('input', e => {
+    if (!mtTodo) return;
+    const row = e.target.closest('[data-ti]');
+    if (row && e.target.dataset.tk === 'text') mtTodo.tasks[+row.dataset.ti].text = e.target.value;
+  });
+  $('mtdoc').addEventListener('click', e => {
+    if (!mtTodo || !e.target.closest('[data-tdadd]')) return;
+    mtTodo.tasks.push({ on: true, text: '', owner: '', due: '' }); renderTodoPanel();
+    const rows = $('mtdoc').querySelectorAll('.td-row'); rows[rows.length - 1].querySelector('[data-tk=text]').focus();
+  });
+
+  async function sendTodos(){
+    const T = mtTodo; if (!T) return;
+    const live = T.tasks.filter(t => t.on && t.text.trim());
+    const unowned = live.filter(t => !t.owner);
+    if (unowned.length){ toast(unowned.length + ' task' + (unowned.length > 1 ? 's need' : ' needs') + ' someone'); return; }
+    const people = T.people.map(p => ({ memberId: p.memberId, name: p.name,
+      items: live.filter(t => t.owner === p.memberId || t.owner === '*').map(t => ({ text: t.text.trim() + (t.due ? ' (by ' + shortDue(t.due) + ')' : '') })) }));
+    try {
+      await api(TODO_API, 'POST', { meeting: { id: T.meeting.id, title: T.meeting.title, date: T.meeting.date },
+        links: T.links.filter(l => l.on).map(l => ({ label: l.label, url: l.url })), people });
+      T.sent = true; await loadTodoPeople(); renderTodoPanel(); toast('To-do lists ready');
+    } catch { toast('Couldn’t create the lists'); }
+  }
+
   function renderMtDoc(){
     const box = $('mtdoc');
     if (mtEditing){ renderMtForm(); return; }
+    if (mtTodo){ renderTodoPanel(); return; }
     const m = meetings.find(x => x.id === mtSel);
     if (!m){
       box.innerHTML = '<div class="empty">No meetings yet. Start one with “+ New meeting”.</div>';
@@ -2189,6 +2318,7 @@ details.others summary:hover{color:var(--cream)}
           <div class="mt-when">${when}</div>
         </div>
         <div class="mt-acts">
+          <button class="btn sm" data-mtact="todo">To-do lists</button>
           <button class="btn ghost sm" data-mtact="copy">Copy as text</button>
           <button class="btn ghost sm" data-mtact="edit">Edit</button>
         </div>
@@ -2363,6 +2493,7 @@ details.others summary:hover{color:var(--cream)}
   }
 
   $('newmeetingbtn').addEventListener('click', () => {
+    mtTodo = null;
     if (!mtReady) return;
     const last = [...meetings].sort((a, b) => (b.date || '').localeCompare(a.date || ''))[0];
     const carried = last ? (last.actions || []).filter(a => !a.done).map(a => ({ ...a, id: undefined })) : [];
@@ -2377,7 +2508,7 @@ details.others summary:hover{color:var(--cream)}
 
   $('mtlist').addEventListener('click', e => {
     const b = e.target.closest('[data-mt]'); if (!b) return;
-    mtSel = b.dataset.mt; mtEditing = null; renderMeetings();
+    mtSel = b.dataset.mt; mtEditing = null; mtTodo = null; renderMeetings();
   });
 
   $('mtdoc').addEventListener('click', async e => {
@@ -2435,6 +2566,15 @@ details.others summary:hover{color:var(--cream)}
 
     const act = e.target.closest('[data-mtact]'); if (!act) return;
     const m = meetings.find(x => x.id === mtSel);
+    if (act.dataset.mtact === 'todo' && m){ openTodoPanel(m); return; }
+    if (act.dataset.mtact === 'todo-back'){ mtTodo = null; renderMtDoc(); return; }
+    if (act.dataset.mtact === 'todo-send'){ sendTodos(); return; }
+    if (act.dataset.mtact === 'todo-copy'){ const t = act.dataset.text; navigator.clipboard.writeText(t).then(() => toast('Link copied')).catch(() => toast('Copy failed')); return; }
+    if (act.dataset.mtact === 'todo-rotate'){
+      if (!confirm('Make a new link for ' + act.dataset.name + '? Their old link will stop working.')) return;
+      try { await api(TODO_API, 'DELETE', { memberId: act.dataset.member }); await loadTodoPeople(); renderTodoPanel(); toast('New link made'); } catch { toast('Couldn’t do that'); }
+      return;
+    }
     if (act.dataset.mtact === 'edit' && m){ mtEditing = JSON.parse(JSON.stringify(m)); renderMtDoc(); }
     if (act.dataset.mtact === 'cancel'){ mtEditing = null; renderMtDoc(); }
     if (act.dataset.mtact === 'copy' && m){
