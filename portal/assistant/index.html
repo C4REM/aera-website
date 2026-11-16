@@ -306,7 +306,8 @@ details.imp .row{display:flex;gap:10px;align-items:center;margin-top:10px}
       } else if (a === 'pitch-link'){ shown[id] = Object.assign({}, shown[id], { link: true }); render(); }
       else if (a === 'pitch-save'){
         const inp = document.getElementById('pl-' + id);
-        try { await setStatus(id, 'Pursuing', { pitchUrl: inp ? inp.value.trim() : '' }); const now = leads.find(x => x.id === id); if (now && now.pitchUrl){ delete shown[id]; say('Pitch link saved'); } else say('That is not a Claude artifact link.'); render(); }
+        try { await setStatus(id, 'Pursuing', { pitchUrl: inp ? inp.value.trim() : '' }); const now = leads.find(x => x.id === id);
+          if (now && now.pitchUrl && now.jobId){ try { await api(JOBS, 'PUT', { id: now.jobId, pitchUrl: now.pitchUrl }); } catch(_){} } if (now && now.pitchUrl){ delete shown[id]; say('Pitch link saved'); } else say('That is not a Claude artifact link.'); render(); }
         catch(err){ say(err.message || 'Could not save'); }
       }
       return;
@@ -316,7 +317,7 @@ details.imp .row{display:flex;gap:10px;align-items:center;margin-top:10px}
     try {
       if (b.dataset.a === 'pursue'){
         const notes = ['Lead from Assistant.', l.assessment, [l.phone,l.email].filter(Boolean).join(' · ')].filter(Boolean).join(' ').slice(0,600);
-        const res = await api(JOBS,'POST',{ client:l.name, type:l.type||'Lead', status:'Enquiry', notes });
+        const res = await api(JOBS,'POST',{ client:l.name, type:l.type||'Lead', status:'Enquiry', notes, pitchUrl: l.pitchUrl || '' });
         const jobId = (res.jobs && res.jobs[0] && res.jobs[0].id) || '';
         await setStatus(id,'Pursuing',{ jobId });
         say('Added to Jobs as an enquiry', { href:'/portal/', text:'Open Jobs' });

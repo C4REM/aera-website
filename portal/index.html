@@ -777,6 +777,30 @@ details.others summary:hover{color:var(--cream)}
 .td-gc pre{font-family:inherit;font-size:13px;color:var(--dim);white-space:pre-wrap;word-break:break-all;margin-bottom:12px;line-height:1.55}
 .td-gcacts,.td-gcset{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .td-gcset input{flex:1;min-width:220px}
+.jobacts .jobpitch{color:var(--champagne);text-decoration:none;font-size:12.5px;margin-right:4px}
+.jobacts .jobpitch:hover{text-decoration:underline}
+/* week: important / urgent highlights */
+.task{position:relative}
+.task .top{position:relative}
+.flagbtn{position:absolute;top:-3px;right:-4px;width:20px;height:20px;border-radius:50%;border:0;background:rgba(255,255,255,.06);color:var(--stone);
+  font:600 11px/1 var(--sans);cursor:pointer;opacity:0;transition:opacity .2s,background .2s,color .2s;z-index:2}
+.task:hover .flagbtn,.flagbtn:focus-visible{opacity:1}
+.flagbtn:hover{background:rgba(255,255,255,.12);color:var(--cream)}
+@media(hover:none){.flagbtn{opacity:.55}}
+.task .txt{padding-right:16px}
+.flagtag{align-self:flex-start;font:500 9.5px/1 var(--sans);letter-spacing:.12em;text-transform:uppercase;padding:4px 7px;border-radius:999px;margin-bottom:1px}
+.task.flag-important{box-shadow:inset 0 0 0 1.5px rgba(205,179,134,.75)!important}
+.task.flag-important .flagtag{background:rgba(205,179,134,.18);color:#E3CB9B}
+.task.flag-important .flagbtn{opacity:1;background:rgba(205,179,134,.22);color:#E3CB9B}
+.task.flag-urgent{box-shadow:inset 0 0 0 1.5px rgba(214,98,82,.9),0 0 0 3px rgba(214,98,82,.14)!important;background:color-mix(in srgb,#D66252 16%,#1F1D1A)!important}
+.task.flag-urgent .flagtag{background:#D66252;color:#1a0f0d;font-weight:600}
+.task.flag-urgent .flagbtn{opacity:1;background:#D66252;color:#1a0f0d}
+.flagseg{display:inline-flex;background:var(--panel2);border-radius:999px;padding:3px;gap:2px}
+.flagseg button{background:none;border:0;border-radius:999px;color:var(--stone);font:inherit;font-size:12.5px;padding:7px 14px;cursor:pointer;transition:background .2s,color .2s}
+.flagseg button:hover{color:var(--cream)}
+.flagseg button[aria-checked="true"]{background:var(--panel3);color:var(--cream)}
+.flagseg button[data-fv="important"][aria-checked="true"]{background:rgba(205,179,134,.22);color:#E3CB9B}
+.flagseg button[data-fv="urgent"][aria-checked="true"]{background:#D66252;color:#1a0f0d}
 /* edit mode */
 .mt-form .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:12px}
 .mt-form .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
@@ -904,6 +928,10 @@ details.others summary:hover{color:var(--cream)}
         <option>Social content</option><option>Portraits</option><option>Graphic design</option>
       </datalist>
       <datalist id="people"></datalist>
+      <div style="margin-top:12px">
+        <label for="f-pitch">Pitch deck link</label>
+        <input id="f-pitch" name="pitchUrl" type="url" placeholder="https://claude.ai/artifact/…">
+      </div>
       <div style="margin-top:12px">
         <label for="f-notes">Notes</label>
         <textarea id="f-notes" name="notes" placeholder="Location, kit needed, deadline, anything the other person would need to know."></textarea>
@@ -1057,6 +1085,14 @@ details.others summary:hover{color:var(--cream)}
           <option>Done</option><option>Blocked</option>
         </select>
         <div class="statushint" id="tm-statushint"></div>
+      </div>
+      <div class="row">
+        <label>Highlight</label>
+        <div class="flagseg" id="tm-flag" role="radiogroup" aria-label="Highlight">
+          <button type="button" data-fv="" aria-checked="true" role="radio">None</button>
+          <button type="button" data-fv="important" aria-checked="false" role="radio">★ Important</button>
+          <button type="button" data-fv="urgent" aria-checked="false" role="radio">! Urgent</button>
+        </div>
       </div>
       <div class="row two optional">
         <div>
@@ -1307,10 +1343,12 @@ details.others summary:hover{color:var(--cream)}
           const cyc = `${esc(st)} — click to advance`;
           const i = cardIndex++;
           return `
-          <div class="task ${enter?'enter':''}" style="--i:${i};--c:${col}"
+          <div class="task ${enter?'enter':''}${t.flag ? ' flag-' + esc(t.flag) : ''}" style="--i:${i};--c:${col}"
                data-task="${esc(t.id)}" data-member="${esc(m.id)}" data-date="${date}"
                data-status="${esc(st)}" title="Drag to move · click to edit">
+            ${t.flag ? `<span class="flagtag">${t.flag === 'urgent' ? '! Urgent' : '★ Important'}</span>` : ''}
             <div class="top">
+              <button type="button" class="flagbtn" data-flag="${esc(t.id)}" title="${t.flag === 'urgent' ? 'Clear the flag' : t.flag === 'important' ? 'Mark urgent' : 'Mark important'}" aria-label="Flag as important or urgent">!</button>
               <div class="txt">
                 <div class="c">${esc(t.client || t.task)}</div>
                 ${t.client && t.task ? `<div class="k">${esc(t.task)}</div>` : ''}
@@ -1442,6 +1480,7 @@ details.others summary:hover{color:var(--cream)}
     $('tm-task').value   = t ? (t.task   || '') : '';
     $('tm-hours').value  = t && t.hours ? t.hours : '';
     $('tm-status').value = t ? (t.status || 'To do') : 'To do';
+    setFlagSeg(t ? (t.flag || '') : '');
     paintStatusHint();
     $('tm-save').textContent = t ? 'Save' : 'Add';
     $('tm-delete').hidden = !t;
@@ -1477,6 +1516,9 @@ details.others summary:hover{color:var(--cream)}
       `<i style="background:${colourFor(s)}"></i> Marker colour for "${esc(s)}"`;
   }
   $('tm-status').addEventListener('change', paintStatusHint);
+  function setFlagSeg(v){ $('tm-flag').querySelectorAll('[data-fv]').forEach(b => b.setAttribute('aria-checked', String(b.dataset.fv === v))); }
+  const flagSegValue = () => { const b = $('tm-flag').querySelector('[aria-checked="true"]'); return b ? b.dataset.fv : ''; };
+  $('tm-flag').addEventListener('click', e => { const b = e.target.closest('[data-fv]'); if (b) setFlagSeg(b.dataset.fv); });
 
   function renderLegend(){
     $('legend').innerHTML =
@@ -1522,6 +1564,10 @@ details.others summary:hover{color:var(--cream)}
     const cyc = e.target.closest('[data-cycle]');
     if (cyc){ e.stopPropagation(); return cycleStatus(cyc.dataset.cycle); }
 
+    // ! on a card: none → important → urgent → none.
+    const fl = e.target.closest('[data-flag]');
+    if (fl){ e.stopPropagation(); return cycleFlag(fl.dataset.flag); }
+
     // The On/Off switch is its own control.
     const sw = e.target.closest('[data-onoff]');
     if (sw){
@@ -1547,15 +1593,17 @@ details.others summary:hover{color:var(--cream)}
   /* ---- week summary — job-based, not hour-based ---- */
   function renderSummary(){
     const days = weekDays().map(iso);
-    let count = 0, done = 0;
+    let count = 0, done = 0, urgent = 0;
     const working = new Set();
     members.forEach(m => days.forEach(d => {
       const list = tasksFor(d, m.id);
       count += list.length;
+      urgent += list.filter(t => t.flag === 'urgent' && t.status !== 'Done').length;
       done += list.filter(t => (t.status || 'To do') === 'Done').length;
       if (!isOff(d, m.id)) working.add(m.id);
     }));
     const parts = [
+      urgent ? `${urgent} urgent` : null,
       `${count} ${count === 1 ? 'job' : 'jobs'} this week`,
       count ? `${done} done` : null,
       `${working.size} of ${members.length} ${members.length === 1 ? 'person' : 'people'} working`
@@ -1588,6 +1636,14 @@ details.others summary:hover{color:var(--cream)}
   }
 
   /* ---- one-click status cycling ---- */
+  const FLAG_ORDER = ['', 'important', 'urgent'];
+  function cycleFlag(taskId){
+    const t = tasks.find(x => x.id === taskId);
+    if (!t) return;
+    const next = FLAG_ORDER[(FLAG_ORDER.indexOf(t.flag || '') + 1) % FLAG_ORDER.length];
+    send({ op:'task.update', id: taskId, flag: next }, next ? (next === 'urgent' ? 'Marked urgent' : 'Marked important') : 'Flag cleared', () => { t.flag = next; });
+  }
+
   function cycleStatus(taskId){
     const t = tasks.find(x => x.id === taskId);
     if (!t) return;
@@ -1678,7 +1734,7 @@ details.others summary:hover{color:var(--cream)}
   $('plangrid').addEventListener('pointerdown', e => {
     if (!ready || e.button > 0) return;
     const card = e.target.closest('.task');
-    if (!card || e.target.closest('[data-cycle]')) return;
+    if (!card || e.target.closest('[data-cycle]') || e.target.closest('[data-flag]')) return;
     drag.card = card; drag.id = card.dataset.task;
     drag.sx = drag.x = e.clientX; drag.sy = drag.y = e.clientY;
     drag.touch = e.pointerType === 'touch';
@@ -1711,7 +1767,7 @@ details.others summary:hover{color:var(--cream)}
     const who = members.find(m => m.id === toMember);
     const day = new Date(toDate + 'T12:00:00').toLocaleDateString('en-GB', { weekday:'short', day:'numeric' });
     return send({ op:'task.add', memberId: toMember, date: toDate, client: t.client, task: t.task,
-                  hours: t.hours || 0, status: t.status === 'Done' ? 'To do' : (t.status || 'To do') },
+                  hours: t.hours || 0, status: t.status === 'Done' ? 'To do' : (t.status || 'To do'), flag: t.flag || '' },
                 'Copied to ' + (who ? who.name.split(' ')[0] : '') + ', ' + day,
                 () => {
                   tasks.push({ ...t, id: 'tmp-' + Date.now(), memberId: toMember, date: toDate, status: t.status === 'Done' ? 'To do' : t.status });
@@ -1743,8 +1799,8 @@ details.others summary:hover{color:var(--cream)}
     const when = editing.date, who = members.find(m => m.id === editing.memberId);
     const addJob = wasNew && client && !jobByClient(client) && $('tm-savejob').checked;
     const ok = editing.taskId
-      ? await send({ op:'task.update', id: editing.taskId, client, task, hours: hrs, status: st }, 'Saved')
-      : await send({ op:'task.add', memberId: editing.memberId, date: editing.date, client, task, hours: hrs, status: st }, 'Added');
+      ? await send({ op:'task.update', id: editing.taskId, client, task, hours: hrs, status: st, flag: flagSegValue() }, 'Saved')
+      : await send({ op:'task.add', memberId: editing.memberId, date: editing.date, client, task, hours: hrs, status: st, flag: flagSegValue() }, 'Added');
     if (ok) closeTask();
     if (!ok || !client) return;
     // keep the Jobs tab in step: a new project becomes a job, and booking work
@@ -1927,16 +1983,36 @@ details.others summary:hover{color:var(--cream)}
           </div>
           ${j.notes ? `<div class="jobnotes">${esc(j.notes)}</div>` : ''}
           <div class="jobacts">
+            ${/^https:\/\//i.test(j.pitchUrl || '') ? `<a class="jobpitch" href="${esc(j.pitchUrl)}" target="_blank" rel="noopener">Pitch deck ↗</a>` : ''}
             <button data-edit="${esc(j.id)}">Edit</button>
             <button class="del" data-del="${esc(j.id)}">Delete</button>
           </div>
         </div>`;
   }
 
+  // A pitch made for a lead belongs to the job that lead became. Any job still
+  // without a pitch link picks it up from its lead (by jobId, else by name) and
+  // the link is saved onto the job, so it stays even if the lead is cleared.
+  const normName = s => String(s || '').toLowerCase().replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '');
+  async function linkPitchesFromLeads(){
+    let leads = [];
+    try { leads = (await api('/portal/api/leads', 'GET')).leads || []; } catch { return; }
+    const withPitch = leads.filter(l => l.pitchUrl);
+    let changed = false;
+    for (const j of jobs){
+      if (j.pitchUrl) continue;
+      const l = withPitch.find(x => x.jobId && x.jobId === j.id) || withPitch.find(x => normName(x.name) === normName(j.client));
+      if (!l) continue;
+      try { jobs = (await api(JOBS_API, 'PUT', { id: j.id, pitchUrl: l.pitchUrl })).jobs; changed = true; } catch {}
+    }
+    if (changed) renderJobs();
+  }
+
   async function loadJobs(){
     try {
       const { jobs: list } = await api(JOBS_API, 'GET');
       jobs = list; renderJobs();
+      linkPitchesFromLeads();
     } catch (err) {
       if (err.data && err.data.error === 'no-kv'){
         $('kvbanner').hidden = false;
@@ -2109,6 +2185,7 @@ details.others summary:hover{color:var(--cream)}
       form.date.value = j.date || '';     form.assignee.value = j.assignee || '';
       fillTeam(j.assignee);
       form.fee.value = String(j.fee || '').replace(/^£\s*/, ''); form.notes.value = j.notes || '';
+      form.pitchUrl.value = j.pitchUrl || '';
       form.status.value = j.status || 'Enquiry';
       // The form is collapsed behind "+ New job" by default, so editing has
       // to open it, otherwise the fields fill in out of sight.

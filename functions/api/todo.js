@@ -61,6 +61,9 @@ export async function onRequest({ request, env }) {
   const files = [];
   const seen = new Set();
   Object.values(doc.links || {}).flat().forEach(l => { if (l && l.url && !seen.has(l.url)) { seen.add(l.url); files.push(l); } });
+  jobs.forEach(j => {
+    if (j.pitchUrl && !seen.has(j.pitchUrl)) { seen.add(j.pitchUrl); files.push({ label: j.client + ' pitch', url: j.pitchUrl }); }
+  });
   (await readJSON(kv, 'leads', [])).forEach(l => {
     if (l.pitchUrl && !seen.has(l.pitchUrl)) { seen.add(l.pitchUrl); files.push({ label: l.name + ' pitch', url: l.pitchUrl }); }
   });

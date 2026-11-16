@@ -97,6 +97,10 @@ async function read(kv) {
 
 const save = (kv, data) => kv.put(KEY, JSON.stringify(data));
 
+/* Highlight on a task: '' (none), 'important' or 'urgent'. */
+const FLAGS = ['', 'important', 'urgent'];
+const flag = v => (FLAGS.includes(String(v ?? '')) ? String(v ?? '') : '');
+
 export async function onRequest(context) {
   const { request, env } = context;
   const kv = env.PORTAL_KV;
@@ -159,6 +163,7 @@ export async function onRequest(context) {
         client, task,
         hours: hours(body.hours, 0),
         status: status(body.status),
+        flag: flag(body.flag),
         updated: new Date().toISOString()
       });
       break;
@@ -182,6 +187,7 @@ export async function onRequest(context) {
       if (body.task   !== undefined) t.task   = str(body.task, 60);
       if (body.hours  !== undefined) t.hours  = hours(body.hours, t.hours);
       if (body.status !== undefined) t.status = status(body.status);
+      if (body.flag   !== undefined) t.flag   = flag(body.flag);
       t.updated = new Date().toISOString();
 
       // moving work onto someone's day books them in for it

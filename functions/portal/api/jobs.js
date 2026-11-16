@@ -45,6 +45,8 @@ function clean(body, existing = {}) {
     assignee: str(body.assignee ?? existing.assignee, 200),   // team, comma-separated
     fee:      money(body.fee    ?? existing.fee),
     notes:    str(body.notes    ?? existing.notes,    600),
+    // The pitch deck for this job (a Claude artifact or any https link).
+    pitchUrl: (() => { const v = str(body.pitchUrl ?? existing.pitchUrl, 300); return /^https:\/\//i.test(v) ? v : ''; })(),
     status,
     // Ticked off = finished with. Inactive jobs drop out of the planner's
     // project picker and sit under "Inactive" on the Jobs tab until added back.
