@@ -834,6 +834,20 @@ details.others summary:hover{color:var(--cream)}
 .as-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--champagne);margin-left:7px;vertical-align:middle;animation:asPulse 2.4s ease-in-out infinite}
 @keyframes asPulse{0%,100%{opacity:.35;transform:scale(.85)}50%{opacity:1;transform:scale(1.15)}}
 @media (prefers-reduced-motion:reduce){.as-dot{animation:none}}
+/* time away */
+.daycell.is-away{background:repeating-linear-gradient(135deg,rgba(126,139,175,.13) 0 8px,rgba(126,139,175,.05) 8px 16px)!important;
+  box-shadow:inset 0 0 0 1px rgba(126,139,175,.35)!important}
+.awaytag{display:block;width:100%;text-align:left;background:rgba(126,139,175,.2);border:0;border-radius:8px;color:#C3CBE6;
+  font:500 10.5px/1.3 var(--sans);letter-spacing:.1em;text-transform:uppercase;padding:5px 8px;margin-bottom:6px;cursor:pointer;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.awaytag span{letter-spacing:0;text-transform:none;font-weight:400}
+.awaytag:hover{background:rgba(126,139,175,.3)}
+.awayform .row{margin-bottom:12px}
+.awayform .row.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.awaylist h5{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--stone);font-weight:400;margin:22px 0 8px}
+.awayrow{display:flex;gap:10px;align-items:baseline;width:100%;text-align:left;background:var(--panel2);border:0;border-radius:10px;padding:9px 12px;margin-bottom:5px;color:var(--dim);font:inherit;font-size:13px;cursor:pointer}
+.awayrow:hover{background:var(--panel3)}
+.awayrow b{color:#C3CBE6;font-weight:500}
 /* page frame: keep the header's logo / sign-out and the last line of each tab
    off the screen edges (later .wrap/.hrow rules had zeroed these paddings) */
 header .wrap.hrow{padding-left:56px;padding-right:56px}
@@ -885,6 +899,7 @@ main.wrap{padding-top:28px;padding-bottom:calc(90px + env(safe-area-inset-bottom
       <div class="wk-acts">
         <span class="saving" id="saving">Saving&hellip;</span>
         <button class="btn ghost sm" id="thisweek">Today</button>
+        <button class="btn ghost sm" id="awaybtn">Away</button>
         <button class="btn ghost sm" id="teambtn">Team</button>
       </div>
     </div>
@@ -1146,6 +1161,29 @@ main.wrap{padding-top:28px;padding-bottom:calc(90px + env(safe-area-inset-bottom
   </div>
 </div>
 
+<div class="modal" id="awaymodal" hidden>
+  <div class="box">
+    <h4>Time away</h4>
+    <div class="sub">Shows on the Week so everyone knows. You can still add work on those days.</div>
+    <form id="awayform" class="awayform">
+      <input type="hidden" id="aw-id">
+      <div class="row"><label for="aw-who">Who</label><select id="aw-who"></select></div>
+      <div class="row two">
+        <div><label for="aw-from">From</label><input id="aw-from" type="date" required></div>
+        <div><label for="aw-to">To</label><input id="aw-to" type="date" required></div>
+      </div>
+      <div class="row"><label for="aw-note">Note — optional</label><input id="aw-note" maxlength="60" placeholder="e.g. Dubai, exams, uni deadline"></div>
+      <div class="acts">
+        <button type="submit" class="btn" id="aw-save">Add</button>
+        <button type="button" class="btn ghost" id="aw-cancel">Close</button>
+        <span style="flex:1"></span>
+        <button type="button" class="btn danger" id="aw-delete" hidden>Remove</button>
+      </div>
+    </form>
+    <div class="awaylist" id="awaylist"></div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -1204,7 +1242,7 @@ main.wrap{padding-top:28px;padding-bottom:calc(90px + env(safe-area-inset-bottom
      WEEK PLANNER
      ================================================================ */
   const PLANNER = '/portal/api/roster';
-  let members = [], tasks = [], on = [], ready = false;
+  let members = [], tasks = [], on = [], away = [], ready = false;
   let anchor = startOfWeek(new Date());     // Monday of the shown week
   let editing = null;                        // {memberId, date, taskId?}
   const hiddenMembers = new Set();           // avatar-row focus filter, display only
@@ -1230,6 +1268,8 @@ main.wrap{padding-top:28px;padding-bottom:calc(90px + env(safe-area-inset-bottom
   const fmtH = n => (Math.round(n*100)/100).toString().replace(/\.00?$/,'') + 'h';
 
   const isOff = (date, memberId) => !on.includes(`${date}|${memberId}`);   // not working unless marked on
+  const awayOn = (date, memberId) => away.find(a => a.memberId === memberId && a.from <= date && date <= a.to);
+  const shortDay = d => new Date(d + 'T12:00:00').toLocaleDateString('en-GB', { day:'numeric', month:'short' });
   const tasksFor = (date, memberId) => tasks.filter(t => t.date === date && t.memberId === memberId);
 
   const RING = ['var(--champagne)','var(--rust)','var(--sage)','var(--slate)'];
@@ -1341,7 +1381,8 @@ main.wrap{padding-top:28px;padding-bottom:calc(90px + env(safe-area-inset-bottom
         const list = tasksFor(date, m.id);
         weekJobs += list.length;
         const dayOff = isOff(date, m.id);
-        const cls = ['daycell', iso(d)===todayIso() ? 'is-today':'', dayOff ? 'is-off':''].filter(Boolean).join(' ');
+        const aw = awayOn(date, m.id);
+        const cls = ['daycell', iso(d)===todayIso() ? 'is-today':'', dayOff ? 'is-off':'', aw ? 'is-away':''].filter(Boolean).join(' ');
 
         const cards = list.map(t => {
           const st = t.status || 'To do';
@@ -1368,6 +1409,7 @@ main.wrap{padding-top:28px;padding-bottom:calc(90px + env(safe-area-inset-bottom
         return `<div class="${cls}" data-member="${esc(m.id)}" data-date="${date}">
           <button type="button" class="dstate" data-onoff="${esc(m.id)}" data-date="${date}"
                   title="${dayOff ? 'Mark' : 'Unmark'} ${esc((m.name||'').split(' ')[0])} as working on ${esc(d.toLocaleDateString('en-GB',{weekday:'long'}))}">${dayOff ? 'Off' : 'On'}</button>
+          ${aw ? `<button type="button" class="awaytag" data-away="${esc(aw.id)}" title="Away ${esc(shortDay(aw.from))}${aw.to !== aw.from ? ' to ' + esc(shortDay(aw.to)) : ''}${aw.note ? ' · ' + esc(aw.note) : ''}. Click to edit.">Away${aw.note ? ` · <span>${esc(aw.note)}</span>` : ''}</button>` : ''}
           ${cards}
           <button class="add" data-add="${esc(m.id)}" data-date="${date}"
                   aria-label="Add work for ${esc(m.name)}">+</button>
@@ -1547,13 +1589,14 @@ main.wrap{padding-top:28px;padding-bottom:calc(90px + env(safe-area-inset-bottom
     if (e.key === 'Escape'){
       if (!$('taskmodal').hidden) closeTask();
       if (!$('teammodal').hidden){ $('teammodal').hidden = true; dropFocus(); }
+      if (!$('awaymodal').hidden) closeAway();
       return;
     }
     // Week shortcuts, but never while typing or with a modal open — otherwise
     // arrowing through a date field would jump the whole board.
     const tag = (document.activeElement && document.activeElement.tagName) || '';
     if (/^(INPUT|SELECT|TEXTAREA)$/.test(tag)) return;
-    if (!$('taskmodal').hidden || !$('teammodal').hidden) return;
+    if (!$('taskmodal').hidden || !$('teammodal').hidden || !$('awaymodal').hidden) return;
     if (e.metaKey || e.ctrlKey || e.altKey) return;
     if ($('week').hidden) return;
 
@@ -1569,6 +1612,10 @@ main.wrap{padding-top:28px;padding-bottom:calc(90px + env(safe-area-inset-bottom
     // card's own "open the editor" handler sees the click.
     const cyc = e.target.closest('[data-cycle]');
     if (cyc){ e.stopPropagation(); return cycleStatus(cyc.dataset.cycle); }
+
+    // Away label on a day: edit that time away.
+    const awt = e.target.closest('[data-away]');
+    if (awt){ e.stopPropagation(); const a = away.find(x => x.id === awt.dataset.away); if (a) openAway(a); return; }
 
     // ! on a card: none → important → urgent → none.
     const fl = e.target.closest('[data-flag]');
@@ -1612,7 +1659,8 @@ main.wrap{padding-top:28px;padding-bottom:calc(90px + env(safe-area-inset-bottom
       urgent ? `${urgent} urgent` : null,
       `${count} ${count === 1 ? 'job' : 'jobs'} this week`,
       count ? `${done} done` : null,
-      `${working.size} of ${members.length} ${members.length === 1 ? 'person' : 'people'} working`
+      `${working.size} of ${members.length} ${members.length === 1 ? 'person' : 'people'} working`,
+      (() => { const n = members.filter(m => days.some(d => awayOn(d, m.id))).length; return n ? `${n} away` : null; })()
     ].filter(Boolean);
     $('summary').textContent = parts.join('  ·  ');
   }
@@ -1624,17 +1672,17 @@ main.wrap{padding-top:28px;padding-bottom:calc(90px + env(safe-area-inset-bottom
      write then fails we restore the snapshot taken beforehand — so the screen
      is never left showing a change the server rejected. */
   async function send(body, okMsg, optimistic){
-    const snap = { members: members.slice(), tasks: tasks.map(t => ({...t})), on: on.slice() };
+    const snap = { members: members.slice(), tasks: tasks.map(t => ({...t})), on: on.slice(), away: away.slice() };
     if (optimistic){ optimistic(); renderWeek(); }
     setSaving(true);
     try {
       const data = await api(PLANNER, 'POST', body);
-      members = data.members; tasks = data.tasks; on = data.on || [];
-      renderWeek();
+      members = data.members; tasks = data.tasks; on = data.on || []; away = data.away || [];
+      renderWeek(); if (!$('awaymodal').hidden) renderAwayList();
       if (okMsg) toast(okMsg);
       return true;
     } catch (err) {
-      members = snap.members; tasks = snap.tasks; on = snap.on;
+      members = snap.members; tasks = snap.tasks; on = snap.on; away = snap.away;
       renderWeek();
       toast(err.message || 'Save failed');
       return false;
@@ -1843,6 +1891,50 @@ main.wrap{padding-top:28px;padding-bottom:calc(90px + env(safe-area-inset-bottom
     return div;
   }
 
+  /* ---- time away ---- */
+  function renderAwayList(){
+    const today = todayIso();
+    const list = away.filter(a => a.to >= today).sort((a, b) => a.from.localeCompare(b.from));
+    const nm = id => ((members.find(m => m.id === id) || {}).name || '').split(' ')[0];
+    $('awaylist').innerHTML = list.length ? `<h5>Coming up</h5>` + list.map(a => `
+      <button type="button" class="awayrow" data-awedit="${esc(a.id)}">
+        <b>${esc(nm(a.memberId))}</b>
+        <span>${esc(shortDay(a.from))}${a.to !== a.from ? ' – ' + esc(shortDay(a.to)) : ''}${a.note ? ' · ' + esc(a.note) : ''}</span>
+      </button>`).join('') : '';
+  }
+  function openAway(entry, memberId, date){
+    $('aw-who').innerHTML = members.map(m => `<option value="${esc(m.id)}">${esc(m.name)}</option>`).join('');
+    const d = date || iso(new Date());
+    $('aw-id').value = entry ? entry.id : '';
+    $('aw-who').value = entry ? entry.memberId : (memberId || (members[0] || {}).id || '');
+    $('aw-from').value = entry ? entry.from : d;
+    $('aw-to').value = entry ? entry.to : d;
+    $('aw-note').value = entry ? (entry.note || '') : '';
+    $('aw-save').textContent = entry ? 'Save' : 'Add';
+    $('aw-delete').hidden = !entry;
+    renderAwayList();
+    $('awaymodal').hidden = false;
+    setTimeout(() => (entry ? $('aw-note') : $('aw-from')).focus(), 30);
+  }
+  const closeAway = () => { $('awaymodal').hidden = true; dropFocus(); };
+  $('awaybtn').addEventListener('click', () => openAway(null));
+  $('aw-cancel').addEventListener('click', closeAway);
+  $('awaymodal').addEventListener('click', e => {
+    if (e.target === $('awaymodal')) return closeAway();
+    const r = e.target.closest('[data-awedit]');
+    if (r){ const a = away.find(x => x.id === r.dataset.awedit); if (a) openAway(a); }
+  });
+  $('aw-from').addEventListener('change', () => { if ($('aw-to').value < $('aw-from').value) $('aw-to').value = $('aw-from').value; });
+  $('awayform').addEventListener('submit', async e => {
+    e.preventDefault();
+    const body = { op:'away.add', memberId: $('aw-who').value, from: $('aw-from').value, to: $('aw-to').value, note: $('aw-note').value.trim() };
+    if ($('aw-id').value) body.id = $('aw-id').value;
+    if (await send(body, $('aw-id').value ? 'Saved' : 'Marked away')) closeAway();
+  });
+  $('aw-delete').addEventListener('click', async () => {
+    if (await send({ op:'away.delete', id: $('aw-id').value }, 'Removed')) closeAway();
+  });
+
   $('teambtn').addEventListener('click', () => {
     const list = $('memberlist');
     list.innerHTML = '';
@@ -1894,7 +1986,7 @@ main.wrap{padding-top:28px;padding-bottom:calc(90px + env(safe-area-inset-bottom
   async function loadPlanner(){
     try {
       const data = await api(PLANNER, 'GET');
-      members = data.members; tasks = data.tasks; on = data.on || [];
+      members = data.members; tasks = data.tasks; on = data.on || []; away = data.away || [];
       ready = true;
       renderWeek(true); fillPeopleList(); renderLegend();
     } catch (err) {

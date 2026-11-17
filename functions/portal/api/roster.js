@@ -71,7 +71,7 @@ function mergeIn(members, list) {
 
 async function read(kv) {
   const raw = await kv.get(KEY);
-  const empty = { v: VERSION, members: DEFAULT_MEMBERS, tasks: [], on: [] };
+  const empty = { v: VERSION, members: DEFAULT_MEMBERS, tasks: [], on: [], away: [] };
   if (!raw) return empty;
   try {
     const p = JSON.parse(raw);
@@ -79,7 +79,9 @@ async function read(kv) {
       v: VERSION,
       members: Array.isArray(p.members) && p.members.length ? p.members : DEFAULT_MEMBERS,
       tasks:   Array.isArray(p.tasks) ? p.tasks : [],
-      on:      Array.isArray(p.on) ? p.on : null
+      on:      Array.isArray(p.on) ? p.on : null,
+      // Time away: { id, memberId, from, to, note }. Shown on the Week, never blocks adding work.
+      away:    Array.isArray(p.away) ? p.away : []
     };
     if (!(p.v >= 2)) mergeIn(data.members, ADDED_V2);   // one-off: Toosh, Owen
     if (!(p.v >= 3)) mergeIn(data.members, ADDED_V3);   // one-off: Aoife
@@ -140,6 +142,7 @@ export async function onRequest(context) {
       // doesn't leave orphaned tasks the board can never show or clear.
       const ids = new Set(data.members.map(m => m.id));
       data.tasks = data.tasks.filter(t => ids.has(t.memberId));
+      data.away  = data.away.filter(x => ids.has(x.memberId));
       data.on    = data.on.filter(k => ids.has(String(k).split('|')[1]));
       break;
     }
@@ -197,6 +200,30 @@ export async function onRequest(context) {
       }
 
       if (!t.client && !t.task) data.tasks.splice(i, 1);   // emptied = removed
+      break;
+    }
+
+    /* ---- time away (holiday, exams, travel) ---- */
+    case 'away.add': {
+      const from = str(body.from, 10), to = str(body.to || body.from, 10);
+      if (!isDate(from) || !isDate(to)) return json({ error: 'bad dates' }, 400);
+      if (to < from)                    return json({ error: 'the end date is before the start' }, 400);
+      if (!known(body.memberId))        return json({ error: 'unknown member' }, 400);
+      const entry = { id: crypto.randomUUID(), memberId: str(body.memberId, 40), from, to, note: str(body.note, 60) };
+      if (body.id) {   // editing an existing entry
+        const i = data.away.findIndex(a => a.id === str(body.id, 60));
+        if (i === -1) return json({ error: 'no such away entry' }, 404);
+        entry.id = data.away[i].id; data.away[i] = entry;
+      } else data.away.push(entry);
+      // tidy: forget entries that ended more than ~3 months ago
+      const cutoff = new Date(Date.now() - 90 * 864e5).toISOString().slice(0, 10);
+      data.away = data.away.filter(a => a.to >= cutoff).slice(-200);
+      break;
+    }
+    case 'away.delete': {
+      const before = data.away.length;
+      data.away = data.away.filter(a => a.id !== str(body.id, 60));
+      if (data.away.length === before) return json({ error: 'no such away entry' }, 404);
       break;
     }
 
