@@ -45,7 +45,7 @@ const status = v => STATUSES.includes(v) ? v : 'To do';
 function hours(v, fallback = 0) {
   const n = Number(v);
   if (!Number.isFinite(n) || n < 0) return fallback;
-  return Math.min(24, Math.round(n * 4) / 4);
+  return Math.min(24, Math.round(n * 100) / 100);   // keep what was typed (1.3 stays 1.3)
 }
 
 const DEFAULT_MEMBERS = [
