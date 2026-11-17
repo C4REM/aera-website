@@ -2616,7 +2616,7 @@ main.wrap{padding-top:28px;padding-bottom:calc(90px + env(safe-area-inset-bottom
       <label>Date</label>
       ${dayStrip(m.date)}
       <div class="mt-whenrow">
-        <div><label>Time</label><input name="time" type="time" value="${esc(m.time)}"></div>
+        <div><label>Time</label><input name="time" type="text" inputmode="text" autocomplete="off" placeholder="e.g. 14:30 or 2.30pm" value="${esc(m.time)}"></div>
         <div><label>Where</label><input name="location" placeholder="Video call, studio, café…" value="${esc(m.location)}"></div>
       </div>
       <label>Attending</label>
@@ -2642,9 +2642,27 @@ main.wrap{padding-top:28px;padding-bottom:calc(90px + env(safe-area-inset-bottom
     </form>`;
   }
 
+  function parseTime(raw){
+    const v = String(raw || '').trim().toLowerCase().replace(/\s+/g, '');
+    const m = v.match(/^(\d{1,2})(?:[:.h](\d{2}))?(am|pm|a|p)?$/) || v.match(/^(\d{1,2})(\d{2})(am|pm|a|p)?$/);
+    if (!m) return null;
+    let h = +m[1], min = m[2] ? +m[2] : 0;
+    const ap = m[3];
+    if (ap){ if (h < 1 || h > 12) return null; if (ap[0] === 'p' && h !== 12) h += 12; if (ap[0] === 'a' && h === 12) h = 0; }
+    if (h > 23 || min > 59) return null;
+    return String(h).padStart(2, '0') + ':' + String(min).padStart(2, '0');
+  }
+
   function readMtForm(){
     const f = $('mtform');
     const fd = Object.fromEntries(new FormData(f));
+    // Time is free text (the browser's time box ran on a 12-hour clock on some
+    // Macs, so typing 14:30 was rejected). Read it here and store as 24h HH:MM.
+    if (fd.time && fd.time.trim()){
+      const t = parseTime(fd.time);
+      if (t === null){ f.querySelector('input[name=time]').focus(); toast('Time: try 14:30 or 2.30pm'); throw new Error('bad time'); }
+      fd.time = t;
+    } else fd.time = '';
     fd.decisions = [...f.querySelectorAll('[data-dec]')].map(x => x.value.trim()).filter(Boolean).join('\n');
     fd.attendees = [...f.querySelectorAll('[data-person]:checked')].map(x => x.value).join(', ');
     fd.agenda = [...f.querySelectorAll('#mtag .mt-repitem')].map(r => ({
@@ -2881,7 +2899,7 @@ main.wrap{padding-top:28px;padding-bottom:calc(90px + env(safe-area-inset-bottom
 
   $('mtdoc').addEventListener('submit', async e => {
     e.preventDefault();
-    const data = readMtForm();
+    let data; try { data = readMtForm(); } catch { return; }
     if (mtEditing.id) data.id = mtEditing.id;
     const btn = e.target.querySelector('[type=submit]'); btn.disabled = true;
     try { await saveMeeting(data, 'Minutes saved'); mtEditing = null; renderMeetings(); }
