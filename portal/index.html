@@ -983,18 +983,6 @@ main.wrap{padding-top:28px;padding-bottom:calc(90px + env(safe-area-inset-bottom
 .fu .a{display:flex;gap:6px;flex:none}
 .fu.gone{opacity:0;transform:translateX(8px);transition:opacity .25s,transform .25s}
 
-/* ---- scroll performance (18 Nov 2026) ----
-   1. The page gradient was background-attachment:fixed, which repaints the
-      whole page on every scroll frame. It now sits on a fixed layer the GPU
-      just keeps in place.
-   2. The sticky header blurred everything scrolling under it (backdrop-filter)
-      while two dots inside it pulsed forever, so the blur re-ran every frame.
-      Solid header instead; the dots stay, they no longer cost anything. */
-body{background:transparent!important}
-body::before{content:"";position:fixed;inset:0;z-index:-1;background:var(--grad-page);pointer-events:none;transform:translateZ(0)}
-header{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;background:rgba(15,14,13,.97)!important}
-.modal{backdrop-filter:none!important;background:rgba(10,9,8,.86)!important}
-@keyframes pulseDot{0%,100%{opacity:1}50%{opacity:.4}}
 .jp{overscroll-behavior:contain}
 
 .gr .gt{grid-column:1/-1;border-left:0;min-height:0;padding:16px 10px 7px;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--champagne);background:rgba(194,168,120,.035)}
