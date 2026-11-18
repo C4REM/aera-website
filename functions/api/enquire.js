@@ -16,6 +16,34 @@ async function get(kv, k, fb = null) { const r = await kv.get(k); if (!r) return
 const TIMES = ['11:00', '13:30', '17:00'];
 const TYPES = { band: 'Live music', wedding: 'Wedding', business: 'Social content', event: 'Event', other: 'Other' };
 
+/* ---- email to Jack ----
+   Two ways, whichever is set up in Cloudflare (Pages → aera-website → Settings → Bindings):
+   1. MAILER: a service binding to the small "aera-mailer" Worker (workers/mailer/),
+      which sends through Cloudflare Email Routing to bookings@ → iCloud. Free.
+   2. RESEND_API_KEY (+ optional NOTIFY_TO): Resend's HTTP API.
+   With neither, the enquiry still lands in the portal and Compass as normal. */
+async function notify(env, e) {
+  const when = e.call ? new Date(e.call.slice(0, 10) + 'T12:00:00Z').toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' }) + ' at ' + e.call.slice(11) : '';
+  const subject = `New enquiry: ${e.name} · ${e.type}`;
+  const text = [
+    `${e.name} just sent an enquiry through the website.`, '',
+    `Type: ${e.type}`,
+    ...e.answers.map(a => `${a.q} ${a.a}`),
+    `Email: ${e.email}`,
+    when ? `Wants a call: ${when}` : 'No call booked',
+    '', 'Open it in the portal: https://aerastudios.org/portal/',
+    '', 'Reply to this email to answer them directly.'
+  ].join('\n');
+  if (env.MAILER && env.MAILER.fetch) {
+    await env.MAILER.fetch('https://mailer/send', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ subject, text, replyTo: e.email }) });
+  } else if (env.RESEND_API_KEY) {
+    await fetch('https://api.resend.com/emails', { method: 'POST',
+      headers: { Authorization: 'Bearer ' + env.RESEND_API_KEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ from: 'Aera Portal <portal@aerastudios.org>', to: [env.NOTIFY_TO || 'bookings@aerastudios.org'], reply_to: e.email, subject, text }) });
+  }
+}
+
 function londonISO(d) { return new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/London', year: 'numeric', month: '2-digit', day: '2-digit' }).format(d); }
 
 async function slots(kv) {
@@ -40,7 +68,7 @@ async function slots(kv) {
     .filter(d => d.times.length);
 }
 
-export async function onRequest({ request, env }) {
+export async function onRequest({ request, env, waitUntil }) {
   const kv = env.PORTAL_KV;
   if (!kv) return json({ error: 'unavailable' }, 503);
   if (request.method === 'GET') return json({ slots: await slots(kv) });
@@ -82,8 +110,11 @@ export async function onRequest({ request, env }) {
   jobs.unshift({
     id: crypto.randomUUID(), client: name, type: TYPES[type], date: '', assignee: '', fee: '', notes,
     status: 'Enquiry', active: true, priority: false, rank: 9999, pitchUrl: '',
-    source: 'Website', email, call, updated: new Date().toISOString()
+    source: 'Website', email, call, unread: true, created: new Date().toISOString(), updated: new Date().toISOString()
   });
   await kv.put('jobs', JSON.stringify(jobs));
+  // Email Jack. Never blocks or fails the enquiry itself.
+  const mail = notify(env, { name, email, type: TYPES[type], answers, call }).catch(() => {});
+  if (waitUntil) waitUntil(mail); else await mail;
   return json({ ok: true, call });
 }

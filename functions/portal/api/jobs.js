@@ -60,6 +60,10 @@ function clean(body, existing = {}) {
     call:        str(body.call        ?? existing.call,        20),
     snoozeUntil: str(body.snoozeUntil ?? existing.snoozeUntil, 10),
     lastContact: str(body.lastContact ?? existing.lastContact, 10),
+    // A website enquiry nobody has opened yet: drives the portal pop-up, the
+    // tab-title count and the Compass card. Cleared when the job is opened.
+    unread:      body.unread !== undefined ? body.unread === true : existing.unread === true,
+    created:     str(existing.created || body.created || new Date().toISOString(), 30),
     rank:     Number.isFinite(+body.rank) ? +body.rank : (Number.isFinite(+existing.rank) ? +existing.rank : 9999),
     updated:  new Date().toISOString()
   };
