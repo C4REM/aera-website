@@ -170,6 +170,16 @@ export async function onRequest({ request, env }) {
       await kv.put(k, JSON.stringify(old));
       return json({ sheet: old });
     }
+    // Reset a proposal the client has opened or accepted: clears their acceptance
+    // and the paid ticks so they can look again and re-accept on the same link.
+    // The job's own status and fee are left alone.
+    if (b.action === 'reset' && part === 'proposal') {
+      old.accepted = null; old.viewedAt = ''; old.depositPaid = false; old.balancePaid = false;
+      old.status = old.key ? 'sent' : 'draft';
+      old.updated = new Date().toISOString();
+      await kv.put(k, JSON.stringify(old));
+      return json({ proposal: old });
+    }
     if (b.action === 'unlink' && (part === 'proposal' || part === 'review') && old.key) {
       await kv.delete(`pub:${old.key}`);
       old.key = '';

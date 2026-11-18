@@ -1008,6 +1008,9 @@ main.wrap{padding-top:28px;padding-bottom:calc(90px + env(safe-area-inset-bottom
 .enq-more{align-self:flex-end;font-size:12px;color:var(--stone);background:rgba(18,15,11,.92);border-radius:var(--r-pill);padding:4px 12px}
 .nudge.new{background:var(--champagne);color:var(--obsidian)}
 @media(max-width:640px){.enq-pop{top:auto;bottom:16px;right:16px}}
+
+.gr .it .mount{display:inline-block;margin-left:7px;padding:1px 7px;border-radius:999px;background:rgba(194,168,120,.14);color:var(--champagne);font-size:10.5px;letter-spacing:.03em;vertical-align:1px}
+.gr .it input.mv{width:120px;font-size:11px;padding:2px 6px}
 </style>
 </head>
 <body>
@@ -1183,6 +1186,8 @@ main.wrap{padding-top:28px;padding-bottom:calc(90px + env(safe-area-inset-bottom
     <form class="gr-add" id="gr-add">
       <input name="name" placeholder="Add kit, e.g. Sony FX3" maxlength="60" required>
       <input name="owner" placeholder="Whose is it?" maxlength="40" style="max-width:180px">
+      <input name="mount" placeholder="Mount, e.g. Sony E" maxlength="30" list="mounts" style="max-width:170px" hidden>
+      <datalist id="mounts"><option>Sony E</option><option>Canon RF</option><option>Canon EF</option><option>Nikon Z</option><option>Nikon F</option><option>L-Mount</option><option>Fujifilm X</option><option>Micro Four Thirds</option><option>PL</option></datalist>
       <select name="type" style="max-width:170px" aria-label="Type"><option>Cameras</option><option>Lenses</option><option>Lighting</option><option>Sound</option><option>Grip &amp; support</option><option>Other</option></select>
       <button class="btn sm" type="submit">Add</button>
     </form>
@@ -3400,6 +3405,8 @@ main.wrap{padding-top:28px;padding-bottom:calc(90px + env(safe-area-inset-bottom
         <div class="big" id="prop-total">${gbp(saved && saved.accepted ? saved.accepted.total : propTotal(p))}</div>
         <p style="font-size:12.5px;color:var(--stone);margin-bottom:14px">${esc(st)}</p>
         ${saved ? payToggles(saved, saved.accepted ? saved.accepted.total : propTotal(saved), saved.accepted ? saved.accepted.deposit : Math.round(propTotal(saved) * (saved.depositPct || 0) / 100)) : ''}
+        ${saved && (saved.accepted || saved.viewedAt || saved.depositPaid || saved.balancePaid) ? `<button class="linkbtn" data-propreset style="margin-top:12px;color:var(--rust)">Reset proposal</button>
+          <p style="font-size:12px;color:var(--stone);margin-top:2px">Clears the client's acceptance and the paid ticks so they can accept again on the same link.</p>` : ''}
       </div>
       <div class="panel"><h4>Send it</h4>
         <p style="font-size:13px;color:var(--stone)">A private link the client can open on their phone, pick extras and accept. Nobody can find it without the link.</p>
@@ -3456,6 +3463,15 @@ main.wrap{padding-top:28px;padding-bottom:calc(90px + env(safe-area-inset-bottom
         toast(ok ? 'Saved · link copied' : 'Saved · copy the link below');
       }
     } catch { toast('Couldn’t do that'); }
+  });
+
+  $('jp-body').addEventListener('click', async e => {
+    if (!e.target.closest('[data-propreset]')) return;
+    const p = jp.data.proposal; if (!p) return;
+    const who = p.accepted ? p.accepted.name + '’s acceptance' : 'the client’s progress';
+    if (!confirm(`Reset this proposal? This clears ${who} and the deposit/balance paid ticks, so they can open the same link and accept again. The job's status and fee stay as they are.`)) return;
+    try { jp.data.proposal = (await api(JD_API, 'POST', { job: jp.id, part: 'proposal', action: 'reset' })).proposal; jp.dirty = false; paintJp(); toast('Proposal reset'); }
+    catch { toast('Couldn’t reset it'); }
   });
 
   // repeaters shared by all three editors
@@ -3628,7 +3644,9 @@ main.wrap{padding-top:28px;padding-bottom:calc(90px + env(safe-area-inset-bottom
     GT.forEach(ty => { const group = gear.items.filter(it => tyOf(it) === ty); if (!group.length) return;
     h += `<div class="gt">${esc(ty)} <span>${group.length}</span></div>`;
     group.forEach(it => {
-      h += `<div class="it"><div><b>${esc(it.name)}</b>${it.owner ? `<small>${esc(it.owner)}’s</small>` : ''}
+      const lens = ty === 'Lenses';
+      h += `<div class="it"><div><b>${esc(it.name)}</b>${lens && it.mount ? `<span class="mount">${esc(it.mount)}</span>` : ''}${it.owner ? `<small>${esc(it.owner)}’s</small>` : ''}
+        ${lens ? `<input class="mv" data-mount="${esc(it.id)}" list="mounts" maxlength="30" placeholder="Set mount" value="${esc(it.mount || '')}" aria-label="Mount for ${esc(it.name)}">` : ''}
         <select class="mv" data-mv="${esc(it.id)}" aria-label="Move ${esc(it.name)} to another type">${GT.map(t => `<option${t === ty ? ' selected' : ''}>${esc(t)}</option>`).join('')}</select></div>
         <button class="x" data-rmitem="${esc(it.id)}" title="Remove this kit" aria-label="Remove ${esc(it.name)}">×</button></div>`;
       days.forEach(d => {
@@ -3641,10 +3659,16 @@ main.wrap{padding-top:28px;padding-bottom:calc(90px + env(safe-area-inset-bottom
   }
   async function gearOp(body, msg){ try { gear = await api(GEAR_API, 'POST', body); renderGear(); if (msg) toast(msg); } catch (x) { toast(x.message || 'Couldn’t save that'); } }
   $('gr').addEventListener('change', e => { const m = e.target.closest('[data-mv]'); if (m) gearOp({ op: 'item.update', id: m.dataset.mv, type: m.value }, 'Moved to ' + m.value); });
+  $('gr').addEventListener('change', e => { const m = e.target.closest('[data-mount]'); if (m) gearOp({ op: 'item.update', id: m.dataset.mount, mount: m.value.trim() }, m.value.trim() ? 'Mount set to ' + m.value.trim() : 'Mount cleared'); });
+  $('gr').addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.matches('[data-mount]')) e.target.blur(); });
   $('gr-prev').addEventListener('click', () => { grAnchor.setDate(grAnchor.getDate() - 7); renderGear(); });
   $('gr-next').addEventListener('click', () => { grAnchor.setDate(grAnchor.getDate() + 7); renderGear(); });
   $('gr-add').addEventListener('submit', e => { e.preventDefault(); const f = e.target;
-    const ty = f.type.value; gearOp({ op: 'item.add', name: f.name.value, owner: f.owner.value, type: ty }, 'Kit added'); f.reset(); f.type.value = ty; f.name.focus(); });
+    const ty = f.type.value, mt = f.mount.value;
+    gearOp({ op: 'item.add', name: f.name.value, owner: f.owner.value, type: ty, mount: ty === 'Lenses' ? mt : '' }, 'Kit added');
+    f.reset(); f.type.value = ty; f.mount.value = mt; f.mount.hidden = ty !== 'Lenses'; f.name.focus(); });
+  // the mount box only shows when you're adding a lens
+  $('gr-add').type.addEventListener('change', e => { const f = $('gr-add'); f.mount.hidden = e.target.value !== 'Lenses'; if (!f.mount.hidden) f.mount.focus(); });
   $('gr').addEventListener('click', e => {
     const rm = e.target.closest('[data-rmitem]');
     if (rm){ const it = gear.items.find(i => i.id === rm.dataset.rmitem); if (it && confirm(`Remove ${it.name} and its bookings?`)) gearOp({ op: 'item.delete', id: it.id }, 'Removed'); return; }

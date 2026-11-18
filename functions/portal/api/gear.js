@@ -1,6 +1,6 @@
 /* ==========================================================================
    AERA — KIT (behind the portal password)
-   KV 'gear': { items: [{id,name,owner,type}], bookings: [{id,itemId,date,who,jobId,note}] }
+   KV 'gear': { items: [{id,name,owner,type,mount}], bookings: [{id,itemId,date,who,jobId,note}] }
    Two bookings of the same item on the same day is a clash; the portal shows
    it in red (it's allowed, so you can sort it out, never blocked).
    POST ops: item.add {name, owner, type}, item.update {id, type|name|owner}, item.delete {id}, book {itemId,date,who,jobId,note}, unbook {id}
@@ -27,13 +27,14 @@ export async function onRequest({ request, env }) {
     case 'item.add': {
       const name = str(b.name, 60); if (!name) return json({ error: 'Name the kit' }, 400);
       if (g.items.length >= 80) return json({ error: 'Too many items' }, 400);
-      g.items.push({ id: crypto.randomUUID(), name, owner: str(b.owner, 40), type: type(b.type) }); break;
+      g.items.push({ id: crypto.randomUUID(), name, owner: str(b.owner, 40), type: type(b.type), mount: str(b.mount, 30) }); break;
     }
     case 'item.update': {
       const it = g.items.find(i => i.id === b.id); if (!it) return json({ error: 'unknown item' }, 400);
       if (b.type !== undefined) it.type = type(b.type);
       if (b.name !== undefined && str(b.name, 60)) it.name = str(b.name, 60);
       if (b.owner !== undefined) it.owner = str(b.owner, 40);
+      if (b.mount !== undefined) it.mount = str(b.mount, 30);
       break;
     }
     case 'item.delete': {
