@@ -35,13 +35,16 @@ async function notify(env, e) {
     '', 'Reply to this email to answer them directly.'
   ].join('\n');
   if (env.MAILER && env.MAILER.fetch) {
-    await env.MAILER.fetch('https://mailer/send', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+    const r = await env.MAILER.fetch('https://mailer/send', { method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ subject, text, replyTo: e.email }) });
+    return r.ok ? 'sent' : 'failed ' + r.status;
   } else if (env.RESEND_API_KEY) {
     await fetch('https://api.resend.com/emails', { method: 'POST',
       headers: { Authorization: 'Bearer ' + env.RESEND_API_KEY, 'Content-Type': 'application/json' },
       body: JSON.stringify({ from: 'Aera Portal <portal@aerastudios.org>', to: [env.NOTIFY_TO || 'bookings@aerastudios.org'], reply_to: e.email, subject, text }) });
+    return 'sent';
   }
+  return 'none';
 }
 
 function londonISO(d) { return new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/London', year: 'numeric', month: '2-digit', day: '2-digit' }).format(d); }
@@ -68,7 +71,7 @@ async function slots(kv) {
     .filter(d => d.times.length);
 }
 
-export async function onRequest({ request, env, waitUntil }) {
+export async function onRequest({ request, env }) {
   const kv = env.PORTAL_KV;
   if (!kv) return json({ error: 'unavailable' }, 503);
   if (request.method === 'GET') return json({ slots: await slots(kv) });
@@ -114,7 +117,8 @@ export async function onRequest({ request, env, waitUntil }) {
   });
   await kv.put('jobs', JSON.stringify(jobs));
   // Email Jack. Never blocks or fails the enquiry itself.
-  const mail = notify(env, { name, email, type: TYPES[type], answers, call }).catch(() => {});
-  if (waitUntil) waitUntil(mail); else await mail;
-  return json({ ok: true, call });
+  // Awaited (it's quick) so a failure shows up in the response for debugging.
+  let mail = 'none';
+  try { mail = await notify(env, { name, email, type: TYPES[type], answers, call }); } catch (e) { mail = 'error'; }
+  return json({ ok: true, call, mail });
 }
