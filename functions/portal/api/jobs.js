@@ -54,6 +54,12 @@ function clean(body, existing = {}) {
     // Priority jobs sit at the top of the Jobs tab in the order Jack drags them
     // into; `rank` is that order (lower = higher up).
     priority: body.priority !== undefined ? body.priority === true || body.priority === 'true' : existing.priority === true,
+    // Where it came from and follow-up housekeeping (kept through edits)
+    source:      str(body.source      ?? existing.source,      30),
+    email:       str(body.email       ?? existing.email,       120),
+    call:        str(body.call        ?? existing.call,        20),
+    snoozeUntil: str(body.snoozeUntil ?? existing.snoozeUntil, 10),
+    lastContact: str(body.lastContact ?? existing.lastContact, 10),
     rank:     Number.isFinite(+body.rank) ? +body.rank : (Number.isFinite(+existing.rank) ? +existing.rank : 9999),
     updated:  new Date().toISOString()
   };

@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="referrer" content="no-referrer">
+<title>Proposal — Aera</title>
+<link rel="icon" type="image/svg+xml" href="/assets/img/logo/aera-monogram-favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/client/client.css">
+<style>
+body{background:var(--desk)}
+.sheet{max-width:820px;margin:48px auto 70px;background:var(--paper);box-shadow:0 1px 0 rgba(0,0,0,.04),0 24px 60px -30px rgba(40,25,10,.35);overflow:hidden}
+.head{padding:28px 64px 24px;display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap}
+.meta{display:grid;grid-template-columns:auto auto;gap:2px 18px;margin:0;font-size:12.5px}
+.meta dt{color:var(--stone)}.meta dd{margin:0}
+.body{padding:0 64px 8px}
+.parties{display:flex;gap:48px;flex-wrap:wrap;margin:34px 0 38px;font-size:13.5px}
+.parties small{display:block;color:var(--muted);font-size:12px;margin-bottom:4px}
+h1.display{font-size:42px;line-height:1.1;margin-bottom:14px}
+.intro{color:var(--ink2);max-width:600px;margin:0;white-space:pre-line}
+h2.sec{margin:42px 0 6px;font-size:13px;font-weight:600}
+h2.sec span{color:var(--gold-ink);margin-right:6px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+td{padding:14px 0;vertical-align:top}
+tr{border-top:1px solid var(--line)}
+td.price{text-align:right;white-space:nowrap}
+td.tick{width:34px}
+.desc{color:var(--muted);font-size:13px}
+tr.pick{cursor:pointer}
+tr.pick:hover td{background:rgba(194,168,120,.06)}
+.sum td{padding:10px 0}
+.sum .dep td:last-child{color:var(--gold-ink);font-weight:500}
+.sum .bal{border-top:1px solid var(--ink);border-bottom:2px solid var(--gold)}
+.sum .bal td{padding:12px 0;font-weight:600}
+ol.terms{margin:0;padding-left:18px;font-size:14px;color:var(--ink2);display:flex;flex-direction:column;gap:6px}
+.accept{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.agree{display:flex;gap:10px;align-items:flex-start;margin-top:16px;font-size:13.5px;color:var(--ink2)}
+.agree input{margin-top:3px}
+.go{display:flex;align-items:center;gap:16px;margin-top:22px;flex-wrap:wrap}
+.done{background:var(--tint);border-left:3px solid var(--gold);padding:18px 20px;margin-top:8px}
+.foot{margin-top:48px;padding:18px 64px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.center{max-width:560px;margin:120px auto;padding:0 24px;text-align:center}
+@media(max-width:700px){
+  .sheet{margin:0}
+  .head,.body,.foot{padding-left:22px;padding-right:22px}
+  h1.display{font-size:32px}
+  .accept{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<main id="app" aria-live="polite">
+  <div class="sheet"><div class="head band"><span class="mark"><svg viewBox="61 51 78 98" fill="none" aria-hidden="true"><path d="M100,52 L138,100 L100,148 L62,100 Z" stroke="#C2A878" stroke-width="1.5" opacity=".5"/><path d="M100,60 L70,100 L130,100 Z M100,140 L70,100 M130,100 L100,140 M82,85 L118,85 M82,115 L118,115" stroke="#C2A878" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/></svg><span>AERA</span></span></div>
+  <div class="body" style="padding-top:40px;padding-bottom:60px"><div class="skeleton" style="height:42px;width:60%"></div><div class="skeleton" style="height:16px;width:80%;margin-top:18px"></div><div class="skeleton" style="height:16px;width:70%;margin-top:8px"></div><div class="skeleton" style="height:140px;margin-top:40px"></div></div></div>
+</main>
+<script>
+(function(){
+  'use strict';
+  const app = document.getElementById('app');
+  const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const key = (location.hash || '').slice(1).trim();
+  const money = n => '£' + Number(n || 0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  const longDate = d => d ? new Date(d + (d.length === 10 ? 'T12:00:00' : '')).toLocaleDateString('en-GB', { day:'numeric', month:'long', year:'numeric' }) : '';
+  const MARK = '<span class="mark"><svg viewBox="61 51 78 98" fill="none" aria-hidden="true"><path d="M100,52 L138,100 L100,148 L62,100 Z" stroke="#C2A878" stroke-width="1.5" opacity=".5"/><path d="M100,60 L70,100 L130,100 Z M100,140 L70,100 M130,100 L100,140 M82,85 L118,85 M82,115 L118,115" stroke="#C2A878" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/></svg><span>AERA</span></span>';
+  let P = null, client = '', picked = new Set(), sending = false;
+
+  async function call(method, body){
+    const r = await fetch('/api/client', { method, cache: 'no-store',
+      headers: Object.assign({ 'X-Key': key }, body ? { 'Content-Type': 'application/json' } : {}),
+      body: body ? JSON.stringify(body) : undefined });
+    const d = await r.json().catch(() => ({}));
+    if (!r.ok) throw Object.assign(new Error(d.error || 'Something went wrong'), { status: r.status, data: d });
+    return d;
+  }
+
+  function totals(){
+    const t = (P.base ? P.base.price : 0) + (P.addons || []).filter(a => picked.has(a.id)).reduce((s, a) => s + a.price, 0);
+    const dep = Math.round(t * (P.depositPct || 0)) / 100;
+    return { t, dep, bal: Math.round((t - dep) * 100) / 100 };
+  }
+
+  function shell(inner){
+    return `<article class="sheet fade-in">
+      <header class="head band">${MARK}
+        <dl class="meta">
+          ${P.ref ? `<dt>Proposal</dt><dd>${esc(P.ref)}</dd>` : ''}
+          <dt>Issued</dt><dd>${esc(longDate(P.issued))}</dd>
+          ${P.validUntil ? `<dt>Valid until</dt><dd>${esc(longDate(P.validUntil))}</dd>` : ''}
+        </dl>
+      </header>
+      <div class="body">
+        <div class="parties">
+          <div><small>Prepared for</small>${esc(client)}${P.contactName ? '<br>' + esc(P.contactName) : ''}</div>
+          <div><small>Prepared by</small>Aera<br>bookings@aerastudios.org</div>
+        </div>
+        ${inner}
+      </div>
+      <footer class="foot band"><span><b>Aera</b> · Photo and film studio · Leeds</span><span>aerastudios.org · bookings@aerastudios.org</span></footer>
+    </article>`;
+  }
+
+  function render(){
+    const A = P.accepted;
+    if (A){
+      app.innerHTML = shell(`
+        <h1 class="display">${esc(P.title || 'Proposal')}</h1>
+        <div class="done" style="margin-top:22px">
+          <b style="font-weight:600">Accepted by ${esc(A.name)}</b> <span class="muted">· ${esc(longDate(A.at.slice(0,10)))}</span>
+          <div class="muted" style="font-size:14px;margin-top:4px">${A.items.map(esc).join(' · ')}</div>
+        </div>
+        <table class="sum" style="margin-top:22px"><tbody>
+          <tr><td class="muted">Total</td><td class="price">${money(A.total)}</td></tr>
+          <tr class="dep"><td class="muted">Deposit</td><td class="price">${money(A.deposit)}${P.depositPaid ? ' · paid' : ''}</td></tr>
+          <tr class="bal"><td>Balance, due on delivery</td><td class="price">${money(Math.round((A.total - A.deposit) * 100) / 100)}${P.balancePaid ? ' · paid' : ''}</td></tr>
+        </tbody></table>
+        <div class="go">
+          ${!P.depositPaid && P.payUrl ? `<a class="btn" href="${esc(P.payUrl)}" target="_blank" rel="noopener">Pay ${money(A.deposit)} deposit</a>` : ''}
+          <span class="muted" style="font-size:13px">${P.depositPaid ? 'Thank you, your date is confirmed.' : P.payUrl ? 'Your date is held once the deposit is paid.' : 'We’ll send payment details by email shortly.'}</span>
+        </div>
+        <p style="height:48px;margin:0"></p>`);
+      return;
+    }
+    const { t, dep, bal } = totals();
+    app.innerHTML = shell(`
+      <h1 class="display">${esc(P.title || 'Proposal')}</h1>
+      ${P.intro ? `<p class="intro">${esc(P.intro)}</p>` : ''}
+      <h2 class="sec"><span>1.</span>Choose your package</h2>
+      <p class="muted" style="margin:0 0 14px;font-size:13.5px">${(P.addons || []).length ? 'The first item is included. Tick any extras you’d like.' : 'Here’s what’s included.'}</p>
+      <table><tbody>
+        ${P.base && P.base.name ? `<tr><td class="tick"><input type="checkbox" checked disabled aria-label="${esc(P.base.name)}, included"></td><td style="padding-right:12px"><div style="font-weight:500">${esc(P.base.name)}</div>${P.base.desc ? `<div class="desc">${esc(P.base.desc)}</div>` : ''}</td><td class="price">${money(P.base.price)}</td></tr>` : ''}
+        ${(P.addons || []).map(a => `<tr class="pick" data-id="${esc(a.id)}"><td class="tick"><input type="checkbox" data-id="${esc(a.id)}" ${picked.has(a.id) ? 'checked' : ''} aria-label="${esc(a.name)}"></td><td style="padding-right:12px"><div style="font-weight:500">${esc(a.name)}</div>${a.desc ? `<div class="desc">${esc(a.desc)}</div>` : ''}</td><td class="price">${money(a.price)}</td></tr>`).join('')}
+      </tbody></table>
+      <h2 class="sec"><span>2.</span>Summary</h2>
+      <table class="sum"><tbody>
+        <tr><td class="muted">Total</td><td class="price" id="t">${money(t)}</td></tr>
+        <tr class="dep"><td class="muted">Deposit to confirm the date (${P.depositPct || 0}%)</td><td class="price" id="d">${money(dep)}</td></tr>
+        <tr class="bal"><td>Balance, due on delivery</td><td class="price" id="b">${money(bal)}</td></tr>
+      </tbody></table>
+      ${(P.terms || []).length ? `<h2 class="sec"><span>3.</span>Key terms</h2><ol class="terms">${P.terms.map(x => `<li>${esc(x)}</li>`).join('')}</ol>` : ''}
+      ${P.agreementUrl ? `<p style="margin:12px 0 0;font-size:13.5px"><a href="${esc(P.agreementUrl)}" target="_blank" rel="noopener">Read the full agreement</a></p>` : ''}
+      <h2 class="sec"><span>${(P.terms || []).length ? 4 : 3}.</span>Accept</h2>
+      <form id="acc" style="margin-top:14px" novalidate>
+        <div class="accept">
+          <label class="lab">Full name<input class="field" name="name" autocomplete="name" required></label>
+          <label class="lab">Signing for<input class="field" name="for" value="${esc(client)}"></label>
+        </div>
+        <label class="agree"><input type="checkbox" name="agree">I’ve read and agree to the terms${P.agreementUrl ? ' above and the full agreement' : ' above'}.</label>
+        <div class="go">
+          <button class="btn" type="submit" id="go">Accept${dep ? ' and pay ' + money(dep) + ' deposit' : ''}</button>
+          <span class="muted" style="font-size:12.5px">${P.payUrl ? 'Secure card payment. ' : ''}Your acceptance is recorded with the date and time.</span>
+        </div>
+        <p class="err" id="err" role="alert"></p>
+      </form>
+      <p style="height:20px;margin:0"></p>`);
+  }
+
+  app.addEventListener('click', e => {
+    const row = e.target.closest('tr.pick'); if (!row || P.accepted) return;
+    const id = row.dataset.id;
+    if (e.target.tagName !== 'INPUT'){ picked.has(id) ? picked.delete(id) : picked.add(id); }
+    else { e.target.checked ? picked.add(id) : picked.delete(id); }
+    row.querySelector('input').checked = picked.has(id);
+    const { t, dep, bal } = totals();
+    document.getElementById('t').textContent = money(t);
+    document.getElementById('d').textContent = money(dep);
+    document.getElementById('b').textContent = money(bal);
+    document.getElementById('go').textContent = 'Accept' + (dep ? ' and pay ' + money(dep) + ' deposit' : '');
+  });
+
+  app.addEventListener('submit', async e => {
+    e.preventDefault(); if (sending) return;
+    const f = e.target, err = document.getElementById('err');
+    const name = f.name.value.trim();
+    if (name.length < 2){ err.textContent = 'Please type your full name.'; f.name.focus(); return; }
+    if (!f.agree.checked){ err.textContent = 'Please tick the box to agree to the terms.'; return; }
+    sending = true; document.getElementById('go').disabled = true; err.textContent = '';
+    try {
+      const d = await call('POST', { action: 'accept', name, for: f.for.value.trim(), agree: true, picked: [...picked] });
+      P.accepted = d.accepted; render();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } catch (x) {
+      err.textContent = x.message; sending = false; document.getElementById('go').disabled = false;
+      if (x.data && x.data.accepted){ P.accepted = x.data.accepted; render(); }
+    }
+  });
+
+  (async () => {
+    if (!/^[a-f0-9]{36}$/.test(key)){ app.innerHTML = '<div class="center"><h1 class="display" style="font-size:34px">Link not recognised</h1><p class="muted">Please check the link, or email bookings@aerastudios.org.</p></div>'; return; }
+    try {
+      const d = await call('GET'); P = d.proposal; client = d.client;
+      (P.addons || []).forEach(a => { if (a.preselect) picked.add(a.id); });
+      document.title = (P.title || 'Proposal') + ' — Aera';
+      render();
+    } catch {
+      app.innerHTML = '<div class="center"><h1 class="display" style="font-size:34px">Link not recognised</h1><p class="muted">This proposal may have been replaced. Please email bookings@aerastudios.org.</p></div>';
+    }
+  })();
+})();
+</script>
+</body>
+</html>

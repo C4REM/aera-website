@@ -1,0 +1,54 @@
+/* Aera client pages (proposal /p/, review /r/, enquiry /enquire/).
+   Ivory paper, obsidian ink, the website's brown/amber glow in the bands,
+   champagne used sparingly. Makcasa for headings only: its digits, £ and
+   dashes are locked in this cut, so unicode-range hands those to Playfair. */
+@font-face{font-family:'Makcasa';src:url('/assets/fonts/Makcasa-Regular.woff2') format('woff2');font-display:swap;
+  unicode-range:U+0020-002C,U+002E-002F,U+003A-007E,U+00A0-00A2,U+00A4-00FF,U+2000-2012,U+2015-206F}
+:root{
+  --paper:#F5F1E9; --desk:#E3DDD1; --ink:#0E0E10; --ink2:#35312B; --muted:#5F594F;
+  --line:#DDD5C6; --field:#C9C0AF; --tint:#EAE3D6; --brown:#3B2213; --brown-hi:#4A2C18;
+  --cream:#EADFCD; --stone:#A39C90; --gold:#C2A878; --gold-ink:#8A6E3E; --ok:#3F6B45; --bad:#A4473A;
+  --display:'Makcasa','Playfair Display',Georgia,serif; --sans:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+}
+*{box-sizing:border-box}
+html{background:var(--paper)}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:var(--ink)}a:hover{color:var(--muted)}
+h1,h2,h3{margin:0}
+.display{font-family:var(--display);font-weight:400}
+button,a,input,textarea,select{transition:background-color .22s ease,color .22s ease,border-color .22s ease,box-shadow .22s ease,opacity .22s ease,filter .22s ease}
+button{font:inherit;-webkit-tap-highlight-color:transparent}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+
+/* the brand band: brown/amber glow from the website, drifting slowly */
+.band{color:var(--cream);border-bottom:2px solid var(--gold);
+  background:radial-gradient(60% 160% at 16% 0%,rgba(219,140,71,.34),transparent 62%),
+             radial-gradient(55% 140% at 86% 100%,rgba(150,100,60,.36),transparent 66%),
+             linear-gradient(115deg,#170e08 0%,#3a2213 48%,#1d120b 100%);
+  background-size:170% 170%,170% 170%,100% 100%;animation:glow 18s cubic-bezier(.45,0,.55,1) infinite alternate}
+.band.foot{border-bottom:0;color:var(--stone);font-size:12px}
+.band.foot b{color:var(--cream);font-weight:400}
+@keyframes glow{from{background-position:0% 0%,100% 100%,0 0}to{background-position:45% 35%,55% 65%,0 0}}
+.mark{display:inline-flex;align-items:center;gap:11px;text-decoration:none;color:var(--cream)}
+.mark svg{width:14px;height:18px;flex:none}
+.mark span{font-family:var(--display);letter-spacing:.32em;font-size:16px}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:4px;padding:13px 22px;background:var(--brown);color:var(--cream);font-weight:500;font-size:14.5px;cursor:pointer;text-decoration:none}
+.btn:hover{background:var(--brown-hi);color:var(--cream)}
+.btn:active{transform:translateY(1px)}
+.btn:disabled{opacity:.55;cursor:default}
+.btn.ghost{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 1px var(--field)}
+.btn.ghost:hover{box-shadow:inset 0 0 0 1px var(--ink)}
+.btn.ok{background:var(--ok)}
+.field{display:block;width:100%;border:1px solid var(--field);border-radius:4px;padding:11px 12px;font:400 15px var(--sans);color:var(--ink);background:var(--paper)}
+.field:focus{border-color:var(--gold);outline:none;box-shadow:0 0 0 3px rgba(194,168,120,.22)}
+label.lab{display:block;font-size:13px;font-weight:500}
+label.lab .field{margin-top:6px}
+input[type=checkbox]{width:16px;height:16px;accent-color:var(--gold-ink)}
+.muted{color:var(--muted)}
+.err{color:var(--bad);font-size:13.5px;min-height:1.2em}
+.fade-in{animation:fadeIn .45s ease both}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.skeleton{background:linear-gradient(90deg,var(--tint),#F1EBE0,var(--tint));background-size:200% 100%;animation:sk 1.4s ease infinite;border-radius:4px}
+@keyframes sk{from{background-position:100% 0}to{background-position:-100% 0}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}

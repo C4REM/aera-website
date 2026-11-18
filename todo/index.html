@@ -65,6 +65,18 @@ h2{font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--cham
 @keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 :focus-visible{outline:2px solid var(--champagne);outline-offset:2px}
+
+.sheet{background:var(--panel);border-radius:14px;padding:18px 20px;margin-bottom:12px;animation:rise .4s ease backwards}
+.sheet .sh-h{display:flex;justify-content:space-between;gap:12px;align-items:baseline}
+.sheet .sh-h b{font-weight:500;font-size:16px}
+.sheet .sh-h span{color:var(--champagne);font-size:12.5px;white-space:nowrap}
+.sheet dl{display:grid;grid-template-columns:auto 1fr;gap:5px 14px;font-size:13.5px;margin:12px 0}
+.sheet dt{color:var(--stone)}
+.sheet h4{font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--stone);font-weight:400;margin:14px 0 6px}
+.sheet ul{margin:0;padding-left:18px;font-size:13.5px;color:var(--dim)}
+.sheet .seen{margin-top:16px;border:0;border-radius:999px;padding:9px 18px;font:inherit;font-size:13px;cursor:pointer;background:var(--champagne);color:var(--obsidian);transition:background .25s,color .25s}
+.sheet .seen[disabled]{background:var(--panel3);color:var(--sage);cursor:default}
+@keyframes rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 </style>
 </head>
 <body>
@@ -115,6 +127,16 @@ h2{font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--cham
           <div><div class="t">${esc(i.text)}</div>
           ${(i.links || []).filter(l => ok(l.url)).length ? `<div class="tl">${i.links.filter(l => ok(l.url)).map(l => `<a href="${esc(l.url)}" target="_blank" rel="noopener noreferrer">${esc(l.label || 'Link')} ↗</a>`).join('')}</div>` : ''}</div>
         </div>`).join('')}</div>`).join('') : '<div class="empty">No tasks yet.</div>'}
+      ${(data.sheets || []).length ? `<h2>Shoot sheets</h2>${data.sheets.map((sh, si) => `<div class="sheet" style="animation-delay:${si * 60}ms">
+        <div class="sh-h"><b>${esc(sh.client)}</b><span>${esc([niceDate(sh.date), sh.call ? 'Call ' + sh.call : ''].filter(Boolean).join(' · '))}</span></div>
+        <dl>${[['Venue', sh.venue], ['Address', sh.address], ['Times', [sh.start, sh.end].filter(Boolean).join(' – ')], ['Access', sh.access], ['Contact', sh.contact]]
+          .filter(x => x[1]).map(([k, v]) => `<dt>${k}</dt><dd>${k === 'Address' ? `<a href="https://maps.google.com/?q=${encodeURIComponent(v)}" target="_blank" rel="noopener noreferrer">${esc(v)}</a>` : esc(v)}</dd>`).join('')}</dl>
+        ${sh.crew.length ? `<h4>Crew</h4><ul>${sh.crew.map(c => `<li>${esc(c.name)}${c.role ? ' · ' + esc(c.role) : ''}</li>`).join('')}</ul>` : ''}
+        ${sh.kit.length ? `<h4>Kit</h4><ul>${sh.kit.map(k => `<li>${esc(k)}</li>`).join('')}</ul>` : ''}
+        ${sh.shots.length ? `<h4>Shot list</h4><ul>${sh.shots.map(k => `<li>${esc(k)}</li>`).join('')}</ul>` : ''}
+        ${sh.notes ? `<h4>Notes</h4><p style="font-size:13.5px;color:var(--dim);white-space:pre-wrap;margin:0">${esc(sh.notes)}</p>` : ''}
+        <button class="seen" data-seen="${esc(sh.jobId)}"${sh.seen ? ' disabled' : ''}>${sh.seen ? '✓ Read' : 'I’ve read this'}</button>
+      </div>`).join('')}` : ''}
       <h2>Pitch decks &amp; links</h2>
       ${(data.files || []).filter(f => ok(f.url)).length ? `<div class="files">${data.files.filter(f => ok(f.url)).map(f => `<a class="file" href="${esc(f.url)}" target="_blank" rel="noopener noreferrer">${esc(f.label || f.url)}</a>`).join('')}</div>` : '<div class="empty">Nothing shared yet.</div>'}
       <h2>Who's working on what</h2>
@@ -125,6 +147,12 @@ h2{font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--cham
   }
 
   app.addEventListener('click', async e => {
+    const sb = e.target.closest('[data-seen]');
+    if (sb && !sb.disabled){
+      const sh = data.sheets.find(x => x.jobId === sb.dataset.seen); sh.seen = true; render();
+      try { await call('PUT', { sheetSeen: sh.jobId }); } catch { sh.seen = false; render(); }
+      return;
+    }
     const b = e.target.closest('.tick'); if (!b) return;
     const it = data.items.find(i => i.id === b.dataset.id); if (!it) return;
     it.done = !it.done;

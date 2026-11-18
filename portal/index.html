@@ -854,6 +854,134 @@ header .wrap.hrow{padding-left:56px;padding-right:56px}
 main.wrap{padding-top:28px;padding-bottom:calc(90px + env(safe-area-inset-bottom,0px))}
 @media(max-width:1100px){header .wrap.hrow{padding-left:32px;padding-right:32px}}
 @media(max-width:620px){header .wrap.hrow{padding-left:16px;padding-right:16px}main.wrap{padding-bottom:calc(70px + env(safe-area-inset-bottom,0px))}}
+
+/* ================= JOB PAGE, MONEY, KIT (Nov 2026) ================= */
+.jobclient.open{background:none;border:0;color:inherit;font:inherit;cursor:pointer;padding:0;text-align:left}
+.jobclient.open:hover{color:var(--champagne)}
+.nudges{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
+.nudge{font-size:11px;letter-spacing:.03em;border-radius:var(--r-pill);padding:3px 10px;background:rgba(255,255,255,.04);color:var(--dim)}
+.nudge.warn{background:rgba(194,168,120,.13);color:var(--champagne)}
+.nudge.bad{background:rgba(201,123,110,.13);color:var(--rust)}
+.nudge.ok{background:rgba(126,155,122,.13);color:var(--sage)}
+
+.jp{position:fixed;inset:0;z-index:90;background:var(--grad-page);overflow-y:auto;animation:jpIn .32s var(--ease)}
+.jp[hidden]{display:none}
+@keyframes jpIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.jp-in{max-width:1040px;margin:0 auto;padding:22px 40px 90px}
+.jp-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:22px}
+.jp-back{background:none;border:0;color:var(--stone);font:inherit;font-size:11px;letter-spacing:.16em;text-transform:uppercase;cursor:pointer;padding:8px 0}
+.jp-back:hover{color:var(--cream)}
+.jp h2{margin-bottom:6px}
+.jp-sub{color:var(--stone);font-size:13.5px;margin-bottom:22px}
+.jp-tabs{display:inline-flex;gap:2px;background:var(--panel);border-radius:var(--r-pill);padding:4px;margin-bottom:26px;max-width:100%;overflow-x:auto;box-shadow:var(--shadow)}
+.jp-tabs button{background:none;border:0;border-radius:var(--r-pill);white-space:nowrap;color:var(--stone);font-family:inherit;font-size:11px;letter-spacing:.14em;text-transform:uppercase;padding:10px 18px;cursor:pointer;transition:color .25s,background .25s}
+.jp-tabs button:hover:not([aria-selected="true"]){color:var(--cream)}
+.jp-tabs button[aria-selected="true"]{color:var(--obsidian);background:var(--champagne)}
+.jp-tabs button b{font-weight:400;opacity:.6;margin-left:6px}
+.jp-pane{animation:riseIn .3s var(--ease)}
+.jp-grid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:18px;align-items:start}
+@media(max-width:820px){.jp-grid{grid-template-columns:1fr}.jp-in{padding:18px 18px 80px}}
+.panel{border-radius:var(--r-md);background:var(--grad-panel);box-shadow:var(--shadow);padding:20px 22px;margin-bottom:16px}
+.panel h4{font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--champagne);font-weight:400;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.panel h4 span{color:var(--stone);letter-spacing:.06em;text-transform:none;font-size:12px}
+.facts{display:grid;grid-template-columns:auto 1fr;gap:7px 18px;font-size:13.5px}
+.facts dt{color:var(--stone)}
+.facts dd{color:var(--cream);min-width:0;overflow-wrap:anywhere}
+.steps{display:flex;gap:4px;margin:4px 0 2px}
+.steps i{flex:1;height:4px;border-radius:2px;background:rgba(255,255,255,.07)}
+.steps i.on{background:var(--champagne)}
+.steps-l{display:flex;justify-content:space-between;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--stone);margin-top:7px}
+.f2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.f3{display:grid;grid-template-columns:2fr 1fr 1fr;gap:12px}
+.f4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media(max-width:640px){.f2,.f3,.f4{grid-template-columns:1fr 1fr}}
+.fr{margin-bottom:12px}
+.rep{display:flex;flex-direction:column;gap:8px}
+.reprow{display:grid;gap:8px;align-items:center;animation:riseIn .25s var(--ease)}
+.reprow.addon{grid-template-columns:1.2fr 1.6fr 90px auto auto}
+.reprow.crew{grid-template-columns:1fr 1.4fr auto}
+.reprow.kit{grid-template-columns:auto 1fr auto}
+.reprow.item{grid-template-columns:1.2fr 110px 1.8fr auto}
+@media(max-width:640px){.reprow.addon,.reprow.item{grid-template-columns:1fr 1fr}.reprow .x{justify-self:end}}
+.reprow .x{background:none;border:0;color:var(--stone);cursor:pointer;font-size:17px;line-height:1;padding:4px 6px;border-radius:6px}
+.reprow .x:hover{color:var(--rust);background:rgba(201,123,110,.1)}
+.reprow label.chk{display:flex;align-items:center;gap:6px;margin:0;white-space:nowrap;cursor:pointer}
+.reprow input[type=checkbox],.panel input[type=checkbox]{width:16px;height:16px;accent-color:var(--champagne);flex:none}
+.addrow{background:none;border:1px dashed rgba(255,255,255,.12);border-radius:var(--r-sm);color:var(--stone);font:inherit;font-size:12.5px;padding:9px;cursor:pointer;margin-top:8px;width:100%;transition:color .2s,border-color .2s}
+.addrow:hover{color:var(--cream);border-color:var(--champagne)}
+.savebar{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-top:6px}
+.savebar .note{font-size:12px;color:var(--stone)}
+.dirty .note{color:var(--champagne)}
+.statline{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:13px}
+.big{font-family:var(--display);font-size:2rem;line-height:1;margin:2px 0 4px}
+.paid{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-top:1px solid rgba(255,255,255,.05);font-size:13.5px}
+.paid:first-of-type{border-top:0}
+.tog{position:relative;width:38px;height:22px;border-radius:11px;background:var(--panel2);border:0;cursor:pointer;flex:none;transition:background .25s}
+.tog::after{content:"";position:absolute;left:3px;top:3px;width:16px;height:16px;border-radius:50%;background:var(--stone);transition:transform .25s var(--ease),background .25s}
+.tog[aria-pressed="true"]{background:rgba(126,155,122,.35)}
+.tog[aria-pressed="true"]::after{transform:translateX(16px);background:var(--sage)}
+.rv-item{border-top:1px solid rgba(255,255,255,.05);padding:14px 0}
+.rv-item:first-child{border-top:0;padding-top:0}
+.rv-head{display:flex;justify-content:space-between;gap:10px;align-items:baseline;font-size:14px}
+.rv-head small{color:var(--stone);font-size:11.5px}
+.cmt{font-size:13px;margin-top:8px;padding:8px 12px;border-radius:var(--r-sm);background:rgba(255,255,255,.03)}
+.cmt.team{background:rgba(194,168,120,.07)}
+.cmt b{font-weight:500;color:var(--cream)}
+.cmt .t{color:var(--stone);font-size:11px;margin-left:6px}
+.cmt .at{color:var(--champagne);font-size:11.5px;margin-right:6px}
+.replyrow{display:flex;gap:8px;margin-top:8px}
+.replyrow input{flex:1}
+.copyline{display:flex;gap:8px;align-items:center;margin-top:12px}
+.copyline input{flex:1;font-size:12.5px;color:var(--dim)}
+
+/* money */
+.mn-top{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:22px}
+.seg{display:inline-flex;gap:2px;background:var(--panel);border-radius:var(--r-pill);padding:3px}
+.seg button{background:none;border:0;border-radius:var(--r-pill);color:var(--stone);font:inherit;font-size:11px;letter-spacing:.1em;text-transform:uppercase;padding:8px 14px;cursor:pointer;transition:color .2s,background .2s}
+.seg button[aria-pressed="true"]{background:var(--panel2);color:var(--cream)}
+.tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:22px}
+@media(max-width:900px){.tiles{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.tile{border-radius:var(--r-md);background:var(--grad-panel);box-shadow:var(--shadow);padding:18px 20px;animation:cardIn .34s var(--ease) backwards}
+.tile .l{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--stone)}
+.tile .v{font-family:var(--display);font-size:2.1rem;line-height:1.05;margin:8px 0 4px}
+.tile .s{font-size:12px;color:var(--stone)}
+.bars{display:flex;flex-direction:column;gap:12px}
+.bar{display:grid;grid-template-columns:90px 1fr 80px;gap:12px;align-items:center;font-size:13px}
+.bar .tr{height:8px;border-radius:4px;background:rgba(255,255,255,.05);overflow:hidden}
+.bar .tr i{display:block;height:100%;border-radius:4px;transition:width .6s var(--ease)}
+.bar .n{text-align:right;color:var(--dim)}
+.wl{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:11px 0;border-top:1px solid rgba(255,255,255,.05);font-size:13.5px}
+.wl:first-child{border-top:0}
+.wl small{display:block;color:var(--stone);font-size:12px}
+.wl .amt{font-family:var(--display);font-size:1.15rem;white-space:nowrap}
+.linkbtn{background:none;border:0;color:var(--champagne);font:inherit;font-size:12px;cursor:pointer;padding:4px 0;white-space:nowrap}
+.linkbtn:hover{color:var(--cream)}
+
+/* kit */
+.gr-wrap{overflow-x:auto;border-radius:var(--r-md);background:var(--grad-panel);box-shadow:var(--shadow)}
+.gr{display:grid;grid-template-columns:170px repeat(7,minmax(92px,1fr));min-width:820px}
+.gr>div{padding:9px 10px;border-top:1px solid rgba(255,255,255,.04);border-left:1px solid rgba(255,255,255,.04);font-size:12.5px;min-height:46px}
+.gr .h{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--stone);min-height:0;border-top:0}
+.gr .h.today{color:var(--champagne)}
+.gr .it{border-left:0;display:flex;justify-content:space-between;gap:6px;align-items:flex-start}
+.gr .it b{font-weight:400;color:var(--cream);display:block}
+.gr .it small{color:var(--stone);font-size:11px}
+.gr .it .x{background:none;border:0;color:var(--stone);cursor:pointer;opacity:0;transition:opacity .2s;font-size:15px}
+.gr .it:hover .x{opacity:1}
+.gr .cell{cursor:pointer;transition:background .2s}
+.gr .cell:hover{background:rgba(255,255,255,.025)}
+.bk{display:block;width:100%;text-align:left;border:0;border-radius:7px;padding:4px 7px;margin-bottom:4px;font:inherit;font-size:11.5px;line-height:1.3;cursor:pointer;background:rgba(194,168,120,.14);color:var(--cream)}
+.bk small{display:block;color:var(--dim);font-size:10.5px}
+.bk.clash{background:rgba(201,123,110,.2);color:#F0CFC9}
+.bk:hover{filter:brightness(1.15)}
+.gr-add{display:flex;gap:9px;margin-top:14px;flex-wrap:wrap}
+.gr-add input{max-width:260px}
+.fu{display:flex;justify-content:space-between;gap:14px;align-items:center;padding:13px 0;border-top:1px solid rgba(255,255,255,.05);animation:riseIn .3s var(--ease) backwards}
+.fu:first-child{border-top:0}
+.fu .w{font-size:14px}
+.fu .w small{display:block;color:var(--stone);font-size:12px;margin-top:2px}
+.fu .a{display:flex;gap:6px;flex:none}
+.fu.gone{opacity:0;transform:translateX(8px);transition:opacity .25s,transform .25s}
 </style>
 </head>
 <body>
@@ -882,6 +1010,8 @@ main.wrap{padding-top:28px;padding-bottom:calc(90px + env(safe-area-inset-bottom
     <button role="tab" aria-selected="true"  data-tab="week">Week</button>
     <button role="tab" aria-selected="false" data-tab="jobs">Jobs</button>
     <button role="tab" aria-selected="false" data-tab="meetings">Meetings</button>
+    <button role="tab" aria-selected="false" data-tab="money">Money</button>
+    <button role="tab" aria-selected="false" data-tab="gear">Kit</button>
     <button role="tab" aria-selected="false" data-tab="kit">Brand kit</button>
   </nav>
 
@@ -987,6 +1117,52 @@ main.wrap{padding-top:28px;padding-bottom:calc(90px + env(safe-area-inset-bottom
       <div class="mt-list" id="mtlist"></div>
       <div id="mtdoc"><div class="empty">Loading…</div></div>
     </div>
+  </section>
+
+
+  <!-- ================================ MONEY ================================ -->
+  <section id="money" hidden>
+    <div class="mn-top">
+      <div>
+        <div class="eyebrow">Money</div>
+        <h2>Money</h2>
+        <p class="lede" style="margin-bottom:0">What's booked, what's coming in, and who still owes what. Worked out from the jobs and their proposals.</p>
+      </div>
+      <div class="seg" id="mn-range">
+        <button data-r="month" aria-pressed="false">This month</button>
+        <button data-r="year" aria-pressed="true">This year</button>
+        <button data-r="all" aria-pressed="false">All time</button>
+      </div>
+    </div>
+    <div class="tiles" id="mn-tiles"></div>
+    <div class="jp-grid">
+      <div class="panel"><h4>Waiting on</h4><div id="mn-wait"></div></div>
+      <div class="panel"><h4>By stage</h4><div class="bars" id="mn-bars"></div></div>
+    </div>
+  </section>
+
+  <!-- ================================= KIT ================================= -->
+  <section id="gear" hidden>
+    <div class="eyebrow">Kit &amp; follow-ups</div>
+    <h2>Kit</h2>
+    <p class="lede">Who has which camera on which day. Tap a day to book something out; two bookings on the same day turn red so you can sort it before the shoot.</p>
+    <div class="wk-head" style="margin-bottom:14px">
+      <div class="weeknav">
+        <button class="nav" id="gr-prev" aria-label="Previous week">&lsaquo;</button>
+        <h2 class="weeklabel" id="gr-label" style="font-size:1.6rem"></h2>
+        <button class="nav" id="gr-next" aria-label="Next week">&rsaquo;</button>
+      </div>
+    </div>
+    <div class="gr-wrap"><div class="gr" id="gr"></div></div>
+    <form class="gr-add" id="gr-add">
+      <input name="name" placeholder="Add kit, e.g. Sony FX3" maxlength="60" required>
+      <input name="owner" placeholder="Whose is it?" maxlength="40" style="max-width:180px">
+      <button class="btn sm" type="submit">Add</button>
+    </form>
+
+    <h3 style="margin-top:44px">Follow-ups</h3>
+    <p class="lede" style="margin-bottom:14px">Anything that's gone quiet. Draft a chase or snooze it for a week.</p>
+    <div class="panel" id="fu"><div class="empty">Loading…</div></div>
   </section>
 
   <!-- =============================== BRAND KIT ============================= -->
@@ -1181,6 +1357,44 @@ main.wrap{padding-top:28px;padding-bottom:calc(90px + env(safe-area-inset-bottom
       </div>
     </form>
     <div class="awaylist" id="awaylist"></div>
+  </div>
+</div>
+
+
+<!-- job page: one place per job for the proposal, shoot sheet and review -->
+<div class="jp" id="jobpage" hidden>
+  <div class="jp-in">
+    <div class="jp-top">
+      <button class="jp-back" id="jp-back">&larr; Jobs</button>
+      <div id="jp-pill"></div>
+    </div>
+    <div class="eyebrow" id="jp-eyebrow"></div>
+    <h2 id="jp-title"></h2>
+    <p class="jp-sub" id="jp-sub"></p>
+    <div class="jp-tabs" role="tablist" id="jp-tabs">
+      <button data-jt="overview" aria-selected="true">Overview</button>
+      <button data-jt="proposal" aria-selected="false">Proposal</button>
+      <button data-jt="sheet" aria-selected="false">Shoot sheet</button>
+      <button data-jt="review" aria-selected="false">Review</button>
+    </div>
+    <div id="jp-body"></div>
+  </div>
+</div>
+
+<!-- book kit -->
+<div class="modal" id="bookmodal" hidden>
+  <div class="box">
+    <h4 id="bk-title">Book out</h4>
+    <div class="sub" id="bk-sub"></div>
+    <form id="bookform">
+      <div class="row"><label for="bk-who">Who's taking it</label><select id="bk-who"></select></div>
+      <div class="row"><label for="bk-job">For which job — optional</label><select id="bk-job"></select></div>
+      <div class="row"><label for="bk-note">Note — optional</label><input id="bk-note" maxlength="80" placeholder="e.g. with both batteries"></div>
+      <div class="acts">
+        <button type="submit" class="btn">Book</button>
+        <button type="button" class="btn ghost" id="bk-cancel">Cancel</button>
+      </div>
+    </form>
   </div>
 </div>
 
@@ -2080,7 +2294,7 @@ main.wrap{padding-top:28px;padding-bottom:calc(90px + env(safe-area-inset-bottom
             <div class="jobname">
               ${j.priority ? `<span class="grip" data-grip="${esc(j.id)}" title="Drag to reorder" aria-label="Drag to reorder">⠿</span>` : ''}
               <button type="button" class="star" data-star="${esc(j.id)}" aria-pressed="${!!j.priority}" title="${j.priority ? 'Remove from priority' : 'Make a priority'}">${j.priority ? '★' : '☆'}</button>
-              <div class="jobclient">${esc(j.client)}</div>
+              <button type="button" class="jobclient open" data-open="${esc(j.id)}" title="Open job page">${esc(j.client)}</button>
             </div>
             <div class="jobright">
               <button type="button" class="pill2 jobstat" data-advance="${esc(j.id)}" title="Click to move to ${esc(ORDER[(ORDER.indexOf(j.status) + 1) % ORDER.length])}"
@@ -2094,8 +2308,10 @@ main.wrap{padding-top:28px;padding-bottom:calc(90px + env(safe-area-inset-bottom
             ${j.assignee ? `<span>Team: ${esc(j.assignee)}</span>` : ''}
             ${j.fee      ? `<span>${esc(pounds(j.fee))}</span>` : ''}
           </div>
+          ${jobNudges(j)}
           ${j.notes ? `<div class="jobnotes">${esc(j.notes)}</div>` : ''}
           <div class="jobacts">
+            <button data-open="${esc(j.id)}">Open</button>
             ${/^https:\/\//i.test(j.pitchUrl || '') ? `<a class="jobpitch" href="${esc(j.pitchUrl)}" target="_blank" rel="noopener">Pitch deck ↗</a>` : ''}
             <button data-edit="${esc(j.id)}">Edit</button>
             <button class="del" data-del="${esc(j.id)}">Delete</button>
@@ -2126,6 +2342,8 @@ main.wrap{padding-top:28px;padding-bottom:calc(90px + env(safe-area-inset-bottom
       const { jobs: list } = await api(JOBS_API, 'GET');
       jobs = list; renderJobs();
       linkPitchesFromLeads();
+      loadSummary();
+      if (hashJob && jobs.some(j => j.id === hashJob)) openJob(hashJob);
     } catch (err) {
       if (err.data && err.data.error === 'no-kv'){
         $('kvbanner').hidden = false;
@@ -2911,6 +3129,540 @@ main.wrap{padding-top:28px;padding-bottom:calc(90px + env(safe-area-inset-bottom
     document.cookie = 'aera_portal=; Path=/portal; Max-Age=0; SameSite=Lax; Secure';
     location.reload();
   });
+
+
+  /* ================================================================
+     JOB PAGE · MONEY · KIT · FOLLOW-UPS
+     Per-job parts (proposal, shoot sheet, review) live in their own KV keys
+     via /portal/api/jobdata. Client links are /p/#key and /r/#key.
+     ================================================================ */
+  const JD_API = '/portal/api/jobdata', GEAR_API = '/portal/api/gear';
+  let jsum = {};                 // { jobId: { proposal:{...}, review:{...} } }
+  const DAY = 864e5;
+  const feeNum = v => { const n = Number(String(v || '').replace(/[£,\s]/g, '')); return Number.isFinite(n) ? n : 0; };
+  const gbp = n => '£' + Math.round(n).toLocaleString('en-GB');
+  const daysSince = d => d ? Math.floor((Date.now() - new Date(String(d).slice(0, 10) + 'T12:00:00').getTime()) / DAY) : 999;
+  const addDays = (n, from = new Date()) => { const d = new Date(from); d.setDate(d.getDate() + n); return iso(d); };
+  const lastTouch = j => [j.lastContact, String(j.updated || '').slice(0, 10)].filter(Boolean).sort().pop() || '';
+  const snoozed = j => j.snoozeUntil && j.snoozeUntil > todayIso();
+  const fmtWhen = s => { const d = new Date(s); return isNaN(d) ? '' : d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) + ', ' + d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }); };
+  async function copyText(t){
+    try { await navigator.clipboard.writeText(t); return true; }
+    catch { const a = document.createElement('textarea'); a.value = t; document.body.appendChild(a); a.select();
+      let ok = false; try { ok = document.execCommand('copy'); } catch {} a.remove(); return ok; }
+  }
+  async function loadSummary(){
+    try { jsum = (await api(JD_API + '?summary=1', 'GET')).jobs || {}; } catch { jsum = {}; }
+    renderJobs(); if (!$('money').hidden) renderMoney(); if (!$('gear').hidden) renderFollowups();
+  }
+
+  // What a job card says needs doing, in a few words.
+  function jobNudges(j){
+    const s = jsum[j.id] || {}, p = s.proposal, r = s.review, out = [];
+    if (p){
+      if (p.status === 'accepted'){
+        if (!p.depositPaid) out.push(['warn', 'Deposit not paid · ' + gbp(p.deposit)]);
+        else if (!p.balancePaid && j.status === 'Delivered') out.push(['warn', 'Balance due · ' + gbp(p.total - p.deposit)]);
+        else if (p.balancePaid) out.push(['ok', 'Paid in full']);
+      } else if (p.status === 'viewed') out.push(['', 'Proposal opened']);
+      else if (p.status === 'sent') out.push(['', 'Proposal sent']);
+    }
+    if (r && r.total){
+      if (r.changes) out.push(['bad', `${r.changes} change${r.changes > 1 ? 's' : ''} asked for`]);
+      out.push([r.approved === r.total ? 'ok' : '', `Review ${r.approved}/${r.total} approved`]);
+    }
+    const q = daysSince(lastTouch(j));
+    if ((j.status === 'Enquiry' || (p && p.status !== 'accepted' && j.status !== 'Delivered')) && q >= 7 && q < 999 && !snoozed(j))
+      out.push(['bad', `Quiet for ${q} days`]);
+    if (j.call && j.call.slice(0, 10) >= todayIso()) out.push(['warn', 'Call ' + shortDay(j.call.slice(0, 10)) + ' ' + j.call.slice(11)]);
+    return out.length ? `<div class="nudges">${out.map(([c, t]) => `<span class="nudge ${c}">${esc(t)}</span>`).join('')}</div>` : '';
+  }
+
+  /* ---------------- job page ---------------- */
+  let jp = null;   // { id, tab, data:{proposal,sheet,review}, dirty }
+  const curJob = () => jp && jobs.find(x => x.id === jp.id);
+
+  async function openJob(id, tab = 'overview'){
+    const j = jobs.find(x => x.id === id); if (!j) return;
+    jp = { id, tab, data: null, dirty: false };
+    $('jobpage').hidden = false; document.body.style.overflow = 'hidden';
+    paintJobHead(); setJpTab(tab, true);
+    $('jp-body').innerHTML = '<div class="empty">Loading…</div>';
+    try { jp.data = await api(JD_API + '?job=' + encodeURIComponent(id), 'GET'); }
+    catch { $('jp-body').innerHTML = '<div class="empty">Couldn’t load this job. Close and try again.</div>'; return; }
+    if (jp && jp.id === id) paintJp();
+    history.replaceState(null, '', '#job=' + id);
+  }
+  function closeJob(){
+    if (jp && jp.dirty && !confirm('You have unsaved changes on this job. Close anyway?')) return;
+    jp = null; $('jobpage').hidden = true; document.body.style.overflow = '';
+    history.replaceState(null, '', location.pathname);
+    loadSummary();
+  }
+  function paintJobHead(){
+    const j = curJob(); if (!j) return;
+    $('jp-eyebrow').textContent = [j.type, j.source === 'Website' ? 'Website enquiry' : ''].filter(Boolean).join(' · ') || 'Job';
+    $('jp-title').textContent = j.client;
+    $('jp-sub').textContent = [j.date ? niceDate(j.date) : 'No date yet', j.assignee ? 'Team: ' + j.assignee : '', j.fee ? pounds(j.fee) : ''].filter(Boolean).join(' · ');
+    const c = JOB_COLOUR[j.status] || '#C9C1B2';
+    $('jp-pill').innerHTML = `<button type="button" class="pill2 jobstat" data-jpadvance title="Click to move it on" style="--c:${c};--c-bg:color-mix(in srgb, ${c} 16%, transparent)"><i></i>${esc(j.status)}</button>`;
+  }
+  function setJpTab(tab, quiet){
+    if (!quiet && jp && jp.dirty && !confirm('You have unsaved changes. Leave this tab anyway?')) return;
+    if (!jp) return;
+    jp.tab = tab; jp.dirty = false;
+    $('jp-tabs').querySelectorAll('button').forEach(b => b.setAttribute('aria-selected', String(b.dataset.jt === tab)));
+    if (jp.data) paintJp();
+  }
+  function paintJp(){
+    const t = jp.tab, el = $('jp-body');
+    el.innerHTML = `<div class="jp-pane">${t === 'proposal' ? propHtml() : t === 'sheet' ? sheetHtml() : t === 'review' ? reviewHtml() : overviewHtml()}</div>`;
+    const counts = { proposal: jp.data.proposal ? 1 : 0, sheet: jp.data.sheet ? 1 : 0, review: (jp.data.review && jp.data.review.items || []).length };
+    $('jp-tabs').querySelectorAll('button').forEach(b => {
+      const n = b.dataset.jt; const lab = { overview: 'Overview', proposal: 'Proposal', sheet: 'Shoot sheet', review: 'Review' }[n];
+      b.innerHTML = esc(lab) + (n === 'review' && counts.review ? `<b>${counts.review}</b>` : '');
+    });
+  }
+  $('jp-back').addEventListener('click', closeJob);
+  $('jp-tabs').addEventListener('click', e => { const b = e.target.closest('[data-jt]'); if (b) setJpTab(b.dataset.jt); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && jp && !document.querySelector('.modal:not([hidden])')) closeJob(); });
+  $('jp-body').addEventListener('input', e => { if (jp && jp.tab !== 'overview' && !e.target.matches('[data-reply]')){ jp.dirty = true; const n = $('jp-body').querySelector('.savebar'); if (n){ n.classList.add('dirty'); n.querySelector('.note').textContent = 'Unsaved changes'; } } });
+
+  async function saveJobFields(id, patch, msg){
+    try { jobs = (await api(JOBS_API, 'PUT', { id, ...patch })).jobs; renderJobs(); paintJobHead(); if (msg) toast(msg); return true; }
+    catch { toast('Couldn’t save that'); return false; }
+  }
+  $('jobpage').addEventListener('click', async e => {
+    if (e.target.closest('[data-jpadvance]')){
+      const j = curJob(); if (!j) return;
+      const next = ORDER[(ORDER.indexOf(j.status) + 1) % ORDER.length];
+      await saveJobFields(j.id, { status: next }, `${j.client} → ${next}`);
+      if (jp.tab === 'overview') paintJp();
+    }
+  });
+
+  // ---- overview
+  function overviewHtml(){
+    const j = curJob(), d = jp.data, p = d.proposal, r = d.review, sh = d.sheet;
+    const step = ORDER.indexOf(j.status);
+    const total = p ? (p.accepted ? p.accepted.total : propTotal(p)) : feeNum(j.fee);
+    const dep = p ? (p.accepted ? p.accepted.deposit : Math.round(total * (p.depositPct || 0) / 100)) : 0;
+    const items = (r && r.items) || [];
+    const seen = sh && sh.seen ? Object.keys(sh.seen).map(id => firstName((members.find(m => m.id === id) || {}).name || id)) : [];
+    const q = daysSince(lastTouch(j));
+    return `<div class="jp-grid"><div>
+      <div class="panel"><h4>Where it's at</h4>
+        <div class="steps">${ORDER.map((s, i) => `<i class="${i <= step ? 'on' : ''}"></i>`).join('')}</div>
+        <div class="steps-l">${ORDER.map(s => `<span>${esc(s)}</span>`).join('')}</div>
+      </div>
+      <div class="panel"><h4>Details <button class="linkbtn" data-ov="edit">Edit details</button></h4>
+        <dl class="facts">
+          <dt>Client</dt><dd>${esc(j.client)}</dd>
+          ${j.type ? `<dt>Type</dt><dd>${esc(j.type)}</dd>` : ''}
+          <dt>Date</dt><dd>${j.date ? esc(niceDate(j.date)) : '<span style="color:var(--stone)">Not set</span>'}</dd>
+          ${j.assignee ? `<dt>Team</dt><dd>${esc(j.assignee)}</dd>` : ''}
+          ${j.fee ? `<dt>Fee</dt><dd>${esc(pounds(j.fee))}</dd>` : ''}
+          ${j.email ? `<dt>Email</dt><dd><a href="mailto:${esc(j.email)}">${esc(j.email)}</a></dd>` : ''}
+          ${j.call ? `<dt>Call</dt><dd>${esc(shortDay(j.call.slice(0, 10)) + ' at ' + j.call.slice(11))}</dd>` : ''}
+          ${j.source ? `<dt>Came from</dt><dd>${esc(j.source)}</dd>` : ''}
+          ${/^https:\/\//i.test(j.pitchUrl || '') ? `<dt>Pitch</dt><dd><a href="${esc(j.pitchUrl)}" target="_blank" rel="noopener">Pitch deck ↗</a></dd>` : ''}
+        </dl>
+        ${j.notes ? `<p style="white-space:pre-wrap;font-size:13.5px;color:var(--dim);margin-top:14px">${esc(j.notes)}</p>` : ''}
+      </div>
+    </div><div>
+      <div class="panel"><h4>Money</h4>
+        <div class="big">${total ? gbp(total) : '—'}</div>
+        <div style="font-size:12.5px;color:var(--stone);margin-bottom:10px">${p && p.accepted ? 'Accepted by ' + esc(p.accepted.name) + ' · ' + esc(fmtWhen(p.accepted.at)) : p ? 'Proposal ' + esc(p.status || 'draft') : 'No proposal yet'}</div>
+        ${p ? payToggles(p, total, dep) : `<button class="btn ghost sm" data-ov="proposal">Write a proposal</button>`}
+      </div>
+      <div class="panel"><h4>Shoot sheet</h4>
+        ${sh ? `<p style="font-size:13.5px">${esc([sh.date ? niceDate(sh.date) : '', sh.call ? 'call ' + sh.call : '', sh.venue].filter(Boolean).join(' · ')) || 'Started'}</p>
+          <p style="font-size:12.5px;color:var(--stone);margin-top:4px">${seen.length ? 'Read by ' + esc(seen.join(', ')) : 'Nobody has marked it read yet'}</p>`
+          : `<button class="btn ghost sm" data-ov="sheet">Make the shoot sheet</button>`}
+      </div>
+      <div class="panel"><h4>Review</h4>
+        ${items.length ? `<p style="font-size:13.5px">${items.filter(i => i.status === 'approved').length} of ${items.length} approved${items.some(i => i.status === 'changes') ? ` · <span style="color:var(--rust)">${items.filter(i => i.status === 'changes').length} with changes</span>` : ''}</p>`
+          : `<button class="btn ghost sm" data-ov="review">Add deliverables</button>`}
+      </div>
+      <div class="panel"><h4>Follow-up</h4>
+        <p style="font-size:13px;color:var(--stone);margin-bottom:12px">${q >= 999 ? 'No contact logged.' : q === 0 ? 'Last touched today.' : `Last touched ${q} day${q > 1 ? 's' : ''} ago.`}${snoozed(j) ? ' Snoozed until ' + esc(shortDay(j.snoozeUntil)) + '.' : ''}</p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn ghost sm" data-ov="contacted">Contacted today</button>
+          <button class="btn ghost sm" data-ov="snooze">Snooze a week</button>
+          ${j.email ? '<button class="btn ghost sm" data-ov="chase">Draft chase</button>' : ''}
+        </div>
+      </div>
+    </div></div>`;
+  }
+  function payToggles(p, total, dep){
+    return `<div class="paid"><span>Deposit${dep ? ' · ' + gbp(dep) : ''}</span><button class="tog" data-pay="depositPaid" aria-pressed="${!!p.depositPaid}" aria-label="Deposit paid"></button></div>
+      <div class="paid"><span>Balance${total ? ' · ' + gbp(total - dep) : ''}</span><button class="tog" data-pay="balancePaid" aria-pressed="${!!p.balancePaid}" aria-label="Balance paid"></button></div>`;
+  }
+  $('jp-body').addEventListener('click', async e => {
+    const ov = e.target.closest('[data-ov]');
+    if (ov){
+      const j = curJob(); const a = ov.dataset.ov;
+      if (a === 'edit'){ const id = j.id; jp.dirty = false; closeJob(); document.querySelector('nav.tabs [data-tab=jobs]').click(); const b = document.createElement('button'); b.dataset.edit = id; board.appendChild(b); b.click(); b.remove(); return; }
+      if (a === 'proposal' || a === 'sheet' || a === 'review') return setJpTab(a);
+      if (a === 'contacted'){ await saveJobFields(j.id, { lastContact: todayIso(), snoozeUntil: '' }, 'Logged'); return paintJp(); }
+      if (a === 'snooze'){ await saveJobFields(j.id, { snoozeUntil: addDays(7) }, 'Snoozed for a week'); return paintJp(); }
+      if (a === 'chase'){ location.href = chaseMail(j); return; }
+    }
+    const pay = e.target.closest('[data-pay]');
+    if (pay){
+      const p = jp.data.proposal; if (!p) return;
+      const k = pay.dataset.pay, val = !p[k];
+      pay.setAttribute('aria-pressed', String(val));
+      try { jp.data.proposal = (await api(JD_API, 'PUT', { job: jp.id, part: 'proposal', data: { ...p, [k]: val } })).proposal;
+        toast(val ? (k === 'depositPaid' ? 'Deposit marked paid' : 'Balance marked paid') : 'Marked unpaid'); }
+      catch { pay.setAttribute('aria-pressed', String(!val)); toast('Couldn’t save that'); }
+    }
+  });
+
+  function chaseMail(j){
+    const first = firstName(j.client);
+    const subj = `Following up · ${j.type || 'your shoot'}`;
+    const body = `Hi ${first},\n\nJust checking in on ${j.type ? 'the ' + j.type.toLowerCase() : 'your project'}. No rush at all, I know things get busy. If it's still on the cards, I'm happy to jump on a quick call or answer anything that's holding it up.\n\nIf now isn't the right time, no worries, just let me know and I'll leave it with you.\n\nThanks,\nJack\nAera · aerastudios.org`;
+    return `mailto:${encodeURIComponent(j.email || '')}?subject=${encodeURIComponent(subj)}&body=${encodeURIComponent(body)}`;
+  }
+
+  // ---- proposal
+  const propTotal = p => (p.base ? +p.base.price || 0 : 0) + (p.addons || []).filter(a => a.preselect).reduce((s, a) => s + (+a.price || 0), 0);
+  function propDefaults(j){
+    return { title: `${j.type || 'Shoot'} for ${j.client}`, contactName: '', ref: '',
+      intro: "Thanks for getting in touch. Here's what we'd suggest, with a few optional extras you can switch on or off. Pick what suits, accept below, and we'll lock the date in.",
+      base: { name: j.type || 'Shoot', desc: '', price: feeNum(j.fee) || '' }, addons: [], depositPct: 30,
+      terms: ['A deposit secures the date. The balance is due on delivery.', 'Edited files are delivered within 14 days unless we agree otherwise.', 'One round of changes is included on each edit.', 'If the date has to move, the deposit carries over to a new date within 6 months.'],
+      agreementUrl: '', payUrl: '', validUntil: addDays(14) };
+  }
+  const addonRow = (a = {}) => `<div class="reprow addon" data-id="${esc(a.id || '')}">
+      <input data-k="name" placeholder="Extra, e.g. Drone shots" value="${esc(a.name)}">
+      <input data-k="desc" placeholder="One line on what it is" value="${esc(a.desc)}">
+      <div class="money"><span aria-hidden="true">£</span><input data-k="price" inputmode="decimal" placeholder="0" value="${esc(a.price ?? '')}"></div>
+      <label class="chk" title="Ticked on when the client opens it"><input type="checkbox" data-k="preselect"${a.preselect ? ' checked' : ''}>On</label>
+      <button type="button" class="x" data-rm aria-label="Remove">×</button></div>`;
+  function propHtml(){
+    const j = curJob(), saved = jp.data.proposal, p = saved || propDefaults(j);
+    const st = !saved ? 'Not saved yet' : saved.accepted ? `Accepted by ${saved.accepted.name} · ${fmtWhen(saved.accepted.at)}` :
+      saved.status === 'viewed' ? `Opened by the client · ${fmtWhen(saved.viewedAt)}` : saved.status === 'sent' ? 'Link made, not opened yet' : 'Draft';
+    const link = saved && saved.key ? location.origin + '/p/#' + saved.key : '';
+    const lockNote = saved && saved.accepted ? '<p style="font-size:12.5px;color:var(--champagne);margin-bottom:14px">Accepted, so the client sees what they agreed to. Changing prices now won’t change what they accepted.</p>' : '';
+    return `<div class="jp-grid"><form id="propform" autocomplete="off"><div class="panel"><h4>The offer</h4>${lockNote}
+        <div class="f2 fr"><div><label>Title</label><input name="title" value="${esc(p.title)}"></div><div><label>Client contact name</label><input name="contactName" placeholder="Who it's addressed to" value="${esc(p.contactName)}"></div></div>
+        <div class="fr"><label>Opening note</label><textarea name="intro" rows="3">${esc(p.intro)}</textarea></div>
+        <div class="f3 fr"><div><label>Main package</label><input name="bname" value="${esc(p.base && p.base.name)}"></div><div><label>Price</label><div class="money"><span aria-hidden="true">£</span><input name="bprice" inputmode="decimal" value="${esc(p.base && p.base.price)}"></div></div><div><label>Deposit %</label><input name="depositPct" inputmode="numeric" value="${esc(p.depositPct ?? 30)}"></div></div>
+        <div class="fr"><label>What's included</label><input name="bdesc" placeholder="e.g. 4 hours coverage, 60 edited photos, a 60-second highlight film" value="${esc(p.base && p.base.desc)}"></div>
+        <label style="margin-top:6px">Optional extras</label>
+        <div class="rep" id="addons">${(p.addons || []).map(addonRow).join('')}</div>
+        <button type="button" class="addrow" data-add="addon">+ Add an extra</button>
+      </div>
+      <div class="panel"><h4>Terms &amp; links</h4>
+        <div class="fr"><label>Terms, one per line</label><textarea name="terms" rows="5">${esc((p.terms || []).join('\n'))}</textarea></div>
+        <div class="f2 fr"><div><label>Valid until</label><input name="validUntil" type="date" value="${esc(p.validUntil)}"></div><div><label>Reference — optional</label><input name="ref" placeholder="e.g. AER-014" value="${esc(p.ref)}"></div></div>
+        <div class="fr"><label>Deposit payment link (Stripe) — optional</label><input name="payUrl" type="url" placeholder="https://buy.stripe.com/…" value="${esc(p.payUrl)}"></div>
+        <div class="fr"><label>Full agreement link — optional</label><input name="agreementUrl" type="url" placeholder="https://…" value="${esc(p.agreementUrl)}"></div>
+      </div>
+      <div class="savebar"><button class="btn" type="submit">Save proposal</button><span class="note">${saved ? 'Saved' : 'Not saved yet'}</span></div>
+    </form><div>
+      <div class="panel"><h4>Status</h4>
+        <div class="big" id="prop-total">${gbp(saved && saved.accepted ? saved.accepted.total : propTotal(p))}</div>
+        <p style="font-size:12.5px;color:var(--stone);margin-bottom:14px">${esc(st)}</p>
+        ${saved ? payToggles(saved, saved.accepted ? saved.accepted.total : propTotal(saved), saved.accepted ? saved.accepted.deposit : Math.round(propTotal(saved) * (saved.depositPct || 0) / 100)) : ''}
+      </div>
+      <div class="panel"><h4>Send it</h4>
+        <p style="font-size:13px;color:var(--stone)">A private link the client can open on their phone, pick extras and accept. Nobody can find it without the link.</p>
+        ${link ? `<div class="copyline"><input readonly value="${esc(link)}"><button class="btn sm" data-plink="copy">Copy</button></div>
+          <div style="display:flex;gap:14px;margin-top:10px"><a class="linkbtn" href="${esc(link)}" target="_blank" rel="noopener">Open as the client sees it ↗</a><button class="linkbtn" data-plink="unlink" style="color:var(--stone)">Turn link off</button></div>`
+          : `<button class="btn sm" data-plink="make" style="margin-top:12px">Save &amp; copy client link</button>`}
+      </div>
+    </div></div>`;
+  }
+  function readProp(){
+    const f = $('propform'), v = n => f.elements[n].value;
+    const old = jp.data.proposal || {};
+    return { ...old, title: v('title'), contactName: v('contactName'), intro: v('intro'),
+      base: { name: v('bname'), desc: v('bdesc'), price: v('bprice') }, depositPct: v('depositPct'),
+      addons: [...f.querySelectorAll('#addons .reprow')].map(r => ({ id: r.dataset.id || undefined,
+        name: r.querySelector('[data-k=name]').value, desc: r.querySelector('[data-k=desc]').value,
+        price: r.querySelector('[data-k=price]').value, preselect: r.querySelector('[data-k=preselect]').checked })),
+      terms: v('terms').split('\n'), validUntil: v('validUntil'), ref: v('ref'), payUrl: v('payUrl'), agreementUrl: v('agreementUrl') };
+  }
+  async function savePart(part, data, msg){
+    const res = await api(JD_API, 'PUT', { job: jp.id, part, data });
+    jp.data[part] = res[part]; jp.dirty = false; if (msg) toast(msg); return res[part];
+  }
+  $('jp-body').addEventListener('submit', async e => {
+    e.preventDefault();
+    const f = e.target, btn = f.querySelector('[type=submit]'); btn.disabled = true;
+    try {
+      if (f.id === 'propform') await savePart('proposal', readProp(), 'Proposal saved');
+      if (f.id === 'sheetform') await savePart('sheet', readSheet(), 'Shoot sheet saved');
+      if (f.id === 'reviewform') await savePart('review', readReview(), 'Review saved');
+      paintJp();
+    } catch { toast('Save failed'); btn.disabled = false; }
+  });
+  $('jp-body').addEventListener('input', e => {
+    if (!$('propform') || !e.target.closest('#propform')) return;
+    try { const p = readProp(); const t = $('prop-total'); if (t && !(jp.data.proposal && jp.data.proposal.accepted)) t.textContent = gbp(propTotal({ base: { price: feeNum(p.base.price) }, addons: p.addons.map(a => ({ ...a, price: feeNum(a.price) })) })); } catch {}
+  });
+  $('jp-body').addEventListener('change', e => { if (e.target.matches('#propform [data-k=preselect]')) e.target.dispatchEvent(new Event('input', { bubbles: true })); });
+  $('jp-body').addEventListener('click', async e => {
+    const pl = e.target.closest('[data-plink], [data-rlink]'); if (!pl) return;
+    e.preventDefault();
+    const part = pl.dataset.plink ? 'proposal' : 'review', act = pl.dataset.plink || pl.dataset.rlink, path = part === 'proposal' ? '/p/#' : '/r/#';
+    try {
+      if (act === 'copy'){ const ok = await copyText(location.origin + path + jp.data[part].key); toast(ok ? 'Link copied' : 'Select the link and copy it'); return; }
+      if (act === 'unlink'){
+        if (!confirm('Turn the client link off? Anyone with the old link won’t be able to open it.')) return;
+        jp.data[part] = (await api(JD_API, 'POST', { job: jp.id, part, action: 'unlink' }))[part]; paintJp(); toast('Link turned off'); return;
+      }
+      if (act === 'make'){
+        if (jp.dirty || !jp.data[part]) await savePart(part, part === 'proposal' ? readProp() : readReview());
+        const r = await api(JD_API, 'POST', { job: jp.id, part, action: 'link' });
+        jp.data[part] = r[part]; paintJp();
+        const ok = await copyText(location.origin + path + r.key);
+        toast(ok ? 'Saved · link copied' : 'Saved · copy the link below');
+      }
+    } catch { toast('Couldn’t do that'); }
+  });
+
+  // repeaters shared by all three editors
+  $('jp-body').addEventListener('click', e => {
+    const rm = e.target.closest('[data-rm]');
+    if (rm){ rm.closest('.reprow').remove(); jp.dirty = true; $('jp-body').dispatchEvent(new Event('input')); return; }
+    const add = e.target.closest('[data-add]'); if (!add) return;
+    const box = { addon: 'addons', crew: 'crew', kit: 'kitlist', item: 'items' }[add.dataset.add];
+    const html = { addon: addonRow, crew: crewRow, kit: kitRow, item: itemRow }[add.dataset.add]();
+    $(box).insertAdjacentHTML('beforeend', html);
+    $(box).lastElementChild.querySelector('input:not([type=checkbox])').focus();
+    jp.dirty = true;
+  });
+  // Enter in a kit line adds the next one, like a checklist.
+  $('jp-body').addEventListener('keydown', e => {
+    if (e.key !== 'Enter' || !e.target.matches('#kitlist [data-k=text]')) return;
+    e.preventDefault();
+    e.target.closest('.reprow').insertAdjacentHTML('afterend', kitRow());
+    e.target.closest('.reprow').nextElementSibling.querySelector('[data-k=text]').focus();
+  });
+
+  // ---- shoot sheet
+  const crewRow = (c = {}) => `<div class="reprow crew"><input data-k="name" placeholder="Name" value="${esc(c.name)}"><input data-k="role" placeholder="Role on the day, e.g. Main camera" value="${esc(c.role)}"><button type="button" class="x" data-rm aria-label="Remove">×</button></div>`;
+  const kitRow = (k = {}) => `<div class="reprow kit"><input type="checkbox" data-k="done"${k.done ? ' checked' : ''} aria-label="Packed"><input data-k="text" placeholder="e.g. FX3 + 2 batteries" value="${esc(k.text)}"><button type="button" class="x" data-rm aria-label="Remove">×</button></div>`;
+  function sheetHtml(){
+    const j = curJob(), s = jp.data.sheet || { date: j.date, crew: String(j.assignee || '').split(',').map(n => n.trim()).filter(Boolean).map(name => ({ name, role: '' })), kit: [], shots: [] };
+    const seen = s.seen ? Object.entries(s.seen) : [];
+    return `<div class="jp-grid"><form id="sheetform" autocomplete="off">
+      <div class="panel"><h4>The day</h4>
+        <div class="f4 fr"><div><label>Date</label><input name="date" type="date" value="${esc(s.date)}"></div><div><label>Call time</label><input name="call" placeholder="08:30" value="${esc(s.call)}"></div><div><label>Starts</label><input name="start" placeholder="10:00" value="${esc(s.start)}"></div><div><label>Wrap</label><input name="end" placeholder="18:00" value="${esc(s.end)}"></div></div>
+        <div class="f2 fr"><div><label>Venue</label><input name="venue" value="${esc(s.venue)}"></div><div><label>On-the-day contact</label><input name="contact" placeholder="Name and number" value="${esc(s.contact)}"></div></div>
+        <div class="fr"><label>Address</label><input name="address" value="${esc(s.address)}"></div>
+        <div class="fr"><label>Parking &amp; access</label><input name="access" placeholder="Load in round the back, parking on…" value="${esc(s.access)}"></div>
+        <label class="chk" style="display:flex;gap:8px;align-items:center;text-transform:none;letter-spacing:0;font-size:13px;color:var(--dim)"><input type="checkbox" name="venueOk"${s.venueOk ? ' checked' : ''}> Venue has OK'd filming</label>
+      </div>
+      <div class="panel"><h4>Crew</h4><div class="rep" id="crew">${(s.crew || []).map(crewRow).join('')}</div><button type="button" class="addrow" data-add="crew">+ Add someone</button></div>
+      <div class="panel"><h4>Kit <span>Tick as it’s packed</span></h4><div class="rep" id="kitlist">${(s.kit || []).map(kitRow).join('')}</div><button type="button" class="addrow" data-add="kit">+ Add kit</button></div>
+      <div class="panel"><h4>Shot list</h4><textarea name="shots" rows="6" placeholder="One shot per line">${esc((s.shots || []).map(x => x.text).join('\n'))}</textarea></div>
+      <div class="panel"><h4>Notes</h4><textarea name="notes" rows="3" placeholder="Anything else the crew should know">${esc(s.notes)}</textarea></div>
+      <div class="savebar"><button class="btn" type="submit">Save shoot sheet</button><span class="note">${jp.data.sheet ? 'Saved' : 'Not saved yet'}</span></div>
+    </form><div>
+      <div class="panel"><h4>Who's read it</h4>
+        ${seen.length ? seen.map(([id, at]) => `<div class="paid"><span>${esc((members.find(m => m.id === id) || {}).name || id)}</span><small style="color:var(--stone)">${esc(fmtWhen(at))}</small></div>`).join('') : '<p style="font-size:13px;color:var(--stone)">Nobody yet.</p>'}
+        <p style="font-size:12.5px;color:var(--stone);margin-top:12px">It shows on each crew member’s to-do page with an “I’ve read this” button.</p>
+      </div>
+    </div></div>`;
+  }
+  function readSheet(){
+    const f = $('sheetform'), v = n => f.elements[n].value;
+    return { date: v('date'), call: v('call'), start: v('start'), end: v('end'), venue: v('venue'), contact: v('contact'),
+      address: v('address'), access: v('access'), venueOk: f.elements.venueOk.checked, notes: v('notes'),
+      crew: [...f.querySelectorAll('#crew .reprow')].map(r => ({ name: r.querySelector('[data-k=name]').value, role: r.querySelector('[data-k=role]').value })),
+      kit: [...f.querySelectorAll('#kitlist .reprow')].map(r => ({ text: r.querySelector('[data-k=text]').value, done: r.querySelector('[data-k=done]').checked })),
+      shots: v('shots').split('\n').map(text => ({ text })) };
+  }
+
+  // ---- review
+  const KINDS = ['Photos', 'Film', 'Reel', 'Edit', 'Design'];
+  const itemRow = (i = {}) => `<div class="reprow item" data-id="${esc(i.id || '')}">
+      <input data-k="title" placeholder="e.g. Highlight film" value="${esc(i.title)}">
+      <select data-k="kind">${KINDS.map(k => `<option${(i.kind || 'Film') === k ? ' selected' : ''}>${k}</option>`).join('')}</select>
+      <input data-k="url" type="url" placeholder="Link: YouTube, Vimeo, Drive, Dropbox…" value="${esc(i.url)}">
+      <button type="button" class="x" data-rm aria-label="Remove">×</button></div>`;
+  const RV_ST = { waiting: ['', 'Waiting'], changes: ['bad', 'Changes asked'], approved: ['ok', 'Approved'] };
+  function reviewHtml(){
+    const j = curJob(), r = jp.data.review || { title: j.type || 'Your deliverables', items: [] };
+    const link = jp.data.review && jp.data.review.key ? location.origin + '/r/#' + jp.data.review.key : '';
+    const items = r.items || [];
+    return `<div class="jp-grid"><div>
+      <form id="reviewform" autocomplete="off"><div class="panel"><h4>Deliverables <span>Changing a link makes it a new version</span></h4>
+        <div class="fr"><label>Title the client sees</label><input name="title" value="${esc(r.title)}"></div>
+        <div class="rep" id="items">${items.map(itemRow).join('')}</div>
+        <button type="button" class="addrow" data-add="item">+ Add a deliverable</button>
+      </div>
+      <div class="savebar"><button class="btn" type="submit">Save review</button><span class="note">${jp.data.review ? 'Saved' : 'Not saved yet'}</span></div></form>
+      ${items.length ? `<div class="panel" style="margin-top:16px"><h4>Client feedback</h4>${items.map(i => `<div class="rv-item">
+        <div class="rv-head"><span>${esc(i.title)} <small>v${i.version || 1}</small></span><span class="nudge ${RV_ST[i.status || 'waiting'][0]}">${RV_ST[i.status || 'waiting'][1]}</span></div>
+        ${(i.comments || []).map(c => `<div class="cmt${c.team ? ' team' : ''}">${c.at ? `<span class="at">${esc(c.at)}</span>` : ''}<b>${esc(c.who)}</b><span class="t">${esc(fmtWhen(c.ts))}</span><div>${esc(c.text)}</div></div>`).join('')}
+        <div class="replyrow"><input placeholder="Reply to the client" data-reply="${esc(i.id)}"><button class="btn ghost sm" data-send="${esc(i.id)}">Reply</button></div>
+      </div>`).join('')}</div>` : ''}
+    </div><div>
+      <div class="panel"><h4>Progress</h4>
+        <div class="big">${items.filter(i => i.status === 'approved').length}<span style="font-size:1.1rem;color:var(--stone)"> / ${items.length}</span></div>
+        <p style="font-size:12.5px;color:var(--stone)">approved. When everything is, the job moves to Delivered on its own.</p>
+      </div>
+      <div class="panel"><h4>Send it</h4>
+        <p style="font-size:13px;color:var(--stone)">The client watches each piece, leaves timestamped notes and approves it.</p>
+        ${link ? `<div class="copyline"><input readonly value="${esc(link)}"><button class="btn sm" data-rlink="copy">Copy</button></div>
+          <div style="display:flex;gap:14px;margin-top:10px"><a class="linkbtn" href="${esc(link)}" target="_blank" rel="noopener">Open as the client sees it ↗</a><button class="linkbtn" data-rlink="unlink" style="color:var(--stone)">Turn link off</button></div>`
+          : `<button class="btn sm" data-rlink="make" style="margin-top:12px">Save &amp; copy client link</button>`}
+      </div>
+    </div></div>`;
+  }
+  function readReview(){
+    const f = $('reviewform');
+    return { title: f.elements.title.value, items: [...f.querySelectorAll('#items .reprow')].map(r => ({ id: r.dataset.id || undefined,
+      title: r.querySelector('[data-k=title]').value, kind: r.querySelector('[data-k=kind]').value, url: r.querySelector('[data-k=url]').value,
+      when: (((jp.data.review || {}).items || []).find(x => x.id === r.dataset.id) || {}).when || todayIso() })) };
+  }
+  async function sendReply(id){
+    const inp = $('jp-body').querySelector(`[data-reply="${CSS.escape(id)}"]`); const text = inp && inp.value.trim(); if (!text) return;
+    try { jp.data.review = (await api(JD_API, 'POST', { job: jp.id, part: 'review', action: 'reply', item: id, text, who: 'Aera' })).review; jp.dirty = false; paintJp(); toast('Reply sent'); }
+    catch { toast('Couldn’t send that'); }
+  }
+  $('jp-body').addEventListener('click', e => { const s = e.target.closest('[data-send]'); if (s){ e.preventDefault(); sendReply(s.dataset.send); } });
+  $('jp-body').addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.matches('[data-reply]')){ e.preventDefault(); sendReply(e.target.dataset.reply); } });
+
+  // open from the board: the client name or the Open button
+  board.addEventListener('click', e => { const o = e.target.closest('[data-open]'); if (o){ e.stopImmediatePropagation(); openJob(o.dataset.open); } }, true);
+
+  /* ---------------- money ---------------- */
+  let mnRange = 'year';
+  $('mn-range').addEventListener('click', e => { const b = e.target.closest('[data-r]'); if (!b) return; mnRange = b.dataset.r;
+    $('mn-range').querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', String(x === b))); renderMoney(); });
+  const jobWhen = j => j.date || String(j.updated || '').slice(0, 10);
+  function inRange(j){
+    const d = jobWhen(j); if (mnRange === 'all') return true; if (!d) return false;
+    const t = todayIso(); return mnRange === 'month' ? d.slice(0, 7) === t.slice(0, 7) : d.slice(0, 4) === t.slice(0, 4);
+  }
+  function money(j){
+    const p = (jsum[j.id] || {}).proposal;
+    const total = (p && p.total) || feeNum(j.fee);
+    const deposit = p ? (p.deposit || 0) : 0;
+    const paid = p ? (p.balancePaid ? total : p.depositPaid ? deposit : 0) : 0;
+    return { p, total, deposit, paid };
+  }
+  function renderMoney(){
+    const list = jobs.filter(inRange);
+    const booked = list.filter(j => j.status !== 'Enquiry');
+    const pipe = list.filter(j => j.status === 'Enquiry' && j.active !== false);
+    const sum = (arr, f) => arr.reduce((s, j) => s + f(j), 0);
+    const bookedT = sum(booked, j => money(j).total), paidT = sum(list, j => money(j).paid);
+    const depDue = booked.filter(j => { const m = money(j); return m.p && m.p.status === 'accepted' && !m.p.depositPaid; });
+    const balDue = booked.filter(j => { const m = money(j); return m.p && m.p.depositPaid && !m.p.balancePaid; });
+    const tiles = [
+      ['Booked', gbp(bookedT), `${booked.length} job${booked.length === 1 ? '' : 's'} confirmed or later`],
+      ['Paid in', gbp(paidT), 'Deposits and balances marked paid'],
+      ['To collect', gbp(sum(depDue, j => money(j).deposit) + sum(balDue, j => money(j).total - money(j).deposit)), `${depDue.length} deposit${depDue.length === 1 ? '' : 's'}, ${balDue.length} balance${balDue.length === 1 ? '' : 's'}`],
+      ['Pipeline', String(pipe.length), pipe.length ? `enquir${pipe.length === 1 ? 'y' : 'ies'} worth ${gbp(sum(pipe, j => money(j).total))}` : 'No open enquiries']
+    ];
+    $('mn-tiles').innerHTML = tiles.map(([l, v, s], i) => `<div class="tile" style="animation-delay:${i * 40}ms"><div class="l">${l}</div><div class="v">${esc(v)}</div><div class="s">${esc(s)}</div></div>`).join('');
+    const by = ORDER.map(s => [s, list.filter(j => j.status === s)]);
+    const max = Math.max(1, ...by.map(([, a]) => sum(a, j => money(j).total)));
+    $('mn-bars').innerHTML = by.map(([s, a]) => { const v = sum(a, j => money(j).total);
+      return `<div class="bar"><span>${s}</span><span class="tr"><i style="width:${Math.max(v ? 3 : 0, v / max * 100)}%;background:${JOB_COLOUR[s]}"></i></span><span class="n">${v ? gbp(v) : '—'}</span></div>`; }).join('');
+    const wait = [
+      ...depDue.map(j => [j, 'Deposit', money(j).deposit, 'Accepted ' + (money(j).p.acceptedAt ? shortDay(money(j).p.acceptedAt.slice(0, 10)) : '')]),
+      ...balDue.map(j => [j, 'Balance', money(j).total - money(j).deposit, j.status === 'Delivered' ? 'Delivered, balance due' : 'Due on delivery']),
+      ...list.filter(j => { const p = (jsum[j.id] || {}).proposal; return p && (p.status === 'sent' || p.status === 'viewed'); })
+        .map(j => [j, 'Proposal', money(j).total, (jsum[j.id].proposal.status === 'viewed' ? 'Opened, not accepted' : 'Sent, not opened')])
+    ];
+    $('mn-wait').innerHTML = wait.length ? wait.map(([j, what, amt, note]) => `<div class="wl"><div>${esc(j.client)} · ${what}<small>${esc(note)}</small></div>
+      <div style="display:flex;gap:14px;align-items:center"><span class="amt">${gbp(amt)}</span><button class="linkbtn" data-openjob="${esc(j.id)}" data-tab="${what === 'Proposal' ? 'proposal' : 'overview'}">Open</button></div></div>`).join('')
+      : '<p style="font-size:13px;color:var(--stone)">Nobody owes anything. Nice.</p>';
+  }
+  document.addEventListener('click', e => { const o = e.target.closest('[data-openjob]'); if (o) openJob(o.dataset.openjob, o.dataset.tab || 'overview'); });
+
+  /* ---------------- kit ---------------- */
+  let gear = { items: [], bookings: [] }, grAnchor = startOfWeek(new Date()), grBook = null;
+  async function loadGear(){ try { gear = await api(GEAR_API, 'GET'); } catch {} renderGear(); }
+  function renderGear(){
+    const days = Array.from({ length: 7 }, (_, i) => { const d = new Date(grAnchor); d.setDate(grAnchor.getDate() + i); return iso(d); });
+    const end = new Date(days[6] + 'T12:00:00');
+    $('gr-label').textContent = new Date(days[0] + 'T12:00:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) + ' – ' + end.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+    const t = todayIso();
+    let h = '<div class="h it"></div>' + days.map(d => `<div class="h${d === t ? ' today' : ''}">${new Date(d + 'T12:00:00').toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric' })}</div>`).join('');
+    if (!gear.items.length) h += `<div style="grid-column:1/-1;color:var(--stone);padding:22px">No kit yet. Add your cameras, lenses and lights below.</div>`;
+    gear.items.forEach(it => {
+      h += `<div class="it"><div><b>${esc(it.name)}</b>${it.owner ? `<small>${esc(it.owner)}’s</small>` : ''}</div><button class="x" data-rmitem="${esc(it.id)}" title="Remove this kit" aria-label="Remove ${esc(it.name)}">×</button></div>`;
+      days.forEach(d => {
+        const bs = gear.bookings.filter(b => b.itemId === it.id && b.date === d);
+        h += `<div class="cell" data-cell="${esc(it.id)}|${d}">${bs.map(b => { const jb = jobs.find(x => x.id === b.jobId);
+          return `<button class="bk${bs.length > 1 ? ' clash' : ''}" data-bk="${esc(b.id)}" title="Tap to remove">${esc(b.who || 'Booked')}${jb || b.note ? `<small>${esc([jb && jb.client, b.note].filter(Boolean).join(' · '))}</small>` : ''}</button>`; }).join('')}</div>`;
+      });
+    });
+    $('gr').innerHTML = h;
+  }
+  async function gearOp(body, msg){ try { gear = await api(GEAR_API, 'POST', body); renderGear(); if (msg) toast(msg); } catch (x) { toast(x.message || 'Couldn’t save that'); } }
+  $('gr-prev').addEventListener('click', () => { grAnchor.setDate(grAnchor.getDate() - 7); renderGear(); });
+  $('gr-next').addEventListener('click', () => { grAnchor.setDate(grAnchor.getDate() + 7); renderGear(); });
+  $('gr-add').addEventListener('submit', e => { e.preventDefault(); const f = e.target;
+    gearOp({ op: 'item.add', name: f.name.value, owner: f.owner.value }, 'Kit added'); f.reset(); f.name.focus(); });
+  $('gr').addEventListener('click', e => {
+    const rm = e.target.closest('[data-rmitem]');
+    if (rm){ const it = gear.items.find(i => i.id === rm.dataset.rmitem); if (it && confirm(`Remove ${it.name} and its bookings?`)) gearOp({ op: 'item.delete', id: it.id }, 'Removed'); return; }
+    const bk = e.target.closest('[data-bk]');
+    if (bk){ gearOp({ op: 'unbook', id: bk.dataset.bk }, 'Booking removed'); return; }
+    const c = e.target.closest('[data-cell]'); if (!c) return;
+    const [itemId, date] = c.dataset.cell.split('|'); const it = gear.items.find(i => i.id === itemId);
+    grBook = { itemId, date };
+    $('bk-title').textContent = 'Book out ' + it.name;
+    $('bk-sub').textContent = new Date(date + 'T12:00:00').toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
+    $('bk-who').innerHTML = members.map(m => `<option>${esc(firstName(m.name))}</option>`).join('');
+    const near = jobs.filter(j => j.active !== false).sort((a, b) => (a.date === date ? -1 : 0) - (b.date === date ? -1 : 0));
+    $('bk-job').innerHTML = '<option value="">—</option>' + near.map(j => `<option value="${esc(j.id)}"${j.date === date ? ' selected' : ''}>${esc(j.client)}${j.date ? ' · ' + esc(shortDay(j.date)) : ''}</option>`).join('');
+    $('bk-note').value = '';
+    $('bookmodal').hidden = false;
+  });
+  $('bk-cancel').addEventListener('click', () => { $('bookmodal').hidden = true; });
+  $('bookmodal').addEventListener('click', e => { if (e.target === $('bookmodal')) $('bookmodal').hidden = true; });
+  $('bookform').addEventListener('submit', async e => { e.preventDefault(); if (!grBook) return; $('bookmodal').hidden = true;
+    await gearOp({ op: 'book', ...grBook, who: $('bk-who').value, jobId: $('bk-job').value, note: $('bk-note').value }, 'Booked'); });
+
+  /* ---------------- follow-ups ---------------- */
+  async function renderFollowups(){
+    let leads = [];
+    try { leads = (await api('/portal/api/leads', 'GET')).leads || []; } catch {}
+    const rows = [];
+    jobs.filter(j => j.active !== false && !snoozed(j)).forEach(j => {
+      const p = (jsum[j.id] || {}).proposal, q = daysSince(lastTouch(j));
+      if (p && p.status === 'accepted' && !p.depositPaid) rows.push({ j, w: `${j.client} hasn’t paid the deposit`, s: `${gbp(p.deposit)} · accepted ${p.acceptedAt ? daysSince(p.acceptedAt) + ' days ago' : ''}`, k: 'dep' });
+      else if (p && (p.status === 'sent' || p.status === 'viewed') && q >= 4 && q < 999) rows.push({ j, w: `${j.client} ${p.status === 'viewed' ? 'opened the proposal but hasn’t accepted' : 'hasn’t opened the proposal'}`, s: `Quiet for ${q} days`, k: 'chase' });
+      else if (j.status === 'Enquiry' && q >= 7 && q < 999) rows.push({ j, w: `${j.client} has gone quiet`, s: `Enquiry, last touched ${q} days ago`, k: 'chase' });
+    });
+    leads.filter(l => l.status === 'Pursuing' && l.pitchUrl && !l.jobId).forEach(l => rows.push({ lead: l, w: `Pitch for ${l.name} is ready to send`, s: 'In the Assistant', k: 'lead' }));
+    const t = todayIso();
+    meetings.forEach(m => (m.actions || []).filter(a => !a.done && a.due && a.due < t).forEach(a =>
+      rows.push({ m, w: a.text, s: `Meeting action${a.owner ? ' · ' + a.owner : ''} · due ${shortDay(a.due)}`, k: 'meet' })));
+    $('fu').innerHTML = rows.length ? rows.map((r, i) => `<div class="fu" style="animation-delay:${i * 30}ms"><div class="w">${esc(r.w)}<small>${esc(r.s)}</small></div><div class="a">${
+      r.k === 'lead' ? `<a class="btn ghost sm" href="/portal/assistant/">Open</a>` :
+      r.k === 'meet' ? `<button class="btn ghost sm" data-fumeet="${esc(r.m.id)}">Open</button>` :
+      `${r.j.email ? `<button class="btn ghost sm" data-fuchase="${esc(r.j.id)}">Draft chase</button>` : `<button class="btn ghost sm" data-openjob="${esc(r.j.id)}">Open</button>`}<button class="btn ghost sm" data-fusnooze="${esc(r.j.id)}">Snooze</button>`
+    }</div></div>`).join('') : '<p style="font-size:13px;color:var(--stone)">Nothing’s gone quiet. All caught up.</p>';
+  }
+  $('fu').addEventListener('click', async e => {
+    const c = e.target.closest('[data-fuchase]');
+    if (c){ const j = jobs.find(x => x.id === c.dataset.fuchase); location.href = chaseMail(j); saveJobFields(j.id, { lastContact: todayIso() }); return; }
+    const s = e.target.closest('[data-fusnooze]');
+    if (s){ const row = s.closest('.fu'); row.classList.add('gone'); await saveJobFields(s.dataset.fusnooze, { snoozeUntil: addDays(7) }, 'Snoozed for a week'); setTimeout(renderFollowups, 250); return; }
+    const m = e.target.closest('[data-fumeet]');
+    if (m){ mtSel = m.dataset.fumeet; document.querySelector('nav.tabs [data-tab=meetings]').click(); renderMeetings(); }
+  });
+
+  // render the new tabs when they're opened
+  document.querySelectorAll('nav.tabs button').forEach(t => t.addEventListener('click', () => {
+    if (t.dataset.tab === 'money') renderMoney();
+    if (t.dataset.tab === 'gear'){ loadGear(); renderFollowups(); }
+  }));
+  const hashJob = (location.hash.match(/^#job=(.+)$/) || [])[1];
 
   loadPlanner();
   loadJobs();

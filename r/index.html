@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="referrer" content="no-referrer">
+<title>Review — Aera</title>
+<link rel="icon" type="image/svg+xml" href="/assets/img/logo/aera-monogram-favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/client/client.css">
+<style>
+.top{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;padding:15px 32px}
+.top .who{display:flex;align-items:center;gap:14px;flex-wrap:wrap;font-size:14px}
+.top .sep{width:1px;height:18px;background:rgba(234,223,205,.22)}
+.prog{display:flex;align-items:center;gap:12px;font-size:13px;color:var(--stone)}
+.prog i{display:block;width:120px;height:4px;background:rgba(234,223,205,.15);border-radius:2px;overflow:hidden}
+.prog i b{display:block;height:100%;background:var(--gold);transition:width .5s ease}
+.wrap{max-width:1216px;margin:0 auto;padding:26px 32px 50px}
+.stage{display:flex;gap:28px;flex-wrap:wrap;align-items:flex-start}
+.player{flex:999 1 600px;min-width:0}
+.media{aspect-ratio:16/9;background:#120D09;display:grid;place-items:center;color:#8C867B;font-size:13px;overflow:hidden}
+.media video,.media img,.media iframe{width:100%;height:100%;object-fit:contain;border:0;display:block;background:#120D09}
+.info{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-top:14px;flex-wrap:wrap}
+.info h1{font-size:26px;line-height:1.2}
+.acts{display:flex;gap:8px;flex-wrap:wrap}
+aside{flex:1 1 320px;min-width:0;border:1px solid var(--line);background:var(--paper)}
+aside .h{padding:13px 18px;border-bottom:1px solid var(--line);font-size:13px;font-weight:600}
+.cm{padding:13px 18px;border-bottom:1px solid var(--tint)}
+.cm small{font-size:12.5px;color:var(--muted)}
+.cm .at{font-weight:600;color:var(--bad)}
+.cm.team .at{color:var(--ink)}
+.cm p{margin:2px 0 0;white-space:pre-wrap}
+.new{padding:14px 18px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:16px;margin-top:12px}
+.thumb{border:0;background:none;padding:0 0 6px;text-align:left;cursor:pointer;outline:2px solid transparent;outline-offset:4px}
+.thumb[aria-pressed="true"]{outline-color:var(--gold)}
+.thumb .ph{display:block;aspect-ratio:4/5;background:var(--tint);overflow:hidden}
+.thumb .ph img{width:100%;height:100%;object-fit:cover;display:block}
+.thumb .t{display:block;font-size:13px;margin-top:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.thumb .s{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)}
+.dot{width:7px;height:7px;border-radius:50%;background:#B5AEA2;flex:none}
+.dot.approved{background:var(--ok)}.dot.changes{background:var(--bad)}
+.foot{padding:16px 32px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.center{max-width:560px;margin:120px auto;padding:0 24px;text-align:center}
+@media(max-width:700px){.top,.wrap,.foot{padding-left:16px;padding-right:16px}}
+</style>
+</head>
+<body>
+<div id="app" aria-live="polite"><header class="top band"><span class="mark"><svg viewBox="61 51 78 98" fill="none" aria-hidden="true"><path d="M100,52 L138,100 L100,148 L62,100 Z" stroke="#C2A878" stroke-width="1.5" opacity=".5"/><path d="M100,60 L70,100 L130,100 Z M100,140 L70,100 M130,100 L100,140 M82,85 L118,85 M82,115 L118,115" stroke="#C2A878" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/></svg><span>AERA</span></span></header>
+<div class="wrap"><div class="skeleton" style="aspect-ratio:16/9;max-width:780px"></div></div></div>
+<script>
+(function(){
+  'use strict';
+  const app = document.getElementById('app');
+  const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const key = (location.hash || '').slice(1).trim();
+  const MARK = '<span class="mark"><svg viewBox="61 51 78 98" fill="none" aria-hidden="true"><path d="M100,52 L138,100 L100,148 L62,100 Z" stroke="#C2A878" stroke-width="1.5" opacity=".5"/><path d="M100,60 L70,100 L130,100 Z M100,140 L70,100 M130,100 L100,140 M82,85 L118,85 M82,115 L118,115" stroke="#C2A878" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/></svg><span>AERA</span></span>';
+  const LABEL = { approved: 'Approved', changes: 'Changes requested', waiting: 'Awaiting review' };
+  let R = null, client = '', sel = 0, busy = false;
+  let me = ''; try { me = localStorage.getItem('aera-review-name') || ''; } catch (e) {}
+
+  async function call(method, body){
+    const r = await fetch('/api/client', { method, cache: 'no-store',
+      headers: Object.assign({ 'X-Key': key }, body ? { 'Content-Type': 'application/json' } : {}),
+      body: body ? JSON.stringify(body) : undefined });
+    const d = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error(d.error || 'Something went wrong');
+    return d;
+  }
+
+  // Turn a share link into something the page can show.
+  function media(u){
+    if (!u) return { kind: 'none' };
+    let m;
+    if ((m = u.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/shorts\/)([\w-]{6,})/))) return { kind: 'frame', src: 'https://www.youtube-nocookie.com/embed/' + m[1] };
+    if ((m = u.match(/vimeo\.com\/(?:video\/)?(\d+)/))) return { kind: 'frame', src: 'https://player.vimeo.com/video/' + m[1] };
+    if ((m = u.match(/drive\.google\.com\/file\/d\/([\w-]+)/))) return { kind: 'frame', src: 'https://drive.google.com/file/d/' + m[1] + '/preview' };
+    if (/dropbox\.com\//.test(u)) u = u.replace(/([?&])dl=0/, '$1raw=1').replace(/^(?!.*[?&]raw=1)(.*)$/, (s) => s + (s.includes('?') ? '&' : '?') + 'raw=1');
+    if (/\.(mp4|mov|webm|m4v)(\?|$)/i.test(u) || /dropbox\.com\/.*\.(mp4|mov|webm|m4v)/i.test(u)) return { kind: 'video', src: u };
+    if (/\.(jpe?g|png|webp|gif|avif)(\?|$)/i.test(u) || /dropbox\.com\/.*\.(jpe?g|png|webp)/i.test(u)) return { kind: 'image', src: u };
+    return { kind: 'link', src: u };
+  }
+  const fmtT = s => { s = Math.max(0, Math.floor(s || 0)); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
+
+  function render(){
+    const items = R.items || [];
+    if (!items.length){ app.innerHTML = `<header class="top band">${MARK}</header><div class="center"><h1 class="display" style="font-size:32px">Nothing to review yet</h1><p class="muted">We'll let you know as soon as it's ready.</p></div>`; return; }
+    const it = items[sel] || items[0];
+    const done = items.filter(i => i.status === 'approved').length;
+    const md = media(it.url);
+    const player = md.kind === 'video' ? `<video id="vid" src="${esc(md.src)}" controls playsinline preload="metadata"></video>`
+      : md.kind === 'image' ? `<img src="${esc(md.src)}" alt="${esc(it.title)}">`
+      : md.kind === 'frame' ? `<iframe src="${esc(md.src)}" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen title="${esc(it.title)}"></iframe>`
+      : md.kind === 'link' ? `<a class="btn" href="${esc(md.src)}" target="_blank" rel="noopener">Open the file</a>` : 'Preview coming soon';
+    app.innerHTML = `
+      <header class="top band">
+        <div class="who">${MARK}<span class="sep"></span><span>${esc(client)}${R.title ? ` <span style="color:var(--stone)">· ${esc(R.title)}</span>` : ''}</span></div>
+        <div class="prog">${done} of ${items.length} approved<i><b style="width:${Math.round(done / items.length * 100)}%"></b></i></div>
+      </header>
+      <main class="wrap fade-in">
+        <div class="stage">
+          <div class="player">
+            <div class="media">${player}</div>
+            <div class="info">
+              <div><h1 class="display">${esc(it.title)}</h1>
+                <div class="muted" style="font-size:13px">${[it.kind, it.version > 1 ? 'Version ' + it.version : '', it.when ? 'posting ' + it.when : ''].filter(Boolean).map(esc).join(' · ')}</div></div>
+              <div class="acts">
+                <button class="btn ghost" data-a="changes" type="button">Request changes</button>
+                <button class="btn ${it.status === 'approved' ? 'ok' : ''}" data-a="approve" type="button">${it.status === 'approved' ? 'Approved' : 'Approve'}</button>
+              </div>
+            </div>
+          </div>
+          <aside>
+            <div class="h">Comments <span class="muted" style="font-weight:400">· ${(it.comments || []).length}</span></div>
+            ${(it.comments || []).map(c => `<div class="cm${c.team ? ' team' : ''}"><small>${c.at ? `<span class="at">${esc(c.at)}</span> · ` : ''}${esc(c.who)}${c.team ? ', Aera' : ''} · ${esc(new Date(c.ts).toLocaleDateString('en-GB', { day:'numeric', month:'short' }))}</small><p>${esc(c.text)}</p></div>`).join('') || '<div class="cm"><small>No comments yet.</small></div>'}
+            <form class="new" id="cf" novalidate>
+              ${me ? '' : '<label class="lab" style="margin-bottom:10px">Your name<input class="field" name="who" autocomplete="name"></label>'}
+              <label class="lab"><span id="atl">${md.kind === 'video' ? 'Comment at 0:00' : 'Comment'}</span><textarea class="field" name="text" rows="3" placeholder="What would you like changed?" style="resize:vertical"></textarea></label>
+              <div style="display:flex;gap:8px;margin-top:10px;align-items:center"><button class="btn" type="submit" style="padding:9px 16px;font-size:13.5px">Post</button><span class="err" id="err" role="alert"></span></div>
+            </form>
+          </aside>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:38px;border-top:1px solid var(--line);padding-top:18px">
+          <h2 style="font-size:13px;font-weight:600">All items</h2><span class="muted" style="font-size:12.5px">Select one to review</span></div>
+        <div class="grid">${items.map((x, i) => { const m = media(x.url); return `<button class="thumb" type="button" data-i="${i}" aria-pressed="${i === sel}">
+          <span class="ph">${m.kind === 'image' ? `<img src="${esc(m.src)}" alt="" loading="lazy">` : ''}</span>
+          <span class="t">${esc(x.title)}</span><span class="s"><i class="dot ${esc(x.status)}"></i>${esc(LABEL[x.status] || LABEL.waiting)}</span></button>`; }).join('')}</div>
+      </main>
+      <footer class="foot band foot"><span><b>Aera</b> · Photo and film studio · Leeds</span><span>Questions? bookings@aerastudios.org</span></footer>`;
+    const v = document.getElementById('vid');
+    if (v) v.addEventListener('timeupdate', () => { const l = document.getElementById('atl'); if (l) l.textContent = 'Comment at ' + fmtT(v.currentTime); });
+  }
+
+  async function send(body){
+    if (busy) return; busy = true;
+    try { const d = await call('POST', body); R = d.review; render(); }
+    catch (x) { const e = document.getElementById('err'); if (e) e.textContent = x.message; }
+    finally { busy = false; }
+  }
+
+  app.addEventListener('click', e => {
+    const t = e.target.closest('[data-i]'); if (t){ sel = +t.dataset.i; render(); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
+    const a = e.target.closest('[data-a]'); if (!a) return;
+    const it = R.items[sel];
+    if (a.dataset.a === 'approve') return send({ action: 'approve', item: it.id, undo: it.status === 'approved' });
+    if (a.dataset.a === 'changes'){
+      const f = document.getElementById('cf'), txt = f.text.value.trim();
+      if (!txt){ document.getElementById('err').textContent = 'Write what you’d like changed, then press Request changes.'; f.text.focus(); return; }
+      return post('changes');
+    }
+  });
+  function post(action){
+    const f = document.getElementById('cf'); const v = document.getElementById('vid');
+    if (f.who){ me = f.who.value.trim(); try { if (me) localStorage.setItem('aera-review-name', me); } catch (e) {} }
+    return send({ action, item: R.items[sel].id, text: f.text.value.trim(), who: me || client, at: v ? fmtT(v.currentTime) : '' });
+  }
+  app.addEventListener('submit', e => { e.preventDefault(); post('comment'); });
+
+  (async () => {
+    if (!/^[a-f0-9]{36}$/.test(key)){ app.innerHTML = `<header class="top band">${MARK}</header><div class="center"><h1 class="display" style="font-size:32px">Link not recognised</h1><p class="muted">Please check the link, or email bookings@aerastudios.org.</p></div>`; return; }
+    try { const d = await call('GET'); R = d.review; client = d.client; document.title = (R.title || 'Review') + ' — Aera'; render(); }
+    catch { app.innerHTML = `<header class="top band">${MARK}</header><div class="center"><h1 class="display" style="font-size:32px">Link not recognised</h1><p class="muted">This link may have been replaced. Please email bookings@aerastudios.org.</p></div>`; }
+  })();
+})();
+</script>
+</body>
+</html>

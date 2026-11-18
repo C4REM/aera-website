@@ -33,6 +33,14 @@ export async function onRequest({ request, env }) {
 
   if (request.method === 'PUT') {
     let body; try { body = await request.json(); } catch { return json({ error: 'Bad request' }, 400); }
+    if (body.sheetSeen) {
+      const sk = 'job:' + String(body.sheetSeen).slice(0, 60) + ':sheet';
+      const sh = await readJSON(kv, sk, null);
+      if (!sh) return json({ error: 'No such sheet' }, 404);
+      sh.seen = sh.seen || {}; sh.seen[memberId] = new Date().toISOString();
+      await kv.put(sk, JSON.stringify(sh));
+      return json({ ok: true });
+    }
     const it = (doc.items || []).find(i => i.id === body.id);
     if (!it) return json({ error: 'No such task' }, 404);
     it.done = !!body.done;
@@ -68,5 +76,21 @@ export async function onRequest({ request, env }) {
     if (l.pitchUrl && !seen.has(l.pitchUrl)) { seen.add(l.pitchUrl); files.push({ label: l.name + ' pitch', url: l.pitchUrl }); }
   });
 
-  return json({ name: doc.name, items: doc.items || [], team, files, updated: doc.updated });
+  // Shoot sheets for the jobs this person is crewing, from yesterday onwards.
+  const mine = (doc.name || '').split(' ')[0].toLowerCase();
+  const yday = new Date(Date.now() - 864e5).toISOString().slice(0, 10);
+  const sheets = [];
+  for (const j of jobs) {
+    const sh = await readJSON(kv, 'job:' + j.id + ':sheet', null);
+    if (!sh) continue;
+    const crew = [...String(j.assignee || '').split(','), ...(sh.crew || []).map(c => c.name)].map(n => String(n).trim().split(' ')[0].toLowerCase());
+    if (!mine || !crew.includes(mine)) continue;
+    if ((sh.date || j.date) && (sh.date || j.date) < yday) continue;
+    sheets.push({ jobId: j.id, client: j.client, type: j.type, date: sh.date || j.date, call: sh.call, start: sh.start, end: sh.end,
+      venue: sh.venue, address: sh.address, access: sh.access, contact: sh.contact, crew: sh.crew || [], kit: (sh.kit || []).map(k => k.text),
+      shots: (sh.shots || []).map(x => x.text), notes: sh.notes, seen: !!(sh.seen && sh.seen[memberId]) });
+  }
+  sheets.sort((a, b) => String(a.date || '9').localeCompare(String(b.date || '9')));
+
+  return json({ name: doc.name, items: doc.items || [], team, files, sheets, updated: doc.updated });
 }
