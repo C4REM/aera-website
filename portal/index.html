@@ -996,6 +996,12 @@ header{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;bac
 .modal{backdrop-filter:none!important;background:rgba(10,9,8,.86)!important}
 @keyframes pulseDot{0%,100%{opacity:1}50%{opacity:.4}}
 .jp{overscroll-behavior:contain}
+
+.gr .gt{grid-column:1/-1;border-left:0;min-height:0;padding:16px 10px 7px;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--champagne);background:rgba(194,168,120,.035)}
+.gr .gt span{color:var(--stone);letter-spacing:.06em;margin-left:6px}
+.gr .it .mv{display:block;width:auto;margin-top:5px;padding:2px 6px;font-size:11px;border-radius:6px;background:transparent;border:1px solid rgba(255,255,255,.08);color:var(--stone);opacity:0;transition:opacity .2s}
+.gr .it:hover .mv,.gr .it .mv:focus{opacity:1}
+@media(hover:none){.gr .it .mv,.gr .it .x{opacity:1}}
 </style>
 </head>
 <body>
@@ -1171,6 +1177,7 @@ header{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;bac
     <form class="gr-add" id="gr-add">
       <input name="name" placeholder="Add kit, e.g. Sony FX3" maxlength="60" required>
       <input name="owner" placeholder="Whose is it?" maxlength="40" style="max-width:180px">
+      <select name="type" style="max-width:170px" aria-label="Type"><option>Cameras</option><option>Lenses</option><option>Lighting</option><option>Sound</option><option>Grip &amp; support</option><option>Other</option></select>
       <button class="btn sm" type="submit">Add</button>
     </form>
 
@@ -3605,21 +3612,28 @@ header{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;bac
     const t = todayIso();
     let h = '<div class="h it"></div>' + days.map(d => `<div class="h${d === t ? ' today' : ''}">${new Date(d + 'T12:00:00').toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric' })}</div>`).join('');
     if (!gear.items.length) h += `<div style="grid-column:1/-1;color:var(--stone);padding:22px">No kit yet. Add your cameras, lenses and lights below.</div>`;
-    gear.items.forEach(it => {
-      h += `<div class="it"><div><b>${esc(it.name)}</b>${it.owner ? `<small>${esc(it.owner)}’s</small>` : ''}</div><button class="x" data-rmitem="${esc(it.id)}" title="Remove this kit" aria-label="Remove ${esc(it.name)}">×</button></div>`;
+    const GT = ['Cameras', 'Lenses', 'Lighting', 'Sound', 'Grip & support', 'Other'];
+    const tyOf = it => GT.includes(it.type) ? it.type : 'Other';
+    GT.forEach(ty => { const group = gear.items.filter(it => tyOf(it) === ty); if (!group.length) return;
+    h += `<div class="gt">${esc(ty)} <span>${group.length}</span></div>`;
+    group.forEach(it => {
+      h += `<div class="it"><div><b>${esc(it.name)}</b>${it.owner ? `<small>${esc(it.owner)}’s</small>` : ''}
+        <select class="mv" data-mv="${esc(it.id)}" aria-label="Move ${esc(it.name)} to another type">${GT.map(t => `<option${t === ty ? ' selected' : ''}>${esc(t)}</option>`).join('')}</select></div>
+        <button class="x" data-rmitem="${esc(it.id)}" title="Remove this kit" aria-label="Remove ${esc(it.name)}">×</button></div>`;
       days.forEach(d => {
         const bs = gear.bookings.filter(b => b.itemId === it.id && b.date === d);
         h += `<div class="cell" data-cell="${esc(it.id)}|${d}">${bs.map(b => { const jb = jobs.find(x => x.id === b.jobId);
           return `<button class="bk${bs.length > 1 ? ' clash' : ''}" data-bk="${esc(b.id)}" title="Tap to remove">${esc(b.who || 'Booked')}${jb || b.note ? `<small>${esc([jb && jb.client, b.note].filter(Boolean).join(' · '))}</small>` : ''}</button>`; }).join('')}</div>`;
       });
-    });
+    }); });
     $('gr').innerHTML = h;
   }
   async function gearOp(body, msg){ try { gear = await api(GEAR_API, 'POST', body); renderGear(); if (msg) toast(msg); } catch (x) { toast(x.message || 'Couldn’t save that'); } }
+  $('gr').addEventListener('change', e => { const m = e.target.closest('[data-mv]'); if (m) gearOp({ op: 'item.update', id: m.dataset.mv, type: m.value }, 'Moved to ' + m.value); });
   $('gr-prev').addEventListener('click', () => { grAnchor.setDate(grAnchor.getDate() - 7); renderGear(); });
   $('gr-next').addEventListener('click', () => { grAnchor.setDate(grAnchor.getDate() + 7); renderGear(); });
   $('gr-add').addEventListener('submit', e => { e.preventDefault(); const f = e.target;
-    gearOp({ op: 'item.add', name: f.name.value, owner: f.owner.value }, 'Kit added'); f.reset(); f.name.focus(); });
+    const ty = f.type.value; gearOp({ op: 'item.add', name: f.name.value, owner: f.owner.value, type: ty }, 'Kit added'); f.reset(); f.type.value = ty; f.name.focus(); });
   $('gr').addEventListener('click', e => {
     const rm = e.target.closest('[data-rmitem]');
     if (rm){ const it = gear.items.find(i => i.id === rm.dataset.rmitem); if (it && confirm(`Remove ${it.name} and its bookings?`)) gearOp({ op: 'item.delete', id: it.id }, 'Removed'); return; }

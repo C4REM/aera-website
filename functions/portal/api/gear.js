@@ -1,14 +1,16 @@
 /* ==========================================================================
    AERA — KIT (behind the portal password)
-   KV 'gear': { items: [{id,name,owner}], bookings: [{id,itemId,date,who,jobId,note}] }
+   KV 'gear': { items: [{id,name,owner,type}], bookings: [{id,itemId,date,who,jobId,note}] }
    Two bookings of the same item on the same day is a clash; the portal shows
    it in red (it's allowed, so you can sort it out, never blocked).
-   POST ops: item.add {name, owner}, item.delete {id}, book {itemId,date,who,jobId,note}, unbook {id}
+   POST ops: item.add {name, owner, type}, item.update {id, type|name|owner}, item.delete {id}, book {itemId,date,who,jobId,note}, unbook {id}
    ========================================================================== */
 const json = (d, s = 200) => new Response(JSON.stringify(d), {
   status: s, headers: { 'Content-Type': 'application/json', 'X-Robots-Tag': 'noindex, nofollow', 'Cache-Control': 'no-store' }
 });
 const str = (v, n) => String(v ?? '').trim().slice(0, n);
+const TYPES = ['Cameras', 'Lenses', 'Lighting', 'Sound', 'Grip & support', 'Other'];
+const type = v => TYPES.includes(v) ? v : 'Other';
 async function read(kv) {
   const r = await kv.get('gear'); let g = {};
   try { g = r ? JSON.parse(r) : {}; } catch {}
@@ -25,7 +27,14 @@ export async function onRequest({ request, env }) {
     case 'item.add': {
       const name = str(b.name, 60); if (!name) return json({ error: 'Name the kit' }, 400);
       if (g.items.length >= 80) return json({ error: 'Too many items' }, 400);
-      g.items.push({ id: crypto.randomUUID(), name, owner: str(b.owner, 40) }); break;
+      g.items.push({ id: crypto.randomUUID(), name, owner: str(b.owner, 40), type: type(b.type) }); break;
+    }
+    case 'item.update': {
+      const it = g.items.find(i => i.id === b.id); if (!it) return json({ error: 'unknown item' }, 400);
+      if (b.type !== undefined) it.type = type(b.type);
+      if (b.name !== undefined && str(b.name, 60)) it.name = str(b.name, 60);
+      if (b.owner !== undefined) it.owner = str(b.owner, 40);
+      break;
     }
     case 'item.delete': {
       g.items = g.items.filter(i => i.id !== b.id);
