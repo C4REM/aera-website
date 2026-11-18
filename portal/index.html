@@ -1009,7 +1009,8 @@ main.wrap{padding-top:28px;padding-bottom:calc(90px + env(safe-area-inset-bottom
 .nudge.new{background:var(--champagne);color:var(--obsidian)}
 @media(max-width:640px){.enq-pop{top:auto;bottom:16px;right:16px}}
 
-.gr .it .mount{display:inline-block;margin-left:7px;padding:1px 7px;border-radius:999px;background:rgba(194,168,120,.14);color:var(--champagne);font-size:10.5px;letter-spacing:.03em;vertical-align:1px}
+.gr .it .meta{display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px;margin-top:4px}
+.gr .it .mount{display:inline-block;margin-left:0;padding:1px 7px;border-radius:999px;background:rgba(194,168,120,.14);color:var(--champagne);font-size:10.5px;letter-spacing:.03em;vertical-align:1px}
 .gr .it input.mv{width:120px;font-size:11px;padding:2px 6px}
 </style>
 </head>
@@ -3645,7 +3646,7 @@ main.wrap{padding-top:28px;padding-bottom:calc(90px + env(safe-area-inset-bottom
     h += `<div class="gt">${esc(ty)} <span>${group.length}</span></div>`;
     group.forEach(it => {
       const lens = ty === 'Lenses';
-      h += `<div class="it"><div><b>${esc(it.name)}</b>${lens && it.mount ? `<span class="mount">${esc(it.mount)}</span>` : ''}${it.owner ? `<small>${esc(it.owner)}’s</small>` : ''}
+      h += `<div class="it"><div><b>${esc(it.name)}</b>${(lens && it.mount) || it.owner ? `<span class="meta">${lens && it.mount ? `<span class="mount">${esc(it.mount)}</span>` : ''}${it.owner ? `<small>${esc(it.owner)}’s</small>` : ''}</span>` : ''}
         ${lens ? `<input class="mv" data-mount="${esc(it.id)}" list="mounts" maxlength="30" placeholder="Set mount" value="${esc(it.mount || '')}" aria-label="Mount for ${esc(it.name)}">` : ''}
         <select class="mv" data-mv="${esc(it.id)}" aria-label="Move ${esc(it.name)} to another type">${GT.map(t => `<option${t === ty ? ' selected' : ''}>${esc(t)}</option>`).join('')}</select></div>
         <button class="x" data-rmitem="${esc(it.id)}" title="Remove this kit" aria-label="Remove ${esc(it.name)}">×</button></div>`;
