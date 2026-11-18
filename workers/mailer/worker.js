@@ -6,9 +6,8 @@
    Setup (Cloudflare dashboard, account that owns aerastudios.org):
    1. Workers & Pages → Create → Worker → name it "aera-mailer" → paste this file → Deploy.
    2. aera-mailer → Settings → Domains & Routes → turn OFF the workers.dev route.
-   3. aera-mailer → Settings → Bindings → Add → Send email:
-        variable name EMAIL, destination address jackcareem@icloud.com
-      (must be a verified destination in Email Routing; it already is).
+   3. aera-mailer → Settings → Bindings → Add → Email Service: variable name EMAIL.
+      It can only send to verified Email Routing destinations (jackcareem@icloud.com is one).
    4. Pages → aera-website → Settings → Bindings → Add → Service binding:
         variable name MAILER, service aera-mailer → then redeploy the site.
    ========================================================================== */
@@ -37,7 +36,13 @@ export default {
       'Content-Transfer-Encoding: base64'
     ];
     const raw = head.join('\r\n') + '\r\n\r\n' + b64(text).replace(/.{76}/g, '$&\r\n');
-    await env.EMAIL.send(new EmailMessage(FROM, TO, raw));
+    try {
+      await env.EMAIL.send(new EmailMessage(FROM, TO, raw));
+    } catch (first) {
+      // newer Email Service bindings also take a plain object
+      try { await env.EMAIL.send({ from: { email: FROM, name: 'Aera Portal' }, to: TO, subject, text, ...(replyTo ? { replyTo } : {}) }); }
+      catch (second) { return new Response('failed: ' + (first && first.message) + ' / ' + (second && second.message), { status: 502 }); }
+    }
     return new Response('sent');
   }
 };
