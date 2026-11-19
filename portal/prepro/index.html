@@ -274,7 +274,7 @@ const head = (t, note = '') => `<div class="sechead"><h2 class="sec">${t}</h2>${
 const field = (k, label, ph = '', ta = false) => `<div class="row"><label class="lab2" for="f-${k}">${label}</label>${ta
   ? `<textarea class="field" id="f-${k}" data-k="${k}" placeholder="${esc(ph)}">${esc(getPath(k))}</textarea>`
   : `<input class="field" id="f-${k}" data-k="${k}" placeholder="${esc(ph)}" value="${esc(getPath(k))}">`}</div>`;
-const opts = (list, v) => list.map(o => `<option${o === v ? ' selected' : ''} value="${esc(o)}">${esc(o || '—')}</option>`).join('');
+const opts = (list, v) => (v && !list.includes(v) ? [list[0], v, ...list.slice(1)] : list).map(o => `<option${o === v ? ' selected' : ''} value="${esc(o)}">${esc(o || '—')}</option>`).join('');
 const lineList = (path, ph) => `<div class="list">${getPath(path).map((x, i) => `<div class="li${x.done ? ' done' : ''}"><input type="checkbox" data-k="${path}.${i}.done" aria-label="Done"><input type="text" data-k="${path}.${i}.text" value="${esc(x.text)}" placeholder="${esc(ph)}"><button class="x" data-del="${path}.${i}" aria-label="Remove">×</button></div>`).join('')}
   <button class="addline" data-addline="${path}">+ Add</button></div>`.replace(/data-k="([^"]+\.done)"/g, (m, k) => m + (getPath(k) ? ' checked' : ''));
 
@@ -352,14 +352,16 @@ function board(){
       </div>
       <textarea data-k="frames.${i}.desc" placeholder="What happens in this shot" aria-label="Description">${esc(f.desc)}</textarea>
       <input class="mini" type="text" data-k="frames.${i}.audio" value="${esc(f.audio)}" placeholder="Audio / dialogue" aria-label="Audio" style="font:400 13px var(--sans);border:1px solid var(--field);border-radius:4px;padding:6px 8px;background:var(--paper)">
+      <input class="mini" type="text" data-k="frames.${i}.graphics" value="${esc(f.graphics || '')}" placeholder="Graphics / After Effects" aria-label="Graphics" style="font:400 13px var(--sans);border:1px solid var(--field);border-radius:4px;padding:6px 8px;background:var(--paper)">
+      <input class="mini" type="text" data-k="frames.${i}.transition" value="${esc(f.transition || '')}" placeholder="Transition out" aria-label="Transition out" style="font:400 13px var(--sans);border:1px solid var(--field);border-radius:4px;padding:6px 8px;background:var(--paper)">
       <div class="foot"><label class="chk" style="font-size:13px"><input type="checkbox" data-k="frames.${i}.must"${f.must ? ' checked' : ''}> Must have</label>
         <span><button class="x" data-move="${i}:-1" aria-label="Move earlier" title="Move earlier">‹</button><button class="x" data-move="${i}:1" aria-label="Move later" title="Move later">›</button><button class="x" data-del="frames.${i}" aria-label="Delete frame">×</button></span></div>
       </div></article>`).join('')}<button class="addframe" id="addframe">+ Frame</button></div>`;
 }
 function shots(){
   const insp = f => doc.mood.filter(m => m.shot === f.id).length;
-  return head('Shot list', 'Built from the storyboard. Tick shots off on the day (the crew pack shows them too)') + (doc.frames.length ? `<div class="tablewrap"><table class="sl"><thead><tr><th>#</th><th></th><th>Shot</th><th>Size</th><th>Angle</th><th>Move</th><th>Lens</th><th>Cam</th><th>Inspo</th><th>Got it</th></tr></thead><tbody>
-    ${doc.frames.map((f, i) => `<tr class="${f.got ? 'got' : ''}"><td>${i + 1}</td><td>${f.img ? `<img src="${imgSrc(f.img)}" alt="">` : ''}</td><td>${esc(f.desc || '—')}${f.must ? ' <span class="chip">Must</span>' : ''}${f.when ? `<div style="font-size:12.5px;color:var(--muted)">${esc(f.when)}</div>` : ''}</td><td>${esc(f.size)}</td><td>${esc(f.angle)}</td><td>${esc(f.move)}</td><td>${esc(f.lens)}</td><td>${esc(f.cam)}</td><td>${insp(f) ? insp(f) : ''}</td><td><input type="checkbox" data-k="frames.${i}.got"${f.got ? ' checked' : ''} aria-label="Shot ${i + 1} done"></td></tr>`).join('')}
+  return head('Shot list', 'Built from the storyboard. Tick shots off on the day (the crew pack shows them too)') + (doc.frames.length ? `<div class="tablewrap"><table class="sl"><thead><tr><th>#</th><th></th><th>Shot</th><th>Size</th><th>Angle</th><th>Move</th><th>Lens</th><th>Cam</th><th>Graphics</th><th>Sound</th><th>Out</th><th>Inspo</th><th>Got it</th></tr></thead><tbody>
+    ${doc.frames.map((f, i) => `<tr class="${f.got ? 'got' : ''}"><td>${i + 1}</td><td>${f.img ? `<img src="${imgSrc(f.img)}" alt="">` : ''}</td><td>${esc(f.desc || '—')}${f.must ? ' <span class="chip">Must</span>' : ''}${f.when ? `<div style="font-size:12.5px;color:var(--muted)">${esc(f.when)}</div>` : ''}</td><td>${esc(f.size)}</td><td>${esc(f.angle)}</td><td>${esc(f.move)}</td><td>${esc(f.lens)}</td><td>${esc(f.cam)}</td><td style="font-size:13px">${esc(f.graphics || '')}</td><td style="font-size:13px">${esc(f.audio)}</td><td style="font-size:13px">${esc(f.transition || '')}</td><td>${insp(f) ? insp(f) : ''}</td><td><input type="checkbox" data-k="frames.${i}.got"${f.got ? ' checked' : ''} aria-label="Shot ${i + 1} done"></td></tr>`).join('')}
     </tbody></table></div><button class="addline" id="addshot" style="margin-top:10px">+ Add a shot</button>` : `<div class="empty">No shots yet. <button class="addline" id="addshot">+ Add a shot</button></div>`);
 }
 function locs(){

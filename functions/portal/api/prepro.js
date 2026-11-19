@@ -29,8 +29,8 @@ export function clean(b = {}, old = {}) {
     brief: { purpose: str(br.purpose, 800), audience: str(br.audience, 400), feel: str(br.feel, 400), must: str(br.must, 600),
       avoid: str(br.avoid, 400), deliverables: str(br.deliverables, 600), due: str(br.due, 200), agreed: !!br.agreed },
     aspect: pick(b.aspect, ['16:9', '9:16', '4:5', '1:1', '2.39:1'], '16:9'),
-    frames: arr(b.frames, 80).map(f => ({ id: id(f.id), img: img(f.img), size: str(f.size, 20), angle: str(f.angle, 20), move: str(f.move, 24),
-      lens: str(f.lens, 20), cam: str(f.cam, 12), when: str(f.when, 40), desc: str(f.desc, 400), audio: str(f.audio, 200), must: !!f.must, got: !!f.got })),
+    frames: arr(b.frames, 80).map(f => ({ id: id(f.id), img: img(f.img), size: str(f.size, 60), angle: str(f.angle, 40), move: str(f.move, 60),
+      lens: str(f.lens, 20), cam: str(f.cam, 12), when: str(f.when, 40), desc: str(f.desc, 400), audio: str(f.audio, 300), graphics: str(f.graphics, 300), transition: str(f.transition, 80), must: !!f.must, got: !!f.got })),
     mood: arr(b.mood, 120).map(m => ({ id: id(m.id), img: img(m.img), url: url(m.url), tag: str(m.tag, 20), note: str(m.note, 300), shot: str(m.shot, 60), by: str(m.by, 40), main: !!m.main }))
       .filter(m => m.img || m.url),
     locations: arr(b.locations, 12).map(l => ({ id: id(l.id), name: str(l.name, 80), role: pick(l.role, ['Main', 'Backup', 'Shortlist'], 'Shortlist'),
