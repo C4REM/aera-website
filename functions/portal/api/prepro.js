@@ -42,8 +42,15 @@ export function clean(b = {}, old = {}) {
     props: lines(b.props, 60, 160),
     date: /^\d{4}-\d{2}-\d{2}$/.test(b.date || '') ? b.date : '',
     schedule: arr(b.schedule, 60).map(s => ({ time: str(s.time, 10), what: str(s.what, 160), who: str(s.who, 80) })).filter(s => s.time || s.what),
-    paper: arr(b.paper, 30).map(p => ({ text: str(p.text, 120), status: pick(p.status, ['To do', 'Sent', 'Done', 'Not needed'], 'To do'), url: url(p.url), note: str(p.note, 200) }))
+    paper: arr(b.paper, 30).map(p => ({ text: str(p.text, 120), status: pick(p.status, ['To do', 'Sent', 'Done', 'Not needed'], 'To do'), url: url(p.url), note: str(p.note, 200), formId: str(p.formId, 60) }))
       .filter(p => p.text.trim()),
+    // Paperwork templates. Signatures are only ever written by api/sign.js,
+    // so they're carried over from the stored copy, never from the page.
+    forms: arr(b.forms, 30).map(f => { const o = (old.forms || []).find(x => x.id === f.id) || {};
+      const fl = {}; Object.entries(f.fields || {}).slice(0, 30).forEach(([k, v]) => { if (/^\w{1,20}$/.test(k)) fl[k] = str(v, 600); });
+      return { id: id(f.id), type: pick(f.type, ['talent', 'location', 'risk', 'music'], 'talent'), title: str(f.title, 80), fields: fl,
+        uses: arr(f.uses, 8).map(u => str(u, 60)), rows: arr(f.rows, 30).map(r => ({ hazard: str(r.hazard, 160), who: str(r.who, 120), control: str(r.control, 300), level: pick(r.level, ['Low', 'Medium', 'High'], 'Low') })),
+        key: o.key || '', sig: o.sig || null }; }),
     crewKey: old.crewKey || '',
     updated: new Date().toISOString()
   };
@@ -73,6 +80,12 @@ export async function onRequest({ request, env }) {
     const doc = old.brief ? old : clean({ paper: PAPER.map(text => ({ text })) });
     if (!doc.crewKey) { doc.crewKey = newKey(); await kv.put(`pub:${doc.crewKey}`, JSON.stringify({ kind: 'crew', jobId: job })); await kv.put(k, JSON.stringify(doc)); }
     return json({ key: doc.crewKey });
+  }
+  if (request.method === 'POST' && b.action === 'formlink') {
+    const f = (old.forms || []).find(x => x.id === b.form);
+    if (!f) return json({ error: 'Save the form first' }, 404);
+    if (!f.key) { f.key = newKey(); await kv.put(`pub:${f.key}`, JSON.stringify({ kind: 'form', jobId: job, formId: f.id })); await kv.put(k, JSON.stringify(old)); }
+    return json({ key: f.key });
   }
   if (request.method === 'POST' && b.action === 'uncrew' && old.crewKey) {
     await kv.delete(`pub:${old.crewKey}`); old.crewKey = ''; await kv.put(k, JSON.stringify(old));

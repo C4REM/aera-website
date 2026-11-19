@@ -10,6 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/client/client.css">
+<script src="/client/forms.js"></script>
 <style>
 /* Pre-production workspace: one page per job, in the ivory client look.
    Everything autosaves; typing never re-renders, so focus is never lost. */
@@ -126,7 +127,7 @@ table.sl img{width:72px;aspect-ratio:16/9;object-fit:cover;border-radius:3px;dis
 .rows .r{display:grid;gap:8px;align-items:center}
 .rows .r.p{grid-template-columns:1.1fr 1fr 1.2fr 1.4fr auto}
 .rows .r.s{grid-template-columns:90px 2fr 1fr auto}
-.rows .r.w{grid-template-columns:1.6fr 130px 1.4fr 1.2fr auto}
+.rows .r.w{grid-template-columns:1.6fr 130px 1.4fr 1.2fr 90px auto}
 .rows .field{padding:8px 10px;font-size:14px}
 .sun{display:flex;gap:18px;flex-wrap:wrap;font-size:14px;color:var(--ink2)}
 .sun b{font-weight:600}
@@ -139,6 +140,30 @@ table.sl img{width:72px;aspect-ratio:16/9;object-fit:cover;border-radius:3px;dis
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:10px 16px;border-radius:4px;font-size:14px;opacity:0;transition:opacity .25s;pointer-events:none;z-index:80}
 .toast.show{opacity:1}
 @media(max-width:860px){.grid2,.locs,.rec{grid-template-columns:1fr}.hero h1{font-size:34px}.rows .r.p,.rows .r.w{grid-template-columns:1fr 1fr}.f2{grid-template-columns:1fr}main,.hero,.top .in,nav.secs .in{padding-left:16px;padding-right:16px}dl.brief{grid-template-columns:1fr}}
+.sbbar{display:flex;gap:10px;align-items:center;margin-bottom:22px;flex-wrap:wrap}
+.sb{display:flex;flex-direction:column}
+.sbsec{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold-ink);font-weight:600;margin:26px 0 4px}
+.sbsec:first-child{margin-top:0}
+.sbrow{display:grid;grid-template-columns:300px minmax(0,1fr);gap:26px;padding:22px 0;border-bottom:1px solid var(--line);align-items:start}
+.sbrow .shot{border:1px solid var(--line);border-radius:4px}
+.sbrow.must .shot{box-shadow:0 0 0 2px var(--gold)}
+.sbh{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:8px}
+.sbh h4{margin:0;font-family:var(--display);font-weight:400;font-size:22px}
+.sbh .when{font-size:13.5px;color:var(--muted)}
+.sbd p.tech{margin:0 0 8px;font-size:14px;color:var(--ink2)}.sbd p.tech i{font-style:normal;color:var(--stone);margin:0 7px}
+.sbd p.act{margin:0 0 12px;font-size:16.5px;line-height:1.5}
+.sbd dl.ex{display:grid;grid-template-columns:76px 1fr;gap:5px 12px;margin:0;font-size:14px}
+.sbd dl.ex dt{color:var(--muted);font-size:12.5px;letter-spacing:.04em;padding-top:1px}.sbd dl.ex dd{margin:0}
+.feg{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.fe{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--muted)}.fe.wide{grid-column:1/-1}
+.fe input,.fe select,.fe textarea{font:400 14px var(--sans);color:var(--ink);border:1px solid var(--field);border-radius:4px;padding:7px 9px;background:var(--paper);width:100%;min-width:0}
+.feg .fe:nth-last-child(-n+3){grid-column:span 1}
+.fefoot{display:flex;justify-content:space-between;align-items:center;margin-top:12px;gap:10px;flex-wrap:wrap}
+@media(max-width:760px){.sbrow{grid-template-columns:1fr;gap:12px}.feg{grid-template-columns:1fr 1fr}}
+.formwrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:28px;align-items:start}
+#formprev .formdoc{padding:32px 34px}
+@media(max-width:960px){.formwrap{grid-template-columns:1fr}}
+@media print{body>*:not(main){display:none!important}main{padding:0!important;max-width:none!important}main .sechead,main>div>a,.noprint,.toast{display:none!important}.formwrap{display:block}#formprev .formdoc{border:0;padding:0}}
 </style>
 </head>
 <body>
@@ -205,7 +230,10 @@ function save(){ setStatus('Saving…'); clearTimeout(saveT); saveT = setTimeout
 function setPath(path, val){ const ks = path.split('.'); let o = doc; ks.slice(0, -1).forEach(k => { o = o[k]; }); o[ks[ks.length - 1]] = val; }
 function getPath(path){ return path.split('.').reduce((o, k) => o == null ? o : o[k], doc); }
 // typing: update the doc, never re-render
-document.addEventListener('input', e => { const el = e.target.closest('[data-k]'); if (!el) return;
+document.addEventListener('input', e => { const u = e.target.closest('[data-use]');
+  if (u){ const fm = doc.forms.find(x => x.id === formSel); const set = new Set(fm.uses || []); u.checked ? set.add(u.dataset.use) : set.delete(u.dataset.use); fm.uses = window.AERA_FORMS.USES.filter(x => set.has(x)); save(); $('formprev').innerHTML = window.AERA_FORMS.render(fm, job); return; }
+  const el = e.target.closest('[data-k]'); if (!el) return;
+  if (el.dataset.pv){ setPath(el.dataset.k, el.value); save(); const fm = doc.forms.find(x => x.id === formSel); if (fm) $('formprev').innerHTML = window.AERA_FORMS.render(fm, job); return; }
   setPath(el.dataset.k, el.type === 'checkbox' ? el.checked : el.value); save(); if (el.dataset.re) render(); });
 document.addEventListener('change', e => { const el = e.target.closest('[data-k]'); if (!el || el.tagName === 'TEXTAREA' || (el.tagName === 'INPUT' && el.type === 'text')) return;
   setPath(el.dataset.k, el.type === 'checkbox' ? el.checked : el.value); save(); render(); });
@@ -267,7 +295,7 @@ function renderNav(){
 }
 function render(){
   renderNav();
-  const f = { overview, brief, mood, board, shots, locs, people, schedule, paper }[sec] || overview;
+  const f = { overview, brief, mood, board, shots, locs, people, schedule, paper, form }[sec] || overview;
   $('app').innerHTML = `<div class="fade-in">${f()}</div>`;
 }
 const head = (t, note = '') => `<div class="sechead"><h2 class="sec">${t}</h2>${note ? `<span class="note">${note}</span>` : ''}</div>`;
@@ -335,28 +363,47 @@ function mood(){
       return `<div class="card" style="display:flex;gap:12px;padding:12px">${m.img || yt ? `<img src="${m.img ? imgSrc(m.img) : `https://img.youtube.com/vi/${yt}/hqdefault.jpg`}" alt="" style="width:100px;height:100px;object-fit:cover;border-radius:4px;flex:none">` : ''}<div><b style="font-weight:600">Shot ${n + 1}</b><p style="margin:2px 0 0;font-size:14px;color:var(--ink2)">${esc(m.note || 'No note yet')}</p></div></div>`; }).join('')}</div></section>` : ''}`;
 }
 const ar = () => doc.aspect.replace(':', ' / ');
+const editing = new Set();
+const secOf = f => ((f.when || '').match(/Sec(?:tion)?\s*(\d+)/i) || [])[1] || '';
+const whenText = f => (f.when || '').replace(/\s*·?\s*Sec(?:tion)?\s*\d+\s*/i, '').replace(/\s*·\s*$/, '');
+function frameEdit(f, i){
+  const inp = (k, ph, val) => `<label class="fe"><span>${ph}</span><input type="text" data-k="frames.${i}.${k}" value="${esc(val ?? f[k] ?? '')}"></label>`;
+  return `<div class="feg">
+    <label class="fe"><span>Shot type</span><select data-k="frames.${i}.size">${opts(SIZES, f.size)}</select></label>
+    <label class="fe"><span>Angle</span><select data-k="frames.${i}.angle">${opts(ANGLES, f.angle)}</select></label>
+    <label class="fe"><span>Movement</span><select data-k="frames.${i}.move">${opts(MOVES, f.move)}</select></label>
+    ${inp('lens', 'Lens')}
+    <label class="fe"><span>Camera</span><select data-k="frames.${i}.cam">${opts(CAMS, f.cam)}</select></label>
+    ${inp('when', 'Timing', f.when)}
+    <label class="fe wide"><span>Action</span><textarea data-k="frames.${i}.desc" rows="2">${esc(f.desc)}</textarea></label>
+    ${inp('audio', 'Sound / dialogue')}${inp('graphics', 'Graphics')}${inp('transition', 'Transition out')}
+  </div>
+  <div class="fefoot"><label class="chk" style="font-size:13.5px"><input type="checkbox" data-k="frames.${i}.must"${f.must ? ' checked' : ''}> Must have</label>
+    <span><button class="x" data-move="${i}:-1" aria-label="Move earlier" title="Move earlier">↑</button><button class="x" data-move="${i}:1" aria-label="Move later" title="Move later">↓</button><button class="x" data-del="frames.${i}" aria-label="Delete shot" title="Delete">×</button>
+    <button class="btn sm" data-edit="${f.id}" style="margin-left:8px">Done</button></span></div>`;
+}
+function frameRead(f, i){
+  const tech = [f.size, f.angle, f.lens, f.move, f.cam && 'Cam ' + f.cam].filter(x => x && x !== '—');
+  const extra = [['Sound', f.audio], ['Graphics', f.graphics], ['Out', f.transition]].filter(x => x[1] && x[1] !== '—');
+  return `${tech.length ? `<p class="tech">${tech.map(esc).join('<i>·</i>')}</p>` : ''}
+    <p class="act">${f.desc && f.desc !== '—' ? esc(f.desc) : '<span style="color:var(--stone)">No action written</span>'}</p>
+    ${extra.length ? `<dl class="ex">${extra.map(([k, v]) => `<dt>${k}</dt><dd>${esc(v)}</dd>`).join('')}</dl>` : ''}`;
+}
 function board(){
-  return head('Storyboard', 'Sketch a frame, upload a photo or a still. Frames are your shot list too') + `
-    <div style="display:flex;gap:10px;align-items:center;margin-bottom:16px;flex-wrap:wrap"><span style="font-size:13px;color:var(--muted)">Frame shape</span>
-      <div class="seg">${['16:9','9:16','4:5','1:1','2.39:1'].map(a => `<button data-aspect="${a}" aria-pressed="${a === doc.aspect}">${a}</button>`).join('')}</div></div>
-    <div class="frames">${doc.frames.map((f, i) => `<article class="frame">
-      <div class="shot${f.img ? '' : ' blank'}" style="aspect-ratio:${ar()}">${f.img ? `<img src="${imgSrc(f.img)}" alt="Frame ${i + 1}">` : ''}<span class="n">${i + 1}</span>
-        <div class="tools"><button class="tool" data-sketch="${i}">${f.img ? 'Redraw' : 'Sketch'}</button><button class="tool" data-fimg="${i}">${f.img ? 'Replace' : 'Upload'}</button></div></div>
-      <div class="body"><div class="opts">
-        <select data-k="frames.${i}.size" aria-label="Shot size">${opts(SIZES, f.size).replace('>—<', '>Size<')}</select>
-        <select data-k="frames.${i}.angle" aria-label="Angle">${opts(ANGLES, f.angle).replace('>—<', '>Angle<')}</select>
-        <select data-k="frames.${i}.move" aria-label="Movement">${opts(MOVES, f.move).replace('>—<', '>Move<')}</select>
-        <input class="mini" type="text" data-k="frames.${i}.lens" value="${esc(f.lens)}" placeholder="Lens" aria-label="Lens">
-        <select data-k="frames.${i}.cam" aria-label="Camera">${opts(CAMS, f.cam).replace('>—<', '>Cam<')}</select>
-        <input class="mini" type="text" data-k="frames.${i}.when" value="${esc(f.when)}" placeholder="When" aria-label="When">
-      </div>
-      <textarea data-k="frames.${i}.desc" placeholder="What happens in this shot" aria-label="Description">${esc(f.desc)}</textarea>
-      <input class="mini" type="text" data-k="frames.${i}.audio" value="${esc(f.audio)}" placeholder="Audio / dialogue" aria-label="Audio" style="font:400 13px var(--sans);border:1px solid var(--field);border-radius:4px;padding:6px 8px;background:var(--paper)">
-      <input class="mini" type="text" data-k="frames.${i}.graphics" value="${esc(f.graphics || '')}" placeholder="Graphics / After Effects" aria-label="Graphics" style="font:400 13px var(--sans);border:1px solid var(--field);border-radius:4px;padding:6px 8px;background:var(--paper)">
-      <input class="mini" type="text" data-k="frames.${i}.transition" value="${esc(f.transition || '')}" placeholder="Transition out" aria-label="Transition out" style="font:400 13px var(--sans);border:1px solid var(--field);border-radius:4px;padding:6px 8px;background:var(--paper)">
-      <div class="foot"><label class="chk" style="font-size:13px"><input type="checkbox" data-k="frames.${i}.must"${f.must ? ' checked' : ''}> Must have</label>
-        <span><button class="x" data-move="${i}:-1" aria-label="Move earlier" title="Move earlier">‹</button><button class="x" data-move="${i}:1" aria-label="Move later" title="Move later">›</button><button class="x" data-del="frames.${i}" aria-label="Delete frame">×</button></span></div>
-      </div></article>`).join('')}<button class="addframe" id="addframe">+ Frame</button></div>`;
+  let last = null;
+  return head('Storyboard', `${doc.frames.length} shot${doc.frames.length === 1 ? '' : 's'}${doc.frames.some(f => f.when) ? '' : ''}`) + `
+    <div class="sbbar"><span style="font-size:13px;color:var(--muted)">Frame shape</span>
+      <div class="seg">${['16:9','9:16','4:5','1:1','2.39:1'].map(a => `<button data-aspect="${a}" aria-pressed="${a === doc.aspect}">${a}</button>`).join('')}</div>
+      <span style="flex:1"></span><button class="btn sm" id="addframe">+ Shot</button></div>
+    ${doc.frames.length ? '' : '<div class="empty">No shots yet. Add one, then sketch it or upload a still.</div>'}
+    <div class="sb">${doc.frames.map((f, i) => { const sc = secOf(f); const h = sc && sc !== last ? `<h3 class="sbsec">Section ${sc}</h3>` : ''; last = sc || last;
+      const ed = editing.has(f.id);
+      return `${h}<article class="sbrow${f.must ? ' must' : ''}${ed ? ' editing' : ''}">
+        <div class="shot${f.img ? '' : ' blank'}" style="aspect-ratio:${ar()}">${f.img ? `<img src="${imgSrc(f.img)}" alt="Shot ${i + 1}">` : ''}
+          <div class="tools"><button class="tool" data-sketch="${i}">${f.img ? 'Redraw' : 'Sketch'}</button><button class="tool" data-fimg="${i}">${f.img ? 'Replace' : 'Upload'}</button></div></div>
+        <div class="sbd"><div class="sbh"><h4>Shot ${i + 1}</h4>${whenText(f) ? `<span class="when">${esc(whenText(f))}</span>` : ''}${f.must ? '<span class="chip">Must have</span>' : ''}
+          <span style="flex:1"></span>${ed ? '' : `<button class="tool" data-edit="${f.id}">Edit</button>`}</div>
+          ${ed ? frameEdit(f, i) : frameRead(f, i)}</div></article>`; }).join('')}</div>`;
 }
 function shots(){
   const insp = f => doc.mood.filter(m => m.shot === f.id).length;
@@ -393,12 +440,38 @@ function schedule(){
     <div style="display:flex;gap:16px;margin-top:8px"><button class="addline" id="addslot">+ Add a time</button>${doc.schedule.length > 1 ? '<button class="addline" id="sortslots">Sort by time</button>' : ''}</div>`;
 }
 function paper(){
-  return head('Paperwork', 'Releases, permissions and anything that needs signing. Not legal advice') + `
-    <div class="rows">${doc.paper.map((p, i) => `<div class="r w"><input class="field" data-k="paper.${i}.text" value="${esc(p.text)}" aria-label="Item"><select class="field" data-k="paper.${i}.status" aria-label="Status">${opts(['To do','Sent','Done','Not needed'], p.status)}</select><input class="field" data-k="paper.${i}.url" value="${esc(p.url)}" placeholder="Link to the form or signed copy" aria-label="Link"><input class="field" data-k="paper.${i}.note" value="${esc(p.note)}" placeholder="Note" aria-label="Note"><button class="x" data-del="paper.${i}" aria-label="Remove">×</button></div>`).join('')}</div>
+  const F = window.AERA_FORMS;
+  return head('Paperwork', 'Releases, permissions and anything that needs signing') + `
+    <div class="card" style="margin-bottom:24px"><h3>Fill in a template</h3>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">${Object.entries(F.defs).map(([k, d]) => `<button class="btn ghost sm" data-newform="${k}">+ ${esc(d.title)}</button>`).join('')}</div>
+      <p style="margin:10px 0 0;font-size:13px;color:var(--muted)">Each one fills in from this job. Releases can be signed on the other person's phone from a link, and anything prints or saves as a PDF. Plain-English templates, not legal advice.</p></div>
+    <div class="rows">${doc.paper.map((p, i) => { const fm = (doc.forms || []).find(f => f.id === p.formId);
+      return `<div class="r w"><input class="field" data-k="paper.${i}.text" value="${esc(p.text)}" aria-label="Item"><select class="field" data-k="paper.${i}.status" aria-label="Status">${opts(['To do','Sent','Done','Not needed'], p.status)}</select><input class="field" data-k="paper.${i}.url" value="${esc(p.url)}" placeholder="Link to a form or signed copy" aria-label="Link"><input class="field" data-k="paper.${i}.note" value="${esc(p.note)}" placeholder="Note" aria-label="Note">${fm ? `<button class="btn ${fm.sig ? 'ok' : 'ghost'} sm" data-openform="${fm.id}">${fm.sig ? 'Signed' : 'Open'}</button>` : '<span></span>'}<button class="x" data-del="paper.${i}" aria-label="Remove">×</button></div>`; }).join('')}</div>
     <button class="addline" id="addpaper" style="margin-top:8px">+ Add an item</button>
     <p style="font-size:13px;color:var(--muted);margin-top:22px;max-width:640px">Filming in public places in Leeds may need the council's permission, and flying a drone needs the CAA's Flyer and Operator IDs. Check before the day.</p>`;
 }
-
+let formSel = null;
+function form(){
+  const F = window.AERA_FORMS, fi = (doc.forms || []).findIndex(f => f.id === formSel), f = doc.forms[fi];
+  if (!f) return '<div class="empty">That form has gone. <a href="#paper" data-go="paper">Back to paperwork</a></div>';
+  const d = F.defs[f.type], lock = !!f.sig;
+  const inp = ([k, label, ph]) => k === 'licence'
+    ? `<label class="fe"><span>${label}</span><select data-k="forms.${fi}.fields.${k}" data-pv="1"${lock ? ' disabled' : ''}>${opts(['', ...F.LICENCES], f.fields[k] || '')}</select></label>`
+    : `<label class="fe${['conditions','notes','firstaid','emergency'].includes(k) ? ' wide' : ''}"><span>${label}</span><input type="text" data-k="forms.${fi}.fields.${k}" data-pv="1" value="${esc(f.fields[k] || '')}" placeholder="${esc(ph || '')}"${lock ? ' disabled' : ''}></label>`;
+  return `<a href="#paper" data-go="paper" style="font-size:13px">← Paperwork</a>
+    <div class="sechead" style="margin-top:10px"><h2 class="sec">${esc(d.title)}</h2><span class="note">${f.sig ? `<span style="color:var(--ok)">Signed by ${esc(f.sig.name)} · ${esc(new Date(f.sig.at).toLocaleString('en-GB'))}</span>` : 'Fills in as you type'}</span></div>
+    <div class="formwrap"><div class="noprint">
+      ${lock ? '<p style="font-size:14px;color:var(--muted);margin-top:0">Signed, so the wording is locked. Make a new one if anything needs to change.</p>' : ''}
+      <div class="feg" style="grid-template-columns:1fr 1fr">${d.fields.map(inp).join('')}</div>
+      ${f.type === 'talent' ? `<div style="margin-top:14px"><span class="lab2">Where it can be used</span>${F.USES.map(u => `<label class="chk" style="font-size:14px;margin:4px 0"><input type="checkbox" data-use="${esc(u)}"${(f.uses || []).includes(u) ? ' checked' : ''}${lock ? ' disabled' : ''}> ${esc(u)}</label>`).join('')}</div>` : ''}
+      ${d.rows ? `<div style="margin-top:16px"><span class="lab2">Hazards</span><div class="rows">${f.rows.map((r, j) => `<div class="r" style="grid-template-columns:1.1fr 1fr 1.8fr 100px auto"><input class="field" data-k="forms.${fi}.rows.${j}.hazard" data-pv="1" value="${esc(r.hazard)}" placeholder="Hazard"><input class="field" data-k="forms.${fi}.rows.${j}.who" data-pv="1" value="${esc(r.who)}" placeholder="Who"><input class="field" data-k="forms.${fi}.rows.${j}.control" data-pv="1" value="${esc(r.control)}" placeholder="What we do about it"><select class="field" data-k="forms.${fi}.rows.${j}.level" data-pv="1">${opts(['Low','Medium','High'], r.level)}</select><button class="x" data-del="forms.${fi}.rows.${j}" aria-label="Remove">×</button></div>`).join('')}</div><button class="addline" id="addrisk">+ Add a hazard</button></div>` : ''}
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:20px">
+        <button class="btn sm" id="printform">Print or save as PDF</button>
+        ${d.sign && !f.sig ? '<button class="btn ghost sm" id="signlink">Copy signing link</button>' : ''}
+        <button class="addline" data-delform="${f.id}" style="color:var(--bad);margin-left:auto">Delete</button></div>
+      ${d.sign && !f.sig ? `<p style="font-size:13px;color:var(--muted)">Send the link to ${esc(d.signer.toLowerCase())}. They read it, type their name and sign on their phone. It shows as signed here, and the paperwork item ticks itself off.</p>` : ''}
+    </div><div id="formprev">${F.render(f, job)}</div></div>`;
+}
 /* ---------- clicks ---------- */
 document.addEventListener('click', async e => {
   const t = e.target;
@@ -406,6 +479,10 @@ document.addEventListener('click', async e => {
   const del = t.closest('[data-del]'); if (del){ const ks = del.dataset.del.split('.'); const i = +ks.pop(); getPath(ks.join('.')).splice(i, 1); save(); render(); return; }
   const al = t.closest('[data-addline]'); if (al){ getPath(al.dataset.addline).push({ text: ' ', done: false }); save(); render(); const ins = document.querySelectorAll(`[data-k^="${al.dataset.addline}."][type=text]`); const last = ins[ins.length - 1]; if (last){ last.value = ''; setPath(last.dataset.k, ''); last.focus(); } return; }
   const st = t.closest('[data-star]'); if (st){ const m = doc.mood[+st.dataset.star]; m.main = !m.main; save(); render(); toast(m.main ? 'Added to main inspos' : 'Removed from main inspos'); return; }
+  const edb = t.closest('[data-edit]'); if (edb){ const id = edb.dataset.edit; editing.has(id) ? editing.delete(id) : editing.add(id); render(); return; }
+  const nf = t.closest('[data-newform]'); if (nf){ newForm(nf.dataset.newform); return; }
+  const of = t.closest('[data-openform]'); if (of){ formSel = of.dataset.openform; sec = 'form'; render(); window.scrollTo({ top: 0 }); return; }
+  const df = t.closest('[data-delform]'); if (df){ if (!confirm('Delete this form? A signed copy will be lost.')) return; doc.forms = doc.forms.filter(x => x.id !== df.dataset.delform); doc.paper.forEach(p => { if (p.formId === df.dataset.delform) p.formId = ''; }); save(); sec = 'paper'; render(); return; }
   const fl = t.closest('[data-filter]'); if (fl){ moodFilter = fl.dataset.filter; render(); return; }
   const as = t.closest('[data-aspect]'); if (as){ doc.aspect = as.dataset.aspect; save(); render(); return; }
   const mv = t.closest('[data-move]'); if (mv){ const [i, d] = mv.dataset.move.split(':').map(Number); const j = i + d; if (j < 0 || j >= doc.frames.length) return; [doc.frames[i], doc.frames[j]] = [doc.frames[j], doc.frames[i]]; save(); render(); return; }
@@ -414,13 +491,18 @@ document.addEventListener('click', async e => {
   const fi = t.closest('[data-fimg]'); if (fi){ const i = +fi.dataset.fimg; pickFiles(async files => { const [id] = await uploadFiles(files.slice(0, 1)); if (id){ doc.frames[i].img = id; save(); render(); } }, false); return; }
   const sk = t.closest('[data-sketch]'); if (sk){ openSketch(+sk.dataset.sketch); return; }
   switch (t.id){
-    case 'addframe': case 'addshot': doc.frames.push({ id: uid(), img: '', size: '', angle: '', move: '', lens: '', cam: '', when: '', desc: '', audio: '', must: false, got: false }); save(); render(); if (t.id === 'addframe'){ const c = document.querySelectorAll('.frame'); c[c.length - 1].scrollIntoView({ behavior: 'smooth', block: 'center' }); } return;
+    case 'addframe': case 'addshot': { const nid = uid(); editing.add(nid); doc.frames.push({ id: nid, img: '', size: '', angle: '', move: '', lens: '', cam: '', when: '', desc: '', audio: '', must: false, got: false }); save(); render(); if (t.id === 'addframe'){ const c = document.querySelectorAll('.sbrow'); c[c.length - 1].scrollIntoView({ behavior: 'smooth', block: 'center' }); } return; }
     case 'addurlbtn': return addUrl();
     case 'addimg': return pickFiles(async files => { const ids = await uploadFiles(files); ids.forEach(id => doc.mood.push({ id: uid(), img: id, url: '', tag: moodFilter !== 'All' && TAGS.includes(moodFilter) ? moodFilter : '', note: '', shot: '', by: '' })); if (ids.length){ save(); render(); toast('Added'); } });
     case 'addloc': doc.locations.push({ id: uid(), name: '', role: doc.locations.some(l => l.role === 'Main') ? 'Backup' : 'Main', status: 'Idea', address: '', contact: '', recce: '', photos: [], access: '', light: '', power: '', sound: '', site: '', permission: '', problems: [] }); locSel = doc.locations.length - 1; save(); render(); return;
     case 'addphotos': return pickFiles(async files => { const ids = await uploadFiles(files); doc.locations[locSel].photos.push(...ids); if (ids.length){ save(); render(); } });
     case 'addperson': doc.people.push({ name: ' ', role: '', contact: '', notes: '' }); render(); { const r = document.querySelectorAll('.r.p input'); const f = r[r.length - 4]; f.value = ''; doc.people[doc.people.length - 1].name = ''; f.focus(); } return;
     case 'addslot': doc.schedule.push({ time: '', what: ' ', who: '' }); render(); { const r = document.querySelectorAll('.r.s input'); const f = r[r.length - 3]; doc.schedule[doc.schedule.length - 1].what = ''; r[r.length - 2].value = ''; f.focus(); } return;
+    case 'printform': window.print(); return;
+    case 'addrisk': { const fm = doc.forms.find(x => x.id === formSel); fm.rows.push({ hazard: '', who: '', control: '', level: 'Low' }); save(); render(); return; }
+    case 'signlink': { try { await api('/portal/api/prepro', 'PUT', { job: jobId, data: doc }); const { key } = await api('/portal/api/prepro', 'POST', { job: jobId, action: 'formlink', form: formSel }); const link = location.origin + '/sign/#' + key;
+      const p = doc.paper.find(x => x.formId === formSel); if (p && p.status === 'To do'){ p.status = 'Sent'; save(); }
+      try { await navigator.clipboard.writeText(link); toast('Signing link copied'); } catch { prompt('Signing link:', link); } } catch (x) { toast(x.message); } return; }
     case 'sortslots': doc.schedule.sort((a, b) => a.time.localeCompare(b.time)); save(); render(); return;
     case 'addpaper': doc.paper.push({ text: 'New item', status: 'To do', url: '', note: '' }); save(); render(); return;
   }
@@ -429,6 +511,21 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Enter' && e.target.id === 'addurl'){ e.preventDefault(); addUrl(); }
   if (e.key === 'Enter' && e.target.matches('.list .li input[type=text]')){ e.preventDefault(); const path = e.target.dataset.k.split('.').slice(0, -2).join('.'); document.querySelector(`[data-addline="${path}"]`).click(); }
 });
+function newForm(type){
+  const F = window.AERA_FORMS, d = F.defs[type], main = doc.locations.find(l => l.role === 'Main') || {};
+  const date = shortDate(doc.date || job.date), project = job.client + (job.type ? ' · ' + job.type : '');
+  const pre = { talent: { project, dates: date, location: main.name || '', fee: 'None' },
+    location: { place: main.name || '', address: main.address || '', contact: main.contact || '', project, dates: date, fee: 'None' },
+    risk: { project, date, location: [main.name, main.address].filter(Boolean).join(', '), lead: 'Jack Careem', emergency: '999' },
+    music: { track: '', artist: '' } }[type] || {};
+  const f = { id: uid(), type, title: d.title, fields: pre, uses: type === 'talent' ? ["The client's own channels", 'Aera portfolio and website', 'Aera social media'] : [],
+    rows: type === 'risk' ? F.RISK_ROWS.map(([hazard, who, control]) => ({ hazard, who, control, level: 'Low' })) : [], key: '', sig: null };
+  doc.forms = doc.forms || []; doc.forms.push(f);
+  const label = d.title + (type === 'talent' ? '' : '');
+  const existing = doc.paper.find(p => !p.formId && p.text.toLowerCase().startsWith(d.title.toLowerCase().split(' ')[0]));
+  if (existing) existing.formId = f.id; else doc.paper.push({ text: label, status: 'To do', url: '', note: '', formId: f.id });
+  save(); formSel = f.id; sec = 'form'; render(); window.scrollTo({ top: 0 });
+}
 function addUrl(){
   const v = $('addurl').value.trim(); if (!/^https?:\/\//i.test(v)){ toast('Paste a full link starting with https://'); return; }
   doc.mood.push({ id: uid(), img: '', url: v, tag: '', note: '', shot: '', by: '' }); save(); render(); toast('Added');
@@ -480,6 +577,7 @@ $('crewbtn').addEventListener('click', async () => {
 });
 
 /* ---------- start ---------- */
+{ const st = document.createElement('style'); st.textContent = window.AERA_FORMS.css; document.head.appendChild(st); }
 (async () => {
   if (!jobId){ $('app').innerHTML = '<div class="empty">Open pre-pro from a job in the portal.</div>'; return; }
   try { const d = await api('/portal/api/prepro?job=' + encodeURIComponent(jobId)); job = d.job; doc = d.prepro; }
