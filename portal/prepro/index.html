@@ -96,6 +96,11 @@ table.sl img{width:72px;aspect-ratio:16/9;object-fit:cover;border-radius:3px;dis
 .pin select,.pin input{font:400 12.5px var(--sans);border:1px solid var(--field);border-radius:4px;padding:4px 6px;background:var(--paper);min-width:0}
 .pin input{width:100%}
 .pin .src{font-size:12px;color:var(--muted);text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mains{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-bottom:30px}
+.mains .pin{margin:0}.mains .pin img{aspect-ratio:4/3;object-fit:cover}
+.star{background:none;border:0;cursor:pointer;font-size:17px;line-height:1;padding:3px 5px;color:var(--stone)}
+.star[aria-pressed="true"]{color:var(--gold-ink)}
+.sub{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold-ink);font-weight:600;margin:0 0 12px}
 .drop.on{outline:2px dashed var(--gold-ink);outline-offset:6px}
 /* locations */
 .locs{display:grid;grid-template-columns:260px minmax(0,1fr);gap:24px;align-items:start}
@@ -282,7 +287,7 @@ function overview(){
     <section>${head('The brief', b.agreed ? '<span style="color:var(--ok)">Agreed with the client</span>' : '<a href="#brief" data-go="brief">Edit</a>')}
       ${briefRows.length ? `<dl class="brief">${briefRows.map(([k, v]) => `<dt>${k}</dt><dd>${esc(v)}</dd>`).join('')}</dl>` : `<div class="empty">No brief yet. <a href="#brief" data-go="brief">Write it</a></div>`}</section>
     <section style="margin-top:40px">${head('The look', `<a href="#mood" data-go="mood">Open moodboard${doc.mood.length ? ' · ' + doc.mood.length : ''}</a>`)}
-      ${doc.mood.some(m => m.img || ytId(m.url)) ? `<div class="strip">${doc.mood.filter(m => m.img || ytId(m.url)).slice(0, 5).map(m => `<img src="${m.img ? imgSrc(m.img) : `https://img.youtube.com/vi/${ytId(m.url)}/hqdefault.jpg`}" alt="${esc(m.note || m.tag || 'Reference')}" loading="lazy">`).join('')}</div>` : `<div class="empty">Nothing on the moodboard yet.</div>`}</section>
+      ${doc.mood.some(m => m.img || ytId(m.url)) ? `<div class="strip">${[...doc.mood.filter(m => m.main), ...doc.mood.filter(m => !m.main)].filter(m => m.img || ytId(m.url)).slice(0, 5).map(m => `<img src="${m.img ? imgSrc(m.img) : `https://img.youtube.com/vi/${ytId(m.url)}/hqdefault.jpg`}" alt="${esc(m.note || m.tag || 'Reference')}" loading="lazy">`).join('')}</div>` : `<div class="empty">Nothing on the moodboard yet.</div>`}</section>
     <section style="margin-top:40px">${head('Storyboard', `<a href="#board" data-go="board">${doc.frames.length} frame${doc.frames.length === 1 ? '' : 's'} · open</a>`)}
       ${doc.frames.length ? `<div class="frames" style="grid-template-columns:repeat(3,1fr)">${doc.frames.slice(0, 3).map((fr, i) => `<figure style="margin:0"><div class="shot" style="aspect-ratio:${ar()}">${fr.img ? `<img src="${imgSrc(fr.img)}" alt="Frame ${i + 1}" loading="lazy">` : ''}<span class="n">${i + 1}</span></div><figcaption style="font-size:13.5px;margin-top:6px">${esc([fr.size, fr.move].filter(Boolean).join(', '))}${fr.desc ? ' · ' + esc(fr.desc) : ''}</figcaption></figure>`).join('')}</div>` : `<div class="empty">No frames yet.</div>`}</section>
   </div><aside style="display:flex;flex-direction:column;gap:20px">
@@ -307,20 +312,25 @@ function brief(){
     ${field('brief.due', 'When it\'s due', 'e.g. Reels by 20 Dec, full songs by 3 Jan')}
     <label class="chk"><input type="checkbox" data-k="brief.agreed"${doc.brief.agreed ? ' checked' : ''}> The client has agreed this brief</label></div>`;
 }
+function pinHtml({ m, i }){ const yt = ytId(m.url);
+  const shotOpts = v => `<option value="">No shot</option>` + doc.frames.map((f, k) => `<option value="${f.id}"${f.id === v ? ' selected' : ''}>Shot ${k + 1}${f.desc ? ': ' + esc(f.desc.slice(0, 26)) : ''}</option>`).join('');
+  return `<figure class="pin">${m.img ? `<img src="${imgSrc(m.img)}" alt="${esc(m.note || 'Reference')}" loading="lazy">` : yt ? `<img src="https://img.youtube.com/vi/${yt}/hqdefault.jpg" alt="Video reference" loading="lazy">` : `<div class="linkonly">${esc(host(m.url))}</div>`}
+    <figcaption class="meta">${m.url ? `<a class="src" href="${esc(m.url)}" target="_blank" rel="noopener">${esc(host(m.url))} ↗</a>` : ''}
+      <div class="r"><button class="star" data-star="${i}" aria-pressed="${!!m.main}" title="${m.main ? 'Remove from main inspos' : 'Make a main inspo'}" aria-label="Main inspo">${m.main ? '★' : '☆'}</button><select data-k="mood.${i}.tag" aria-label="Tag"><option value="">Tag</option>${TAGS.map(t => `<option${t === m.tag ? ' selected' : ''}>${t}</option>`).join('')}</select><select data-k="mood.${i}.shot" aria-label="Pin to a shot">${shotOpts(m.shot)}</select><button class="x" data-del="mood.${i}" aria-label="Remove">×</button></div>
+      <input data-k="mood.${i}.note" value="${esc(m.note)}" placeholder="${m.shot ? 'What to take from it' : 'Note'}"></figcaption></figure>`; }
 function mood(){
-  const tags = ['All', ...TAGS, 'Pinned to a shot'];
-  const list = doc.mood.map((m, i) => ({ m, i })).filter(({ m }) => moodFilter === 'All' || (moodFilter === 'Pinned to a shot' ? m.shot : m.tag === moodFilter));
+  const tags = ['All', 'Main inspos', ...TAGS, 'Pinned to a shot'];
+  const list = doc.mood.map((m, i) => ({ m, i })).filter(({ m }) => moodFilter === 'All' || (moodFilter === 'Main inspos' ? m.main : moodFilter === 'Pinned to a shot' ? m.shot : m.tag === moodFilter));
+  const mains = moodFilter === 'All' ? list.filter(({ m }) => m.main) : [];
+  const rest = moodFilter === 'All' ? list.filter(({ m }) => !m.main) : list;
   const shotOpts = v => `<option value="">No shot</option>` + doc.frames.map((f, i) => `<option value="${f.id}"${f.id === v ? ' selected' : ''}>Shot ${i + 1}${f.desc ? ': ' + esc(f.desc.slice(0, 26)) : ''}</option>`).join('');
   const pinned = doc.mood.map((m, i) => ({ m, i })).filter(({ m }) => m.shot);
   return head('Moodboard', 'Paste a link, drop or paste images. Pin a reference to a shot to make it a shot inspo') + `
     <div class="addbar drop" id="dropzone"><input class="field" id="addurl" placeholder="Paste a link: Pinterest, Instagram, YouTube, Vimeo…" aria-label="Reference link">
       <button class="btn sm" id="addurlbtn">Add link</button><button class="btn ghost sm" id="addimg">Upload images</button></div>
     <div class="filters">${tags.map(t => `<button data-filter="${esc(t)}" aria-pressed="${t === moodFilter}">${esc(t)}</button>`).join('')}</div>
-    ${list.length ? `<div class="masonry">${list.map(({ m, i }) => { const yt = ytId(m.url);
-      return `<figure class="pin">${m.img ? `<img src="${imgSrc(m.img)}" alt="${esc(m.note || 'Reference')}" loading="lazy">` : yt ? `<img src="https://img.youtube.com/vi/${yt}/hqdefault.jpg" alt="Video reference" loading="lazy">` : `<div class="linkonly">${esc(host(m.url))}</div>`}
-        <figcaption class="meta">${m.url ? `<a class="src" href="${esc(m.url)}" target="_blank" rel="noopener">${esc(host(m.url))} ↗</a>` : ''}
-          <div class="r"><select data-k="mood.${i}.tag" aria-label="Tag"><option value="">Tag</option>${TAGS.map(t => `<option${t === m.tag ? ' selected' : ''}>${t}</option>`).join('')}</select><select data-k="mood.${i}.shot" aria-label="Pin to a shot">${shotOpts(m.shot)}</select><button class="x" data-del="mood.${i}" aria-label="Remove">×</button></div>
-          <input data-k="mood.${i}.note" value="${esc(m.note)}" placeholder="${m.shot ? 'What to take from it' : 'Note'}"></figcaption></figure>`; }).join('')}</div>` : `<div class="empty">Nothing here yet. Paste a link above, or paste an image straight onto the page.</div>`}
+    ${mains.length ? `<p class="sub">Main inspos</p><div class="mains">${mains.map(pinHtml).join('')}</div>${rest.length ? '<p class="sub">Everything else</p>' : ''}` : ''}
+    ${rest.length ? `<div class="masonry">${rest.map(pinHtml).join('')}</div>` : mains.length ? '' : `<div class="empty">Nothing here yet. Paste a link above, or paste an image straight onto the page. Star the ones that matter most to make them main inspos.</div>`}
     ${pinned.length ? `<section style="margin-top:34px">${head('Shot inspo', 'References pinned to a shot')}<div class="frames">${pinned.map(({ m }) => { const n = doc.frames.findIndex(f => f.id === m.shot); const yt = ytId(m.url);
       return `<div class="card" style="display:flex;gap:12px;padding:12px">${m.img || yt ? `<img src="${m.img ? imgSrc(m.img) : `https://img.youtube.com/vi/${yt}/hqdefault.jpg`}" alt="" style="width:100px;height:100px;object-fit:cover;border-radius:4px;flex:none">` : ''}<div><b style="font-weight:600">Shot ${n + 1}</b><p style="margin:2px 0 0;font-size:14px;color:var(--ink2)">${esc(m.note || 'No note yet')}</p></div></div>`; }).join('')}</div></section>` : ''}`;
 }
@@ -393,6 +403,7 @@ document.addEventListener('click', async e => {
   const go = t.closest('[data-go],[data-sec]'); if (go){ e.preventDefault(); sec = go.dataset.go || go.dataset.sec; history.replaceState(null, '', '#' + sec); render(); window.scrollTo({ top: 0 }); return; }
   const del = t.closest('[data-del]'); if (del){ const ks = del.dataset.del.split('.'); const i = +ks.pop(); getPath(ks.join('.')).splice(i, 1); save(); render(); return; }
   const al = t.closest('[data-addline]'); if (al){ getPath(al.dataset.addline).push({ text: ' ', done: false }); save(); render(); const ins = document.querySelectorAll(`[data-k^="${al.dataset.addline}."][type=text]`); const last = ins[ins.length - 1]; if (last){ last.value = ''; setPath(last.dataset.k, ''); last.focus(); } return; }
+  const st = t.closest('[data-star]'); if (st){ const m = doc.mood[+st.dataset.star]; m.main = !m.main; save(); render(); toast(m.main ? 'Added to main inspos' : 'Removed from main inspos'); return; }
   const fl = t.closest('[data-filter]'); if (fl){ moodFilter = fl.dataset.filter; render(); return; }
   const as = t.closest('[data-aspect]'); if (as){ doc.aspect = as.dataset.aspect; save(); render(); return; }
   const mv = t.closest('[data-move]'); if (mv){ const [i, d] = mv.dataset.move.split(':').map(Number); const j = i + d; if (j < 0 || j >= doc.frames.length) return; [doc.frames[i], doc.frames[j]] = [doc.frames[j], doc.frames[i]]; save(); render(); return; }

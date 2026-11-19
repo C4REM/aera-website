@@ -64,7 +64,7 @@ const day = d => d ? new Date(d + 'T12:00:00').toLocaleDateString('en-GB', { wee
   const br = [['What it\'s for', b.purpose], ['How it should feel', b.feel], ['Must have', b.must], ['Avoid', b.avoid], ['Delivering', b.deliverables]].filter(x => x[1]);
   if (br.length) secs.push(['brief', 'Brief', `<dl>${br.map(([k, v]) => `<dt>${k}</dt><dd>${esc(v)}</dd>`).join('')}</dl>`]);
   if (p.frames.length) secs.push(['shots', 'Shots', `<div class="frames">${p.frames.map((f, i) => `<figure><div class="im" style="aspect-ratio:${p.aspect.replace(':', ' / ')}">${f.img ? `<img src="${img(f.img)}" alt="" loading="lazy">` : ''}<span class="n">${i + 1}</span></div><figcaption>${f.must ? '<b style="font-weight:600;color:var(--gold-ink)">Must · </b>' : ''}${esc([f.size, f.angle, f.move, f.lens, f.cam && 'Cam ' + f.cam].filter(Boolean).join(', '))}${f.desc ? `<br>${esc(f.desc)}` : ''}</figcaption></figure>`).join('')}</div>`]);
-  const mood = p.mood.filter(m => m.img || yt(m.url));
+  const mood = [...p.mood.filter(m => m.main), ...p.mood.filter(m => !m.main)].filter(m => m.img || yt(m.url));
   if (mood.length) secs.push(['look', 'The look', `<div class="mood">${mood.map(m => `<img src="${m.img ? img(m.img) : `https://img.youtube.com/vi/${yt(m.url)}/hqdefault.jpg`}" alt="${esc(m.note || 'Reference')}" loading="lazy">`).join('')}</div>`]);
   if (p.props.length) secs.push(['props', 'Wardrobe & props', `<ul style="margin:0;padding-left:18px">${p.props.map(x => `<li>${esc(x.text)}</li>`).join('')}</ul>`]);
   (p.locations || []).forEach((l, i) => { const notes = [['Light', l.light], ['Power', l.power], ['Sound', l.sound], ['On site', l.site]].filter(x => x[1]); const probs = l.problems.filter(x => !x.done);
