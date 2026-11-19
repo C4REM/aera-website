@@ -1012,6 +1012,9 @@ main.wrap{padding-top:28px;padding-bottom:calc(90px + env(safe-area-inset-bottom
 .gr .it .meta{display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px;margin-top:4px}
 .gr .it .mount{display:inline-block;margin-left:0;padding:1px 7px;border-radius:999px;background:rgba(194,168,120,.14);color:var(--champagne);font-size:10.5px;letter-spacing:.03em;vertical-align:1px}
 .gr .it input.mv{width:120px;font-size:11px;padding:2px 6px}
+
+.jp-tabs a.jp-pre{color:var(--champagne);font-size:11px;letter-spacing:.14em;text-transform:uppercase;padding:10px 18px;text-decoration:none;white-space:nowrap;border-radius:var(--r-pill);transition:background .25s}
+.jp-tabs a.jp-pre:hover{background:var(--panel2)}
 </style>
 </head>
 <body>
@@ -1409,6 +1412,7 @@ main.wrap{padding-top:28px;padding-bottom:calc(90px + env(safe-area-inset-bottom
       <button data-jt="proposal" aria-selected="false">Proposal</button>
       <button data-jt="sheet" aria-selected="false">Shoot sheet</button>
       <button data-jt="review" aria-selected="false">Review</button>
+      <a class="jp-pre" id="jp-prepro" href="#">Pre-pro ↗</a>
     </div>
     <div id="jp-body"></div>
   </div>
@@ -2347,6 +2351,7 @@ main.wrap{padding-top:28px;padding-bottom:calc(90px + env(safe-area-inset-bottom
           ${j.notes ? `<div class="jobnotes">${esc(j.notes)}</div>` : ''}
           <div class="jobacts">
             <button data-open="${esc(j.id)}">Open</button>
+            <a class="jobpitch" href="/portal/prepro/?job=${encodeURIComponent(j.id)}">Pre-pro</a>
             ${/^https:\/\//i.test(j.pitchUrl || '') ? `<a class="jobpitch" href="${esc(j.pitchUrl)}" target="_blank" rel="noopener">Pitch deck ↗</a>` : ''}
             <button data-edit="${esc(j.id)}">Edit</button>
             <button class="del" data-del="${esc(j.id)}">Delete</button>
@@ -3225,6 +3230,7 @@ main.wrap{padding-top:28px;padding-bottom:calc(90px + env(safe-area-inset-bottom
     if (j.unread) saveJobFields(id, { unread: false });
     $('jobpage').hidden = false; document.body.style.overflow = 'hidden';
     paintJobHead(); setJpTab(tab, true);
+    $('jp-prepro').href = '/portal/prepro/?job=' + encodeURIComponent(id);
     $('jp-body').innerHTML = '<div class="empty">Loading…</div>';
     try { jp.data = await api(JD_API + '?job=' + encodeURIComponent(id), 'GET'); }
     catch { $('jp-body').innerHTML = '<div class="empty">Couldn’t load this job. Close and try again.</div>'; return; }

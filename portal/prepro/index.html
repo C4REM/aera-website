@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<title>Pre-pro — Aera</title>
+<link rel="icon" type="image/svg+xml" href="/assets/img/logo/aera-monogram-favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/client/client.css">
+<style>
+/* Pre-production workspace: one page per job, in the ivory client look.
+   Everything autosaves; typing never re-renders, so focus is never lost. */
+.top .in{max-width:1180px;margin:0 auto;padding:16px 32px;display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}
+.top a.back{color:var(--stone);text-decoration:none;font-size:13px}.top a.back:hover{color:var(--cream)}
+.hero{max-width:1180px;margin:0 auto;padding:16px 32px 28px}
+.hero .k{font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold)}
+.hero h1{font-size:46px;line-height:1.05;margin:8px 0 4px}
+.hero p{margin:0;color:#CFC4B0}
+.btn.gold{background:var(--gold);color:#170e08}.btn.gold:hover{background:#D3BB8E;color:#170e08}
+.btn.sm{padding:8px 14px;font-size:13px}
+nav.secs{border-bottom:1px solid var(--line);background:var(--paper);position:sticky;top:0;z-index:20}
+nav.secs .in{max-width:1180px;margin:0 auto;padding:0 32px;display:flex;gap:2px;overflow-x:auto}
+nav.secs button{background:none;border:0;padding:14px 12px;font-size:14px;color:var(--muted);cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent}
+nav.secs button[aria-current="true"]{color:var(--ink);border-bottom-color:var(--gold-ink);font-weight:500}
+nav.secs button b{font-weight:400;color:var(--stone);margin-left:4px;font-size:12px}
+.saved{font-size:12.5px;color:var(--stone);margin-left:auto;align-self:center;white-space:nowrap;padding-left:12px}
+main{max-width:1180px;margin:0 auto;padding:30px 32px 90px}
+h2.sec{font-family:var(--display);font-weight:400;font-size:28px;margin:0}
+.sechead{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:10px;margin-bottom:18px}
+.sechead .note{font-size:13px;color:var(--muted)}
+.grid2{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:34px}
+.card{background:#FBF8F2;border:1px solid var(--line);border-radius:6px;padding:18px 20px}
+.card h3{margin:0 0 10px;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold-ink);font-weight:600}
+.lab2{display:block;font-size:13px;color:var(--muted);margin-bottom:5px}
+textarea.field{resize:vertical;min-height:70px;line-height:1.5}
+.f2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.row{margin-bottom:16px}
+.chk{display:flex;gap:10px;align-items:center;font-size:14.5px;cursor:pointer}
+.chk input{flex:none}
+.empty{color:var(--muted);font-size:14px;padding:26px;text-align:center;border:1.5px dashed var(--field);border-radius:6px}
+.x{background:none;border:0;color:var(--stone);cursor:pointer;font-size:18px;line-height:1;padding:4px 6px;border-radius:4px}
+.x:hover{color:var(--bad);background:rgba(164,71,58,.08)}
+.chip{display:inline-block;font-size:12px;padding:3px 10px;border-radius:999px;background:var(--tint);color:var(--ink2)}
+.seg{display:inline-flex;border:1px solid var(--field);border-radius:4px;overflow:hidden}
+.seg button{background:var(--paper);border:0;border-right:1px solid var(--field);padding:7px 12px;font-size:13px;cursor:pointer;color:var(--muted)}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed="true"]{background:var(--brown);color:var(--cream)}
+/* overview */
+dl.brief{display:grid;grid-template-columns:150px 1fr;gap:12px 18px;margin:0;font-size:16px}
+dl.brief dt{color:var(--muted);font-size:14px}dl.brief dd{margin:0;white-space:pre-wrap}
+.ready li{display:flex;gap:10px;font-size:14.5px}
+.ready .ok{color:var(--ok)}.ready .todo{color:var(--gold-ink)}.ready .bad{color:var(--bad)}
+.bar{height:4px;background:#E3DDD1;border-radius:2px;overflow:hidden;margin:4px 0 14px}.bar i{display:block;height:100%;background:var(--gold-ink)}
+.strip{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.strip img,.strip .ph{width:100%;aspect-ratio:1;object-fit:cover;border-radius:4px;background:var(--tint)}
+/* storyboard */
+.frames{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:18px}
+.frame{background:#FBF8F2;border:1px solid var(--line);border-radius:6px;overflow:hidden;display:flex;flex-direction:column}
+.shot{position:relative;background:#EDE6D8;border-bottom:1px solid var(--line);display:grid;place-items:center;overflow:hidden}
+.shot img{width:100%;height:100%;object-fit:cover}
+.shot .n{position:absolute;top:8px;left:8px;background:var(--ink);color:var(--paper);font-size:11px;font-weight:600;border-radius:999px;padding:1px 9px}
+.shot .tools{position:absolute;bottom:8px;right:8px;display:flex;gap:6px;opacity:0;transition:opacity .2s}
+.frame:hover .shot .tools,.shot .tools:focus-within,.shot.blank .tools{opacity:1}
+.shot.blank .tools{position:static}
+.tool{background:var(--paper);border:1px solid var(--field);border-radius:4px;padding:5px 10px;font-size:12.5px;cursor:pointer}
+.tool:hover{border-color:var(--ink)}
+.frame .body{padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+.frame .opts{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.frame select,.frame input.mini{font:400 12.5px var(--sans);border:1px solid var(--field);border-radius:4px;padding:5px 6px;background:var(--paper);color:var(--ink);width:100%;min-width:0}
+.frame textarea{font:400 14px var(--sans);border:1px solid var(--field);border-radius:4px;padding:7px 9px;background:var(--paper);resize:vertical;min-height:54px;width:100%}
+.frame .foot{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:13px}
+.addframe{border:1.5px dashed var(--field);border-radius:6px;background:none;cursor:pointer;color:var(--muted);font-size:14px;min-height:220px}
+.addframe:hover{border-color:var(--ink);color:var(--ink)}
+/* shot list */
+table.sl{width:100%;border-collapse:collapse;font-size:14px}
+table.sl th{text-align:left;font-weight:500;font-size:12.5px;color:var(--muted);padding:8px 10px;border-bottom:1px solid var(--line)}
+table.sl td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+table.sl tr.got td{color:var(--stone);text-decoration:line-through}
+table.sl img{width:72px;aspect-ratio:16/9;object-fit:cover;border-radius:3px;display:block}
+.tablewrap{overflow-x:auto}
+/* moodboard */
+.addbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;background:#FBF8F2;border:1px solid var(--line);border-radius:6px;padding:12px 14px;margin-bottom:16px}
+.addbar .field{flex:1 1 360px}
+.filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.filters button{background:none;border:1px solid var(--field);border-radius:999px;padding:5px 12px;font-size:13px;cursor:pointer;color:var(--muted)}
+.filters button[aria-pressed="true"]{background:var(--brown);border-color:var(--brown);color:var(--cream)}
+.masonry{columns:4 220px;column-gap:14px}
+.pin{break-inside:avoid;margin:0 0 14px;background:#FBF8F2;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.pin img{width:100%;display:block}
+.pin .linkonly{padding:18px 14px;font-size:13px;color:var(--muted);word-break:break-all}
+.pin .meta{padding:9px 11px;display:flex;flex-direction:column;gap:6px}
+.pin .meta .r{display:flex;gap:6px;align-items:center}
+.pin select,.pin input{font:400 12.5px var(--sans);border:1px solid var(--field);border-radius:4px;padding:4px 6px;background:var(--paper);min-width:0}
+.pin input{width:100%}
+.pin .src{font-size:12px;color:var(--muted);text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.drop.on{outline:2px dashed var(--gold-ink);outline-offset:6px}
+/* locations */
+.locs{display:grid;grid-template-columns:260px minmax(0,1fr);gap:24px;align-items:start}
+.loclist{display:flex;flex-direction:column;gap:8px}
+.locbtn{text-align:left;background:#FBF8F2;border:1px solid var(--line);border-radius:6px;padding:0;cursor:pointer;overflow:hidden;font:inherit;color:inherit}
+.locbtn[aria-current="true"]{border-color:var(--gold-ink);box-shadow:0 0 0 1px var(--gold-ink)}
+.locbtn img,.locbtn .ph{width:100%;height:96px;object-fit:cover;display:block;background:var(--tint)}
+.locbtn .t{padding:9px 12px;font-size:14px}.locbtn .t small{display:block;color:var(--muted);font-size:12.5px}
+.photos{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;margin:6px 0 4px}
+.photos figure{margin:0;position:relative}
+.photos img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:4px;display:block}
+.photos figure .x{position:absolute;top:4px;right:4px;background:rgba(245,241,233,.92)}
+.photos .add{aspect-ratio:4/3;border:1.5px dashed var(--field);border-radius:4px;background:none;cursor:pointer;color:var(--muted);font-size:13px}
+.rec{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.list{display:flex;flex-direction:column;gap:6px}
+.list .li{display:flex;gap:8px;align-items:center}
+.list .li input[type=text]{flex:1;border:0;border-bottom:1px solid transparent;background:none;font:400 14.5px var(--sans);padding:3px 0;color:var(--ink)}
+.list .li input[type=text]:focus{outline:none;border-bottom-color:var(--gold)}
+.list .li.done input[type=text]{color:var(--stone);text-decoration:line-through}
+.addline{background:none;border:0;color:var(--gold-ink);cursor:pointer;font-size:13.5px;padding:4px 0;text-align:left}
+/* tables for people/schedule/paper */
+.rows{display:flex;flex-direction:column;gap:8px}
+.rows .r{display:grid;gap:8px;align-items:center}
+.rows .r.p{grid-template-columns:1.1fr 1fr 1.2fr 1.4fr auto}
+.rows .r.s{grid-template-columns:90px 2fr 1fr auto}
+.rows .r.w{grid-template-columns:1.6fr 130px 1.4fr 1.2fr auto}
+.rows .field{padding:8px 10px;font-size:14px}
+.sun{display:flex;gap:18px;flex-wrap:wrap;font-size:14px;color:var(--ink2)}
+.sun b{font-weight:600}
+/* sketch */
+.modal{position:fixed;inset:0;background:rgba(14,14,16,.55);display:grid;place-items:center;z-index:60;padding:16px}
+.modal[hidden]{display:none}
+.sk{background:var(--paper);border-radius:8px;padding:16px;width:min(960px,100%);box-shadow:0 30px 60px -20px rgba(0,0,0,.5)}
+.sk canvas{width:100%;background:#fff;border:1px solid var(--line);border-radius:4px;touch-action:none;cursor:crosshair;display:block}
+.sk .bar2{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:10px 16px;border-radius:4px;font-size:14px;opacity:0;transition:opacity .25s;pointer-events:none;z-index:80}
+.toast.show{opacity:1}
+@media(max-width:860px){.grid2,.locs,.rec{grid-template-columns:1fr}.hero h1{font-size:34px}.rows .r.p,.rows .r.w{grid-template-columns:1fr 1fr}.f2{grid-template-columns:1fr}main,.hero,.top .in,nav.secs .in{padding-left:16px;padding-right:16px}dl.brief{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="band">
+  <div class="top"><div class="in">
+    <a class="back" id="back" href="/portal/">← Back to the job</a>
+    <a class="mark" href="/portal/"><svg viewBox="61 51 78 98" fill="none" aria-hidden="true"><path d="M100,60 L70,100 L130,100 Z M100,140 L70,100 M130,100 L100,140 M82,85 L118,85 M82,115 L118,115" stroke="#C2A878" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/></svg><span>AERA</span></a>
+    <button class="btn gold sm" id="crewbtn">Share crew pack</button>
+  </div></div>
+  <div class="hero"><div class="k">Pre-production</div><h1 class="display" id="title">Loading…</h1><p id="meta"></p></div>
+</div>
+<nav class="secs" aria-label="Sections"><div class="in" id="nav"></div></nav>
+<main id="app"><div class="skeleton" style="height:300px"></div></main>
+
+<div class="modal" id="sketch" hidden>
+  <div class="sk" role="dialog" aria-label="Sketch a frame">
+    <div class="bar2">
+      <b style="font-weight:600">Sketch frame <span id="sk-n"></span></b>
+      <span style="flex:1"></span>
+      <div class="seg" id="sk-pen"><button aria-pressed="true" data-w="3">Fine</button><button aria-pressed="false" data-w="7">Thick</button><button aria-pressed="false" data-w="26" data-erase="1">Eraser</button></div>
+      <button class="tool" id="sk-undo">Undo</button><button class="tool" id="sk-clear">Clear</button>
+    </div>
+    <canvas id="sk-c" width="1600" height="900"></canvas>
+    <div class="bar2" style="margin:12px 0 0;justify-content:flex-end"><button class="btn ghost sm" id="sk-cancel">Cancel</button><button class="btn sm" id="sk-save">Use this sketch</button></div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<input type="file" id="file" accept="image/*" multiple hidden>
+
+<script>
+(function(){
+'use strict';
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const jobId = new URLSearchParams(location.search).get('job') || '';
+const SECTIONS = [['overview','Overview'],['brief','Brief'],['mood','Moodboard'],['board','Storyboard'],['shots','Shot list'],['locs','Locations'],['people','People & props'],['schedule','Schedule'],['paper','Paperwork']];
+const SIZES = ['','EWS','WS','MS','MCU','CU','ECU','OTS','POV','Insert','Two-shot'];
+const ANGLES = ['','Eye level','Low','High','Overhead','Dutch'];
+const MOVES = ['','Static','Pan','Tilt','Push in','Pull out','Slide','Handheld','Gimbal','Drone'];
+const CAMS = ['','A','B','Stills','Phone'];
+const TAGS = ['Light','Colour','Framing','Wardrobe','Location','Stills','Edit'];
+const LOCSECS = [['access','Getting in','Parking, load-in route, stairs or lift, access times'],['light','Light','Window direction, blackout, practicals, sun on the day'],['power','Power','Sockets, circuits, what can run where'],['sound','Sound','Traffic, fans, fridges, neighbours, flight path'],['site','On site','Toilets, green room, food, signal and wifi, smoke alarms'],['permission','Permission','Contact, fee, hours allowed, what we can move']];
+let job = null, doc = null, sec = (location.hash.slice(1) || 'overview'), saveT = null, moodFilter = 'All', locSel = 0;
+
+function toast(m){ const t = $('toast'); t.textContent = m; t.classList.add('show'); clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.remove('show'), 1800); }
+async function api(url, method = 'GET', body){
+  const r = await fetch(url, { method, headers: body ? { 'Content-Type': 'application/json' } : {}, body: body ? JSON.stringify(body) : undefined });
+  if (r.status === 401){ location.href = '/portal/'; throw new Error('signed out'); }
+  const d = await r.json().catch(() => ({})); if (!r.ok) throw new Error(d.error || 'Request failed'); return d;
+}
+const imgSrc = id => '/api/img?id=' + id;
+const ytId = u => { const m = String(u).match(/(?:youtu\.be\/|v=|shorts\/)([\w-]{11})/); return m ? m[1] : ''; };
+const host = u => { try { return new URL(u).hostname.replace(/^www\./, ''); } catch { return ''; } };
+const shortDate = d => d ? new Date(d + 'T12:00:00').toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'long' }) : '';
+const uid = () => crypto.randomUUID();
+
+/* ---------- saving: every change goes through here ---------- */
+let statusText = 'Saved';
+function setStatus(t){ statusText = t; const s = $('saved'); if (s) s.textContent = t; }
+function save(){ setStatus('Saving…'); clearTimeout(saveT); saveT = setTimeout(async () => {
+  try { await api('/portal/api/prepro', 'PUT', { job: jobId, data: doc }); setStatus('Saved'); }
+  catch { setStatus('Not saved. Check your connection'); }
+}, 800); }
+function setPath(path, val){ const ks = path.split('.'); let o = doc; ks.slice(0, -1).forEach(k => { o = o[k]; }); o[ks[ks.length - 1]] = val; }
+function getPath(path){ return path.split('.').reduce((o, k) => o == null ? o : o[k], doc); }
+// typing: update the doc, never re-render
+document.addEventListener('input', e => { const el = e.target.closest('[data-k]'); if (!el) return;
+  setPath(el.dataset.k, el.type === 'checkbox' ? el.checked : el.value); save(); if (el.dataset.re) render(); });
+document.addEventListener('change', e => { const el = e.target.closest('[data-k]'); if (!el || el.tagName === 'TEXTAREA' || (el.tagName === 'INPUT' && el.type === 'text')) return;
+  setPath(el.dataset.k, el.type === 'checkbox' ? el.checked : el.value); save(); render(); });
+
+/* ---------- images ---------- */
+async function shrink(file){
+  if (!/^image\//.test(file.type)) throw new Error('Not an image');
+  const bmp = await createImageBitmap(file); const s = Math.min(1, 1600 / Math.max(bmp.width, bmp.height));
+  const c = document.createElement('canvas'); c.width = Math.round(bmp.width * s); c.height = Math.round(bmp.height * s);
+  c.getContext('2d').drawImage(bmp, 0, 0, c.width, c.height);
+  return await new Promise(r => c.toBlob(r, 'image/jpeg', .84));
+}
+async function upload(blob){
+  const r = await fetch('/portal/api/img', { method: 'POST', headers: { 'Content-Type': blob.type }, body: blob });
+  const d = await r.json().catch(() => ({})); if (!r.ok) throw new Error(d.error || 'Upload failed'); return d.id;
+}
+let pickCb = null;
+function pickFiles(cb, multiple = true){ pickCb = cb; $('file').multiple = multiple; $('file').value = ''; $('file').click(); }
+$('file').addEventListener('change', async () => { const files = [...$('file').files]; if (pickCb && files.length) pickCb(files); });
+async function uploadFiles(files){
+  const ids = []; toast(files.length > 1 ? `Uploading ${files.length} images…` : 'Uploading…');
+  for (const f of files){ try { ids.push(await upload(await shrink(f))); } catch (x) { toast(x.message); } }
+  return ids;
+}
+
+/* ---------- readiness ---------- */
+function checks(){
+  const main = doc.locations.find(l => l.role === 'Main');
+  const out = [
+    [doc.brief.agreed, 'Brief agreed with the client', 'Brief not agreed yet'],
+    [doc.mood.length > 0, `Moodboard · ${doc.mood.length}`, 'Moodboard is empty'],
+    [doc.frames.length > 0, `Storyboard · ${doc.frames.length} frames`, 'No storyboard frames yet'],
+    [!!main && ['Recced','Booked'].includes(main.status), 'Main location recced', main ? `${main.name || 'Main location'}: ${main.status.toLowerCase()}` : 'No main location yet'],
+    [doc.schedule.length > 0, 'Schedule written', 'No schedule yet'],
+    [doc.people.length > 0, 'People and contacts in', 'No people added yet']
+  ].map(([ok, y, n]) => ({ state: ok ? 'ok' : 'todo', text: ok ? y : n }));
+  doc.locations.forEach(l => l.problems.filter(p => !p.done).forEach(p => out.push({ state: 'bad', text: `${l.name || 'Location'}: ${p.text}` })));
+  doc.paper.filter(p => p.status !== 'Not needed').forEach(p => out.push({ state: p.status === 'Done' ? 'ok' : p.status === 'Sent' ? 'todo' : 'bad', text: p.status === 'Done' ? p.text : `${p.text}: ${p.status.toLowerCase()}` }));
+  return out;
+}
+
+/* ---------- sun times (sunrise equation) for Leeds ---------- */
+function sun(dateStr, lat = 53.8, lng = -1.55){
+  if (!dateStr) return null;
+  const R = Math.PI / 180, d = new Date(dateStr + 'T12:00:00Z');
+  const n = Math.ceil(d / 864e5 + 2440587.5 - 2451545 + .0008), J = n - lng / 360;
+  const M = (357.5291 + .98560028 * J) % 360, C = 1.9148 * Math.sin(M * R) + .02 * Math.sin(2 * M * R) + .0003 * Math.sin(3 * M * R);
+  const L = (M + C + 180 + 102.9372) % 360, Jt = 2451545 + J + .0053 * Math.sin(M * R) - .0069 * Math.sin(2 * L * R);
+  const dec = Math.asin(Math.sin(L * R) * Math.sin(23.4397 * R));
+  const w = Math.acos((Math.sin(-.833 * R) - Math.sin(lat * R) * Math.sin(dec)) / (Math.cos(lat * R) * Math.cos(dec))) / R;
+  const t = j => new Date((j - 2440587.5) * 864e5).toLocaleTimeString('en-GB', { timeZone: 'Europe/London', hour: '2-digit', minute: '2-digit' });
+  return { rise: t(Jt - w / 360), set: t(Jt + w / 360), golden: t(Jt + w / 360 - 1 / 24) };
+}
+
+/* ---------- rendering ---------- */
+function renderNav(){
+  const count = { mood: doc.mood.length, board: doc.frames.length, shots: doc.frames.filter(f => f.got).length + '/' + doc.frames.length, locs: doc.locations.length, paper: doc.paper.filter(p => p.status === 'Done').length + '/' + doc.paper.filter(p => p.status !== 'Not needed').length };
+  $('nav').innerHTML = SECTIONS.map(([k, t]) => `<button data-sec="${k}" aria-current="${k === sec}">${esc(t)}${count[k] !== undefined && doc.frames ? `<b>${count[k]}</b>` : ''}</button>`).join('') + `<span class="saved" id="saved">${statusText}</span>`;
+}
+function render(){
+  renderNav();
+  const f = { overview, brief, mood, board, shots, locs, people, schedule, paper }[sec] || overview;
+  $('app').innerHTML = `<div class="fade-in">${f()}</div>`;
+}
+const head = (t, note = '') => `<div class="sechead"><h2 class="sec">${t}</h2>${note ? `<span class="note">${note}</span>` : ''}</div>`;
+const field = (k, label, ph = '', ta = false) => `<div class="row"><label class="lab2" for="f-${k}">${label}</label>${ta
+  ? `<textarea class="field" id="f-${k}" data-k="${k}" placeholder="${esc(ph)}">${esc(getPath(k))}</textarea>`
+  : `<input class="field" id="f-${k}" data-k="${k}" placeholder="${esc(ph)}" value="${esc(getPath(k))}">`}</div>`;
+const opts = (list, v) => list.map(o => `<option${o === v ? ' selected' : ''} value="${esc(o)}">${esc(o || '—')}</option>`).join('');
+const lineList = (path, ph) => `<div class="list">${getPath(path).map((x, i) => `<div class="li${x.done ? ' done' : ''}"><input type="checkbox" data-k="${path}.${i}.done" aria-label="Done"><input type="text" data-k="${path}.${i}.text" value="${esc(x.text)}" placeholder="${esc(ph)}"><button class="x" data-del="${path}.${i}" aria-label="Remove">×</button></div>`).join('')}
+  <button class="addline" data-addline="${path}">+ Add</button></div>`.replace(/data-k="([^"]+\.done)"/g, (m, k) => m + (getPath(k) ? ' checked' : ''));
+
+function overview(){
+  const b = doc.brief, c = checks(), done = c.filter(x => x.state === 'ok').length, main = doc.locations.find(l => l.role === 'Main') || doc.locations[0];
+  const s = sun(doc.date || job.date);
+  const crew = doc.people.length ? doc.people.slice(0, 5).map(p => `${p.name}${p.role ? ' · ' + p.role : ''}`) : String(job.assignee || '').split(',').map(x => x.trim()).filter(Boolean);
+  const briefRows = [['What it\'s for', b.purpose], ['Who it\'s for', b.audience], ['How it should feel', b.feel], ['Must have', b.must], ['Avoid', b.avoid], ['Delivering', b.deliverables], ['Due', b.due]].filter(x => x[1]);
+  return `<div class="grid2"><div>
+    <section>${head('The brief', b.agreed ? '<span style="color:var(--ok)">Agreed with the client</span>' : '<a href="#brief" data-go="brief">Edit</a>')}
+      ${briefRows.length ? `<dl class="brief">${briefRows.map(([k, v]) => `<dt>${k}</dt><dd>${esc(v)}</dd>`).join('')}</dl>` : `<div class="empty">No brief yet. <a href="#brief" data-go="brief">Write it</a></div>`}</section>
+    <section style="margin-top:40px">${head('The look', `<a href="#mood" data-go="mood">Open moodboard${doc.mood.length ? ' · ' + doc.mood.length : ''}</a>`)}
+      ${doc.mood.some(m => m.img || ytId(m.url)) ? `<div class="strip">${doc.mood.filter(m => m.img || ytId(m.url)).slice(0, 5).map(m => `<img src="${m.img ? imgSrc(m.img) : `https://img.youtube.com/vi/${ytId(m.url)}/hqdefault.jpg`}" alt="${esc(m.note || m.tag || 'Reference')}" loading="lazy">`).join('')}</div>` : `<div class="empty">Nothing on the moodboard yet.</div>`}</section>
+    <section style="margin-top:40px">${head('Storyboard', `<a href="#board" data-go="board">${doc.frames.length} frame${doc.frames.length === 1 ? '' : 's'} · open</a>`)}
+      ${doc.frames.length ? `<div class="frames" style="grid-template-columns:repeat(3,1fr)">${doc.frames.slice(0, 3).map((fr, i) => `<figure style="margin:0"><div class="shot" style="aspect-ratio:${ar()}">${fr.img ? `<img src="${imgSrc(fr.img)}" alt="Frame ${i + 1}" loading="lazy">` : ''}<span class="n">${i + 1}</span></div><figcaption style="font-size:13.5px;margin-top:6px">${esc([fr.size, fr.move].filter(Boolean).join(', '))}${fr.desc ? ' · ' + esc(fr.desc) : ''}</figcaption></figure>`).join('')}</div>` : `<div class="empty">No frames yet.</div>`}</section>
+  </div><aside style="display:flex;flex-direction:column;gap:20px">
+    <div class="card"><h3>Ready for the day</h3><div class="display" style="font-size:32px">${done} of ${c.length}</div><div class="bar"><i style="width:${c.length ? done / c.length * 100 : 0}%"></i></div>
+      <ul class="ready" style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px">${c.map(x => `<li><span class="${x.state}">${x.state === 'ok' ? '✓' : x.state === 'bad' ? '!' : '○'}</span>${esc(x.text)}</li>`).join('')}</ul></div>
+    <div class="card"><h3>Where</h3>${main ? `${main.photos[0] ? `<img src="${imgSrc(main.photos[0])}" alt="" style="width:100%;height:130px;object-fit:cover;border-radius:4px;display:block;margin-bottom:10px">` : ''}<b style="font-weight:600">${esc(main.name || 'Unnamed location')}</b><div style="font-size:14px;color:var(--muted)">${esc(main.status)}${main.address ? ' · ' + esc(main.address) : ''}</div><a href="#locs" data-go="locs" style="font-size:13px">Recce report</a>` : `<p style="margin:0;color:var(--muted)">No location yet. <a href="#locs" data-go="locs">Add one</a></p>`}</div>
+    <div class="card"><h3>On the day</h3><dl style="margin:0;display:grid;grid-template-columns:auto 1fr;gap:6px 16px;font-size:14.5px">
+      <dt style="color:var(--muted)">Date</dt><dd style="margin:0">${esc(shortDate(doc.date || job.date) || 'Not set')}</dd>
+      ${doc.schedule.length ? `<dt style="color:var(--muted)">First</dt><dd style="margin:0">${esc(doc.schedule[0].time)} ${esc(doc.schedule[0].what)}</dd><dt style="color:var(--muted)">Last</dt><dd style="margin:0">${esc(doc.schedule[doc.schedule.length - 1].time)} ${esc(doc.schedule[doc.schedule.length - 1].what)}</dd>` : ''}
+      ${s ? `<dt style="color:var(--muted)">Light</dt><dd style="margin:0">Sunrise ${s.rise} · sunset ${s.set}</dd>` : ''}
+      ${crew.length ? `<dt style="color:var(--muted)">Crew</dt><dd style="margin:0">${crew.map(esc).join('<br>')}</dd>` : ''}</dl></div>
+  </aside></div>`;
+}
+function brief(){
+  return head('Brief', 'What we agreed with the client, in plain words') + `<div style="max-width:760px">
+    ${field('brief.purpose', 'What it\'s for', 'e.g. Launch the new single and give promoters something to book from', true)}
+    ${field('brief.audience', 'Who it\'s for', 'e.g. Leeds gig-goers, 18–30, on Instagram and TikTok', true)}
+    ${field('brief.feel', 'How it should feel', 'Three or four words, or a sentence', true)}
+    ${field('brief.must', 'Must have', 'The shots or moments we can\'t miss', true)}
+    ${field('brief.avoid', 'Avoid', 'Anything the client doesn\'t want', true)}
+    ${field('brief.deliverables', 'What we\'re delivering', 'e.g. 3 songs in 16:9 4K, 3 reels in 9:16, 30 stills', true)}
+    ${field('brief.due', 'When it\'s due', 'e.g. Reels by 20 Dec, full songs by 3 Jan')}
+    <label class="chk"><input type="checkbox" data-k="brief.agreed"${doc.brief.agreed ? ' checked' : ''}> The client has agreed this brief</label></div>`;
+}
+function mood(){
+  const tags = ['All', ...TAGS, 'Pinned to a shot'];
+  const list = doc.mood.map((m, i) => ({ m, i })).filter(({ m }) => moodFilter === 'All' || (moodFilter === 'Pinned to a shot' ? m.shot : m.tag === moodFilter));
+  const shotOpts = v => `<option value="">No shot</option>` + doc.frames.map((f, i) => `<option value="${f.id}"${f.id === v ? ' selected' : ''}>Shot ${i + 1}${f.desc ? ': ' + esc(f.desc.slice(0, 26)) : ''}</option>`).join('');
+  const pinned = doc.mood.map((m, i) => ({ m, i })).filter(({ m }) => m.shot);
+  return head('Moodboard', 'Paste a link, drop or paste images. Pin a reference to a shot to make it a shot inspo') + `
+    <div class="addbar drop" id="dropzone"><input class="field" id="addurl" placeholder="Paste a link: Pinterest, Instagram, YouTube, Vimeo…" aria-label="Reference link">
+      <button class="btn sm" id="addurlbtn">Add link</button><button class="btn ghost sm" id="addimg">Upload images</button></div>
+    <div class="filters">${tags.map(t => `<button data-filter="${esc(t)}" aria-pressed="${t === moodFilter}">${esc(t)}</button>`).join('')}</div>
+    ${list.length ? `<div class="masonry">${list.map(({ m, i }) => { const yt = ytId(m.url);
+      return `<figure class="pin">${m.img ? `<img src="${imgSrc(m.img)}" alt="${esc(m.note || 'Reference')}" loading="lazy">` : yt ? `<img src="https://img.youtube.com/vi/${yt}/hqdefault.jpg" alt="Video reference" loading="lazy">` : `<div class="linkonly">${esc(host(m.url))}</div>`}
+        <figcaption class="meta">${m.url ? `<a class="src" href="${esc(m.url)}" target="_blank" rel="noopener">${esc(host(m.url))} ↗</a>` : ''}
+          <div class="r"><select data-k="mood.${i}.tag" aria-label="Tag"><option value="">Tag</option>${TAGS.map(t => `<option${t === m.tag ? ' selected' : ''}>${t}</option>`).join('')}</select><select data-k="mood.${i}.shot" aria-label="Pin to a shot">${shotOpts(m.shot)}</select><button class="x" data-del="mood.${i}" aria-label="Remove">×</button></div>
+          <input data-k="mood.${i}.note" value="${esc(m.note)}" placeholder="${m.shot ? 'What to take from it' : 'Note'}"></figcaption></figure>`; }).join('')}</div>` : `<div class="empty">Nothing here yet. Paste a link above, or paste an image straight onto the page.</div>`}
+    ${pinned.length ? `<section style="margin-top:34px">${head('Shot inspo', 'References pinned to a shot')}<div class="frames">${pinned.map(({ m }) => { const n = doc.frames.findIndex(f => f.id === m.shot); const yt = ytId(m.url);
+      return `<div class="card" style="display:flex;gap:12px;padding:12px">${m.img || yt ? `<img src="${m.img ? imgSrc(m.img) : `https://img.youtube.com/vi/${yt}/hqdefault.jpg`}" alt="" style="width:100px;height:100px;object-fit:cover;border-radius:4px;flex:none">` : ''}<div><b style="font-weight:600">Shot ${n + 1}</b><p style="margin:2px 0 0;font-size:14px;color:var(--ink2)">${esc(m.note || 'No note yet')}</p></div></div>`; }).join('')}</div></section>` : ''}`;
+}
+const ar = () => doc.aspect.replace(':', ' / ');
+function board(){
+  return head('Storyboard', 'Sketch a frame, upload a photo or a still. Frames are your shot list too') + `
+    <div style="display:flex;gap:10px;align-items:center;margin-bottom:16px;flex-wrap:wrap"><span style="font-size:13px;color:var(--muted)">Frame shape</span>
+      <div class="seg">${['16:9','9:16','4:5','1:1','2.39:1'].map(a => `<button data-aspect="${a}" aria-pressed="${a === doc.aspect}">${a}</button>`).join('')}</div></div>
+    <div class="frames">${doc.frames.map((f, i) => `<article class="frame">
+      <div class="shot${f.img ? '' : ' blank'}" style="aspect-ratio:${ar()}">${f.img ? `<img src="${imgSrc(f.img)}" alt="Frame ${i + 1}">` : ''}<span class="n">${i + 1}</span>
+        <div class="tools"><button class="tool" data-sketch="${i}">${f.img ? 'Redraw' : 'Sketch'}</button><button class="tool" data-fimg="${i}">${f.img ? 'Replace' : 'Upload'}</button></div></div>
+      <div class="body"><div class="opts">
+        <select data-k="frames.${i}.size" aria-label="Shot size">${opts(SIZES, f.size).replace('>—<', '>Size<')}</select>
+        <select data-k="frames.${i}.angle" aria-label="Angle">${opts(ANGLES, f.angle).replace('>—<', '>Angle<')}</select>
+        <select data-k="frames.${i}.move" aria-label="Movement">${opts(MOVES, f.move).replace('>—<', '>Move<')}</select>
+        <input class="mini" type="text" data-k="frames.${i}.lens" value="${esc(f.lens)}" placeholder="Lens" aria-label="Lens">
+        <select data-k="frames.${i}.cam" aria-label="Camera">${opts(CAMS, f.cam).replace('>—<', '>Cam<')}</select>
+        <input class="mini" type="text" data-k="frames.${i}.when" value="${esc(f.when)}" placeholder="When" aria-label="When">
+      </div>
+      <textarea data-k="frames.${i}.desc" placeholder="What happens in this shot" aria-label="Description">${esc(f.desc)}</textarea>
+      <input class="mini" type="text" data-k="frames.${i}.audio" value="${esc(f.audio)}" placeholder="Audio / dialogue" aria-label="Audio" style="font:400 13px var(--sans);border:1px solid var(--field);border-radius:4px;padding:6px 8px;background:var(--paper)">
+      <div class="foot"><label class="chk" style="font-size:13px"><input type="checkbox" data-k="frames.${i}.must"${f.must ? ' checked' : ''}> Must have</label>
+        <span><button class="x" data-move="${i}:-1" aria-label="Move earlier" title="Move earlier">‹</button><button class="x" data-move="${i}:1" aria-label="Move later" title="Move later">›</button><button class="x" data-del="frames.${i}" aria-label="Delete frame">×</button></span></div>
+      </div></article>`).join('')}<button class="addframe" id="addframe">+ Frame</button></div>`;
+}
+function shots(){
+  const insp = f => doc.mood.filter(m => m.shot === f.id).length;
+  return head('Shot list', 'Built from the storyboard. Tick shots off on the day (the crew pack shows them too)') + (doc.frames.length ? `<div class="tablewrap"><table class="sl"><thead><tr><th>#</th><th></th><th>Shot</th><th>Size</th><th>Angle</th><th>Move</th><th>Lens</th><th>Cam</th><th>Inspo</th><th>Got it</th></tr></thead><tbody>
+    ${doc.frames.map((f, i) => `<tr class="${f.got ? 'got' : ''}"><td>${i + 1}</td><td>${f.img ? `<img src="${imgSrc(f.img)}" alt="">` : ''}</td><td>${esc(f.desc || '—')}${f.must ? ' <span class="chip">Must</span>' : ''}${f.when ? `<div style="font-size:12.5px;color:var(--muted)">${esc(f.when)}</div>` : ''}</td><td>${esc(f.size)}</td><td>${esc(f.angle)}</td><td>${esc(f.move)}</td><td>${esc(f.lens)}</td><td>${esc(f.cam)}</td><td>${insp(f) ? insp(f) : ''}</td><td><input type="checkbox" data-k="frames.${i}.got"${f.got ? ' checked' : ''} aria-label="Shot ${i + 1} done"></td></tr>`).join('')}
+    </tbody></table></div><button class="addline" id="addshot" style="margin-top:10px">+ Add a shot</button>` : `<div class="empty">No shots yet. <button class="addline" id="addshot">+ Add a shot</button></div>`);
+}
+function locs(){
+  if (locSel >= doc.locations.length) locSel = 0;
+  const l = doc.locations[locSel];
+  return head('Locations', 'Main, backup and ideas, each with its recce report') + `<div class="locs"><div class="loclist">
+    ${doc.locations.map((x, i) => `<button class="locbtn" data-loc="${i}" aria-current="${i === locSel}">${x.photos[0] ? `<img src="${imgSrc(x.photos[0])}" alt="">` : '<div class="ph"></div>'}<div class="t">${esc(x.name || 'Unnamed')}<small>${esc(x.role)} · ${esc(x.status)}</small></div></button>`).join('')}
+    <button class="btn ghost sm" id="addloc">+ Location</button></div>
+    <div>${l ? `<div class="f2">${field(`locations.${locSel}.name`, 'Name', 'e.g. Rehearsal room A')}<div class="f2"><div class="row"><label class="lab2">Role</label><select class="field" data-k="locations.${locSel}.role">${opts(['Main','Backup','Shortlist'], l.role)}</select></div><div class="row"><label class="lab2">Status</label><select class="field" data-k="locations.${locSel}.status">${opts(['Idea','Recce booked','Recced','Booked'], l.status)}</select></div></div></div>
+      <div class="f2">${field(`locations.${locSel}.address`, `Address${l.address ? ` · <a href="https://maps.google.com/?q=${encodeURIComponent(l.address)}" target="_blank" rel="noopener">Maps ↗</a>` : ''}`, 'Street, postcode')}${field(`locations.${locSel}.contact`, 'Contact', 'Name and number')}</div>
+      ${field(`locations.${locSel}.recce`, 'Recce', 'Who went and when, e.g. Jack and Owen, Sat 15 Nov')}
+      <label class="lab2">Recce photos <span style="color:var(--stone)">· a wide from each corner, the windows, power points, what's behind the talent</span></label>
+      <div class="photos">${l.photos.map((p, i) => `<figure><a href="${imgSrc(p)}" target="_blank" rel="noopener"><img src="${imgSrc(p)}" alt="Recce photo ${i + 1}" loading="lazy"></a><button class="x" data-del="locations.${locSel}.photos.${i}" aria-label="Remove photo">×</button></figure>`).join('')}<button class="add" id="addphotos">+ Photos</button></div>
+      <div class="rec" style="margin-top:18px">${LOCSECS.map(([k, t, ph]) => `<div><label class="lab2" for="l-${k}">${t}</label><textarea class="field" id="l-${k}" data-k="locations.${locSel}.${k}" placeholder="${esc(ph)}">${esc(l[k])}</textarea></div>`).join('')}</div>
+      <div class="card" style="margin-top:18px"><h3>Problems to solve before the day</h3>${lineList(`locations.${locSel}.problems`, 'e.g. Ask if the extractor can go off between takes')}</div>
+      <button class="addline" data-delloc="${locSel}" style="color:var(--bad);margin-top:14px">Delete this location</button>` : `<div class="empty">No locations yet. Add the main one, a backup, and any ideas.</div>`}</div></div>`;
+}
+function people(){
+  return head('People & props', 'Crew, talent and contacts for the day, plus wardrobe, props and make-up') + `
+    <div class="rows">${doc.people.map((p, i) => `<div class="r p"><input class="field" data-k="people.${i}.name" value="${esc(p.name)}" placeholder="Name" aria-label="Name"><input class="field" data-k="people.${i}.role" value="${esc(p.role)}" placeholder="Role, e.g. A cam" aria-label="Role"><input class="field" data-k="people.${i}.contact" value="${esc(p.contact)}" placeholder="Phone or Instagram" aria-label="Contact"><input class="field" data-k="people.${i}.notes" value="${esc(p.notes)}" placeholder="Notes, e.g. dietary, arriving late" aria-label="Notes"><button class="x" data-del="people.${i}" aria-label="Remove">×</button></div>`).join('')}</div>
+    <button class="addline" id="addperson" style="margin-top:8px">+ Add someone</button>
+    <div class="card" style="margin-top:28px;max-width:760px"><h3>Wardrobe, props &amp; make-up</h3>${lineList('props', 'e.g. Band in dark coats, no logos')}</div>`;
+}
+function schedule(){
+  const s = sun(doc.date || job.date);
+  return head('Schedule', 'The running order for the day') + `<div class="f2" style="max-width:760px"><div class="row"><label class="lab2" for="f-date">Shoot date</label><input class="field" type="date" id="f-date" data-k="date" data-re="1" value="${esc(doc.date || job.date || '')}"></div>
+    <div class="row"><span class="lab2">Daylight in Leeds</span>${s ? `<div class="sun"><span>Sunrise <b>${s.rise}</b></span><span>Golden hour from <b>${s.golden}</b></span><span>Sunset <b>${s.set}</b></span></div>` : '<span style="color:var(--muted)">Set a date</span>'}</div></div>
+    <div class="rows" style="max-width:900px">${doc.schedule.map((x, i) => `<div class="r s"><input class="field" data-k="schedule.${i}.time" value="${esc(x.time)}" placeholder="16:00" aria-label="Time"><input class="field" data-k="schedule.${i}.what" value="${esc(x.what)}" placeholder="What happens" aria-label="What"><input class="field" data-k="schedule.${i}.who" value="${esc(x.who)}" placeholder="Who" aria-label="Who"><button class="x" data-del="schedule.${i}" aria-label="Remove">×</button></div>`).join('')}</div>
+    <div style="display:flex;gap:16px;margin-top:8px"><button class="addline" id="addslot">+ Add a time</button>${doc.schedule.length > 1 ? '<button class="addline" id="sortslots">Sort by time</button>' : ''}</div>`;
+}
+function paper(){
+  return head('Paperwork', 'Releases, permissions and anything that needs signing. Not legal advice') + `
+    <div class="rows">${doc.paper.map((p, i) => `<div class="r w"><input class="field" data-k="paper.${i}.text" value="${esc(p.text)}" aria-label="Item"><select class="field" data-k="paper.${i}.status" aria-label="Status">${opts(['To do','Sent','Done','Not needed'], p.status)}</select><input class="field" data-k="paper.${i}.url" value="${esc(p.url)}" placeholder="Link to the form or signed copy" aria-label="Link"><input class="field" data-k="paper.${i}.note" value="${esc(p.note)}" placeholder="Note" aria-label="Note"><button class="x" data-del="paper.${i}" aria-label="Remove">×</button></div>`).join('')}</div>
+    <button class="addline" id="addpaper" style="margin-top:8px">+ Add an item</button>
+    <p style="font-size:13px;color:var(--muted);margin-top:22px;max-width:640px">Filming in public places in Leeds may need the council's permission, and flying a drone needs the CAA's Flyer and Operator IDs. Check before the day.</p>`;
+}
+
+/* ---------- clicks ---------- */
+document.addEventListener('click', async e => {
+  const t = e.target;
+  const go = t.closest('[data-go],[data-sec]'); if (go){ e.preventDefault(); sec = go.dataset.go || go.dataset.sec; history.replaceState(null, '', '#' + sec); render(); window.scrollTo({ top: 0 }); return; }
+  const del = t.closest('[data-del]'); if (del){ const ks = del.dataset.del.split('.'); const i = +ks.pop(); getPath(ks.join('.')).splice(i, 1); save(); render(); return; }
+  const al = t.closest('[data-addline]'); if (al){ getPath(al.dataset.addline).push({ text: ' ', done: false }); save(); render(); const ins = document.querySelectorAll(`[data-k^="${al.dataset.addline}."][type=text]`); const last = ins[ins.length - 1]; if (last){ last.value = ''; setPath(last.dataset.k, ''); last.focus(); } return; }
+  const fl = t.closest('[data-filter]'); if (fl){ moodFilter = fl.dataset.filter; render(); return; }
+  const as = t.closest('[data-aspect]'); if (as){ doc.aspect = as.dataset.aspect; save(); render(); return; }
+  const mv = t.closest('[data-move]'); if (mv){ const [i, d] = mv.dataset.move.split(':').map(Number); const j = i + d; if (j < 0 || j >= doc.frames.length) return; [doc.frames[i], doc.frames[j]] = [doc.frames[j], doc.frames[i]]; save(); render(); return; }
+  const lo = t.closest('[data-loc]'); if (lo){ locSel = +lo.dataset.loc; render(); return; }
+  const dl = t.closest('[data-delloc]'); if (dl){ if (!confirm('Delete this location and its recce notes?')) return; doc.locations.splice(+dl.dataset.delloc, 1); locSel = 0; save(); render(); return; }
+  const fi = t.closest('[data-fimg]'); if (fi){ const i = +fi.dataset.fimg; pickFiles(async files => { const [id] = await uploadFiles(files.slice(0, 1)); if (id){ doc.frames[i].img = id; save(); render(); } }, false); return; }
+  const sk = t.closest('[data-sketch]'); if (sk){ openSketch(+sk.dataset.sketch); return; }
+  switch (t.id){
+    case 'addframe': case 'addshot': doc.frames.push({ id: uid(), img: '', size: '', angle: '', move: '', lens: '', cam: '', when: '', desc: '', audio: '', must: false, got: false }); save(); render(); if (t.id === 'addframe'){ const c = document.querySelectorAll('.frame'); c[c.length - 1].scrollIntoView({ behavior: 'smooth', block: 'center' }); } return;
+    case 'addurlbtn': return addUrl();
+    case 'addimg': return pickFiles(async files => { const ids = await uploadFiles(files); ids.forEach(id => doc.mood.push({ id: uid(), img: id, url: '', tag: moodFilter !== 'All' && TAGS.includes(moodFilter) ? moodFilter : '', note: '', shot: '', by: '' })); if (ids.length){ save(); render(); toast('Added'); } });
+    case 'addloc': doc.locations.push({ id: uid(), name: '', role: doc.locations.some(l => l.role === 'Main') ? 'Backup' : 'Main', status: 'Idea', address: '', contact: '', recce: '', photos: [], access: '', light: '', power: '', sound: '', site: '', permission: '', problems: [] }); locSel = doc.locations.length - 1; save(); render(); return;
+    case 'addphotos': return pickFiles(async files => { const ids = await uploadFiles(files); doc.locations[locSel].photos.push(...ids); if (ids.length){ save(); render(); } });
+    case 'addperson': doc.people.push({ name: ' ', role: '', contact: '', notes: '' }); render(); { const r = document.querySelectorAll('.r.p input'); const f = r[r.length - 4]; f.value = ''; doc.people[doc.people.length - 1].name = ''; f.focus(); } return;
+    case 'addslot': doc.schedule.push({ time: '', what: ' ', who: '' }); render(); { const r = document.querySelectorAll('.r.s input'); const f = r[r.length - 3]; doc.schedule[doc.schedule.length - 1].what = ''; r[r.length - 2].value = ''; f.focus(); } return;
+    case 'sortslots': doc.schedule.sort((a, b) => a.time.localeCompare(b.time)); save(); render(); return;
+    case 'addpaper': doc.paper.push({ text: 'New item', status: 'To do', url: '', note: '' }); save(); render(); return;
+  }
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && e.target.id === 'addurl'){ e.preventDefault(); addUrl(); }
+  if (e.key === 'Enter' && e.target.matches('.list .li input[type=text]')){ e.preventDefault(); const path = e.target.dataset.k.split('.').slice(0, -2).join('.'); document.querySelector(`[data-addline="${path}"]`).click(); }
+});
+function addUrl(){
+  const v = $('addurl').value.trim(); if (!/^https?:\/\//i.test(v)){ toast('Paste a full link starting with https://'); return; }
+  doc.mood.push({ id: uid(), img: '', url: v, tag: '', note: '', shot: '', by: '' }); save(); render(); toast('Added');
+}
+// paste or drop images on the moodboard (or a frame's page)
+document.addEventListener('paste', async e => {
+  if (sec !== 'mood' || e.target.matches('input,textarea')) return;
+  const files = [...(e.clipboardData || {}).files || []].filter(f => /^image\//.test(f.type)); if (!files.length) return;
+  e.preventDefault(); const ids = await uploadFiles(files); ids.forEach(id => doc.mood.push({ id: uid(), img: id, url: '', tag: '', note: '', shot: '', by: '' })); if (ids.length){ save(); render(); }
+});
+document.addEventListener('dragover', e => { if (sec === 'mood' || sec === 'locs'){ e.preventDefault(); } });
+document.addEventListener('drop', async e => {
+  if (sec !== 'mood' && sec !== 'locs') return; e.preventDefault();
+  const files = [...e.dataTransfer.files].filter(f => /^image\//.test(f.type)); if (!files.length) return;
+  const ids = await uploadFiles(files);
+  if (sec === 'mood') ids.forEach(id => doc.mood.push({ id: uid(), img: id, url: '', tag: '', note: '', shot: '', by: '' }));
+  else if (doc.locations[locSel]) doc.locations[locSel].photos.push(...ids);
+  if (ids.length){ save(); render(); }
+});
+
+/* ---------- sketch pad ---------- */
+const cv = $('sk-c'), cx = cv.getContext('2d'); let skI = -1, drawing = false, last = null, pen = { w: 3, erase: false }, undo = [];
+function sizeCanvas(){ const [w, h] = doc.aspect.split(':').map(Number); cv.width = 1600; cv.height = Math.round(1600 * h / w); if (cv.height > 1600){ cv.height = 1600; cv.width = Math.round(1600 * w / h); } }
+function openSketch(i){
+  skI = i; sizeCanvas(); cx.fillStyle = '#fff'; cx.fillRect(0, 0, cv.width, cv.height); undo = [];
+  $('sk-n').textContent = i + 1; $('sketch').hidden = false;
+  cv.style.maxHeight = '70vh'; cv.style.width = 'auto'; cv.style.maxWidth = '100%'; cv.style.margin = '0 auto';
+}
+const pos = e => { const r = cv.getBoundingClientRect(); return [(e.clientX - r.left) * cv.width / r.width, (e.clientY - r.top) * cv.height / r.height]; };
+cv.addEventListener('pointerdown', e => { drawing = true; last = pos(e); cv.setPointerCapture(e.pointerId); undo.push(cx.getImageData(0, 0, cv.width, cv.height)); if (undo.length > 30) undo.shift(); dot(last); });
+cv.addEventListener('pointermove', e => { if (!drawing) return; const p = pos(e); cx.strokeStyle = pen.erase ? '#fff' : '#111'; cx.lineWidth = pen.w * (cv.width / 800) * (e.pressure && e.pointerType === 'pen' ? .5 + e.pressure : 1); cx.lineCap = cx.lineJoin = 'round'; cx.beginPath(); cx.moveTo(...last); cx.lineTo(...p); cx.stroke(); last = p; });
+const dot = p => { cx.fillStyle = pen.erase ? '#fff' : '#111'; cx.beginPath(); cx.arc(p[0], p[1], pen.w * (cv.width / 800) / 2, 0, 7); cx.fill(); };
+['pointerup', 'pointercancel', 'pointerleave'].forEach(ev => cv.addEventListener(ev, () => { drawing = false; }));
+$('sk-pen').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; pen = { w: +b.dataset.w, erase: !!b.dataset.erase }; [...$('sk-pen').children].forEach(x => x.setAttribute('aria-pressed', String(x === b))); });
+$('sk-undo').addEventListener('click', () => { const u = undo.pop(); if (u) cx.putImageData(u, 0, 0); });
+$('sk-clear').addEventListener('click', () => { undo.push(cx.getImageData(0, 0, cv.width, cv.height)); cx.fillStyle = '#fff'; cx.fillRect(0, 0, cv.width, cv.height); });
+$('sk-cancel').addEventListener('click', () => { $('sketch').hidden = true; });
+$('sk-save').addEventListener('click', async () => {
+  const b = $('sk-save'); b.disabled = true;
+  try { const blob = await new Promise(r => cv.toBlob(r, 'image/png')); const id = await upload(blob); doc.frames[skI].img = id; save(); $('sketch').hidden = true; render(); }
+  catch (x) { toast(x.message); } finally { b.disabled = false; }
+});
+
+/* ---------- crew pack ---------- */
+$('crewbtn').addEventListener('click', async () => {
+  try { const { key } = await api('/portal/api/prepro', 'POST', { job: jobId, action: 'crew' }); const link = location.origin + '/crew/#' + key;
+    try { await navigator.clipboard.writeText(link); toast('Crew pack link copied'); } catch { prompt('Crew pack link:', link); }
+  } catch { toast('Couldn’t make the link'); }
+});
+
+/* ---------- start ---------- */
+(async () => {
+  if (!jobId){ $('app').innerHTML = '<div class="empty">Open pre-pro from a job in the portal.</div>'; return; }
+  try { const d = await api('/portal/api/prepro?job=' + encodeURIComponent(jobId)); job = d.job; doc = d.prepro; }
+  catch (x) { $('app').innerHTML = `<div class="empty">${esc(x.message)}. <a href="/portal/">Back to the portal</a></div>`; return; }
+  document.title = 'Pre-pro · ' + job.client + ' — Aera';
+  $('title').textContent = job.client + (job.type ? ' · ' + job.type : '');
+  const days = job.date ? Math.ceil((new Date(job.date + 'T12:00:00') - Date.now()) / 864e5) : null;
+  $('meta').textContent = [shortDate(doc.date || job.date) || 'No date yet', job.assignee, days != null ? (days > 0 ? `${days} days to go` : days === 0 ? 'Today' : 'Shot') : ''].filter(Boolean).join(' · ');
+  $('back').href = '/portal/#job=' + encodeURIComponent(jobId);
+  if (!SECTIONS.some(s => s[0] === sec)) sec = 'overview';
+  render();
+})();
+window.addEventListener('beforeunload', e => { if ($('saved') && /Saving/.test($('saved').textContent)){ e.preventDefault(); e.returnValue = ''; } });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Crew pack — Aera</title>
+<link rel="icon" type="image/svg+xml" href="/assets/img/logo/aera-monogram-favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/client/client.css">
+<style>
+.wrap{max-width:720px;margin:0 auto;padding:0 20px}
+header .wrap{padding-top:18px;padding-bottom:26px}
+header .k{font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-top:18px}
+header h1{font-size:36px;line-height:1.08;margin:6px 0 4px}
+header p{margin:0;color:#CFC4B0}
+nav.jump{position:sticky;top:0;z-index:5;background:var(--paper);border-bottom:1px solid var(--line);overflow-x:auto;white-space:nowrap}
+nav.jump a{display:inline-block;padding:12px 10px;font-size:14px;color:var(--muted);text-decoration:none}
+section{padding:26px 0;border-bottom:1px solid var(--line)}
+h2{font-family:var(--display);font-weight:400;font-size:24px;margin:0 0 12px}
+dl{display:grid;grid-template-columns:120px 1fr;gap:8px 14px;margin:0;font-size:15.5px}dt{color:var(--muted);font-size:14px}dd{margin:0;white-space:pre-wrap}
+.sched div{display:flex;gap:14px;padding:8px 0;border-bottom:1px solid var(--line);font-size:15.5px}.sched b{width:58px;flex:none;font-weight:600}
+.person{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid var(--line)}
+.frames{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.frames figure{margin:0}.frames .im{background:#EDE6D8;border-radius:4px;overflow:hidden;position:relative}
+.frames img{width:100%;height:100%;object-fit:cover;display:block}
+.frames .n{position:absolute;top:6px;left:6px;background:var(--ink);color:var(--paper);font-size:11px;font-weight:600;border-radius:999px;padding:1px 8px}
+.frames figcaption{font-size:13.5px;margin-top:5px}
+.mood{columns:2;column-gap:10px}.mood img{width:100%;border-radius:4px;margin-bottom:10px;display:block}
+.photos{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:10px 0}.photos img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:4px}
+.prob{color:var(--bad)}
+.msg{padding:60px 0;text-align:center;color:var(--muted)}
+</style>
+</head>
+<body>
+<header class="band"><div class="wrap"><a class="mark" href="/"><svg viewBox="61 51 78 98" fill="none" aria-hidden="true"><path d="M100,60 L70,100 L130,100 Z M100,140 L70,100 M130,100 L100,140 M82,85 L118,85 M82,115 L118,115" stroke="#C2A878" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/></svg><span>AERA</span></a>
+<div class="k">Crew pack</div><h1 class="display" id="t">Loading…</h1><p id="m"></p></div></header>
+<nav class="jump" id="jump" hidden></nav>
+<main class="wrap" id="app"></main>
+<footer class="band foot" style="padding:16px 20px;margin-top:30px"><b>Aera</b> · Keep this link within the crew</footer>
+<script>
+(function(){
+'use strict';
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const key = location.hash.slice(1);
+const img = id => '/api/img?id=' + id;
+const yt = u => { const m = String(u).match(/(?:youtu\.be\/|v=|shorts\/)([\w-]{11})/); return m ? m[1] : ''; };
+const day = d => d ? new Date(d + 'T12:00:00').toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' }) : '';
+(async () => {
+  let d; try { const r = await fetch('/api/crew', { headers: { 'X-Key': key }, cache: 'no-store' }); if (!r.ok) throw 0; d = await r.json(); }
+  catch { $('t').textContent = 'Link not recognised'; $('app').innerHTML = '<p class="msg">This crew pack link has been turned off or replaced. Ask Jack for the current one.</p>'; return; }
+  const j = d.job, p = d.prepro, b = p.brief || {};
+  document.title = 'Crew pack · ' + j.client;
+  $('t').textContent = j.client + (j.type ? ' · ' + j.type : '');
+  $('m').textContent = [day(p.date || j.date), j.team].filter(Boolean).join(' · ');
+  const main = (p.locations || []).find(l => l.role === 'Main') || (p.locations || [])[0];
+  const secs = [];
+  if (p.schedule.length || main) secs.push(['day', 'The day', `
+    ${main ? `<dl><dt>Where</dt><dd>${esc(main.name)}${main.address ? `<br><a href="https://maps.google.com/?q=${encodeURIComponent(main.address)}">${esc(main.address)}</a>` : ''}</dd>${main.contact ? `<dt>Contact</dt><dd>${esc(main.contact)}</dd>` : ''}${main.access ? `<dt>Getting in</dt><dd>${esc(main.access)}</dd>` : ''}</dl>` : ''}
+    ${p.schedule.length ? `<div class="sched" style="margin-top:14px">${p.schedule.map(s => `<div><b>${esc(s.time)}</b><span>${esc(s.what)}${s.who ? ` <span style="color:var(--muted)">· ${esc(s.who)}</span>` : ''}</span></div>`).join('')}</div>` : ''}`]);
+  if (p.people.length) secs.push(['people', 'People', p.people.map(x => `<div class="person"><span><b style="font-weight:600">${esc(x.name)}</b>${x.role ? ` · ${esc(x.role)}` : ''}${x.notes ? `<br><span style="font-size:13.5px;color:var(--muted)">${esc(x.notes)}</span>` : ''}</span>${x.contact ? (/^[+\d][\d\s]{6,}$/.test(x.contact) ? `<a href="tel:${esc(x.contact.replace(/\s/g, ''))}">${esc(x.contact)}</a>` : `<span>${esc(x.contact)}</span>`) : ''}</div>`).join('')]);
+  const br = [['What it\'s for', b.purpose], ['How it should feel', b.feel], ['Must have', b.must], ['Avoid', b.avoid], ['Delivering', b.deliverables]].filter(x => x[1]);
+  if (br.length) secs.push(['brief', 'Brief', `<dl>${br.map(([k, v]) => `<dt>${k}</dt><dd>${esc(v)}</dd>`).join('')}</dl>`]);
+  if (p.frames.length) secs.push(['shots', 'Shots', `<div class="frames">${p.frames.map((f, i) => `<figure><div class="im" style="aspect-ratio:${p.aspect.replace(':', ' / ')}">${f.img ? `<img src="${img(f.img)}" alt="" loading="lazy">` : ''}<span class="n">${i + 1}</span></div><figcaption>${f.must ? '<b style="font-weight:600;color:var(--gold-ink)">Must · </b>' : ''}${esc([f.size, f.angle, f.move, f.lens, f.cam && 'Cam ' + f.cam].filter(Boolean).join(', '))}${f.desc ? `<br>${esc(f.desc)}` : ''}</figcaption></figure>`).join('')}</div>`]);
+  const mood = p.mood.filter(m => m.img || yt(m.url));
+  if (mood.length) secs.push(['look', 'The look', `<div class="mood">${mood.map(m => `<img src="${m.img ? img(m.img) : `https://img.youtube.com/vi/${yt(m.url)}/hqdefault.jpg`}" alt="${esc(m.note || 'Reference')}" loading="lazy">`).join('')}</div>`]);
+  if (p.props.length) secs.push(['props', 'Wardrobe & props', `<ul style="margin:0;padding-left:18px">${p.props.map(x => `<li>${esc(x.text)}</li>`).join('')}</ul>`]);
+  (p.locations || []).forEach((l, i) => { const notes = [['Light', l.light], ['Power', l.power], ['Sound', l.sound], ['On site', l.site]].filter(x => x[1]); const probs = l.problems.filter(x => !x.done);
+    if (notes.length || l.photos.length || probs.length) secs.push(['loc' + i, l.name || 'Location', `<p style="margin:-6px 0 8px;color:var(--muted)">${esc(l.role)} · ${esc(l.status)}</p>${l.photos.length ? `<div class="photos">${l.photos.slice(0, 6).map(x => `<a href="${img(x)}"><img src="${img(x)}" alt="" loading="lazy"></a>`).join('')}</div>` : ''}${notes.length ? `<dl>${notes.map(([k, v]) => `<dt>${k}</dt><dd>${esc(v)}</dd>`).join('')}</dl>` : ''}${probs.length ? `<ul class="prob" style="padding-left:18px">${probs.map(x => `<li>${esc(x.text)}</li>`).join('')}</ul>` : ''}`]); });
+  $('jump').innerHTML = secs.map(([id, t]) => `<a href="#" data-to="${id}">${esc(t)}</a>`).join(''); $('jump').hidden = !secs.length;
+  $('app').innerHTML = secs.length ? secs.map(([id, t, h]) => `<section id="s-${id}"><h2>${esc(t)}</h2>${h}</section>`).join('') : '<p class="msg">Nothing planned here yet.</p>';
+  $('jump').addEventListener('click', e => { const a = e.target.closest('[data-to]'); if (!a) return; e.preventDefault(); $('s-' + a.dataset.to).scrollIntoView({ behavior: 'smooth' }); });
+})();
+})();
+</script>
+</body>
+</html>
