@@ -158,7 +158,7 @@ STUDIO = {
     'slogan': 'Looks expensive. Isn\u2019t.',
     'currenciesAccepted': 'GBP', 'paymentAccepted': 'Bank transfer',
     'founder': person_ref('jack'), 'employee': [person_ref('jack'), person_ref('toosh'), person_ref('vance')],
-    'sameAs': ['https://instagram.com/_c4rem'],
+    'sameAs': ['https://instagram.com/aeramediastudios'],
     'knowsAbout': ['Event photography', 'Videography', 'Social media management', 'Social media content creation', 'Commercial photography',
                    'Product photography', 'Food and restaurant photography', 'Business headshots', 'Personal branding photography',
                    'Promotional video', 'Brand films', 'Music videos'],

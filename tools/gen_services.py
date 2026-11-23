@@ -101,7 +101,7 @@ def chrome_top(page, active):
     AERA
   </a>
   <div class="nav-right">
-    <a href="https://instagram.com/_c4rem" target="_blank" rel="noopener" class="nav-cell">{swap("Instagram")}</a>
+    <a href="https://instagram.com/aeramediastudios" target="_blank" rel="noopener" class="nav-cell">{swap("Instagram")}</a>
   </div>
   <div class="nav-links" id="navLinks">
 {nav}
@@ -217,7 +217,7 @@ def contact(line1, line2, svc, subject):
   </div>
   <a class="email" href="mailto:bookings@aerastudios.org?subject={subject}" data-ed="fade">bookings@aerastudios.org</a>
   <div class="ed-contact-foot" data-ed="draw">
-    <a href="https://instagram.com/_c4rem" target="_blank" rel="noopener">Instagram &middot; @_c4rem</a>
+    <a href="https://instagram.com/aeramediastudios" target="_blank" rel="noopener">Instagram &middot; @aeramediastudios</a>
     <span>Leeds &amp; Dubai</span>
   </div>
 </section>
