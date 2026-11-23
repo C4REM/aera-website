@@ -23,7 +23,7 @@ OG = SITE + '/assets/img/og/'
 PAGES_ORDER = ['index', 'social-media', 'brand-commercial', 'events', 'work', 'team',
                'jack-careem', 'toosh-alzaeem', 'vance-serania',
                'rolls-royce', 'kia-motors', 'headspace', 'warwick-application', 'never-felt-so-alone', 'i-feel-good', 'green-planet-dubai',
-               'photography', 'eid-al-etihad', 'graphic-design', 'on-stage', 'live-music', 'on-set', '404']
+               'photography', 'eid-al-etihad', 'graphic-design', 'on-stage', 'live-music', 'on-set', 'privacy', '404']
 SLUGS = set(PAGES_ORDER)
 
 def url(slug):
@@ -123,6 +123,9 @@ PAGES = {
         title='On Set | Behind the Scenes Film Photography | Aera',
         desc='Lighting and behind-the-scenes photography by Toosh Alzaeem on independent film sets.',
         kind='project', creator='toosh', genre='Behind the scenes photography'),
+    'privacy': dict(title='Privacy | Aera Media Studio, Leeds',
+        desc='What Aera keeps when you get in touch, why, who else sees it, how long it is kept, and how to have it deleted. No tracking cookies.',
+        og='og-home.jpg', kind='privacy'),
     '404': dict(title='Page not found | Aera', desc='That page has moved or no longer exists. Browse Aera’s film, photography and design work instead.',
                 og='og-work.jpg', kind='404'),
 }
@@ -237,6 +240,10 @@ def graph(slug, body, meta):
             work.update(meta['video'])
         nodes += [work,
                   crumbs(home, ('Work', url('work')), (name, page))]
+    elif k == 'privacy':
+        nodes += [{'@type': 'WebPage', '@id': page + '#page', 'url': page, 'name': 'Privacy', 'isPartOf': {'@id': SITE + '/#website'},
+                   'about': {'@id': SITE + '/#studio'}, 'dateModified': '2026-11-23'},
+                  crumbs(home, ('Privacy', page))]
     else:
         return ''
     f = faq_from(body)
@@ -358,7 +365,7 @@ def process(slug):
 
 def sitemap():
     lastmod = '2026-11-23'
-    prio = {'index': '1.0', 'social-media': '0.9', 'brand-commercial': '0.9', 'events': '0.9', 'work': '0.8', 'team': '0.7'}
+    prio = {'privacy': '0.3', 'index': '1.0', 'social-media': '0.9', 'brand-commercial': '0.9', 'events': '0.9', 'work': '0.8', 'team': '0.7'}
     rows = []
     for slug in PAGES_ORDER:
         if slug in NOINDEX:

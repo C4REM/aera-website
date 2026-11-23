@@ -119,7 +119,7 @@ def chrome_bottom():
       <svg width="16" height="16" viewBox="0 0 200 200" fill="none">{MARK}</svg>
       AERA
     </span>
-    &copy; <span id="year"></span> Aera Media Studio <span class="foot-nap">&middot; Photography, video &amp; social media in Leeds, West Yorkshire &middot; <a href="mailto:bookings@aerastudios.org">bookings@aerastudios.org</a></span>
+    &copy; <span id="year"></span> Aera Media Studio <span class="foot-nap">&middot; Photography, video &amp; social media in Leeds, West Yorkshire &middot; <a href="mailto:bookings@aerastudios.org">bookings@aerastudios.org</a> &middot; <a href="/privacy">Privacy</a></span>
     <div class="foot-links">
 {foot}
     </div>
