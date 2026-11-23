@@ -38,7 +38,10 @@ P['headspace'] = dict(
     billing=[('Written, directed, shot & edited by', 'Jack Careem'), ('Year', '2025'), ('Genre', 'Psychological thriller'),
              ('Next screening', 'HollyShorts MENA, Dubai<br>14–17 January 2027')],
     laurels=[('assets/img/awards/black-sheep-winner.png', 'Winner, UAE Student Film Award, The Black Sheep Film Festival, 14th edition, 2026'),
-             ('assets/img/awards/dune-editing.svg', 'Winner, Best Editing, Dune Creative Festival 2026')],
+             ('assets/img/awards/dune-editing.svg', 'Winner, Best Editing, Dune Creative Festival 2026'),
+             ('assets/img/awards/dune-cinematography-nominee.svg', 'Nominee, Best Cinematography, Dune Creative Festival 2026'),
+             ('assets/img/awards/dune-mise-en-scene.svg', 'Nominee, Best Mise en Scène, Dune Creative Festival 2026'),
+             ('assets/img/awards/hollyshorts-dubai.svg', 'Official selection, HollyShorts MENA, Dubai, January 2027')],
     frames=[(H + 'library.webp', 'Nolan stands still in a library while blurred figures rush past him'),
             (H + 'mirror.webp', 'Nolan sits facing another version of himself across a mirrored pillar'),
             (H + 'floor.webp', 'Nolan sits on the floor of a dark stage beside a tipped-over chair'),
@@ -55,6 +58,8 @@ P['headspace'] = dict(
             ('reel', 4, 6),
             ('ledger', 'Festival run', [('2026', 'The Black Sheep Film Festival, Dubai', 'UAE Student Film Award · Winner'),
                                         ('2026', 'Dune Creative Festival', 'Best Editing · Winner'),
+                                        ('2026', 'Dune Creative Festival', 'Best Cinematography · Nominee'),
+                                        ('2026', 'Dune Creative Festival', 'Best Mise en Scène · Nominee'),
                                         ('2027', 'HollyShorts MENA, Dubai', 'Official selection')]),
             ('note', 'The UAE Student Film Award was new at Black Sheep’s fourteenth edition, the first year SAE Dubai opened its festival to students from across the country. HollyShorts MENA is the Dubai edition of the Oscar and BAFTA qualifying HollyShorts festival.')])
 
