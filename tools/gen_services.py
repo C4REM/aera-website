@@ -9,7 +9,7 @@ replaces everything from <body> to </html>.
 import re, pathlib
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-CSS_V = '20261019w1'
+CSS_V = '20261123a'
 JS_V = '20261013b'
 
 SQ = 'https://images.squarespace-cdn.com/content/v1/67a046e3af281e412f15579a/'
@@ -119,7 +119,7 @@ def chrome_bottom():
       <svg width="16" height="16" viewBox="0 0 200 200" fill="none">{MARK}</svg>
       AERA
     </span>
-    &copy; <span id="year"></span> Aera Media Studio &middot; Leeds, UK
+    &copy; <span id="year"></span> Aera Media Studio <span class="foot-nap">&middot; Photography, video &amp; social media in Leeds, West Yorkshire &middot; <a href="mailto:bookings@aerastudios.org">bookings@aerastudios.org</a></span>
     <div class="foot-links">
 {foot}
     </div>
@@ -347,6 +347,7 @@ def social():
         ('What if we just want a one-off shoot?', 'That&rsquo;s what the starter content set is. One shoot, no ongoing commitment, and no follow-up call trying to upsell you.'),
         ('Which platforms do you create for?', 'Mostly Instagram and TikTok, formatted for wherever your audience actually is rather than whatever&rsquo;s trendy that week.'),
         ('Is there a minimum contract length?', 'No. Monthly means monthly. Pause or stop whenever it stops being useful to you.'),
+        ('Do you work with small local businesses in Leeds?', 'Mostly, yes. Restaurants, caf&eacute;s, barbers, salons, independent shops and gyms across Leeds and West Yorkshire: places that need a feed that looks as good as the real thing, without paying for an agency.'),
     ]) + related([
         ('brand-commercial.html', 'Brand &amp; Commercial', 'Product &middot; portrait &middot; campaign', 'fm2'),
         ('events.html', 'Events', 'Launches &middot; nights &middot; shows', 'finale'),
@@ -532,7 +533,7 @@ def brand():
     <span class="ed-line"><span>Brand content</span></span>
     <span class="ed-line"><span><em>with a studio finish.</em></span></span>
   </h1>
-  <p class="sv-lede" data-ed="fade">Commercial, product and portrait photography and brand video that make a Leeds business look like it has a marketing department. It doesn&rsquo;t. It has us.</p>
+  <p class="sv-lede" data-ed="fade">Product, food, headshot and commercial photography, plus promotional video, that make a Leeds business look like it has a marketing department. It doesn&rsquo;t. It has us.</p>
   <div class="sv-acts" data-ed="fade">
     <a class="ed-link" href="#contact">Start a shoot</a>
     <a class="ed-link" href="#rates">See the rates</a>
@@ -593,6 +594,9 @@ def brand():
         ('Do you shoot product photography for e-commerce?', 'Yes. Clean, consistent stills that actually match each other, quoted per session or per range.'),
         ('Can I get headshots for my team?', 'Yes, individually or as a group, at your workplace or somewhere that isn&rsquo;t a plain grey wall.'),
         ('How do I use the images?', 'However you like. Full usage rights come with every delivered image.'),
+        ('Do you do food and restaurant photography in Leeds?', 'Yes. Menu shots, the room, the people behind the counter and short vertical clips for socials, shot during a quiet service or before opening so nothing goes cold.'),
+        ('Can you make a promotional video for my business?', 'Yes. Short promo films and reels for websites, ads and socials, from a single location to a full campaign day.'),
+        ('Which areas do you cover?', 'Leeds and the rest of West Yorkshire as standard: Bradford, Wakefield, Huddersfield, Harrogate and York are all an easy trip. Further afield and Dubai on request.'),
     ]) + related([
         ('social-media.html', 'Social Media', 'Posts &middot; reels &middot; management', 'sienna2'),
         ('events.html', 'Events', 'Launches &middot; nights &middot; shows', 'finale'),

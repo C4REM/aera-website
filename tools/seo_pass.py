@@ -38,11 +38,11 @@ PAGES = {
         og='og-home.jpg', kind='home'),
     'social-media': dict(
         title='Social Media Agency in Leeds | Content & Management | Aera',
-        desc='Social media content and management for Leeds and Yorkshire brands: one shoot a month, reels and posts in one consistent style, posting handled. From £300.',
+        desc='Social media content and management for Leeds and Yorkshire businesses: one shoot a month, reels and posts in one consistent style, posting handled. From £300.',
         og='og-social.jpg', kind='service', service='Social media content and management', crumb='Social Media'),
     'brand-commercial': dict(
-        title='Commercial & Product Photography and Video in Leeds | Aera',
-        desc='Commercial, product and headshot photography plus brand video for Leeds businesses. Studio-quality images and films, with full usage rights. From £150.',
+        title='Commercial, Product & Food Photography and Video in Leeds | Aera',
+        desc='Product, food, headshot and commercial photography plus promotional video for Leeds businesses: restaurants, shops, salons and start-ups. Full usage rights. From £150.',
         og='og-brand.jpg', kind='service', service='Commercial photography and video production', crumb='Brand & Commercial'),
     'events': dict(
         title='Event Photographer & Videographer in Leeds | Aera',
@@ -151,11 +151,17 @@ STUDIO = {
     'url': SITE + '/', 'email': 'bookings@aerastudios.org', 'logo': SITE + '/assets/img/icons/icon-512.png', 'image': OG + 'og-home.jpg',
     'priceRange': '££', 'foundingDate': '2026',
     'address': {'@type': 'PostalAddress', 'addressLocality': 'Leeds', 'addressRegion': 'West Yorkshire', 'addressCountry': 'GB'},
-    'areaServed': [{'@type': 'City', 'name': 'Leeds'}, {'@type': 'AdministrativeArea', 'name': 'Yorkshire'},
+    'areaServed': [{'@type': 'City', 'name': 'Leeds'}, {'@type': 'City', 'name': 'Bradford'}, {'@type': 'City', 'name': 'Wakefield'},
+                   {'@type': 'City', 'name': 'York'}, {'@type': 'Place', 'name': 'Harrogate'}, {'@type': 'Place', 'name': 'Huddersfield'},
+                   {'@type': 'AdministrativeArea', 'name': 'West Yorkshire'}, {'@type': 'AdministrativeArea', 'name': 'Yorkshire'},
                    {'@type': 'Country', 'name': 'United Kingdom'}, {'@type': 'City', 'name': 'Dubai'}],
+    'slogan': 'Looks expensive. Isn\u2019t.',
+    'currenciesAccepted': 'GBP', 'paymentAccepted': 'Bank transfer',
     'founder': person_ref('jack'), 'employee': [person_ref('jack'), person_ref('toosh'), person_ref('vance')],
     'sameAs': ['https://instagram.com/_c4rem'],
-    'knowsAbout': ['Event photography', 'Videography', 'Social media management', 'Commercial photography', 'Product photography', 'Brand films', 'Music videos'],
+    'knowsAbout': ['Event photography', 'Videography', 'Social media management', 'Social media content creation', 'Commercial photography',
+                   'Product photography', 'Food and restaurant photography', 'Business headshots', 'Personal branding photography',
+                   'Promotional video', 'Brand films', 'Music videos'],
     'hasOfferCatalog': {'@type': 'OfferCatalog', 'name': 'Services', 'itemListElement': [
         {'@type': 'Offer', 'itemOffered': {'@type': 'Service', 'name': 'Social media content and management', 'url': url('social-media')}},
         {'@type': 'Offer', 'itemOffered': {'@type': 'Service', 'name': 'Commercial photography and video production', 'url': url('brand-commercial')}},
@@ -238,11 +244,15 @@ def graph(slug, body, meta):
         nodes.append(f)
     return '<script type="application/ld+json">\n' + json.dumps({'@context': 'https://schema.org', '@graph': nodes}, ensure_ascii=False, indent=1) + '\n</script>\n'
 
+# reachable by link, kept out of search: a university application isn't what a
+# Leeds business searching for a photographer should land on
+NOINDEX = {'404', 'warwick-application'}
+
 def meta_block(slug, meta, body):
     t = meta['title']; d = meta['desc']; page = url(slug)
     og_img = OG + meta['og'] if meta.get('og') else first_image(body) or OG + 'og-home.jpg'
     e = lambda s: html.escape(s, quote=True)
-    robots = 'noindex, follow' if slug == '404' else 'index, follow, max-image-preview:large'
+    robots = 'noindex, follow' if slug in NOINDEX else 'index, follow, max-image-preview:large'
     lines = [
         f'<title>{e(t)}</title>',
         f'<meta name="description" content="{e(d)}">',
@@ -347,11 +357,11 @@ def process(slug):
     p.write_text(head + body)
 
 def sitemap():
-    lastmod = '2026-10-13'
+    lastmod = '2026-11-23'
     prio = {'index': '1.0', 'social-media': '0.9', 'brand-commercial': '0.9', 'events': '0.9', 'work': '0.8', 'team': '0.7'}
     rows = []
     for slug in PAGES_ORDER:
-        if slug == '404':
+        if slug in NOINDEX:
             continue
         rows.append(f'  <url><loc>{url(slug)}</loc><lastmod>{lastmod}</lastmod><priority>{prio.get(slug, "0.6")}</priority></url>')
     (ROOT / 'sitemap.xml').write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + '\n'.join(rows) + '\n</urlset>\n')
