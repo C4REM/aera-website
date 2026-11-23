@@ -82,27 +82,103 @@ table.sl td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:
 table.sl tr.got td{color:var(--stone);text-decoration:line-through}
 table.sl img{width:72px;aspect-ratio:16/9;object-fit:cover;border-radius:3px;display:block}
 .tablewrap{overflow-x:auto}
-/* moodboard */
-.addbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;background:#FBF8F2;border:1px solid var(--line);border-radius:6px;padding:12px 14px;margin-bottom:16px}
-.addbar .field{flex:1 1 360px}
-.filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
-.filters button{background:none;border:1px solid var(--field);border-radius:999px;padding:5px 12px;font-size:13px;cursor:pointer;color:var(--muted)}
-.filters button[aria-pressed="true"]{background:var(--brown);border-color:var(--brown);color:var(--cream)}
-.masonry{columns:4 220px;column-gap:14px}
-.pin{break-inside:avoid;margin:0 0 14px;background:#FBF8F2;border:1px solid var(--line);border-radius:6px;overflow:hidden}
-.pin img{width:100%;display:block}
-.pin .linkonly{padding:18px 14px;font-size:13px;color:var(--muted);word-break:break-all}
-.pin .meta{padding:9px 11px;display:flex;flex-direction:column;gap:6px}
-.pin .meta .r{display:flex;gap:6px;align-items:center}
-.pin select,.pin input{font:400 12.5px var(--sans);border:1px solid var(--field);border-radius:4px;padding:4px 6px;background:var(--paper);min-width:0}
-.pin input{width:100%}
-.pin .src{font-size:12px;color:var(--muted);text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.mains{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-bottom:30px}
-.mains .pin{margin:0}.mains .pin img{aspect-ratio:4/3;object-fit:cover}
-.star{background:none;border:0;cursor:pointer;font-size:17px;line-height:1;padding:3px 5px;color:var(--stone)}
-.star[aria-pressed="true"]{color:var(--gold-ink)}
-.sub{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold-ink);font-weight:600;margin:0 0 12px}
-.drop.on{outline:2px dashed var(--gold-ink);outline-offset:6px}
+/* moodboard: image first, details in the viewer */
+.mb-add{display:flex;gap:10px;flex-wrap:wrap;align-items:center;border:1.5px dashed var(--field);border-radius:8px;padding:12px 14px;margin-bottom:26px;background:transparent;transition:border-color .2s,background .2s}
+.mb-add .lead{font-size:13.5px;color:var(--muted);flex:none}
+.mb-add .field{flex:1 1 320px}
+.drop.on{border-color:var(--gold-ink);background:rgba(194,168,120,.10);outline:none}
+.mb-look{background:var(--brown);color:var(--cream);border-radius:10px;padding:22px 22px 18px;margin-bottom:30px}
+.mb-look .lh{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.mb-look .k{font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold)}
+.mb-look h3{font-family:var(--display);font-weight:400;font-size:30px;margin:4px 0 0;color:#F5EDE0;line-height:1.15}
+.mb-look .lh .feel{font-size:14px;color:#CFC4B0;max-width:460px}
+.look-grid{display:grid;grid-template-columns:2fr 1fr;grid-auto-rows:minmax(0,1fr);gap:10px;height:min(52vw,470px)}
+.look-grid.n1{grid-template-columns:1fr}
+.look-grid.n2{grid-template-columns:1fr 1fr}
+.look-grid .t:first-child{grid-row:span 2}
+.look-grid.n2 .t:first-child,.look-grid.n1 .t:first-child{grid-row:auto}
+.look-grid .t{position:relative;border-radius:6px;overflow:hidden;cursor:zoom-in;background:#2a170c}
+.look-grid .t img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s ease}
+.look-grid .t:hover img{transform:scale(1.03)}
+.look-grid .t .cap{position:absolute;left:0;right:0;bottom:0;padding:26px 12px 10px;font-size:13px;color:#F5EDE0;background:linear-gradient(transparent,rgba(14,8,4,.75))}
+.look-more{display:flex;gap:8px;margin-top:10px}
+.look-more .t{width:72px;height:54px;border-radius:4px;overflow:hidden;cursor:zoom-in;flex:none}
+.look-more .t img{width:100%;height:100%;object-fit:cover}
+.palette{display:flex;gap:6px;margin-top:14px;align-items:center}
+.palette i{display:block;height:26px;flex:1;border-radius:4px;max-width:90px}
+.palette span{font-size:11.5px;color:#A89B85;margin-right:6px;white-space:nowrap}
+.mb-empty-look{border:1px dashed rgba(234,223,205,.35);border-radius:6px;padding:26px;text-align:center;color:#CFC4B0;font-size:14px}
+.jump{position:sticky;top:49px;z-index:15;background:var(--paper);display:flex;gap:6px;flex-wrap:wrap;padding:10px 0;margin-bottom:6px;border-bottom:1px solid var(--line)}
+.jump button{background:none;border:1px solid var(--field);border-radius:999px;padding:5px 12px;font-size:13px;cursor:pointer;color:var(--ink2)}
+.jump button b{font-weight:400;color:var(--stone);margin-left:5px}
+.jump button:hover{border-color:var(--ink)}
+.jump .presbtn{margin-left:auto;background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.mb-sec{margin-top:26px;scroll-margin-top:110px}
+.mb-sec h4{display:flex;align-items:baseline;gap:10px;margin:0 0 12px;font-family:var(--display);font-weight:400;font-size:22px}
+.mb-sec h4 small{font-family:var(--sans);font-size:13px;color:var(--stone)}
+.mb-sec.sort h4{color:var(--gold-ink)}
+.mb-sec .hint{font-size:13px;color:var(--muted);margin:-6px 0 12px}
+.tiles{columns:4 210px;column-gap:12px}
+.tile{break-inside:avoid;margin:0 0 12px;position:relative;border-radius:6px;overflow:hidden;cursor:zoom-in;background:var(--tint);display:block;width:100%;border:0;padding:0;text-align:left;font:inherit;color:inherit}
+.tile img{width:100%;display:block;transition:transform .4s ease,filter .3s}
+.tile:hover img{transform:scale(1.025)}
+.tile .ov{position:absolute;inset:auto 0 0 0;padding:28px 10px 9px;font-size:12.5px;color:#fff;background:linear-gradient(transparent,rgba(14,10,6,.72));opacity:0;transition:opacity .25s}
+.tile:hover .ov,.tile:focus-visible .ov{opacity:1}
+.tile .badges{position:absolute;top:8px;left:8px;display:flex;gap:5px}
+.tile .bd{font-size:11px;font-weight:600;border-radius:999px;padding:2px 8px;background:rgba(14,14,16,.78);color:#F5F1E9}
+.tile .bd.star{background:var(--gold);color:#1b1108}
+.tile .play{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none}
+.tile .play span{width:42px;height:42px;border-radius:50%;background:rgba(14,14,16,.6);display:grid;place-items:center;color:#fff;font-size:14px}
+.tile.link{background:#FBF8F2;border:1px solid var(--line);padding:16px 14px;cursor:pointer}
+.tile.link .h{font-size:14px;font-weight:500;color:var(--ink);word-break:break-all}
+.tile.link .n{font-size:13px;color:var(--muted);margin-top:4px}
+.tile.link .badges{position:static;margin-bottom:8px}
+/* viewer */
+.lb{position:fixed;inset:0;z-index:60;background:rgba(14,10,6,.92);display:grid;grid-template-columns:minmax(0,1fr) 340px}
+.lb[hidden]{display:none}
+.lb .stage{position:relative;display:grid;place-items:center;padding:40px 70px;min-height:0}
+.lb .stage img{max-width:100%;max-height:calc(100vh - 80px);object-fit:contain;border-radius:4px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.lb .stage iframe{width:min(100%,960px);aspect-ratio:16/9;border:0;border-radius:4px}
+.lb .stage .linkbig{color:#F5EDE0;font-size:18px;text-align:center}
+.lb .stage .linkbig a{color:var(--gold)}
+.lb .nav{position:absolute;top:50%;transform:translateY(-50%);width:46px;height:46px;border-radius:50%;border:0;background:rgba(245,241,233,.12);color:#F5EDE0;font-size:20px;cursor:pointer}
+.lb .nav:hover{background:rgba(245,241,233,.22)}
+.lb .prev{left:14px}.lb .next{right:14px}
+.lb .count{position:absolute;top:16px;left:20px;color:#A89B85;font-size:13px}
+.lb .side{background:var(--paper);padding:22px 22px 18px;overflow:auto;display:flex;flex-direction:column;gap:18px}
+.lb .side .top2{display:flex;justify-content:space-between;align-items:center}
+.lb .side .k{font-size:11px;letter-spacing:.25em;text-transform:uppercase;color:var(--gold-ink);font-weight:600}
+.lb .close{background:none;border:0;font-size:22px;cursor:pointer;color:var(--muted);line-height:1}
+.lb .starbtn{display:flex;align-items:center;gap:10px;width:100%;border:1px solid var(--field);background:#FBF8F2;border-radius:6px;padding:11px 12px;cursor:pointer;font:500 14px var(--sans);color:var(--ink)}
+.lb .starbtn[aria-pressed="true"]{background:var(--brown);border-color:var(--brown);color:var(--cream)}
+.lb .starbtn span{font-size:18px;color:var(--gold)}
+.lb .grp label,.lb .grp .lab2{display:block;font-size:12.5px;color:var(--muted);margin-bottom:6px}
+.lb .tags{display:flex;flex-wrap:wrap;gap:6px}
+.lb .tags button{background:none;border:1px solid var(--field);border-radius:999px;padding:5px 11px;font-size:13px;cursor:pointer;color:var(--ink2)}
+.lb .tags button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.lb select,.lb textarea{width:100%;font:400 14px var(--sans);border:1px solid var(--field);border-radius:4px;padding:8px 10px;background:#fff;color:var(--ink)}
+.lb textarea{min-height:90px;resize:vertical;line-height:1.5}
+.lb .src{font-size:13px;color:var(--gold-ink);word-break:break-all}
+.lb .del{margin-top:auto;background:none;border:0;color:var(--bad);font-size:13px;cursor:pointer;text-align:left;padding:0}
+/* present */
+.mbp{position:fixed;inset:0;z-index:70;background:#120a05;color:#F5EDE0;display:flex;flex-direction:column}
+.mbp[hidden]{display:none}
+.mbp .pt{display:flex;justify-content:space-between;align-items:center;padding:18px 26px;font-size:13px;color:#A89B85}
+.mbp .pt b{font-family:var(--display);font-weight:400;font-size:20px;color:#F5EDE0;letter-spacing:.02em}
+.mbp .pt button{background:none;border:1px solid rgba(245,237,224,.25);color:#F5EDE0;border-radius:999px;padding:6px 14px;cursor:pointer;font-size:13px}
+.mbp .ps{flex:1;display:grid;place-items:center;padding:0 90px;min-height:0;position:relative}
+.mbp .ps img{max-width:100%;max-height:calc(100vh - 190px);object-fit:contain;border-radius:3px}
+.mbp .pc{text-align:center;padding:16px 26px 26px;min-height:74px}
+.mbp .pc .sec{font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold)}
+.mbp .pc p{margin:6px 0 0;font-size:17px;color:#E8DCC8}
+.mbp .nav{position:absolute;top:50%;transform:translateY(-50%);width:50px;height:50px;border-radius:50%;border:0;background:rgba(245,241,233,.1);color:#F5EDE0;font-size:20px;cursor:pointer}
+.mbp .prev{left:20px}.mbp .next{right:20px}
+@media(max-width:860px){
+  .lb{display:flex;flex-direction:column;overflow:auto}
+  .lb .stage{flex:none;height:56vh;padding:44px 12px 12px}.lb .stage{overflow:hidden}.lb .stage img{max-height:calc(56vh - 58px)}.lb .stage iframe{max-height:calc(56vh - 58px)}.lb .nav{top:auto;bottom:8px;transform:none}.lb .side{flex:1}
+  .look-grid,.look-grid.n1,.look-grid.n2{height:auto;grid-template-columns:1fr 1fr;grid-auto-rows:auto}.look-grid .t{height:150px}.look-grid .t:first-child,.look-grid.n2 .t:first-child{grid-column:1/-1;grid-row:auto;height:230px}
+  .tiles{columns:2 140px}.jump{top:47px}.mbp .ps{padding:0 12px}.mbp .nav{display:none}
+}
 /* locations */
 .locs{display:grid;grid-template-columns:260px minmax(0,1fr);gap:24px;align-items:start}
 .loclist{display:flex;flex-direction:column;gap:8px}
@@ -190,6 +266,8 @@ table.sl img{width:72px;aspect-ratio:16/9;object-fit:cover;border-radius:3px;dis
     <div class="bar2" style="margin:12px 0 0;justify-content:flex-end"><button class="btn ghost sm" id="sk-cancel">Cancel</button><button class="btn sm" id="sk-save">Use this sketch</button></div>
   </div>
 </div>
+<div class="lb" id="lb" hidden role="dialog" aria-modal="true" aria-label="Reference"></div>
+<div class="mbp" id="pres" hidden role="dialog" aria-modal="true" aria-label="Present the moodboard"></div>
 <div class="toast" id="toast"></div>
 <input type="file" id="file" accept="image/*" multiple hidden>
 
@@ -297,6 +375,8 @@ function render(){
   renderNav();
   const f = { overview, brief, mood, board, shots, locs, people, schedule, paper, form }[sec] || overview;
   $('app').innerHTML = `<div class="fade-in">${f()}</div>`;
+  if (sec === 'mood') paintPalette();
+  if (lbCur >= 0) renderLB();
 }
 const head = (t, note = '') => `<div class="sechead"><h2 class="sec">${t}</h2>${note ? `<span class="note">${note}</span>` : ''}</div>`;
 const field = (k, label, ph = '', ta = false) => `<div class="row"><label class="lab2" for="f-${k}">${label}</label>${ta
@@ -340,28 +420,81 @@ function brief(){
     ${field('brief.due', 'When it\'s due', 'e.g. Reels by 20 Dec, full songs by 3 Jan')}
     <label class="chk"><input type="checkbox" data-k="brief.agreed"${doc.brief.agreed ? ' checked' : ''}> The client has agreed this brief</label></div>`;
 }
-function pinHtml({ m, i }){ const yt = ytId(m.url);
-  const shotOpts = v => `<option value="">No shot</option>` + doc.frames.map((f, k) => `<option value="${f.id}"${f.id === v ? ' selected' : ''}>Shot ${k + 1}${f.desc ? ': ' + esc(f.desc.slice(0, 26)) : ''}</option>`).join('');
-  return `<figure class="pin">${m.img ? `<img src="${imgSrc(m.img)}" alt="${esc(m.note || 'Reference')}" loading="lazy">` : yt ? `<img src="https://img.youtube.com/vi/${yt}/hqdefault.jpg" alt="Video reference" loading="lazy">` : `<div class="linkonly">${esc(host(m.url))}</div>`}
-    <figcaption class="meta">${m.url ? `<a class="src" href="${esc(m.url)}" target="_blank" rel="noopener">${esc(host(m.url))} ↗</a>` : ''}
-      <div class="r"><button class="star" data-star="${i}" aria-pressed="${!!m.main}" title="${m.main ? 'Remove from main inspos' : 'Make a main inspo'}" aria-label="Main inspo">${m.main ? '★' : '☆'}</button><select data-k="mood.${i}.tag" aria-label="Tag"><option value="">Tag</option>${TAGS.map(t => `<option${t === m.tag ? ' selected' : ''}>${t}</option>`).join('')}</select><select data-k="mood.${i}.shot" aria-label="Pin to a shot">${shotOpts(m.shot)}</select><button class="x" data-del="mood.${i}" aria-label="Remove">×</button></div>
-      <input data-k="mood.${i}.note" value="${esc(m.note)}" placeholder="${m.shot ? 'What to take from it' : 'Note'}"></figcaption></figure>`; }
-function mood(){
-  const tags = ['All', 'Main inspos', ...TAGS, 'Pinned to a shot'];
-  const list = doc.mood.map((m, i) => ({ m, i })).filter(({ m }) => moodFilter === 'All' || (moodFilter === 'Main inspos' ? m.main : moodFilter === 'Pinned to a shot' ? m.shot : m.tag === moodFilter));
-  const mains = moodFilter === 'All' ? list.filter(({ m }) => m.main) : [];
-  const rest = moodFilter === 'All' ? list.filter(({ m }) => !m.main) : list;
-  const shotOpts = v => `<option value="">No shot</option>` + doc.frames.map((f, i) => `<option value="${f.id}"${f.id === v ? ' selected' : ''}>Shot ${i + 1}${f.desc ? ': ' + esc(f.desc.slice(0, 26)) : ''}</option>`).join('');
-  const pinned = doc.mood.map((m, i) => ({ m, i })).filter(({ m }) => m.shot);
-  return head('Moodboard', 'Paste a link, drop or paste images. Pin a reference to a shot to make it a shot inspo') + `
-    <div class="addbar drop" id="dropzone"><input class="field" id="addurl" placeholder="Paste a link: Pinterest, Instagram, YouTube, Vimeo…" aria-label="Reference link">
-      <button class="btn sm" id="addurlbtn">Add link</button><button class="btn ghost sm" id="addimg">Upload images</button></div>
-    <div class="filters">${tags.map(t => `<button data-filter="${esc(t)}" aria-pressed="${t === moodFilter}">${esc(t)}</button>`).join('')}</div>
-    ${mains.length ? `<p class="sub">Main inspos</p><div class="mains">${mains.map(pinHtml).join('')}</div>${rest.length ? '<p class="sub">Everything else</p>' : ''}` : ''}
-    ${rest.length ? `<div class="masonry">${rest.map(pinHtml).join('')}</div>` : mains.length ? '' : `<div class="empty">Nothing here yet. Paste a link above, or paste an image straight onto the page. Star the ones that matter most to make them main inspos.</div>`}
-    ${pinned.length ? `<section style="margin-top:34px">${head('Shot inspo', 'References pinned to a shot')}<div class="frames">${pinned.map(({ m }) => { const n = doc.frames.findIndex(f => f.id === m.shot); const yt = ytId(m.url);
-      return `<div class="card" style="display:flex;gap:12px;padding:12px">${m.img || yt ? `<img src="${m.img ? imgSrc(m.img) : `https://img.youtube.com/vi/${yt}/hqdefault.jpg`}" alt="" style="width:100px;height:100px;object-fit:cover;border-radius:4px;flex:none">` : ''}<div><b style="font-weight:600">Shot ${n + 1}</b><p style="margin:2px 0 0;font-size:14px;color:var(--ink2)">${esc(m.note || 'No note yet')}</p></div></div>`; }).join('')}</div></section>` : ''}`;
+/* ---------- moodboard: image first, details in a viewer ---------- */
+const tagOf = m => TAGS.includes(m.tag) ? m.tag : '';
+const shotNo = id => doc.frames.findIndex(f => f.id === id) + 1;
+const thumb = m => m.img ? imgSrc(m.img) : ytId(m.url) ? `https://img.youtube.com/vi/${ytId(m.url)}/hqdefault.jpg` : '';
+const isLook = m => m.main && thumb(m);
+let lbCur = -1, presI = 0, presList = [];
+// one reading order for the page, the viewer and Present: the look first, then each section
+function moodOrder(){
+  const all = doc.mood.map((m, i) => i), out = all.filter(i => isLook(doc.mood[i]));
+  ['', ...TAGS].forEach(t => all.filter(i => !isLook(doc.mood[i]) && tagOf(doc.mood[i]) === t).forEach(i => out.push(i)));
+  return out;
 }
+function tileHtml(i){ const m = doc.mood[i], src = thumb(m), sn = m.shot ? shotNo(m.shot) : 0;
+  const badges = (m.main || sn) ? `<span class="badges">${m.main ? '<span class="bd star">★ Main</span>' : ''}${sn ? `<span class="bd">Shot ${sn}</span>` : ''}</span>` : '';
+  if (!src) return `<button class="tile link" data-lb="${i}">${badges}<div class="h">↗ ${esc(host(m.url) || 'Link')}</div>${m.note ? `<div class="n">${esc(m.note)}</div>` : ''}</button>`;
+  return `<button class="tile" data-lb="${i}" aria-label="${esc(m.note || 'Open reference')}"><img src="${src}" alt="" loading="lazy">${ytId(m.url) && !m.img ? '<span class="play"><span>▶</span></span>' : ''}${badges}${m.note ? `<span class="ov">${esc(m.note)}</span>` : ''}</button>`;
+}
+function mood(){
+  const looks = doc.mood.map((m, i) => i).filter(i => isLook(doc.mood[i])), big = looks.slice(0, 3), more = looks.slice(3);
+  const feel = ((doc.brief || {}).feel || '').trim();
+  let look = `<section class="mb-look"><div class="lh"><div><div class="k">The look</div><h3>${feel ? esc(feel) : 'Main inspos'}</h3></div>${looks.length ? '' : ''}</div>`;
+  look += looks.length
+    ? `<div class="look-grid n${big.length}">${big.map(i => `<div class="t" data-lb="${i}"><img src="${thumb(doc.mood[i])}" alt="">${doc.mood[i].note ? `<div class="cap">${esc(doc.mood[i].note)}</div>` : ''}</div>`).join('')}</div>${more.length ? `<div class="look-more">${more.map(i => `<div class="t" data-lb="${i}"><img src="${thumb(doc.mood[i])}" alt=""></div>`).join('')}</div>` : ''}<div class="palette" id="palette"></div>`
+    : `<div class="mb-empty-look">Open any reference and choose <b>Make it a main inspo</b>. The strongest three sit here, big, with a colour palette pulled from them.</div>`;
+  look += '</section>';
+  const groups = [['', 'To sort', 'Not in a section yet. Open one to give it a section.'], ...TAGS.map(t => [t, t, ''])]
+    .map(([t, label, hint]) => ({ t, label, hint, items: doc.mood.map((m, i) => i).filter(i => !isLook(doc.mood[i]) && tagOf(doc.mood[i]) === t) }))
+    .filter(g => g.items.length);
+  const pinned = doc.mood.filter(m => m.shot).length;
+  const add = `<div class="mb-add drop" id="dropzone"><span class="lead">Drop or paste images here, or</span><input class="field" id="addurl" placeholder="paste a link: Pinterest, Instagram, YouTube, Vimeo…" aria-label="Reference link"><button class="btn sm" id="addurlbtn">Add link</button><button class="btn ghost sm" id="addimg">Upload images</button></div>`;
+  const jump = `<div class="jump"><button data-jump="look">The look<b>${looks.length}</b></button>${groups.map(g => `<button data-jump="${g.t || 'sort'}">${esc(g.label)}<b>${g.items.length}</b></button>`).join('')}<button class="presbtn" id="presbtn">Present</button></div>`;
+  const secs = groups.map(g => `<section class="mb-sec${g.t ? '' : ' sort'}" id="mb-${g.t || 'sort'}"><h4>${esc(g.label)} <small>${g.items.length}</small></h4>${g.hint ? `<p class="hint">${g.hint}</p>` : ''}<div class="tiles">${g.items.map(tileHtml).join('')}</div></section>`).join('');
+  return head('Moodboard', `${doc.mood.length} reference${doc.mood.length === 1 ? '' : 's'}${pinned ? ` · ${pinned} pinned to shots` : ''}`) + add +
+    (doc.mood.length ? jump + `<div id="mb-look">${look}</div>` + secs : `<div class="empty">Nothing here yet. Paste a link above, or drop images anywhere on the page.</div>`);
+}
+// colour palette from the main inspos (our own images only, so the canvas can read them)
+const palCache = {};
+function paintPalette(){ const el = $('palette'); if (!el) return;
+  const ids = doc.mood.filter(m => m.main && m.img).map(m => m.img).slice(0, 6); if (!ids.length) return;
+  const key = ids.join(); if (palCache[key]){ el.innerHTML = palCache[key]; return; }
+  Promise.all(ids.map(id => new Promise(res => { const im = new Image(); im.onload = () => res(im); im.onerror = () => res(null); im.src = imgSrc(id); }))).then(ims => {
+    const c = document.createElement('canvas'); c.width = c.height = 48; const x = c.getContext('2d', { willReadFrequently: true }), bk = {};
+    ims.filter(Boolean).forEach(im => { x.drawImage(im, 0, 0, 48, 48); const d = x.getImageData(0, 0, 48, 48).data;
+      for (let p = 0; p < d.length; p += 4){ const k = (d[p] >> 5) + ',' + (d[p + 1] >> 5) + ',' + (d[p + 2] >> 5); const b = bk[k] || (bk[k] = { n: 0, r: 0, g: 0, b: 0 }); b.n++; b.r += d[p]; b.g += d[p + 1]; b.b += d[p + 2]; } });
+    const pick = []; Object.values(bk).sort((a, b) => b.n - a.n).map(b => [b.r / b.n | 0, b.g / b.n | 0, b.b / b.n | 0])
+      .forEach(c => { if (pick.length < 6 && pick.every(p => Math.abs(p[0] - c[0]) + Math.abs(p[1] - c[1]) + Math.abs(p[2] - c[2]) > 70)) pick.push(c); });
+    if (!pick.length) return;
+    palCache[key] = '<span>Palette</span>' + pick.map(c => `<i style="background:rgb(${c})" title="rgb(${c})"></i>`).join('');
+    const e2 = $('palette'); if (e2) e2.innerHTML = palCache[key];
+  }); }
+// the viewer
+function openLB(i){ lbCur = i; $('lb').hidden = false; document.body.style.overflow = 'hidden'; renderLB(); }
+function closeLB(){ lbCur = -1; $('lb').hidden = true; $('lb').innerHTML = ''; document.body.style.overflow = ''; }
+function lbStep(d){ const L = moodOrder(); const p = L.indexOf(lbCur); if (p < 0 || !L.length) return; lbCur = L[(p + d + L.length) % L.length]; renderLB(); }
+function renderLB(){ if (lbCur < 0) return; const L = moodOrder(), m = doc.mood[lbCur]; if (!m){ closeLB(); return; }
+  const p = L.indexOf(lbCur), yt = ytId(m.url);
+  const media = m.img ? `<img src="${imgSrc(m.img)}" alt="">` : yt ? `<iframe src="https://www.youtube-nocookie.com/embed/${yt}" allow="encrypted-media; picture-in-picture" allowfullscreen title="Video reference"></iframe>` : `<div class="linkbig">A link reference<br><a href="${esc(m.url)}" target="_blank" rel="noopener">Open ${esc(host(m.url))} ↗</a></div>`;
+  const shotOpts = `<option value="">Not pinned to a shot</option>` + doc.frames.map((f, k) => `<option value="${f.id}"${f.id === m.shot ? ' selected' : ''}>Shot ${k + 1}${f.desc ? ': ' + esc(f.desc.slice(0, 34)) : ''}</option>`).join('');
+  $('lb').innerHTML = `<div class="stage"><span class="count">${p + 1} of ${L.length}</span>${media}${L.length > 1 ? '<button class="nav prev" data-lbgo="-1" aria-label="Previous">←</button><button class="nav next" data-lbgo="1" aria-label="Next">→</button>' : ''}</div>
+    <aside class="side" aria-label="Reference details"><div class="top2"><span class="k">${m.main ? 'Main inspo' : esc(tagOf(m) || 'To sort')}</span><button class="close" data-lbclose aria-label="Close">✕</button></div>
+      <button class="starbtn" data-star="${lbCur}" aria-pressed="${!!m.main}"><span>${m.main ? '★' : '☆'}</span>${m.main ? 'Main inspo · tap to remove' : 'Make it a main inspo'}</button>
+      <div class="grp"><span class="lab2">Section</span><div class="tags">${TAGS.map(t => `<button data-lbtag="${t}" aria-pressed="${m.tag === t}">${t}</button>`).join('')}</div></div>
+      <div class="grp"><label for="lbshot">Pin to a shot</label><select id="lbshot" data-k="mood.${lbCur}.shot">${shotOpts}</select></div>
+      <div class="grp"><label for="lbnote">${m.shot ? 'What to take from it' : 'Note'}</label><textarea id="lbnote" data-k="mood.${lbCur}.note" placeholder="e.g. the warm practicals, the low angle">${esc(m.note)}</textarea></div>
+      ${m.url ? `<div class="grp"><span class="lab2">Source</span><a class="src" href="${esc(m.url)}" target="_blank" rel="noopener">${esc(m.url)}</a></div>` : ''}
+      <button class="del" data-lbdel>Remove from the moodboard</button></aside>`;
+}
+// present: a clean full-screen run-through for the client
+function openPres(){ presList = moodOrder().filter(i => thumb(doc.mood[i])); if (!presList.length){ toast('Add some images first'); return; } presI = 0; $('pres').hidden = false; document.body.style.overflow = 'hidden'; renderPres(); }
+function closePres(){ $('pres').hidden = true; $('pres').innerHTML = ''; document.body.style.overflow = ''; }
+function presStep(d){ presI = (presI + d + presList.length) % presList.length; renderPres(); }
+function renderPres(){ const m = doc.mood[presList[presI]];
+  $('pres').innerHTML = `<div class="pt"><b>${esc((job && job.client) || 'Moodboard')}</b><span>${presI + 1} / ${presList.length}</span><button data-presclose>Close</button></div>
+    <div class="ps"><img src="${thumb(m)}" alt=""><button class="nav prev" data-presgo="-1" aria-label="Previous">←</button><button class="nav next" data-presgo="1" aria-label="Next">→</button></div>
+    <div class="pc"><div class="sec">${m.main ? 'The look' : esc(tagOf(m) || 'Reference')}${m.shot ? ' · Shot ' + shotNo(m.shot) : ''}</div>${m.note ? `<p>${esc(m.note)}</p>` : ''}</div>`; }
 const ar = () => doc.aspect.replace(':', ' / ');
 const editing = new Set();
 const secOf = f => ((f.when || '').match(/Sec(?:tion)?\s*(\d+)/i) || [])[1] || '';
@@ -475,6 +608,16 @@ function form(){
 /* ---------- clicks ---------- */
 document.addEventListener('click', async e => {
   const t = e.target;
+  if (t.id === 'lb'){ closeLB(); render(); return; }
+  const lbo = t.closest('[data-lb]'); if (lbo){ openLB(+lbo.dataset.lb); return; }
+  if (t.closest('[data-lbclose]')){ closeLB(); render(); return; }
+  const lg = t.closest('[data-lbgo]'); if (lg){ lbStep(+lg.dataset.lbgo); return; }
+  const lt = t.closest('[data-lbtag]'); if (lt){ const m = doc.mood[lbCur]; m.tag = m.tag === lt.dataset.lbtag ? '' : lt.dataset.lbtag; save(); render(); return; }
+  if (t.closest('[data-lbdel]')){ const L = moodOrder(), p = L.indexOf(lbCur); doc.mood.splice(lbCur, 1); save(); const L2 = moodOrder(); if (!L2.length){ closeLB(); render(); } else { const nx = L[p + 1] !== undefined ? L[p + 1] : L[p - 1]; lbCur = nx > lbCur ? nx - 1 : nx; render(); } toast('Removed'); return; }
+  const jp = t.closest('[data-jump]'); if (jp){ const el = $('mb-' + jp.dataset.jump); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
+  if (t.closest('#presbtn')){ openPres(); return; }
+  if (t.closest('[data-presclose]')){ closePres(); return; }
+  const pg = t.closest('[data-presgo]'); if (pg){ presStep(+pg.dataset.presgo); return; }
   const go = t.closest('[data-go],[data-sec]'); if (go){ e.preventDefault(); sec = go.dataset.go || go.dataset.sec; history.replaceState(null, '', '#' + sec); render(); window.scrollTo({ top: 0 }); return; }
   const del = t.closest('[data-del]'); if (del){ const ks = del.dataset.del.split('.'); const i = +ks.pop(); getPath(ks.join('.')).splice(i, 1); save(); render(); return; }
   const al = t.closest('[data-addline]'); if (al){ getPath(al.dataset.addline).push({ text: ' ', done: false }); save(); render(); const ins = document.querySelectorAll(`[data-k^="${al.dataset.addline}."][type=text]`); const last = ins[ins.length - 1]; if (last){ last.value = ''; setPath(last.dataset.k, ''); last.focus(); } return; }
@@ -508,6 +651,9 @@ document.addEventListener('click', async e => {
   }
 });
 document.addEventListener('keydown', e => {
+  if (lbCur >= 0){ if (e.target.matches('input,textarea,select')){ if (e.key === 'Escape') e.target.blur(); return; }
+    if (e.key === 'ArrowRight'){ lbStep(1); return; } if (e.key === 'ArrowLeft'){ lbStep(-1); return; } if (e.key === 'Escape'){ closeLB(); render(); return; } }
+  if (!$('pres').hidden){ if (e.key === 'ArrowRight' || e.key === ' '){ e.preventDefault(); presStep(1); return; } if (e.key === 'ArrowLeft'){ presStep(-1); return; } if (e.key === 'Escape'){ closePres(); return; } }
   if (e.key === 'Enter' && e.target.id === 'addurl'){ e.preventDefault(); addUrl(); }
   if (e.key === 'Enter' && e.target.matches('.list .li input[type=text]')){ e.preventDefault(); const path = e.target.dataset.k.split('.').slice(0, -2).join('.'); document.querySelector(`[data-addline="${path}"]`).click(); }
 });
