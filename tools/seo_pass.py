@@ -90,11 +90,15 @@ PAGES = {
     'never-felt-so-alone': dict(
         title='Never Felt So Alone | Music Video by Jack Careem | Aera',
         desc='A music video set to Labrinth and Billie Eilish’s Never Felt So Alone, directed by Jack Careem: a man sorting memory from the fact she isn’t coming back.',
-        kind='project', creator='jack', genre='Music video'),
+        kind='project', creator='jack', genre='Music video', type='VideoObject',
+        video=dict(thumbnailUrl=SITE + '/assets/img/work/never-felt-so-alone/poster.webp', uploadDate='2026-11-24', duration='PT3M17S',
+                   contentUrl=SITE + '/assets/video/never-felt-so-alone/index.m3u8')),
     'i-feel-good': dict(
         title='I Feel Good | Short Film for World Ocean Day | Aera',
         desc='A short film for World Ocean Day: a man dances round his flat getting ready for a date and wrecks the planet a little on the way out. Directed by Jack Careem.',
-        kind='project', creator='jack', genre='Short film'),
+        kind='project', creator='jack', genre='Short film', type='VideoObject',
+        video=dict(thumbnailUrl=SITE + '/assets/img/work/i-feel-good/poster.webp', uploadDate='2026-11-24', duration='PT3M40S',
+                   contentUrl=SITE + '/assets/video/i-feel-good/index.m3u8')),
     'green-planet-dubai': dict(
         title='Green Planet Dubai | Wildlife Photography | Aera',
         desc='Wildlife photography inside the Green Planet biodome in Dubai by Jack Careem: birds and animals that mostly did not want to be photographed.',
@@ -106,7 +110,9 @@ PAGES = {
     'eid-al-etihad': dict(
         title='Eid Al Etihad Day Campaign | Aera',
         desc='A UAE National Day (Eid Al Etihad) campaign for a school in Dubai, shot and designed by Jack Careem in three days.',
-        kind='project', creator='jack', genre='Campaign'),
+        kind='project', creator='jack', genre='Campaign', type='VideoObject',
+        video=dict(thumbnailUrl=SITE + '/assets/img/work/eid-al-etihad/poster.webp', uploadDate='2026-11-24', duration='PT3M7S',
+                   contentUrl=SITE + '/assets/video/eid-al-etihad/index.m3u8')),
     'graphic-design': dict(
         title='Graphic Design | Social Posts & Posters | Aera',
         desc='Social media graphics, event posters and matchday designs by Jack Careem, built around the photography for school and sports clients.',

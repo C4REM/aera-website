@@ -68,8 +68,10 @@ P['never-felt-so-alone'] = dict(
     name='Never Felt So Alone', credit='A music video by Jack Careem', hero=(h[0], 'A frame from Never Felt So Alone'),
     logline='A man sorting memory from the fact that she isn’t coming back. Set to Labrinth and Billie Eilish.',
     billing=[('Directed, shot & edited by', 'Jack Careem'), ('Year', '2023'), ('Format', 'Music video'), ('Camera', 'Canon EOS 5D Mark IV')],
+    film=dict(src='assets/video/never-felt-so-alone/index.m3u8', poster='assets/img/work/never-felt-so-alone/poster.webp', title='Never Felt So Alone', runtime='3:17'),
     frames=g,
-    blocks=[('text', 'The film', [
+    blocks=[('film',),
+            ('text', 'The film', [
                 'The video follows one man through the end of a relationship. He moves through the memories first, then runs into the flat fact that she has gone for good.',
                 'Nothing is spelled out. The heartache, the regret and the slow letting go are all carried by the pictures.']),
             ('reel', 0, 4),
@@ -83,8 +85,10 @@ P['i-feel-good'] = dict(
     name='I Feel Good', credit='A short film by Jack Careem', hero=(h[0], 'A frame from I Feel Good'),
     logline='A man dances round his flat getting ready for a date, and wrecks the planet a little on the way out.',
     billing=[('Directed, shot & edited by', 'Jack Careem'), ('Year', '2024'), ('Format', 'Short film'), ('Made for', 'World Ocean Day')],
+    film=dict(src='assets/video/i-feel-good/index.m3u8', poster='assets/img/work/i-feel-good/poster.webp', title='I Feel Good', runtime='3:40'),
     frames=g,
-    blocks=[('text', 'The idea', [
+    blocks=[('film',),
+            ('text', 'The idea', [
                 'He’s getting ready for a date and he’s thrilled about it, tearing round the flat without a second thought. Behind him he leaves the tap running, the hob on and rubbish everywhere.',
                 'It starts as a silly few minutes and turns into a film about the habits nobody thinks twice about.']),
             ('reel', 0, 4),
@@ -148,8 +152,10 @@ P['eid-al-etihad'] = dict(
     name='Eid Al Etihad Day', credit='A campaign by Jack Careem', hero=(h[0], 'The UAE flag'),
     logline='A national day campaign for a school in Dubai, planned, shot, lit and edited in three days.',
     billing=[('Shot, lit & edited by', 'Jack Careem'), ('Year', '2024'), ('Client', 'A school in Dubai'), ('Turnaround', 'Three days')],
+    film=dict(src='assets/video/eid-al-etihad/index.m3u8', poster='assets/img/work/eid-al-etihad/poster.webp', title='Eid Al Etihad Day', runtime='3:07'),
     frames=[],
-    blocks=[('text', 'The brief', [
+    blocks=[('film',),
+            ('text', 'The brief', [
                 'Eid Al Etihad is the UAE’s national day, marking the union of the seven emirates. Jack’s school came to him with an idea for it and a deadline three days away, covering the planning, shooting, lighting and the full edit.']),
             ('text', 'Three days', [
                 'There was no room to try anything twice, so the thinking had to be done before anyone picked up a camera. It’s the job that taught him to plan a shoot properly.',
